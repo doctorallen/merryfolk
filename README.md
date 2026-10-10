@@ -1,0 +1,85 @@
+# Merryfolk
+
+A cozy, pixel-art artificial-life game in the spirit of *Creatures*, set in Thistledown, a Shire-like village of hobbit-holes, gardens, pipe-weed and parties. Villagers are born with a genome and grow up learning from experience. They go to school, take up trades, fall in love, raise families who inherit their looks and nature, and one day set off over the hills. The village grows with them: new hobbit-holes, public buildings and fields are built as the population rises. It runs in any modern browser, with no build step and no dependencies.
+
+## Play
+
+Play online at **https://doctorallen.github.io/merryfolk/**, or open `index.html` in a browser. Double-clicking works, since everything is plain `<script>` tags. Or serve the folder:
+
+```sh
+python3 -m http.server 8000   # then visit http://localhost:8000
+```
+
+| Action | Controls |
+| --- | --- |
+| Look around | Drag the map, or WASD / arrow keys |
+| Zoom | Mouse wheel, `+` / `−` |
+| Select a villager | Click them; `Tab` cycles through everyone |
+| Pat (reward) / tut-tut (discourage) | Click the selected villager again or `P` / `T` |
+| Give a lesson | `E` (or the Teach button) |
+| Pick a villager up | Drag them with the hand, drop them anywhere |
+| Follow with the camera | `F` |
+| Village ledger | `V`: stores, trades, census, the departed, travellers |
+| Tools | `1`–`8`: hand, seed-cake, keg of ale, pipe-weed, remedy, storybook, flowers, fireworks |
+| Pause / speed | `Space`, or the 1× to 16× buttons |
+
+The village saves to `localStorage` every in-game hour and when you leave the page. **?** → *Start a fresh village* resets it. One in-game day takes 8 real minutes at 1×, and each season lasts three days.
+
+## What's going on under the hood
+
+### Ideas borrowed from the *Creatures* series
+
+| In Creatures | In Merryfolk |
+| --- | --- |
+| Norns with drives (hunger, tiredness, loneliness, boredom, coldness, pain…) | Nine drives: hunger, thirst, sleepiness, loneliness, boredom, pipe craving, chill, aches, and an itch to work |
+| Biochemistry: chemicals, toxins, bacteria | Body chemistry: tipsiness from ale (with wobbly walks and hangovers), germs (colds that spread through gossip and parties), toxins (toadstools), immunity. The Life tab shows them all |
+| Medicine and the Health Kit | Herbalists gather herbs and brew remedies, then walk to the sick to nurse them. You can dose anyone with the Remedy tool |
+| Reward and punishment (tickle / slap) shape behaviour | Pat and tut-tut nudge the learned weight of whatever they're doing |
+| A brain that learns from experience | Every action's habit weight moves towards how much it actually helped. Food likes are learned from taste. Bitter experience teaches wariness of toadstools |
+| Norns learning from each other | Imitation: villagers, especially children, copy what contented folk nearby are doing |
+| Teaching with the learning computer | Education: every villager has an education level (unlettered, knows letters, schooled, well-read, learned). Little ones build it at the story circle, round the supper table, from storybooks, from grown-ups who explain things, and from your lessons. It shapes how they talk (everyone speaks in whole sentences, from plain and folksy to grand and bookish), which trades suit them, whether they read or head for the inn, and how fast they learn skills |
+| Genome with crossover and mutation, the Genetics Kit | Inherited looks, including two-allele recessive genes for eye colour, freckles and curls (traits can skip a generation), thirteen personality traits, talents for eight skills, and inborn tastes. Mutations are noted in the chronicle and the Nature tab |
+| Life stages: baby → child → adult → old | Baby (fed and cuddled by parents), little one, grown-up (comes of age at 33 with a party), elder |
+| Breeding, eggs and the Hatchery | Every villager is female or male. Courtship (chemistry, sweethearts, flowers, dances) between a lass and a lad, weddings, expecting, baby girls and boys, twins. The *Invite a traveller* button brings a newcomer up the West Road |
+| Family trees and the Owner's Kit | Kin tab, a family-tree view spanning grandparents to grandchildren, and the archive of everyone who ever lived here |
+| The graveyard / photo album | The *Remembered* ledger: elders who set off on a last great adventure, with sepia portraits |
+| Docking Station warp: sending creatures to other players | *Post a copy to a friend* packs a villager's genome, skills and habits into a code that another game of Merryfolk can receive |
+| The hand picking creatures up | Drag a villager to carry them. Little ones love it; grown-ups grumble; drop them in the river and they'll remember it |
+| Seasons, weather and ecology (Creatures 2) | Spring blossom, summer storms, autumn fog and falling leaves, winter snow. Crops follow the seasons; mushrooms boom in autumn; hearths burn timber in the cold |
+| Grendels and Ettins causing mischief | Rabbits sneak out of the woods to nibble gardens (children and gardeners chase them off), and crows raid the barley. Click them to shoo |
+| Observation Kit graphs | The Census ledger charts population, children and village mood day by day |
+
+### Life in the village
+
+- **Trades.** Grown-ups take up a trade: farmer, miller, baker, brewer, innkeeper, leaf-grower, fisher, woodwright, herbalist, orchard-keeper, postie or storyteller. The choice comes from their talents, the skills they've practised, their family's trade, what they watched as an apprentice child, and what the village is short of. Trades can change as experience grows, and you can steer anyone from their Work tab.
+- **Skills.** Eight skills improve with practice, faster with talent and education. Better hands produce more.
+- **The economy.** Everything flows through the Common Store: barley → flour → bread, barley → ale, apples and honey → pies and cakes, vegetables and fish → the innkeeper's stew, timber → hearths and new homes, herbs → remedies. Food spoils (except in winter's cold), larders are stocked from the Store, and in lean times folk grind barley at home.
+- **Homes and growth.** Every married couple wants a hole of their own, and grown sons and daughters move out when a spare one is going. Woodwrights always keep a spare hole or two ready, digging the old knolls first and then fresh ones surveyed across the map (over 30 homes in all), with timber kept back so the hearths never go cold. Each hole is a little different: door style, stone, timber or brick surround, round or shuttered windows, porches, lanterns, flower boxes, rooftop wildflowers and garden apple trees.
+- **Public works.** As the population passes each milestone the village builds a second and third well, a storehouse (stores hold half as much again), a smokehouse (food keeps twice as long), a second tavern, a second bakehouse and two more barley fields. Construction shows on the map: scaffolding rises, fields are staked and furrowed. The *Stores* ledger lists everything under way.
+- **Farmland.** A sheepfold, cow paddock and pig sty are tended by the herder (cheese for the larders, wool for winter woollens that keep folk warm); farmers work vegetable allotments as well as the barley; two orchards and plenty of garden apple trees; two watermills and a windmill grind the flour.
+- **The land.** The north bank climbs towards the Hill and both banks fall away to the river, with hill-shading and grassy terraced banks. Chimneys smoke whenever the kettle's on.
+- **Festivals.** Each season has a feast: Mayday (maypole), Midsummer (double fireworks), the Harvest Feast and Yule (bonfire). Weddings, comings of age and house-warmings throw parties too.
+- **Adventures.** Bold villagers take short trips and send letters home through the postie, then return with tales, trinkets or a spouse met far away. Elders eventually set off on a last great adventure, sometimes hand in hand. When the village is small, travellers from over the hills bring new blood.
+
+## Files
+
+| File | Contents |
+| --- | --- |
+| `js/util.js` | RNG, noise, colour helpers, names, meal times, the calendar |
+| `js/sprites.js` | Procedural pixel art: villagers (with genes), seasonal trees, cottages and workshops, critters, props, icons |
+| `js/genetics.js` | Genome, inheritance, dominance, mutation, posting villagers as codes |
+| `js/world.js` | Map layout, seasonal ground painting, places, crops, critters, A* pathfinding |
+| `js/fx.js` | Particles, fireworks, weather (rain, storms, snow, fog, leaves, petals), lighting |
+| `js/audio.js` | Generative folk music and sound effects |
+| `js/education.js` | Education levels, learning, and whole-sentence speech in five registers |
+| `js/town.js` | Town planning: surveyed lots, housing need, building projects, public works |
+| `js/farm.js` | Animal pens, the second orchard, allotments and farm animals |
+| `js/villager.js` | Drives, body chemistry, the learning brain, imitation, memories, speech |
+| `js/actions.js` | The action catalogue: leisure, family, courtship, school and every trade |
+| `js/society.js` | The Common Store, trade assignment, courtship, births, homes, adventures, the archive |
+| `js/ui.js` | Toolbar, HUD, the five-tab inspector, the village ledger, family trees |
+| `js/main.js` | Game loop, seasons and weather, rendering, input, saving |
+
+## Deployment
+
+Every push to `main` runs `.github/workflows/pages.yml`. It checks the JavaScript syntax and that every script in `index.html` exists, then publishes `index.html`, `css/` and `js/` to GitHub Pages. Pull requests run the checks without deploying.

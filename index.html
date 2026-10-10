@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Merryfolk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="game">
+  <canvas id="view"></canvas>
+  <canvas id="overlay"></canvas>
+
+  <header id="topbar">
+    <div class="card brand-card">
+      <div class="brand">Merryfolk</div>
+      <div class="clock">
+        <span id="hud-season" class="pill season">Spring</span>
+        <span id="hud-day">Day 1</span>
+        <span id="hud-time" class="time">08:20</span>
+        <span id="hud-meal" class="pill">Second Breakfast</span>
+        <span id="hud-weather" class="weather">Fair</span>
+        <span id="hud-party" class="pill party" hidden>Party tonight!</span>
+      </div>
+    </div>
+    <div class="card controls">
+      <div class="speed" role="group" aria-label="Game speed">
+        <button data-speed="0" title="Pause (Space)">Pause</button>
+        <button data-speed="1" title="Normal speed">1×</button>
+        <button data-speed="2" title="Double speed">2×</button>
+        <button data-speed="3" title="Quadruple speed">4×</button>
+        <button data-speed="4" title="Eight times speed">8×</button>
+        <button data-speed="5" title="Sixteen times speed">16×</button>
+      </div>
+      <span id="hud-pop" class="pop">0 folk</span>
+      <button id="btn-folk" title="List everyone in the village">Folk</button>
+      <button id="btn-village" title="The village ledger: stores, trades, census (V)">Village</button>
+      <button id="btn-zoomout" title="Zoom out (-)" aria-label="Zoom out">−</button>
+      <button id="btn-zoomin" title="Zoom in (+)" aria-label="Zoom in">+</button>
+      <button id="btn-sound">Music: off</button>
+      <button id="btn-help" title="How to play" aria-label="How to play">?</button>
+    </div>
+  </header>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <aside id="panel" class="card" hidden>
+    <div class="panel-head">
+      <canvas id="portrait" width="60" height="80"></canvas>
+      <div class="who">
+        <h2 id="p-name">Name</h2>
+        <div id="p-sub" class="sub"></div>
+        <div id="p-mood" class="mood"></div>
+      </div>
+      <button id="panel-close" class="x" aria-label="Close">×</button>
+    </div>
+    <div id="p-now" class="now"></div>
+    <nav class="tabs" aria-label="Villager details">
+      <button data-tab="life">Life</button><button data-tab="nature">Nature</button><button data-tab="mind">Mind</button><button data-tab="kin">Kin</button><button data-tab="work">Work</button>
+    </nav>
+    <div id="p-body" class="p-body"></div>
+    <div class="actions">
+      <button id="b-pat" class="good" title="Reward what they're doing (P)">Pat <kbd>P</kbd></button>
+      <button id="b-tut" class="bad" title="Discourage what they're doing (T)">Tut-tut <kbd>T</kbd></button>
+      <button id="b-teach" title="Give them a lesson (E)">Teach <kbd>E</kbd></button>
+      <button id="b-follow" title="Keep the camera on them (F)">Follow</button>
+    </div>
+    <div id="lesson" class="lesson"></div>
+  </aside>
+
+  <section id="chronicle" class="card">
+    <button id="log-toggle" class="log-head" aria-label="Show or hide the chronicle"><span>Village Chronicle</span><span class="caret">▾</span></button>
+    <ol id="log"></ol>
+  </section>
+
+  <div id="roster" class="card" hidden>
+    <div class="roster-head"><h3>Folk of Thistledown</h3><button id="roster-close" class="x" aria-label="Close">×</button></div>
+    <div id="roster-list"></div>
+  </div>
+
+  <div id="village" class="modal" hidden>
+    <div class="card modal-card">
+      <div class="modal-head"><h2>The Thistledown Ledger</h2><button id="village-close" class="x" aria-label="Close">×</button></div>
+      <nav class="tabs" aria-label="Ledger sections">
+        <button data-tab="stores">Stores</button><button data-tab="trades">Trades</button><button data-tab="census">Census</button><button data-tab="remembered">Remembered</button><button data-tab="travellers">Travellers</button>
+      </nav>
+      <div id="village-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="tree" class="modal" hidden>
+    <div class="card modal-card">
+      <div class="modal-head"><h2 id="tree-title">Family tree</h2><button id="tree-close" class="x" aria-label="Close">×</button></div>
+      <div id="tree-body" class="modal-body tree"></div>
+    </div>
+  </div>
+
+  <div id="post" class="modal" hidden>
+    <div class="card modal-card small">
+      <div class="modal-head"><h2 id="post-title">Post a villager</h2><button id="post-close" class="x" aria-label="Close">×</button></div>
+      <div class="modal-body">
+        <p class="lede-s">This code carries their genome, skills and habits. A friend can paste it into the Travellers tab of their own game of Merryfolk, and a copy of this villager will come walking up their West Road.</p>
+        <textarea id="post-code" rows="5" readonly></textarea>
+        <div class="row-btns"><button id="post-copy">Copy code</button></div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="bottom">
+    <div id="tool-hint" class="tool-hint"></div>
+    <nav id="toolbar" class="card" aria-label="Tools"></nav>
+  </footer>
+
+  <div id="intro">
+    <div class="intro-card card">
+      <h1>Merryfolk</h1>
+      <p class="lede">Thistledown is a snug village of hobbit-holes, gardens and good ale, tucked between green hills and a slow river. Its folk are born, grow up, go to school, take up trades, fall in love, raise families and, one day, set off over the hills. You can watch over them and guide them a little.</p>
+      <div class="how">
+        <div><b>Look around</b><span>Drag the map, or use WASD / arrow keys. Scroll or <kbd>+</kbd><kbd>−</kbd> to zoom.</span></div>
+        <div><b>Get to know folk</b><span>Click a villager to open their panel: needs and health, genes, habits and education, family and friends, trade and skills. <kbd>Tab</kbd> cycles through everyone.</span></div>
+        <div><b>Teach them</b><span>Click a selected villager again (or <kbd>P</kbd>) to pat them, and they'll do more of whatever they were doing. <kbd>T</kbd> tut-tuts. <kbd>E</kbd> gives a lesson: little ones learn fastest, and education shapes how folk talk, work and spend their days.</span></div>
+        <div><b>The giant hand</b><span>Drag a villager to pick them up and carry them somewhere. Little ones love it; grown-ups less so.</span></div>
+        <div><b>Gifts &amp; remedies</b><span>Drop cake, ale, leaf, storybooks, remedies, flowers or fireworks from the toolbar. Fireworks in the party field start a party.</span></div>
+        <div><b>The village</b><span>Open the <b>Village</b> ledger (<kbd>V</kbd>) for the Common Store, the trades, the census, the departed, and to welcome travellers.</span></div>
+      </div>
+      <div class="intro-actions">
+        <button id="intro-go" class="primary">Enter Thistledown</button>
+        <button id="intro-new" class="ghost">Start a fresh village</button>
+        <span id="intro-confirm" hidden>Start over? The current village will be lost.
+          <button id="intro-confirm-yes" class="bad">Yes, start fresh</button>
+          <button id="intro-confirm-no" class="ghost">Keep it</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/util.js"></script>
+<script src="js/sprites.js"></script>
+<script src="js/genetics.js"></script>
+<script src="js/world.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/education.js"></script>
+<script src="js/villager.js"></script>
+<script src="js/actions.js"></script>
+<script src="js/society.js"></script>
+  <script src="js/town.js"></script>
+  <script src="js/farm.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
