@@ -12,6 +12,10 @@ const SHIRT_COLS = ['#efe6cf', '#e8dcc0', '#f4efe2', '#dfe8d2', '#e9d8c8'];
 const LEG_COLS = ['#6b4a2b', '#4d5a3a', '#5a4636', '#7a6a4a', '#3e4a5a', '#8a5a3a'];
 const DOOR_COLS = ['#2f6b34', '#c9a227', '#a23b2a', '#2f5e9a', '#6b3f8a', '#2f7f7a', '#c86a2a', '#3a7a3a'];
 const OUTLINE = '#2a1c12';
+// Riftfolk colours: neon accents, dyed hair and dark synth-weave jackets
+const NEON_COLS = ['#3af0ff', '#ff3aa8', '#b45aff', '#7aff5a', '#ffd23a', '#ff6a3a'];
+const RIFT_HAIR = ['#ff3aa8', '#3af0ff', '#b45aff', '#7aff5a', '#ff8a2a', '#e8e8f8', '#26262e', '#3a2a5a'];
+const RIFT_JACKETS = ['#2a2a3a', '#1e2a3a', '#3a1e3a', '#22343a', '#3a2a24', '#2a2a2a'];
 
 // ----- villager templates (10 px wide) -----
 const FRONT_BODY = [
@@ -109,16 +113,45 @@ function applySex(rows, view, sex, child) {
   return rows.map((r) => r.join(''));
 }
 
-function villagerPalette(genes, stage) {
+function villagerPalette(genes, stage, look = {}) {
   const ex = expressed(genes);
   let hair = ex.hair;
   if (stage === 'elder') hair = mix(hair, '#d9d6cc', 0.8);
   const skin = ex.skin;
-  return {
+  const pal = {
     h: hair, H: shade(hair, -0.28), s: skin, S: shade(skin, -0.15), e: ex.eyes, r: mix(skin, '#e0705a', 0.35), k: mix(skin, '#7a3a1a', 0.45),
     v: ex.vest, V: shade(ex.vest, -0.25), w: ex.shirt, W: shade(ex.shirt, -0.12),
     t: ex.legs, T: shade(ex.legs, -0.2), f: shade(skin, -0.12), F: shade(hair, -0.05), b: '#e8c860', R: mix(ex.vest, '#ff5a7a', 0.6),
+    c: '#6af8ff', n: ex.neon, z: mix(ex.neon, '#101018', 0.35), Z: '#1a1a22',
   };
+  const tier = look.tier || 0;
+  // folk taking up rift ways wear neon trim; the thoroughly rift-minded go about in synth-weave
+  if (tier >= 1) { pal.b = ex.neon; pal.R = ex.neon; }
+  if (tier >= 2) {
+    pal.v = mix(ex.vest, '#1e1e2a', 0.72); pal.V = shade(pal.v, -0.3);
+    pal.w = mix(ex.shirt, '#4a4a5a', 0.8); pal.W = shade(pal.w, -0.15);
+    pal.t = mix(ex.legs, '#24242e', 0.7); pal.T = shade(pal.t, -0.2);
+  }
+  return pal;
+}
+
+// Chrome eyes, neon belts and visors drawn over the base template.
+function applyRiftLook(rows, view, ex, look, child) {
+  rows = rows.map((r) => r.split(''));
+  const set = (j, i, ch) => { if (rows[j] && rows[j][i] !== undefined) rows[j][i] = ch; };
+  const tier = look.tier || 0;
+  if (ex.chrome) { if (view === 'front') set(3, 6, 'c'); if (view === 'side') set(3, 8, 'c'); }
+  if (tier >= 1) {
+    const belt = child ? 7 : 9;
+    if (view === 'front' || view === 'back') for (let i = 2; i <= 7; i++) set(belt, i, 'n');
+    if (view === 'side') for (let i = 3; i <= 6; i++) set(belt, i, 'n');
+  }
+  if (look.visor && tier >= 2) {
+    if (view === 'front') for (let i = 2; i <= 7; i++) set(3, i, 'z');
+    if (view === 'side') for (let i = 6; i <= 9; i++) set(3, i, 'z');
+    if (view === 'back') { set(3, 1, 'Z'); set(3, 8, 'Z'); for (let i = 2; i <= 7; i++) set(3, i, 'Z'); }
+  }
+  return rows.map((r) => r.join(''));
 }
 
 function finishSprite(rows, pal) {
@@ -128,8 +161,8 @@ function finishSprite(rows, pal) {
   return outlineCanvas(c, OUTLINE);
 }
 
-function buildVillagerSprites(genes, stage) {
-  const pal = villagerPalette(genes, stage);
+function buildVillagerSprites(genes, stage, look = {}) {
+  const pal = villagerPalette(genes, stage, look);
   const ex = expressed(genes);
   const out = { down: {}, up: {}, side: {} };
   if (stage === 'baby') {
@@ -145,6 +178,7 @@ function buildVillagerSprites(genes, stage) {
     let b = applyHairStyle(body, view, ex.sex === 'f' && ex.style === 0 ? 1 : ex.style, ex.freckles);
     b = applySex(b, view, ex.sex, child);
     if (child) b = [0, 1, 2, 3, 4, 6, 8, 9].map((i) => b[i]);
+    b = applyRiftLook(b, view, ex, look, child);
     for (const pose of ['stand', 'walk1', 'walk2', 'sit']) {
       let legs = LEGS[legKind][pose].slice();
       if (ex.garment === 1 && pose !== 'sit') legs[1] = legKind === 'front' ? '.tttttttt.' : '..tttttt..';
@@ -156,8 +190,8 @@ function buildVillagerSprites(genes, stage) {
 }
 
 // Large portrait for the inspector panel.
-function drawPortrait(canvas, genes, stage, sepia) {
-  const sp = buildVillagerSprites(genes, stage).down.stand;
+function drawPortrait(canvas, genes, stage, sepia, look) {
+  const sp = buildVillagerSprites(genes, stage, look).down.stand;
   const ctx = canvas.getContext('2d');
   ctx.imageSmoothingEnabled = false;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -794,6 +828,90 @@ function makeCottage(opts) {
   return c;
 }
 
+// ---------------------------------------------------------------------------
+// Rift-built: a lattice relay mast over a tin shack, a neon tavern, and a
+// field of sun-glass panels. Same conventions as makeCottage.
+// ---------------------------------------------------------------------------
+function makeRelay(lit) {
+  const W = 52, H = 120;
+  const [c, x] = makeCanvas(W, H);
+  ellipseFill(x, W / 2, H - 3, W / 2 - 4, 3, 'rgba(20,40,10,0.25)');
+  const wallTop = H - 34, wallBot = H - 4;
+  // corrugated tin shack
+  x.fillStyle = '#7a8088'; x.fillRect(6, wallTop, W - 12, wallBot - wallTop);
+  x.fillStyle = '#5e646c'; for (let i = 7; i < W - 6; i += 3) x.fillRect(i, wallTop, 1, wallBot - wallTop);
+  x.fillStyle = '#4a4e56'; x.fillRect(4, wallTop - 4, W - 8, 4);
+  x.fillStyle = '#9aa0a8'; x.fillRect(4, wallTop - 5, W - 8, 1);
+  // door and a round porthole
+  x.fillStyle = '#2a2a32'; x.fillRect(W / 2 - 6, wallBot - 20, 12, 20);
+  x.fillStyle = lit ? '#7af0ff' : '#3a4450'; x.fillRect(W / 2 - 4, wallBot - 18, 8, 18);
+  x.fillStyle = '#ff3aa8'; x.fillRect(W / 2 - 7, wallBot - 22, 14, 1);
+  disc(x, 13, wallTop + 10, 4, '#2a2a32'); disc(x, 13, wallTop + 10, 3, lit ? '#7af0ff' : '#41556a');
+  // the mast: a lattice tower
+  const mx = W / 2 + 10, top = 6, base = wallTop - 4;
+  for (let y = top; y < base; y++) {
+    const half = 1 + Math.round((y - top) / (base - top) * 5);
+    x.fillStyle = '#5a5e66'; x.fillRect(mx - half, y, 1, 1); x.fillRect(mx + half, y, 1, 1);
+    if ((y - top) % 6 === 0) { x.fillStyle = '#7a7e86'; x.fillRect(mx - half, y, half * 2 + 1, 1); }
+    if ((y - top) % 6 === 3) { x.fillStyle = '#4a4e56'; x.fillRect(mx - Math.round(half / 2), y, 1, 1); x.fillRect(mx + Math.round(half / 2), y, 1, 1); }
+  }
+  // dishes and the beacon
+  x.fillStyle = '#c8ccd4'; x.fillRect(mx - 9, top + 22, 5, 7); x.fillStyle = '#8a9098'; x.fillRect(mx - 5, top + 25, 3, 1);
+  x.fillStyle = '#c8ccd4'; x.fillRect(mx + 4, top + 38, 6, 6); x.fillStyle = '#8a9098'; x.fillRect(mx + 2, top + 41, 3, 1);
+  x.fillStyle = '#5a5e66'; x.fillRect(mx, 0, 1, top);
+  x.fillStyle = lit ? '#ff4a4a' : '#8a2a2a'; x.fillRect(mx - 1, top - 2, 3, 3);
+  // cables to the shack
+  x.fillStyle = '#26262e'; for (let k = 0; k < 10; k++) x.fillRect(mx - 3 - k, base - 2 + Math.round(Math.sin(k / 3) * 2), 1, 1);
+  // a neon strip under the eaves
+  x.fillStyle = lit ? '#3af0ff' : '#2a6a74'; x.fillRect(6, wallTop, W - 12, 1);
+  outlineCanvas(c, OUTLINE);
+  return c;
+}
+
+function makeNeonBar(lit) {
+  return makeCottage({
+    w: 80, wall: '#3e3850', roof: 'slate', windows: [10, 60], door: 40, chimneys: [56], lit,
+    extra: (x, g) => {
+      // a neon sign: a little glowing worm, curled up, over the door
+      const sx = 26, sy = g.wallTop - 2;
+      x.fillStyle = '#1a1a22'; x.fillRect(sx, sy, 28, 10);
+      const glow = lit ? '#7aff5a' : '#3a7a2a', pink = lit ? '#ff3aa8' : '#7a2a5a';
+      for (let i = 0; i < 20; i++) { x.fillStyle = i % 5 === 4 ? pink : glow; x.fillRect(sx + 4 + i, sy + 4 + Math.round(Math.sin(i * 0.8) * 2), 1, 1); }
+      x.fillStyle = pink; x.fillRect(sx + 24, sy + 3, 2, 2);
+      // neon strips along the walls
+      x.fillStyle = lit ? '#b45aff' : '#4a2a6a'; x.fillRect(g.L, g.wallTop + 4, g.Rr - g.L, 1);
+      x.fillStyle = lit ? '#3af0ff' : '#2a5a64'; x.fillRect(g.L, g.wallBot - 6, g.Rr - g.L, 1);
+    },
+  });
+}
+
+function makeSolarArray(lit) {
+  const W = 84, H = 46;
+  const [c, x] = makeCanvas(W, H);
+  ellipseFill(x, W / 2, H - 3, W / 2 - 4, 3, 'rgba(20,40,10,0.25)');
+  // three tilted panels on legs
+  for (let p = 0; p < 3; p++) {
+    const px = 4 + p * 26, py = 8 + (p % 2) * 3;
+    x.fillStyle = '#5a5e66'; x.fillRect(px + 4, py + 14, 2, H - py - 18); x.fillRect(px + 16, py + 12, 2, H - py - 16);
+    for (let j = 0; j < 14; j++) {
+      const sh = Math.round(j * 0.4);
+      x.fillStyle = j === 0 ? '#9ab0d0' : '#1e3a6a'; x.fillRect(px + sh, py + j, 22, 1);
+    }
+    x.fillStyle = '#5a7ab0';
+    for (let k = 1; k < 4; k++) for (let j = 1; j < 14; j++) x.fillRect(px + Math.round(j * 0.4) + k * 6, py + j, 1, 1);
+    x.fillRect(px + 1, py + 7, 22, 1);
+    x.fillStyle = '#c8e0ff'; x.fillRect(px + 3, py + 2, 4, 1);
+  }
+  // a small control box with a door
+  const bx = W / 2 - 7, by = H - 22;
+  x.fillStyle = '#6a7078'; x.fillRect(bx, by, 14, 18);
+  x.fillStyle = '#2a2a32'; x.fillRect(bx + 4, by + 6, 6, 12);
+  x.fillStyle = lit ? '#7aff5a' : '#2a5a2a'; x.fillRect(bx + 2, by + 2, 2, 2);
+  x.fillStyle = lit ? '#ffd23a' : '#5a4a1a'; x.fillRect(bx + 10, by + 2, 2, 2);
+  outlineCanvas(c, OUTLINE);
+  return c;
+}
+
 function makeBeehive() {
   const [c, x] = makeCanvas(12, 14);
   ellipseFill(x, 6, 12, 5, 1, 'rgba(20,40,10,0.25)');
@@ -1019,6 +1137,8 @@ const ICON_ROWS = {
   ring: ['.........', '...yyy...', '..y...y..', '.y.....y.', '.y.....y.', '.y.....y.', '..y...y..', '...yyy...', '.........'],
   cheese: ['.........', '.........', '.....yy..', '...yyyyy.', '.yyyYyyy.', 'yyyyyyyy.', 'yYyyyyYy.', 'yyyyyyyy.', '.........'],
   wool: ['.........', '..www....', '.wwWww.ww', 'wwwwWwwww', 'wWwwwwWww', '.wwwwwww.', '..wwWw...', '....bbb..', '.........'],
+  chip: ['.........', '.k.k.k.k.', 'kkkkkkkkk', '.kzzzzzk.', 'kkzcczkkk', '.kzcczzk.', 'kkzzzzzkk', '.kkkkkkk.', '.k.k.k.k.'],
+  rift: ['....m....', '...mcm...', '...mkm...', '..mckcm..', '..mkkkm..', '..mckcm..', '...mkm...', '...mcm...', '....m....'],
   sheep: ['.........', '..wwww...', '.wwwwwwk.', 'wwwwwwwkk', 'wwwwwwwke', '.wwwwww..', '.k.k.k.k.', '.k.k.k.k.', '.........'],
 };
 const ICON_PAL = {
@@ -1043,6 +1163,8 @@ function buildIcons() {
     if (k === 'bunny') pal.b = '#a08060';
     if (k === 'stew') pal.k = '#4a4a52', pal.g = '#6aaa4a';
     if (k === 'remedy') pal.g = '#3a9a6a', pal.G = '#7ad8a0';
+    if (k === 'chip') pal.z = '#2a5a4a', pal.c = '#5af8ff', pal.k = '#3a3a44';
+    if (k === 'rift') pal.m = '#c050ff', pal.c = '#5af8ff', pal.k = '#14081e';
     ICONS[k] = spriteFrom(ICON_ROWS[k], pal);
   }
 }

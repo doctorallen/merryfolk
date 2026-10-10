@@ -29,6 +29,9 @@ let tReal = 0;
 // ---------------------------------------------------------------------------
 function newVillage() {
   Game.villagers = []; Game.archive = {}; Game.away = []; Game.census = [];
+  World.rifts = []; World.riftScars = [];
+  // the first rift tears open on the second evening
+  Game.riftNext = 1440 + 20.5 * 60;
   NEXT_ID = 1;
   Village.reset();
   // Founding families: 'a' adult, 'e' elder, 'c' child, 'b' baby
@@ -93,7 +96,8 @@ function save() {
       villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
       archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
-      homes: World.homes.map((h) => ({ built: h.built, buildProg: h.buildProg, pantry: h.pantry, chilly: h.chilly, plots: h.plots.map((p) => [p.stage, p.prog]) })),
+      homes: World.homes.map((h) => ({ built: h.built, buildProg: h.buildProg, pantry: h.pantry, chilly: h.chilly, neon: !!h.neon, plots: h.plots.map((p) => [p.stage, p.prog]) })),
+      rifts: World.rifts, scars: World.riftScars, riftNext: Game.riftNext, riftsOn: Village.riftsOn,
       allot: World.allotments.map((a) => a.plots.map((p) => p.stage)), pens: World.pens.map((p) => p.tend),
       weed: World.weed.map((w) => w.stage), fields: World.fields.map((f) => f.plots.map((p) => p.stage)), herbs: World.herbBeds.map((p) => p.stage),
       orchard: World.orchard.map((t) => t.apples), hives: World.hives.map((h) => h.honey), eggs: World.eggs,
@@ -127,7 +131,7 @@ function load() {
     const home = World.homes[i]; if (!home) return;
     if (h.built && !home.built) { home.built = true; furnishHome(home); addHomeFlowers(home); }
     home.buildProg = h.buildProg || 0;
-    home.pantry = Object.assign(emptyPantry(), h.pantry || {}); home.chilly = !!h.chilly;
+    home.pantry = Object.assign(emptyPantry(), h.pantry || {}); home.chilly = !!h.chilly; home.neon = !!h.neon;
     (h.plots || []).forEach(([s, p], j) => { if (home.plots[j]) { home.plots[j].stage = s; home.plots[j].prog = p; } });
   });
   Village.projects = Village.projects.filter((p) => p.kind !== 'home' || (World.homes[p.homeId] && !World.homes[p.homeId].built));
@@ -143,6 +147,9 @@ function load() {
   (data.woods || []).forEach((n, i) => { if (World.woodSpots[i]) World.woodSpots[i].stock = n; });
   (data.mush || []).forEach((n, i) => { if (World.mushrooms[i]) World.mushrooms[i].amount = n; });
   World.eggs = data.eggs || 0;
+  World.rifts = data.rifts || []; World.riftScars = data.scars || [];
+  Game.riftNext = data.riftNext || Game.time + R.f(400, 1200);
+  Village.riftsOn = data.riftsOn ?? true;
   Game.villagers = data.villagers.map((o) => new Villager(o));
   // villagers from before they had a sex: make sure couples can still start a family
   for (const v of Game.villagers) {
@@ -178,6 +185,7 @@ function simulate(dt) {
   if (Game.day !== Game.lastDay) { Game.lastDay = Game.day; dailySociety(); checkSeason(true); save(); }
 
   updateWorld(dt, Game.raining, World.season, Game.hour);
+  updateRifts(dt);
   for (const v of Game.villagers) v.update(dt, Game.hour);
   const gone = Game.villagers.filter((v) => v.gone);
   if (gone.length) {
@@ -203,6 +211,7 @@ function simulate(dt) {
     b.lit = Game.darkness > 0.15 && (b.inside.length > 0 || (b.isInn && Game.hour > 16));
     if (b.static) b.static.useAlt = b.lit;
     const busy = b.inside.length > 0 || b.isInn;
+    if (b.static && b.neon) b.static.useAlt = Game.darkness > 0.15;
     b.smoking = busy || ['bakery', 'bakery2', 'smokehouse', 'brewhouse', 'herbalist', 'workshop'].includes(k) && Game.hour > 5 && Game.hour < 20;
   }
   if (Game.party.on && Game.time > Game.party.until) {
@@ -434,6 +443,13 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
         break;
       }
       case 'stick': P(10, hY - 4, 1, h - hY + 3, '#7a5a3a'); P(10, hY - 5, 2, 1, '#5a3a22'); break;
+      case 'gadget': {
+        // a little handheld with a glowing screen
+        if (dir === 'up') { P(3, hY - 3, 4, 3, '#2a2a32'); break; }
+        P(dir === 'side' ? 8 : 3, hY - 3, 4, 3, '#2a2a32');
+        P(dir === 'side' ? 9 : 4, hY - 2, 2, 1, Math.sin(t * 4 + v.id) > -0.3 ? expressed(v.genes).neon : '#1a4a50');
+        break;
+      }
     }
   };
   if (dir === 'up') drawProp();
@@ -516,7 +532,7 @@ function collectLights() {
   if (dk <= 0.01) return L;
   for (const h of World.homes) {
     if (!h.built) continue;
-    if (h.lit) for (const w of h.windows) L.push({ x: w.x, y: w.y + 3, r: 30, a: 0.9, warm: true });
+    if (h.lit) for (const w of h.windows) L.push(h.neon ? { x: w.x, y: w.y + 3, r: 30, a: 0.85, col: '#7af0ff' } : { x: w.x, y: w.y + 3, r: 30, a: 0.9, warm: true });
     if (h.doorAnim > 0 && h.lit) L.push({ x: h.doorX, y: h.doorY, r: 26, a: 0.8, warm: true });
     if (h.v && h.v.lantern) L.push({ x: h.doorX + h.doorR + (h.v.porch ? 7 : 4), y: h.doorY - h.doorR - 1, r: 22, a: 0.85, warm: true });
     if (h.lit && h.roofWin) L.push({ x: h.roofWin.x, y: h.roofWin.y, r: 14, a: 0.6, warm: true });
@@ -528,9 +544,11 @@ function collectLights() {
   }
   for (const k in World.buildings) {
     const b = World.buildings[k];
+    if (b.neon && dk > 0.15) { L.push({ x: b.left + b.w / 2, y: b.bottom - 20, r: 40, a: 0.7, col: k === 'glowworm' ? '#b45aff' : '#3af0ff' }); continue; }
     if (!b.lit || b === inn) continue;
     L.push({ x: b.left + b.w / 2, y: b.bottom - 24, r: 44, a: 0.8, warm: true });
   }
+  riftLights(L);
   World.lamps.forEach((l, i) => L.push({ x: l.x, y: l.y + 2, r: 46 * (0.96 + Math.sin(tReal * 7 + i) * 0.04), a: 0.95, warm: true }));
   if (Game.party.on) {
     for (const p of World.partyPoles) L.push({ x: p.x, y: p.y + 8, r: 42, a: 0.85, col: '#ffcf70' });
@@ -574,6 +592,7 @@ function render(dtReal) {
     else if (Village.projects.some((p) => p.homeId === h.id)) drawSite(ctx, h);
   }
   for (const p of Village.projects) if (p.kind === 'field') drawFieldSite(ctx, World.lots[p.lot], p.prog);
+  for (const s of World.riftScars) if (s.x > cx - 40 && s.x < cx + cam.w + 40 && s.y > cy - 20 && s.y < cy + cam.h + 20) drawRiftScar(ctx, s);
 
   // y-sorted drawables
   const list = [];
@@ -600,6 +619,7 @@ function render(dtReal) {
   for (const c of World.crows) if (c.state === 'peck' && inView(c.x, c.y)) list.push({ y: c.y, img: SPR.crow[1], x: Math.round(c.x) - 3, iy: Math.round(c.y) - 5 });
   for (const mw of World.millWheels) if (inView(mw.x, mw.y)) list.push({ y: mw.y + 12, wheel: mw });
   if (World.windmill && inView(World.windmill.x, World.windmill.sortY)) list.push({ y: World.windmill.sortY + 1, sails: true });
+  for (const r of World.rifts) if (inView(r.x, r.y)) list.push({ y: r.y, rift: r });
   for (const p of Village.projects) {
     if (p.kind !== 'building' && p.kind !== 'well') continue;
     const lot = World.lots[p.lot];
@@ -612,6 +632,7 @@ function render(dtReal) {
     else if (d.s) ctx.drawImage(d.s.useAlt && d.s.alt ? d.s.alt : d.s.img, d.s.x - d.s.ox, d.s.y - d.s.oy);
     else if (d.wheel) drawMillWheel(ctx, d.wheel);
     else if (d.sails) drawWindmillSails(ctx);
+    else if (d.rift) drawRift(ctx, d.rift, tReal);
     else if (d.lot) drawLotSite(ctx, d.lot, d.prog);
     else if (d.flip) drawFlipped(ctx, d.img, d.x, d.iy, true);
     else ctx.drawImage(d.img, d.x, d.iy);
@@ -631,6 +652,7 @@ function render(dtReal) {
   if (winter) { ctx.fillStyle = 'rgba(160,190,230,0.06)'; ctx.fillRect(cx, cy, cam.w, cam.h); }
   Light.render(ctx, cr, sky.dark, winter ? '14,22,54' : '12,18,46', collectLights());
   FX.draw(ctx, true);
+  drawRiftEmissive(ctx, cr);
   FX.drawFireflies(ctx, Game, cr, []);
   FX.drawFog(ctx, Game, cr);
   FX.drawFalling(ctx, Game, cr, dtReal);
@@ -1011,6 +1033,7 @@ function frame(now) {
     stepPaint(6);
     const fxDt = speed > 0 ? dtReal : 0;
     emitSmoke(speed > 0 ? dtReal : 0);
+    emitRiftFx(dtReal);
     FX.update(fxDt, Game);
     updateCamera(dtReal);
     render(fxDt);

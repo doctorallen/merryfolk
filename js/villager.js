@@ -48,6 +48,10 @@ class Villager {
     this.skills = Object.assign(Object.fromEntries(SKILLS.map((s) => [s, 0])), o.skills || {});
     this.edu = typeof o.edu === 'number' ? o.edu : o.vocab ? educationFromOld(o, this.genes, this.age) : startingEducation(this.genes, this.age);
     this.eduFrom = o.eduFrom ?? {};
+    // rift ways: 0 = hill-folk through and through, 1 = rift-born manners and gear
+    this.tech = typeof o.tech === 'number' ? o.tech : (this.genes.rift || 0);
+    this.visor = o.visor ?? false;
+    this.techTier = techTier(this.tech);
     this.memories = o.memories ?? [];
     this.job = o.job ?? null;
     this.playerJob = o.playerJob ?? false;
@@ -63,8 +67,10 @@ class Villager {
     this.leaving = false; this.thinkDelay = Math.random() * 3; this.observeT = Math.random() * 10; this.speakT = R.f(5, 30);
     this.stage = this.lifeStage();
     if (this.stage === 'child' || this.stage === 'baby') { this.drives.craving = 0; this.drives.industry = 0; }
-    this.sprites = buildVillagerSprites(this.genes, this.stage);
+    this.sprites = buildVillagerSprites(this.genes, this.stage, this.look());
   }
+  look() { return { tier: this.techTier, visor: this.visor }; }
+  isRiftborn() { return (this.genes.rift || 0) >= 0.99; }
 
   name() { return this.first + ' ' + this.surname; }
   home() { return World.homes[this.homeId]; }
@@ -124,7 +130,7 @@ class Villager {
     if (a.id === 'sleep' && this.isSick()) return 'Laid up in bed, feeling poorly';
     return label;
   }
-  refreshSprites() { this.sprites = buildVillagerSprites(this.genes, this.stage); }
+  refreshSprites() { this.techTier = techTier(this.tech); this.sprites = buildVillagerSprites(this.genes, this.stage, this.look()); this._portraitKey = null; }
 
   // Longer sentences stay up a little longer.
   say(text, dur = 3.2) { if (text) this.bubble = { text, t: Math.max(dur, 1.4 + text.length * 0.045) }; }
@@ -173,7 +179,7 @@ class Villager {
   }
   score(a, h) {
     if (a.queued || !this.canDo(a)) return -1;
-    if (a.job && a.job !== this.job) return -1;
+    if (a.job && a.job !== this.job && !(a.jobs && a.jobs.includes(this.job))) return -1;
     if (a.avail && !a.avail(this, h)) return -1;
     if (this.cool[a.id] && this.cool[a.id] > Game.time) return -1;
     let s = 0;
@@ -506,6 +512,8 @@ class Villager {
         const l = clamp((this.love[o.id] || 0) + dt * 0.0012 * chemistry(this, o) * (0.5 + this.genes.romance), 0, 1);
         this.love[o.id] = l; o.love[this.id] = l;
       }
+      // a pint beside someone in neon trim rubs off, a little
+      if (o.tech > this.tech + 0.1 && this.stage !== 'baby') shiftWays(this, dt * 0.00008 * (o.tech - this.tech) * (0.4 + this.genes.curiosity * 0.8));
       if (this.isSick() && o.chem.germs === 0 && Math.random() < dt * 0.0015 * (1.2 - o.genes.hardiness)) o.catchCold(this.first);
     }
   }
@@ -541,6 +549,7 @@ class Villager {
     if (mode === 'quarrel') { FX.puff(speaker.x, speaker.y - 20); task.data.reply = { who: other, to: speaker, kind: 'quarrel' }; return; }
     if (mode === 'court' && R.chance(0.6)) FX.hearts((this.x + p.x) / 2, Math.min(this.y, p.y) - 18);
     if (other.pendingReply) task.data.reply = { who: other, to: speaker, kind: other.pendingReply };
+    shareWays(speaker, other);
     // gossip spreads colds, too
     if (speaker.chem.germs > 0.3 && Math.random() < 0.08 * (1.2 - other.genes.hardiness)) other.catchCold(speaker.first);
   }
@@ -629,7 +638,8 @@ class Villager {
     return {
       id: this.id, first: this.first, surname: this.surname, genes: this.genes, age: this.age, homeId: this.homeId, parents: this.parents,
       spouse: this.spouse, sweetheart: this.sweetheart, x: this.x, y: this.y, drives: this.drives, chem: this.chem, weights: this.weights,
-      foodLike: this.foodLike, rel: this.rel, love: this.love, skills: this.skills, edu: Math.round(this.edu * 1000) / 1000, eduFrom: this.eduFrom, memories: this.memories, job: this.job,
+      foodLike: this.foodLike, rel: this.rel, love: this.love, skills: this.skills, edu: Math.round(this.edu * 1000) / 1000, eduFrom: this.eduFrom,
+      tech: Math.round(this.tech * 1000) / 1000, visor: this.visor, memories: this.memories, job: this.job,
       playerJob: this.playerJob, wary: this.wary, pouch: this.pouch, stats: this.stats, born: this.born, expecting: this.expecting, lastFood: this.lastFood,
     };
   }

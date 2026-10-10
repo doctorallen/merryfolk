@@ -44,6 +44,7 @@ const JOBS = {
   herder: { label: 'Herder', skill: 'farming', icon: 'sheep', desc: 'Tends the sheep, cows and pigs: milk for cheese, wool for winter woollens.' },
   postie: { label: 'Postie', skill: 'lore', icon: 'letter', desc: 'Carries letters from hole to hole (and from far-off adventurers).' },
   storyteller: { label: 'Storyteller', skill: 'lore', icon: 'book', desc: 'Gathers the little ones beneath the old oak and teaches them letters, sums and tales.' },
+  tinker: { label: 'Tinker', skill: 'tinkering', icon: 'chip', desc: 'Rift know-how: salvages scrap from rifts, wires hobbit-holes with neon and sun-glass, keeps the Relay humming, and lends a hand building.' },
 };
 
 const isDay = (h) => h >= 6.5 && h < 19.5;
@@ -187,7 +188,7 @@ function nearestOf(v, list, ok) {
 // The nearest place goods can be dropped off.
 function dropOffFor(v, res) {
   const B = World.buildings;
-  const pref = { grain: ['barn', 'store'], wood: ['workshop', 'store'], herbs: ['herbalist'], flour: ['bakery', 'store'], fish: ['store', 'barn'], egg: ['store', 'barn'] }[res] || ['store', 'barn'];
+  const pref = { grain: ['barn', 'store'], wood: ['workshop', 'store'], scrap: ['relay', 'workshop', 'store'], herbs: ['herbalist'], flour: ['bakery', 'store'], fish: ['store', 'barn'], egg: ['store', 'barn'] }[res] || ['store', 'barn'];
   let best = null, bd = 1e9;
   for (const k of pref) { const b = B[k]; if (!b) continue; const d = dist(v.x, v.y, b.stepX, b.stepY) * (k === pref[0] ? 0.7 : 1); if (d < bd) { bd = d; best = b; } }
   return best;
@@ -719,7 +720,7 @@ const ACTIONS = {
       let grain = 0;
       for (const f of World.fields) for (const q of f.plots) {
         if (q.ty !== p.ty || Math.abs(q.tx - p.tx) > 3) continue;
-        if (q.stage === 4) { grain += 3; q.stage = 1; q.prog = 0; }
+        if (q.stage === 4) { grain += 4; q.stage = 1; q.prog = 0; }
         else if (q.stage === 0) { q.stage = 1; q.prog = 0; }
       }
       grain = Math.round(grain * 1.3 * v.skillMul('farming'));
@@ -850,19 +851,23 @@ const ACTIONS = {
     release: (v, task) => { if (task.target.wood) task.target.wood.claimed = null; },
   },
   build: {
-    label: 'Building', icon: 'hammer', sat: { industry: -0.5, bored: -0.3 }, dur: 80, pose: 'work', prop: 'spade', outdoor: true, job: 'woodwright', skill: 'woodcraft',
-    avail: () => Village.projects.some((p) => p.kind !== 'field' && projectReady(p)),
+    label: 'Building', icon: 'hammer', sat: { industry: -0.5, bored: -0.3 }, dur: 80, pose: 'work', prop: 'spade', outdoor: true, job: 'woodwright', jobs: ['tinker'], skill: 'woodcraft',
+    avail: (v) => Village.projects.some((p) => canWorkProject(v, p)),
     time: (h) => workHours(h, 8, 18),
-    extra: () => 0.18 + (Village.projects.length > 1 ? 0.08 : 0),
+    extra: (v) => 0.18 + (Village.projects.length > 1 ? 0.08 : 0) + (v.job === 'tinker' && Village.projects.some((p) => p.kind === 'retrofit') ? 0.1 : 0),
     target: (v) => {
-      const open = Village.projects.filter((p) => p.kind !== 'field' && projectReady(p));
+      const open = Village.projects.filter((p) => canWorkProject(v, p));
       if (!open.length) return null;
       // spread the hands: go where fewest are working, nearest first
       const crew = (p) => Game.villagers.filter((o) => o.task && o.task.target && o.task.target.project === p).length;
       const p = open.sort((a, b) => crew(a) - crew(b) || b.prog - a.prog)[0];
       return { ...projectSpot(p), project: p };
     },
-    tick: (v, task, dt) => { if (Math.random() < dt * 0.2) { if (task.target.project && task.target.project.kind === 'building') FX.chips(v.x, v.y - 6); else FX.dirt(v.x, v.y - 2); } },
+    tick: (v, task, dt) => {
+      if (Math.random() > dt * 0.2) return;
+      const k = task.target.project && task.target.project.kind;
+      if (k === 'retrofit' || v.job === 'tinker') FX.sparkle(v.x, v.y - 8, '#5af8ff'); else if (k === 'building') FX.chips(v.x, v.y - 6); else FX.dirt(v.x, v.y - 2);
+    },
     done: (v, task) => { const p = task.target.project; if (p && Village.projects.includes(p)) workProject(v, p); },
   },
   plough: {

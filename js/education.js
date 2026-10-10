@@ -34,7 +34,7 @@ function educationFromOld(o, genes, age) {
 }
 const WORD_COUNT_OLD = 54;
 
-const EDU_SOURCES = { school: 'story circle', home: 'home', books: 'books', talk: 'conversation', you: 'your lessons', travel: 'travel', work: 'apprenticing' };
+const EDU_SOURCES = { school: 'story circle', home: 'home', books: 'books', talk: 'conversation', you: 'your lessons', travel: 'travel', work: 'apprenticing', net: 'the Relay' };
 
 // How readily someone learns: young minds soak things up; wit and curiosity help.
 function learnRate(v) {
@@ -334,6 +334,9 @@ function lineFor(v, topic, ctx) {
   const table = LINES[topic] || CHAT[topic];
   if (!table) return null;
   if (reg === 'baby') return R.pick(LINES.baby.baby);
+  // the rift-minded slip into rift-talk, more often the further they've gone
+  const rl = riftLine(v, topic, ctx);
+  if (rl) return rl;
   // little ones don't say grown-up things
   if ((reg === 'child' || reg === 'bright') && !table.child && !table.bright) return pickFrom(LINES.idle, reg);
   if ((reg !== 'child' && reg !== 'bright') && !table.plain && !table.common && !table.fine) return pickFrom(LINES.idle, reg);
@@ -356,6 +359,7 @@ function speechTopic(v) {
   else if (World.season === 'winter') opts.push([1, 'snow']);
   else if (Game.hour > 8 && Game.hour < 18) opts.push([0.6, 'sunny']);
   if (Game.party.on || Game.party.planned) opts.push([1.5, 'party']);
+  if (v.techTier === 0 && (World.rifts.length || Game.villagers.some((o) => o.isRiftborn()))) opts.push([World.rifts.length ? 2.5 : 0.6, 'rifttalk']);
   if (Village.projects.length) opts.push([v.job === 'woodwright' ? 1.5 : 0.4, 'building']);
   if (!kid) {
     if (v.memories.some((m) => m.d >= Game.day - 2 && /^Moved into/.test(m.t))) opts.push([1.5, 'newhome']);
@@ -402,7 +406,8 @@ function converse(speaker, listener, mode) {
     return lineFor(speaker, 'explain', ctx);
   }
   if (gap > 0) learn(listener, gap * 0.002, 'talk');
-  listener.pendingReply = 'reply';
+  // hill-folk don't always follow rift-talk
+  listener.pendingReply = speaker.techTier >= 2 && listener.tech < 0.3 && R.chance(0.5) ? 'riftpuzzle' : 'reply';
   if (kind === 'gossip') return lineFor(speaker, 'gossip', { ...ctx, other: R.pick(others).first });
   if (kind === 'topic') return lineFor(speaker, speechTopic(speaker), ctx);
   return lineFor(speaker, kind, ctx);

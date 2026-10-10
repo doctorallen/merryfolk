@@ -27,8 +27,8 @@ const TRAIT_INFO = {
   longevity: ['Longevity', 'Ages quickly', 'Long-lived'],
 };
 
-const SKILLS = ['farming', 'cooking', 'brewing', 'fishing', 'woodcraft', 'herbalism', 'lore', 'music'];
-const SKILL_LABEL = { farming: 'Farming', cooking: 'Cooking', brewing: 'Brewing', fishing: 'Fishing', woodcraft: 'Woodcraft', herbalism: 'Herb-lore', lore: 'Storytelling', music: 'Music' };
+const SKILLS = ['farming', 'cooking', 'brewing', 'fishing', 'woodcraft', 'herbalism', 'lore', 'music', 'tinkering'];
+const SKILL_LABEL = { farming: 'Farming', cooking: 'Cooking', brewing: 'Brewing', fishing: 'Fishing', woodcraft: 'Woodcraft', herbalism: 'Herb-lore', lore: 'Storytelling', music: 'Music', tinkering: 'Tinkering' };
 
 const EYE_ALLELES = ['B', 'H', 'G', 'b']; // brown > hazel > green > blue
 const EYE_INFO = { B: ['brown', '#3a2414'], H: ['hazel', '#7a5a2a'], G: ['green', '#2f7a3a'], b: ['blue', '#3a6ab0'] };
@@ -46,10 +46,13 @@ function randomGenes() {
     eyes: [R.weighted([[5, 'B'], [2, 'H'], [1.5, 'G'], [2.5, 'b']]), R.weighted([[5, 'B'], [2, 'H'], [1.5, 'G'], [2.5, 'b']])],
     freckles: [R.chance(0.25) ? 1 : 0, R.chance(0.25) ? 1 : 0],
     curls: [R.chance(0.3) ? 1 : 0, R.chance(0.3) ? 1 : 0],
+    // rift-blood: how much of their ancestry stepped through a rift (0 for hill-folk);
+    // a chrome-eye gene (dominant) and a favourite neon, which shows once they take up rift ways
+    rift: 0, chrome: [0, 0], neon: R.i(0, NEON_COLS.length - 1),
     taste: {}, food: {}, apt: {}, mutations: [],
   };
   for (const t of TRAITS) g[t] = R.f(0.1, 0.95);
-  for (const s of SKILLS) g.apt[s] = R.f(0.15, 1);
+  for (const s of SKILLS) g.apt[s] = s === 'tinkering' ? R.f(0.05, 0.45) : R.f(0.15, 1);
   for (const a in ACTIONS) g.taste[a] = R.f(0.8, 1.25);
   for (const f in FOODS) g.food[f] = R.f(0.7, 1.3);
   return g;
@@ -83,6 +86,9 @@ function inheritGenes(a, b) {
   g.eyes = [allele(a.eyes), allele(b.eyes)];
   g.freckles = [allele(a.freckles), allele(b.freckles)];
   g.curls = [allele(a.curls), allele(b.curls)];
+  g.chrome = [allele(a.chrome), allele(b.chrome)];
+  g.rift = clamp(((a.rift || 0) + (b.rift || 0)) / 2, 0, 1);
+  g.neon = fromEither(a.neon, b.neon);
   for (const t of TRAITS) {
     g[t] = clamp(fromEither(a[t], b[t]) * 0.65 + (a[t] + b[t]) * 0.175 + R.f(-0.1, 0.1), 0.03, 1);
   }
@@ -118,6 +124,8 @@ function expressed(g) {
     style: g.curls && g.curls[0] && g.curls[1] ? 3 : g.style,
     eyes: EYE_INFO[expressEyes(g.eyes || ['B', 'B'])][1],
     freckles: !!(g.freckles && g.freckles[0] && g.freckles[1]),
+    chrome: !!(g.chrome && (g.chrome[0] || g.chrome[1])),
+    neon: NEON_COLS[g.neon] || NEON_COLS[0],
   };
 }
 
@@ -130,6 +138,9 @@ function geneDescription(g) {
   lines.push(['Freckles', fr === 2 ? 'freckled' : fr === 1 ? 'none (carrier)' : 'none']);
   const cu = g.curls[0] + g.curls[1];
   lines.push(['Hair', (cu === 2 ? 'curly' : ['tidy', 'long', 'tousled'][g.style] || 'tidy') + (cu === 1 ? ' (carries curls)' : '')]);
+  const ch = (g.chrome || [0, 0])[0] + (g.chrome || [0, 0])[1];
+  if (ch) lines.push(['Optic', ch === 2 ? 'chrome eye (pure-bred)' : 'chrome eye (carries a plain one)']);
+  if (g.rift > 0) lines.push(['Rift-blood', g.rift >= 0.99 ? 'rift-born' : Math.round(g.rift * 100) + '%']);
   return lines;
 }
 
@@ -144,7 +155,7 @@ function topTalents(g, n = 2) {
 function exportVillager(v) {
   const data = {
     f: v.first, s: v.surname, g: v.genes, a: Math.min(v.age, ELDER_DAYS - 1), k: v.skills, w: v.weights,
-    e: Math.round(v.edu * 100) / 100,
+    e: Math.round(v.edu * 100) / 100, t: Math.round(v.tech * 100) / 100,
     from: 'Thistledown',
   };
   const json = JSON.stringify(data);

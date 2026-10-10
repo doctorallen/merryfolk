@@ -11,21 +11,22 @@ const RES_INFO = {
   fish: { label: 'Fish', icon: 'fish' }, mush: { label: 'Mushrooms', icon: 'shroom' }, apple: { label: 'Apples', icon: 'apple' },
   egg: { label: 'Eggs', icon: 'egg' }, honey: { label: 'Honey', icon: 'honey' }, stew: { label: 'Stew', icon: 'stew' },
   ale: { label: 'Ale', icon: 'mug' }, leaf: { label: 'Pipe-weed', icon: 'leaf' }, wood: { label: 'Timber', icon: 'wood' },
-  herbs: { label: 'Herbs', icon: 'herb' }, remedy: { label: 'Remedies', icon: 'remedy' },
+  herbs: { label: 'Herbs', icon: 'herb' }, remedy: { label: 'Remedies', icon: 'remedy' }, scrap: { label: 'Rift salvage', icon: 'chip' },
 };
 const STORE_KEYS = Object.keys(RES_INFO);
 const FOOD_KEYS = ['bread', 'pie', 'cake', 'veg', 'fish', 'mush', 'apple', 'egg', 'stew'];
 // daily spoilage (fraction lost) outside winter
 const SPOIL = { cheese: 0.02, bread: 0.1, pie: 0.1, cake: 0.08, veg: 0.05, fish: 0.2, mush: 0.15, apple: 0.03, egg: 0.08, stew: 0.5 };
 const SMOKED = ['fish', 'bread', 'mush'];
-const STORE_CAP = { cheese: 50, wool: 60, grain: 320, flour: 60, bread: 80, pie: 40, cake: 40, veg: 120, fish: 50, mush: 40, apple: 80, egg: 40, honey: 30, stew: 40, ale: 90, leaf: 60, wood: 120, herbs: 30, remedy: 15 };
+const STORE_CAP = { scrap: 80, cheese: 50, wool: 60, grain: 320, flour: 60, bread: 80, pie: 40, cake: 40, veg: 120, fish: 50, mush: 40, apple: 80, egg: 40, honey: 30, stew: 40, ale: 90, leaf: 60, wood: 120, herbs: 30, remedy: 15 };
 const HOME_CAP = (h) => (h.grand ? 6 : 4);
 
 const Village = {
   stores: {}, today: { made: {}, used: {} }, yesterday: { made: {}, used: {} }, projects: [], wantHomes: 0,
 
   reset() {
-    this.stores = { grain: 24, flour: 8, bread: 24, pie: 6, cake: 4, veg: 24, fish: 8, mush: 4, apple: 8, egg: 6, honey: 3, stew: 0, ale: 30, leaf: 16, wood: 36, herbs: 4, remedy: 3, cheese: 6, wool: 10 };
+    this.stores = { grain: 24, flour: 8, bread: 24, pie: 6, cake: 4, veg: 24, fish: 8, mush: 4, apple: 8, egg: 6, honey: 3, stew: 0, ale: 30, leaf: 16, wood: 36, herbs: 4, remedy: 3, cheese: 6, wool: 10, scrap: 0 };
+    this.riftsOn = true;
     this.today = { made: {}, used: {} }; this.yesterday = { made: {}, used: {} };
     this.projects = []; this.wantHomes = 0;
   },
@@ -68,7 +69,7 @@ const Village = {
 // ---------------------------------------------------------------------------
 // Trades: chosen from talent, practice, family trade and what the village needs.
 // ---------------------------------------------------------------------------
-const JOB_HABIT = { herder: 'stroll', farmer: 'garden', fisher: 'fish', herbalist: 'forage', innkeeper: 'eat_inn', brewer: 'ale', grower: 'smoke', storyteller: 'read', orchardist: 'garden', postie: 'chat', baker: 'eat_home', miller: 'eat_home', woodwright: 'stroll' };
+const JOB_HABIT = { tinker: 'gadget', herder: 'stroll', farmer: 'garden', fisher: 'fish', herbalist: 'forage', innkeeper: 'eat_inn', brewer: 'ale', grower: 'smoke', storyteller: 'read', orchardist: 'garden', postie: 'chat', baker: 'eat_home', miller: 'eat_home', woodwright: 'stroll' };
 function jobFit(v, j) {
   const J = JOBS[j];
   let s = (v.skills[J.skill] || 0) + v.genes.apt[J.skill] * 40;
@@ -81,15 +82,19 @@ function jobFit(v, j) {
   if (LETTERED[j]) s += (v.edu - 0.35) * LETTERED[j] * 1.5 - (v.edu < 0.2 ? 20 : 0);
   else if (['farmer', 'woodwright', 'fisher', 'grower'].includes(j)) s += (0.4 - v.edu) * 8;
   if (j === 'storyteller') s += v.stage === 'elder' ? 25 : -20;
+  // only the rift-minded know how the gadgets work
+  if (j === 'tinker') s += v.tech * 40 - 25;
   return s;
 }
 function jobTargets() {
   const adults = Game.villagers.filter((v) => v.isGrown() && !v.leaving).length;
   const kids = Game.villagers.some((v) => v.isChild());
+  const techAdults = Game.villagers.filter((v) => v.isGrown() && v.tech >= 0.6 && !v.leaving).length;
   const t = (min, frac) => Math.max(min, Math.round(adults * frac));
   return {
     farmer: t(2, 0.2), herder: World.pens.length ? t(1, 0.05) : 0, baker: t(2, 0.11) + (World.buildings.bakery2 ? 1 : 0) + (Village.stores.flour > 40 ? 1 : 0), miller: t(1, 0.05) + (Village.stores.grain > 80 ? 1 : 0) + (Village.stores.grain > 240 ? 1 : 0), brewer: t(1, 0.06), innkeeper: 1, grower: t(1, 0.05), fisher: t(1, 0.1),
-    woodwright: Math.min(Math.max(2, Math.round(adults * 0.22)), t(1, Village.projects.length ? 0.12 : 0.08) + (Village.projects.length > 1 ? 1 : 0) + (Village.stores.wood < 10 + firewoodReserve() ? 1 : 0)), herbalist: 1, orchardist: t(1, 0.05), postie: adults > 10 ? 1 : 0, storyteller: kids ? 1 : 0,
+    woodwright: Math.min(Math.max(2, Math.round(adults * 0.22)), t(1, Village.projects.some((p) => p.kind !== 'retrofit') ? 0.12 : 0.08) + (Village.projects.filter((p) => p.kind !== 'retrofit').length > 1 ? 1 : 0) + (Village.stores.wood < 10 + firewoodReserve() ? 1 : 0)), herbalist: 1, orchardist: t(1, 0.05), postie: adults > 10 ? 1 : 0, storyteller: kids ? 1 : 0,
+    tinker: techAdults ? clamp(Math.round(techAdults * 0.25), 1, 4) + (Village.projects.some((p) => p.kind === 'retrofit') ? 1 : 0) : 0,
   };
 }
 function jobCounts() {
@@ -117,6 +122,8 @@ function assignJobs(announce = true) {
       if (j === 'storyteller' && v.stage !== 'elder' && v.genes.apt.lore < 0.6) continue;
       if (v.stage === 'elder' && j !== 'storyteller' && v.age > ELDER_DAYS * 1.2) continue;
       const n = need(j);
+      // the trades that only want one or two never take on extra hands
+      if (n <= 0 && ['storyteller', 'herbalist', 'postie', 'innkeeper', 'tinker'].includes(j)) continue;
       const s = jobFit(v, j) + (n > 0 ? 30 + n * 10 : -25 + n * 10);
       if (s > bs) { bs = s; best = j; }
     }
@@ -223,7 +230,7 @@ function settleHomes(newHome) {
 function archivePerson(v, reason) {
   Game.archive[v.id] = {
     id: v.id, first: v.first, surname: v.surname, genes: v.genes, parents: v.parents.slice(), spouse: v.spouse, born: v.born, stage: v.stage,
-    job: v.job, left: Game.day, reason, years: v.years(), archived: true,
+    job: v.job, left: Game.day, reason, years: v.years(), archived: true, look: v.look(),
   };
 }
 
@@ -403,6 +410,7 @@ function dailySociety() {
   }
 
   householdLessons();
+  dailyRifts();
   // jobs, homes, building
   assignJobs(true);
   settleHomes(false);
@@ -484,7 +492,7 @@ function wed(a, b) {
 function birth(a, b) {
   const genes = inheritGenes(a.genes, b.genes);
   const baby = new Villager({
-    genes, age: 0, homeId: a.homeId, parents: [a.id, b.id], surname: R.chance(0.5) ? a.surname : b.surname,
+    genes, age: 0, first: babyName(genes) || undefined, tech: ((a.tech || 0) + (b.tech || 0)) / 2 * 0.6, homeId: a.homeId, parents: [a.id, b.id], surname: R.chance(0.5) ? a.surname : b.surname,
     x: a.home().stepX, y: a.home().stepY, born: Game.day, drives: { hunger: 0.2, thirst: 0.1, tired: 0.3, lonely: 0.2, bored: 0.1, craving: 0, cold: 0, ache: 0, industry: 0 }, pouch: 0,
   });
   baby.rel[a.id] = 0.9; baby.rel[b.id] = 0.9; a.rel[baby.id] = 0.9; if (b.rel) b.rel[baby.id] = 0.9;
@@ -493,6 +501,10 @@ function birth(a, b) {
   baby.task = null;
   Game.villagers.push(baby);
   Game.stats.births = (Game.stats.births || 0) + 1;
+  if (genes.rift > 0 && genes.rift < 0.99 && !Game.stats.firstHybrid) {
+    Game.stats.firstHybrid = baby.id;
+    chronicle(`${baby.first} is the first child of hill and rift! ${expressed(genes).chrome ? 'One of those little eyes glints chrome.' : 'A proper hill-folk button nose, mind.'}`, 'rift');
+  }
   if (a.remember) a.remember(`Welcomed little ${baby.first} into the world.`, 3);
   if (b.remember) b.remember(`Welcomed little ${baby.first} into the world.`, 3);
   return baby;
@@ -518,7 +530,8 @@ function lightHearths() {
   let cold = 0;
   for (const h of World.homes) {
     if (!h.built || !residentsOf(h).length) { h.chilly = false; continue; }
-    if (Math.random() > need) { h.chilly = false; continue; }
+    // sun-glass panels keep many hearths warm without timber
+    if (Math.random() > need * (civicBuilt('array') ? 0.5 : 1) * (h.neon ? 0.7 : 1)) { h.chilly = false; continue; }
     if (Village.stores.wood >= 1) { Village.use('wood', 1); h.chilly = false; }
     else { h.chilly = true; cold++; }
   }

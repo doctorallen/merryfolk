@@ -154,7 +154,7 @@ function selectVillager(v) {
   Game.selected = v;
   if (!v) Game.follow = false;
   $('panel').hidden = !v;
-  if (v) { drawPortrait($('portrait'), v.genes, v.stage); v._portraitStage = v.stage; renderPanel(true); }
+  if (v) { drawPortrait($('portrait'), v.genes, v.stage, false, v.look()); v._portraitKey = portraitKey(v); renderPanel(true); }
   updateFollowBtn();
 }
 
@@ -217,9 +217,10 @@ function healthChips(v) {
 function renderPanel(full) {
   const v = Game.selected;
   if (!v) return;
-  if (v._portraitStage !== v.stage) { drawPortrait($('portrait'), v.genes, v.stage); v._portraitStage = v.stage; }
+  if (v._portraitKey !== portraitKey(v)) { drawPortrait($('portrait'), v.genes, v.stage, false, v.look()); v._portraitKey = portraitKey(v); }
   $('p-name').textContent = v.name();
-  $('p-sub').textContent = `${v.genes.sex === 'f' ? '♀' : '♂'} ${v.years()} years · ${STAGE_WORD[v.stage]}${v.job ? ' · ' + JOBS[v.job].label : ''} · ${v.home().name}`;
+  const blood = bloodWord(v.genes);
+  $('p-sub').textContent = `${v.genes.sex === 'f' ? '♀' : '♂'} ${v.years()} years · ${STAGE_WORD[v.stage]}${blood ? ' · ' + blood : ''}${v.job ? ' · ' + JOBS[v.job].label : ''} · ${v.home().name}`;
   $('p-mood').textContent = 'Mood: ' + v.moodWord();
   $('p-mood').dataset.level = v.mood() > 0.6 ? 'good' : v.mood() > 0.35 ? 'mid' : 'low';
   $('p-now').textContent = v.inside && !v.carried ? (v.task ? (v.task.a.label2 ? v.task.a.label2(v) : v.task.a.label) : 'Indoors') + ` (inside ${v.inside.name})` : v.activity();
@@ -307,10 +308,21 @@ function panelMind(v) {
   }
   const lvl = eduLevel(v.edu);
   h += `<h3>Education</h3><div class="drive"><span class="dl">${lvl[1]}</span>${bar(v.edu, 'good')}</div>`;
-  h += `<div class="likes"><div><b>Speaks</b> ${{ baby: 'in babbles and gurgles', child: 'like a chatty little one', bright: 'like a bright, bookish little one', plain: 'plainly, in good honest words', common: 'like most folk in the Shire', fine: 'rather grandly, quoting books' }[register(v)]}</div>`;
+  h += `<div class="likes"><div><b>Speaks</b> ${{ baby: 'in babbles and gurgles', child: 'like a chatty little one', bright: 'like a bright, bookish little one', plain: 'plainly, in good honest words', common: 'like most folk in the Shire', fine: 'rather grandly, quoting books' }[register(v)]}${v.techTier >= 2 ? ', thick with rift-talk' : v.techTier === 1 ? ', with a sprinkle of rift-talk' : ''}</div>`;
   const from = Object.entries(v.eduFrom).filter(([, x]) => x > 0.005).sort((a, b) => b[1] - a[1]);
   if (from.length) h += `<div><b>Learned from</b> ${from.slice(0, 4).map(([k]) => EDU_SOURCES[k] || k).join(', ')}</div>`;
   h += `</div><ul class="edu-fx">${eduEffects(v).map((t) => `<li>${t}</li>`).join('')}</ul>`;
+  if (v.stage !== 'baby' && (v.tech > 0.02 || v.genes.rift > 0 || Game.villagers.some((o) => o.isRiftborn()))) {
+    h += `<h3>Rift ways</h3><div class="drive"><span class="dl">${techWord(v)}</span>${bar(v.tech, 'mid')}</div>`;
+    const fx = [];
+    if (v.techTier >= 1) fx.push('Wears neon trim' + (v.techTier >= 2 ? ', synth-weave' + (v.visor ? ' and a visor' : '') : ''));
+    if (v.tech >= 0.3) fx.push(World.buildings.relay ? 'Likes to jack in at the Relay Mast' : 'Would jack in at a Relay, if the village had one');
+    if (v.tech >= 0.45) fx.push('Fiddles with gadgets instead of (or as well as) a pipe');
+    if (v.tech >= 0.6) fx.push('Could make a good tinker');
+    if (v.techTier >= 1) fx.push('Slips into rift-talk: "ping", "signal", "low battery"');
+    if (v.techTier === 0) fx.push('Picks up rift ways by chatting with the rift-minded, and at home');
+    h += `<ul class="edu-fx">${fx.map((t) => `<li>${t}</li>`).join('')}</ul>`;
+  }
   if (!v.isGrown()) h += '<div class="hint">Little ones learn at the story circle, from storybooks, round the supper table, from grown-ups who stop to explain things, and from you (Teach, or <kbd>E</kbd>).</div>';
   h += '<h3>Diary</h3><ol class="diary">';
   if (!v.memories.length) h += '<li>Nothing much to report yet.</li>';
@@ -387,7 +399,7 @@ function renderRoster() {
     g.innerHTML = `<h4>${escapeHtml(h.name)}</h4>`;
     for (const v of vs) {
       const b = document.createElement('button'); b.className = 'roster-row';
-      const c = document.createElement('canvas'); c.width = 24; c.height = 32; drawPortrait(c, v.genes, v.stage);
+      const c = document.createElement('canvas'); c.width = 24; c.height = 32; drawPortrait(c, v.genes, v.stage, false, v.look());
       b.appendChild(c);
       const s = document.createElement('span');
       s.innerHTML = `<b>${escapeHtml(v.first)}${v.job ? ` <em>${JOBS[v.job].label}</em>` : v.stage === 'baby' ? ' <em>baby</em>' : ''}</b><small>${escapeHtml(v.inside ? (v.task ? v.task.a.label : 'Indoors') : v.activity())}</small>`;
@@ -415,13 +427,22 @@ function renderVillage() {
   body.innerHTML = ({ stores: villageStores, trades: villageTrades, census: villageCensus, remembered: villageRemembered, travellers: villageTravellers }[Game.villageTab] || villageStores)();
   hydrateIcons(body);
   if (Game.villageTab === 'census') drawCensus($('census-chart'));
-  if (Game.villageTab === 'remembered') body.querySelectorAll('canvas[data-arch]').forEach((c) => { const a = Game.archive[c.dataset.arch]; if (a) drawPortrait(c, a.genes, a.stage === 'baby' ? 'child' : a.stage, true); });
+  if (Game.villageTab === 'remembered') body.querySelectorAll('canvas[data-arch]').forEach((c) => { const a = Game.archive[c.dataset.arch]; if (a) drawPortrait(c, a.genes, a.stage === 'baby' ? 'child' : a.stage, true, a.look); });
   body.querySelectorAll('a[data-v]').forEach((a) => a.addEventListener('click', () => { const o = Game.villagers.find((x) => x.id === +a.dataset.v); if (o) { selectVillager(o); focusVillager(o); } }));
   if (Game.villageTab === 'travellers') {
     $('tr-invite').addEventListener('click', () => {
       if (Game.day - Game.lastTraveller < 1) { toast('One traveller a day. The road is long.', 'info'); return; }
       const r = welcomeTraveller(null);
       if (!r.ok) toast(r.msg, 'info'); else { selectVillager(r.v); focusVillager(r.v); $('village').hidden = true; }
+    });
+    $('tr-rift').addEventListener('click', () => {
+      const r = openRift(true);
+      if (!r.ok) toast(r.msg, 'info'); else { $('village').hidden = true; Game.follow = false; centerOn(r.r.x, r.r.y - 20); updateFollowBtn(); }
+    });
+    $('tr-rifts-on').addEventListener('click', () => {
+      Village.riftsOn = !Village.riftsOn;
+      if (Village.riftsOn && Game.riftNext < Game.time + 300) Game.riftNext = Game.time + R.f(300, 900);
+      renderVillage();
     });
     $('tr-import').addEventListener('click', () => {
       try {
@@ -435,7 +456,7 @@ function renderVillage() {
 
 function villageStores() {
   const S = Village.stores, Y = Village.yesterday;
-  const groups = [['Food', ['bread', 'pie', 'cake', 'stew', 'veg', 'fish', 'mush', 'apple', 'egg', 'cheese']], ['Makings', ['grain', 'flour', 'honey', 'herbs']], ['Comforts', ['ale', 'leaf', 'remedy', 'wood', 'wool']]];
+  const groups = [['Food', ['bread', 'pie', 'cake', 'stew', 'veg', 'fish', 'mush', 'apple', 'egg', 'cheese']], ['Makings', ['grain', 'flour', 'honey', 'herbs', 'scrap']], ['Comforts', ['ale', 'leaf', 'remedy', 'wood', 'wool']]];
   let h = '<p class="lede-s">Everything the village grows, catches and makes goes into the Common Store, and folk fetch what their larders need. Numbers in grey are yesterday\'s comings and goings.</p>';
   for (const [title, keys] of groups) {
     h += `<h3>${title}</h3><div class="stores">`;
@@ -455,8 +476,9 @@ function villageStores() {
   h += `<h3>Homes and building</h3><div class="likes"><div>${built.length} hobbit-holes for ${live} folk (about ${(live / Math.max(1, built.length - empty)).toFixed(1)} to a lived-in hole)${empty ? `, ${empty} standing ready for newcomers` : ''}. ${larders} helpings in larders${cold ? `, <b>${cold} cold hearth${cold > 1 ? 's' : ''}</b>` : ''}.</div>`;
   if (waiting) h += `<div><b>${waiting} household${waiting > 1 ? 's are' : ' is'} waiting for a hole of their own.</b></div>`;
   for (const p of Village.projects) {
-    const what = p.kind === 'home' ? 'Digging' : p.kind === 'field' ? 'Ploughing' : p.kind === 'well' ? 'Sinking' : 'Raising';
-    const stall = projectReady(p) ? '' : ' <small>(waiting for timber: the hearths come first)</small>';
+    const what = p.kind === 'home' ? 'Digging' : p.kind === 'field' ? 'Ploughing' : p.kind === 'well' ? 'Sinking' : p.kind === 'retrofit' ? 'Wiring up' : 'Raising';
+    const needsScrap = p.kind === 'retrofit' || (p.lot != null && World.lots[p.lot].def && World.lots[p.lot].def.rift);
+    const stall = projectReady(p) ? '' : needsScrap && (Village.stores.scrap || 0) < 2 ? ' <small>(waiting for rift salvage)</small>' : ' <small>(waiting for timber: the hearths come first)</small>';
     h += `<div class="build-row"><span>${what} ${escapeHtml(projectLabel(p))} · ${Math.round(p.prog * 100)}%${stall}</span>${bar(p.prog, 'good')}</div>`;
   }
   const knolls = World.homes.filter((x) => !x.built && !Village.projects.some((p) => p.homeId === x.id)).length + World.lots.filter((l) => l.kind === 'home' && l.state === 'planned').length;
@@ -532,10 +554,32 @@ function villageRemembered() {
 
 function villageTravellers() {
   const wait = Game.day - Game.lastTraveller < 1;
-  return `<p class="lede-s">Folk sometimes come walking up the West Road looking for a home, like the eggs in the old Creatures hatchery. And villages can post their folk to one another, like Docking Station's warp.</p>
+  return `<p class="lede-s">Folk sometimes come walking up the West Road looking for a home, like the eggs in the old Creatures hatchery. Others step out of rifts in the sky. And villages can post their folk to one another, like Docking Station's warp.</p>
   <h3>Welcome a stranger</h3><div class="row-btns"><button id="tr-invite" ${wait || Game.villagers.length >= MAX_POP ? 'disabled' : ''}>Invite a traveller</button><span class="sub">${Game.villagers.length >= MAX_POP ? 'The village is full.' : wait ? 'Another may come tomorrow.' : 'A newcomer with their own genes will arrive along the West Road.'}</span></div>
+  ${riftLedger()}
   <h3>Receive a villager by post</h3><p class="sub">Paste a code a friend made with "Post a copy to a friend" (on the Nature tab of any grown-up).</p>
   <textarea id="tr-code" rows="3" placeholder="TD2:..."></textarea><div class="row-btns"><button id="tr-import">Welcome them</button><span id="tr-error" class="err"></span></div>`;
+}
+
+function portraitKey(v) { return v.stage + v.techTier + (v.visor ? 'v' : ''); }
+
+function riftLedger() {
+  const born = Game.villagers.filter((v) => v.isRiftborn() && !v.leaving);
+  const mixed = Game.villagers.filter((v) => v.genes.rift > 0 && v.genes.rift < 0.99 && !v.leaving);
+  const share = Math.round(riftShare() * 100);
+  const neon = World.homes.filter((h) => h.built && h.neon).length;
+  const open = World.rifts.length > 0;
+  const built = RIFT_CIVIC.filter((d) => civicBuilt(d.key));
+  const next = RIFT_CIVIC.find((d) => !civicBuilt(d.key) && World.lots.some((l) => l.key === d.key && l.state === 'planned'));
+  const days = Math.max(0, Math.ceil((Game.riftNext - Game.time) / 1440));
+  let h = '<h3>Rifts</h3><div class="likes">';
+  h += `<div>${born.length ? `<b>${born.length}</b> rift-born live here${mixed.length ? `, and <b>${mixed.length}</b> folk of mixed blood` : ''}.` : 'No rift-born live here yet.'} ${share}% of hill-folk have taken up rift ways. ${neon} neon home${neon === 1 ? '' : 's'}. ${Math.floor(Village.stores.scrap || 0)} salvage in the Store.</div>`;
+  if (born.length) h += `<div>${born.slice(0, 12).map(link).join(', ')}</div>`;
+  if (built.length) h += `<div>Rift-built: ${built.map((d) => d.name).join(', ')}.</div>`;
+  if (next) h += `<div class="sub">Next: ${next.name}, ${next.when}.</div>`;
+  h += `<div class="sub">${open ? 'A rift is open right now!' : Village.riftsOn ? `The air feels thin. Another rift may open ${days <= 1 ? 'soon' : `in about ${days} days`}.` : 'Rifts are switched off: the sky stays stitched.'}</div></div>`;
+  h += `<div class="row-btns"><button id="tr-rift" ${open || Game.villagers.length >= MAX_POP - 1 ? 'disabled' : ''}>Open a rift now</button><button id="tr-rifts-on" class="ghost">${Village.riftsOn ? 'Stop rifts opening' : 'Let rifts open again'}</button></div>`;
+  return h;
 }
 
 // ---------------------------------------------------------------------------
@@ -566,7 +610,7 @@ function openTree(v) {
   body.querySelectorAll('canvas[data-pid]').forEach((c) => {
     const id = +c.dataset.pid;
     const o = Game.villagers.find((x) => x.id === id) || Game.archive[id] || (Game.away.find((a) => a.id === id) || {}).data;
-    if (o) drawPortrait(c, o.genes, o.stage === 'baby' && !Game.villagers.includes(o) ? 'child' : o.stage || 'adult', !Game.villagers.includes(o));
+    if (o) drawPortrait(c, o.genes, o.stage === 'baby' && !Game.villagers.includes(o) ? 'child' : o.stage || 'adult', !Game.villagers.includes(o), o.look ? (typeof o.look === 'function' ? o.look() : o.look) : { tier: techTier(o.tech || 0), visor: o.visor });
   });
   body.querySelectorAll('.tnode').forEach((b) => b.addEventListener('click', () => {
     const o = Game.villagers.find((x) => x.id === +b.dataset.id);
@@ -597,7 +641,11 @@ function placeAt(wx, wy) {
       }
       const res = residentsOf(h);
       const inside = namesInside(h);
-      return [h.name, `${res.length} living here · larder: ${pantryTotal(h)} helpings`, h.chilly ? 'The hearth is cold: no timber!' : inside.length ? 'Inside: ' + inside.join(', ') : 'Nobody home just now'];
+      const rp = Village.projects.find((p) => p.kind === 'retrofit' && p.homeId === h.id);
+      const lines = [h.name, `${res.length} living here · larder: ${pantryTotal(h)} helpings`, h.chilly ? 'The hearth is cold: no timber!' : inside.length ? 'Inside: ' + inside.join(', ') : 'Nobody home just now'];
+      if (h.neon) lines.push('Wired up: neon arch, sky-dish and a sun-glass panel');
+      else if (rp) lines.push(`The tinkers are wiring it up: ${Math.round(rp.prog * 100)}% done`);
+      return lines;
     }
   }
   const INFO = {
@@ -606,7 +654,7 @@ function placeAt(wx, wy) {
     store: 'The Common Store: what the village makes, the village shares', barn: 'Barley and eggs are stored here', mill: 'Grinding barley into flour', mill2: 'The water wheel turns the millstones', windmill: 'Sails turning in the breeze, grinding barley into flour',
   };
   for (const p of Village.projects) {
-    if (p.kind === 'home') continue;
+    if (p.kind === 'home' || p.kind === 'retrofit') continue;
     const lot = World.lots[p.lot], [x0, y0, x1, y1] = lotBounds(lot);
     if (wx / 16 >= x0 && wx / 16 <= x1 + 1 && wy / 16 >= y0 && wy / 16 <= y1 + 1) return [projectLabel(p), `${p.kind === 'field' ? 'Being ploughed' : 'Under construction'}: ${Math.round(p.prog * 100)}% done`, lot.def.desc];
   }
@@ -620,6 +668,10 @@ function placeAt(wx, wy) {
       return lines;
     }
   }
+  for (const r of World.rifts) if (Math.abs(wx - r.x) < 22 && wy < r.y + 8 && wy > r.y - 56) {
+    return ['A rift', r.closing ? 'Flickering, closing up...' : r.sent < r.crew ? 'A tear between worlds. Someone is about to step through!' : 'A tear between worlds, humming like a hive', 'Tinkers salvage scrap here; curious folk come to gawk'];
+  }
+  for (const s of World.riftScars) if (dist(wx, wy, s.x, s.y) < 22) return ['A rift scar', 'Where a rift snapped shut. The grass glitters.', `${s.stock} loads of salvage left for the tinkers`];
   const tx = Math.floor(wx / 16), ty = Math.floor(wy / 16);
   const t = tileAt(tx, ty);
   if (t === T.WEED) return ['The pipe-weed field', World.season === 'winter' ? 'Bare until spring' : 'Leaf grows here for the village pipes'];

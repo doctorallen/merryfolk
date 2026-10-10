@@ -1210,7 +1210,7 @@ function drawDoor(ctx, h) {
     if (World.season === 'winter') { ctx.fillStyle = '#f4f8ff'; ctx.fillRect(x - r - 4, y - r - 6, r * 2 + 9, 2); }
   }
   for (const w of h.windows) {
-    const glass = h.lit ? '#ffd77a' : '#41556a', shine = h.lit ? '#fff0b0' : '#5a7088';
+    const glass = h.lit ? (h.neon ? '#8af4ff' : '#ffd77a') : (h.neon ? '#2a4a6a' : '#41556a'), shine = h.lit ? '#fff0b0' : '#5a7088';
     if (V.square) {
       ctx.fillStyle = glass; ctx.fillRect(w.x - 4, w.y - 4, 9, 9);
       ctx.fillStyle = shine; ctx.fillRect(w.x - 3, w.y - 3, 2, 2);
@@ -1245,6 +1245,7 @@ function drawDoor(ctx, h) {
     ctx.fillStyle = '#4a3a2a'; ctx.fillRect(c.x - 4, c.y - 10, 9, 3);
     if (World.season === 'winter') { ctx.fillStyle = '#f4f8ff'; ctx.fillRect(c.x - 4, c.y - 11, 9, 1); }
   }
+  if (h.neon) drawNeonHome(ctx, h);
 }
 
 // A site being dug: stakes, a dirt heap that grows as work progresses.

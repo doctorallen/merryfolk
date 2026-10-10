@@ -78,6 +78,7 @@ button:focus-visible, .tool:focus-visible { outline: 3px solid var(--brass); out
 #toast[data-kind="party"] { border-color: #ffcf70; }
 #toast[data-kind="adventure"] { border-color: var(--moss-2); }
 #toast[data-kind="build"] { border-color: #c8945a; }
+#toast[data-kind="rift"] { border-color: #b45aff; box-shadow: 4px 4px 0 var(--shadow), 0 0 12px rgba(180, 90, 255, 0.6); }
 #toast[data-kind="season"] { border-color: #e8862a; }
 
 /* ---------- inspector ---------- */
@@ -257,6 +258,7 @@ textarea { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: 
 #log li[data-kind="learn"] span::before { content: "✎ "; color: #2f6f8f; }
 #log li[data-kind="sick"] span::before { content: "✚ "; color: #3a9a6a; }
 #log li[data-kind="build"] span::before { content: "⌂ "; color: var(--ink-2); }
+#log li[data-kind="rift"] span::before { content: "✦ "; color: #8a3ad8; }
 #log li[data-kind="season"] span::before { content: "❀ "; color: #b8602a; }
 #log li[data-kind="letter"] span::before { content: "✉ "; color: var(--ink-2); }
 #log li[data-kind="quarrel"] span::before { content: "⚡ "; color: var(--berry); }

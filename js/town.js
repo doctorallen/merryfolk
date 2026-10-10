@@ -25,17 +25,17 @@ const CIVIC_DEFS = [
   },
   { key: 'well_east', kind: 'well', name: 'the East Well', anchor: [96, 26], pop: 38, desc: 'Cool water by the party field' },
   {
-    key: 'inn2', kind: 'building', name: 'The Hedgehog and Kettle', anchor: [40, 66], pop: 40, w: 6, pw: 96, doorOff: 48, chimneys: [20, 70], yard: 4,
+    key: 'inn2', kind: 'building', name: 'The Hedgehog and Kettle', anchor: [40, 66], pop: 40, w: 6, pw: 96, doorOff: 48, chimneys: [20, 70], yard: 4, inn: true,
     desc: 'A snug second tavern on the south bank: more seats, shorter walks',
     make: (lit) => makeCottage({ w: 96, wall: '#f0e2bc', roof: 'thatch', sign: 'mug', windows: [12, 30, 66, 80], door: 48, chimneys: [20, 70], lit }),
   },
-  { key: 'field3', kind: 'field', name: 'the hill barley field', anchor: [42, 7], pop: 42, desc: 'Fresh-ploughed barley' },
+  { key: 'field3', kind: 'field', name: 'the hill barley field', anchor: [42, 7], pop: 34, desc: 'Fresh-ploughed barley' },
   {
     key: 'bakery2', kind: 'building', name: 'The South Bakehouse', anchor: [82, 72], pop: 46, w: 5, pw: 88, doorOff: 44, chimneys: [62],
     desc: 'A second oven: more bread, pies and cakes for a growing village',
     make: (lit) => makeCottage({ w: 88, wall: '#f2e6c6', roof: 'thatch', sign: 'bread', windows: [12, 64], door: 44, chimneys: [62], lit }),
   },
-  { key: 'field4', kind: 'field', name: 'the far barley field', anchor: [80, 80], pop: 50, desc: 'Fresh-ploughed barley' },
+  { key: 'field4', kind: 'field', name: 'the far barley field', anchor: [80, 80], pop: 44, desc: 'Fresh-ploughed barley' },
   { key: 'well_west', kind: 'well', name: 'the West Well', anchor: [20, 50], pop: 52, desc: 'A well for the western holes' },
 ];
 const BUILD_PHRASES = {
@@ -43,14 +43,39 @@ const BUILD_PHRASES = {
   building: ['Up she goes!', 'Mind the scaffold!', 'Hand me that beam, would you?', 'Square and true.'],
   well: ['Deeper, deeper...', 'I can hear water!', 'Pass the bucket down.'],
   field: ['Straight furrows, now.', 'Good dark soil, this.', 'Barley by summer!'],
+  retrofit: ['Patching in the neon...', 'Sky-dish, aligned.', 'Mind the cable!', 'Hold this. Don\'t lick it.'],
+  rift: ['Wood frame, steel skin.', 'Splice that, would you?', 'Bit of rift, bit of hill.'],
 };
-const CIVIC_BY_KEY = Object.fromEntries(CIVIC_DEFS.map((d) => [d.key, d]));
+// Built by the Riftfolk (with the woodwrights' help) as their numbers and ways
+// grow. Surveyed after the hobbit-hole knolls, so older villages keep their lots.
+const RIFT_CIVIC = [
+  {
+    key: 'relay', kind: 'building', rift: true, name: 'The Relay Mast', anchor: [58, 14], w: 3, pw: 52, doorOff: 26, tall: 7,
+    due: () => riftAdults() >= 2, when: 'once two rift-born grown-ups live here',
+    desc: 'A humming lattice mast over a tin shack: the rift-minded jack in here, and the curious pick up rift ways',
+    make: (lit) => makeRelay(lit),
+  },
+  {
+    key: 'glowworm', kind: 'building', rift: true, inn: true, name: 'The Glowworm', anchor: [86, 46], w: 5, pw: 80, doorOff: 40, chimneys: [56],
+    due: () => techFolk() >= 6, when: 'once six folk keep rift ways',
+    desc: 'A neon-lit tavern: ale, stew and synth-fiddle, for hill-folk and rift-folk alike',
+    make: (lit) => makeNeonBar(lit),
+  },
+  {
+    key: 'array', kind: 'building', rift: true, name: 'The Sun-Glass Array', anchor: [26, 66], w: 5, pw: 84, doorOff: 42,
+    due: () => techFolk() >= 10, when: 'once ten folk keep rift ways',
+    desc: 'Panels of glass that drink the sunshine: hearths burn half the firewood',
+    make: (lit) => makeSolarArray(lit),
+  },
+];
+const CIVIC_BY_KEY = Object.fromEntries(CIVIC_DEFS.concat(RIFT_CIVIC).map((d) => [d.key, d]));
 // How quickly each kind of project goes up, and how much timber a step takes.
 const PROJECT_KIND = {
   home: { rate: 0.05, wood: 2 },
   building: { rate: 0.034, wood: 2 },
   well: { rate: 0.14, wood: 0 },
   field: { rate: 0.09, wood: 0 },
+  retrofit: { rate: 0.2, wood: 0, scrap: 2 },
 };
 
 // ---------------------------------------------------------------------------
@@ -114,7 +139,8 @@ function lotShape(kind, def, ax, ay) {
   const x1 = ax + def.w - 1;
   const left = Math.round((ax + x1 + 1) * 8 - def.pw / 2);
   const doorTx = Math.floor((left + def.doorOff) / 16);
-  return { core: [ax, ay - 4, x1, ay + (def.yard || 1)], area: [ax - 1, ay - 5, x1 + 1, ay + 1 + (def.yard || 1)], avoid: [ax - 1, ay - 5, x1 + 1, ay], starts: [[doorTx, ay + 1]] };
+  const up = def.tall || 4;
+  return { core: [ax, ay - up, x1, ay + (def.yard || 1)], area: [ax - 1, ay - up - 1, x1 + 1, ay + 1 + (def.yard || 1)], avoid: [ax - 1, ay - 5, x1 + 1, ay], starts: [[doorTx, ay + 1]] };
 }
 
 function surveyLot(kind, def, ax, ay, maxR) {
@@ -136,17 +162,7 @@ function planLots(seed) {
   // the six original knolls will want their gardens one day
   for (const h of World.homes) if (!h.built) { const [sx, sy] = h.stepTile; reserveRect(sx - 5, sy, sx + 5, sy + 1); }
   // public buildings and fields, each near the spot it suits
-  for (const def of CIVIC_DEFS) {
-    const found = surveyLot(def.kind, def, def.anchor[0], def.anchor[1], 16);
-    if (!found) continue;
-    const { x, y, sh, spur } = found;
-    const lot = { i: World.lots.length, kind: def.kind, key: def.key, def, spur, state: 'planned' };
-    if (def.kind === 'building') Object.assign(lot, { x0: x, x1: x + def.w - 1, y1: y, y0: y - 2 });
-    else if (def.kind === 'field') Object.assign(lot, { x0: x, x1: x + 11, y0: y, y1: y + 6 });
-    else Object.assign(lot, { tx: x, ty: y });
-    World.lots.push(lot);
-    reserveRect(...sh.core); reserveTiles(spur);
-  }
+  for (const def of CIVIC_DEFS) surveyCivic(def, 16);
   // spare knolls for hobbit-holes, nearest the heart of the village first
   const cands = [];
   for (let cy = 8; cy <= 87; cy++) for (let cx = 7; cx <= 114; cx++) {
@@ -166,6 +182,18 @@ function planLots(seed) {
     reserveRect(...sh.core); reserveTiles(spur);
     n++;
   }
+  for (const def of RIFT_CIVIC) surveyCivic(def, 26);
+}
+function surveyCivic(def, maxR) {
+  const found = surveyLot(def.kind, def, def.anchor[0], def.anchor[1], maxR);
+  if (!found) return;
+  const { x, y, sh, spur } = found;
+  const lot = { i: World.lots.length, kind: def.kind, key: def.key, def, spur, state: 'planned' };
+  if (def.kind === 'building') Object.assign(lot, { x0: x, x1: x + def.w - 1, y1: y, y0: y - 2 });
+  else if (def.kind === 'field') Object.assign(lot, { x0: x, x1: x + 11, y0: y, y1: y + 6 });
+  else Object.assign(lot, { tx: x, ty: y });
+  World.lots.push(lot);
+  reserveRect(...sh.core); reserveTiles(spur);
 }
 
 // ---------------------------------------------------------------------------
@@ -249,7 +277,8 @@ function finishLot(lot, silent = false) {
   if (lot.kind === 'building') {
     const b = World._addBuilding(def.key, { x0: lot.x0, x1: lot.x1, y0: lot.y0, y1: lot.y1, img: def.make(false), imgNight: def.make(true), doorOff: def.doorOff, name: def.name, chimneys: def.chimneys || [] });
     b.civic = def.key;
-    if (def.key === 'inn2') {
+    if (def.rift) b.neon = true;
+    if (def.inn) {
       b.isInn = true; b.seats = [];
       const tableImg = makeTable();
       for (const tx of [lot.x0, lot.x1]) {
@@ -291,7 +320,12 @@ function firewoodReserve() {
   return Math.ceil(homes * ({ spring: 0.6, summer: 0.3, autumn: 1.5, winter: 2 }[World.season] || 1));
 }
 function buildWood() { return Math.max(0, Village.stores.wood - firewoodReserve()); }
-function projectReady(p) { return !PROJECT_KIND[p.kind].wood || buildWood() >= 2; }
+function projectReady(p) {
+  const K = PROJECT_KIND[p.kind];
+  if (K.scrap && (Village.stores.scrap || 0) < K.scrap) return false;
+  if (p.lot != null && World.lots[p.lot].def && World.lots[p.lot].def.rift && (Village.stores.scrap || 0) < 1) return false;
+  return !K.wood || buildWood() >= 2;
+}
 
 function civicBuilt(key) { return World.lots.some((l) => l.key === key && l.state === 'done'); }
 function storeCap(res) { return Math.round((STORE_CAP[res] || 999) * (civicBuilt('storehouse') ? 1.5 : 1)); }
@@ -319,7 +353,7 @@ function leavingNest(v, res) {
 }
 
 function projectLabel(p) {
-  if (p.kind === 'home') return World.homes[p.homeId].name;
+  if (p.kind === 'home' || p.kind === 'retrofit') return World.homes[p.homeId].name;
   const lot = World.lots[p.lot];
   return lot.def.name.replace(/^the /, 'The ');
 }
@@ -337,7 +371,7 @@ function planTown() {
   const pop = live.length;
   const wrights = live.filter((v) => v.job === 'woodwright').length;
   const maxProjects = 1 + Math.min(2, Math.floor(wrights / 2));
-  const P = Village.projects;
+  const P = Village.projects.filter((p) => p.kind !== 'retrofit');
   // homes first: always keep a spare hole or two ready for newlyweds and newcomers
   const built = World.homes.filter((h) => h.built);
   const empty = built.filter((h) => residentsOf(h).length === 0).length;
@@ -348,19 +382,29 @@ function planTown() {
     const site = World.homes.filter((h) => !h.built && !P.some((p) => p.homeId === h.id))
       .sort((a, b) => dist(a.doorX, a.doorY, PLAZA.cx * 16, PLAZA.cy * 16) - dist(b.doorX, b.doorY, PLAZA.cx * 16, PLAZA.cy * 16))[0];
     if (site) {
-      P.push({ kind: 'home', homeId: site.id, prog: site.buildProg || 0 });
+      const np = { kind: 'home', homeId: site.id, prog: site.buildProg || 0 };
+      P.push(np); Village.projects.push(np);
       if (site.siteStatic) site.siteStatic.hidden = false;
       chronicle(`The woodwrights have started digging a new hobbit-hole on the knoll at ${site.name.replace(/ \w+$/, '')}'s. Timber will be wanted!`, 'build');
     } else {
       const lot = World.lots.find((l) => l.kind === 'home' && l.state === 'planned');
       if (!lot) break;
       const p = startProject(lot);
+      P.push(p);
       chronicle(`Thistledown is growing! The woodwrights have staked out a fresh knoll for ${World.homes[p.homeId].name}, a new hobbit-hole.`, 'build');
     }
     want--;
   }
+  // the tinkers raise their own buildings alongside, one at a time
+  if (!P.some((p) => p.lot != null && World.lots[p.lot].def && World.lots[p.lot].def.rift)) {
+    const def = RIFT_CIVIC.find((d) => d.due() && World.lots.some((l) => l.key === d.key && l.state === 'planned'));
+    if (def) {
+      P.push(startProject(World.lots.find((l) => l.key === def.key)));
+      chronicle(`The tinkers have begun raising ${def.name}, half timber and half rift-steel. ${def.desc}.`, 'build');
+    }
+  }
   // then public works, one at a time, as the village grows into them
-  if (P.some((p) => p.kind === 'building' || p.kind === 'well')) return;
+  if (P.some((p) => (p.kind === 'building' && !World.lots[p.lot].def.rift) || p.kind === 'well')) return;
   const housed = housingNeed() <= 1;
   for (const def of CIVIC_DEFS) {
     const lot = World.lots.find((l) => l.key === def.key);
@@ -369,7 +413,7 @@ function planTown() {
     if (!due) continue;
     if (def.kind === 'field') {
       if (P.some((p) => p.kind === 'field')) continue;
-      startProject(lot);
+      P.push(startProject(lot));
       chronicle(`The farmers are fencing and ploughing ${def.name} to feed the growing village.`, 'build');
       continue;
     }
@@ -385,28 +429,37 @@ function planTown() {
 // One shift of work on a project.
 function workProject(v, p) {
   const K = PROJECT_KIND[p.kind];
+  const lot = p.lot != null ? World.lots[p.lot] : null;
+  const rift = !!(lot && lot.def && lot.def.rift);
   let step = K.rate;
+  if (K.scrap) { if ((Village.stores.scrap || 0) < K.scrap) return; Village.use('scrap', K.scrap); }
+  if (rift) { if ((Village.stores.scrap || 0) < 1) return; Village.use('scrap', 1); }
   if (K.wood) {
     const wood = Math.min(K.wood, buildWood());
     if (wood <= 0) return;
     Village.use('wood', wood);
     step = K.rate * wood;
   }
-  p.prog = Math.min(1, p.prog + step * v.skillMul(p.kind === 'field' ? 'farming' : 'woodcraft'));
+  const skill = p.kind === 'field' ? 'farming' : p.kind === 'retrofit' || (v.job === 'tinker' && rift) ? 'tinkering' : 'woodcraft';
+  const before = p.prog;
+  p.prog = Math.min(1, p.prog + step * v.skillMul(skill));
+  // a hole the tinkers did most of the work on comes out wired
+  if (v.job === 'tinker' && p.kind === 'home') p.tinkered = (p.tinkered || 0) + (p.prog - before);
   if (p.kind === 'home') World.homes[p.homeId].buildProg = p.prog;
-  if (p.prog < 1) { if (R.chance(0.25)) v.say(R.pick(BUILD_PHRASES[p.kind])); return; }
+  if (p.prog < 1) { if (R.chance(0.25)) v.say(R.pick(BUILD_PHRASES[rift ? 'rift' : p.kind])); return; }
   Village.projects = Village.projects.filter((x) => x !== p);
+  if (p.kind === 'retrofit') { finishRetrofit(World.homes[p.homeId], v); return; }
   if (p.kind === 'home') {
     const h = World.homes[p.homeId];
     if (p.lot != null) finishLot(World.lots[p.lot]); else completeHome(h);
-    chronicle(`A brand-new hobbit-hole, ${h.name}, is finished! The round door is painted and the kettle's on.`, 'build');
+    if ((p.tinkered || 0) >= 0.5) h.neon = true;
+    chronicle(`A brand-new hobbit-hole, ${h.name}, is finished! The round door is painted${h.neon ? ', the tinkers have wired in a neon arch' : ''} and the kettle's on.`, 'build');
     v.remember(`Finished building ${h.name}.`, 2);
     Game.schedulePartyTonight('house-warming');
     Village.wantHomes = Math.max(0, Village.wantHomes - 1);
     settleHomes(true);
     return;
   }
-  const lot = World.lots[p.lot];
   finishLot(lot);
   const nm = lot.def.name;
   if (p.kind === 'field') chronicle(`${nm.charAt(0).toUpperCase() + nm.slice(1)} is ploughed and sown. More barley for bread and ale!`, 'build');
@@ -417,7 +470,7 @@ function workProject(v, p) {
 
 // Where a worker stands to work on a project.
 function projectSpot(p) {
-  if (p.kind === 'home') { const h = World.homes[p.homeId]; return { x: h.doorX + R.i(-20, 20), y: h.doorY + 14, facing: 'up' }; }
+  if (p.kind === 'home' || p.kind === 'retrofit') { const h = World.homes[p.homeId]; return { x: h.doorX + R.i(-20, 20), y: h.doorY + 14, facing: 'up' }; }
   const lot = World.lots[p.lot];
   if (lot.kind === 'well') return { x: (lot.tx + 0.5) * 16 + R.pick([-20, 20]), y: (lot.ty + 1) * 16 + 10, facing: 'up' };
   if (lot.kind === 'field') {
@@ -484,6 +537,6 @@ function loadTown(data) {
     openLot(lot, true);
     if (state === 'done') finishLot(lot, true);
   }
-  Village.projects = (data.projects || []).filter((p) => (p.kind === 'home' ? World.homes[p.homeId] : World.lots[p.lot]));
+  Village.projects = (data.projects || []).filter((p) => (p.kind === 'home' || p.kind === 'retrofit' ? World.homes[p.homeId] : World.lots[p.lot]));
   for (const p of Village.projects) if (p.kind === 'home') { const h = World.homes[p.homeId]; if (h.siteStatic) h.siteStatic.hidden = false; }
 }
