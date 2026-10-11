@@ -636,7 +636,7 @@ function villageRemembered() {
   if (Game.away.length) h += `<h3>Away adventuring (coming back)</h3><div class="likes">${Game.away.map((a) => `<div>${escapeHtml(a.data.first)} ${escapeHtml(a.data.surname)}: due home about day ${a.back}</div>`).join('')}</div>`;
   h += '<h3>Departed</h3><div class="arch">';
   if (!arch.length) h += '<div class="sub">Nobody yet. The old folk are still hale.</div>';
-  for (const a of arch) h += `<div class="arch-row"><canvas data-arch="${a.id}" width="24" height="32"></canvas><div><b>${escapeHtml(a.first)} ${escapeHtml(a.surname)}</b><small>${a.years} years${a.job ? ' · ' + JOBS[a.job].label : ''} · ${a.reason === 'home' ? 'went home through a rift' : 'left'} on day ${a.left}${memorialFor(a.id) ? ' · a stone on the Remembrance Green' : ''}</small></div></div>`;
+  for (const a of arch) h += `<div class="arch-row"><canvas data-arch="${a.id}" width="24" height="32"></canvas><div><b>${escapeHtml(a.first)} ${escapeHtml(a.surname)}</b><small>${a.years} years${a.job ? ' · ' + JOBS[a.job].label : ''} · ${a.reason === 'home' ? 'went home through a rift' : a.reason === 'bree' ? 'moved away to Bree' : 'left'} on day ${a.left}${memorialFor(a.id) ? ' · a stone on the Remembrance Green' : ''}</small></div></div>`;
   return h + '</div>';
 }
 

@@ -741,3 +741,16 @@ body.building #panel { display: none !important; }
 
 #panel[hidden] { display: none !important; }
 @media (max-width: 760px) { #errand { bottom: auto; top: var(--hud-top); z-index: 8; } }
+
+.ec-bn { display: grid; gap: 3px; font-size: 14px; color: var(--berry); margin-bottom: 6px; }
+.ec-wrap { overflow-x: auto; }
+.ec-table { border-collapse: collapse; font-size: 13.5px; width: 100%; font-variant-numeric: tabular-nums; }
+.ec-table th { text-align: left; font-family: var(--font-ui); font-size: 12px; color: var(--ink-3); font-weight: 400; padding: 2px 6px; border-bottom: 1px solid var(--parch-3); }
+.ec-table td { padding: 2px 6px; border-bottom: 1px dashed var(--parch-3); }
+.ec-table td small { color: var(--ink-3); }
+.ec-table td.low { color: var(--berry); font-weight: 700; }
+.ec-proj { display: grid; gap: 4px; }
+.ec-p { display: grid; grid-template-columns: minmax(0, 1.2fr) 90px minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 14px; }
+.ec-p.first span:first-child { font-weight: 700; color: var(--moss); }
+.ec-p button { font-size: 12px; padding: 1px 6px; }
+@media (max-width: 560px) { .ec-p { grid-template-columns: 1fr auto; } .ec-p .bar, .ec-p .sub { grid-column: 1 / -1; } }

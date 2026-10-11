@@ -110,6 +110,9 @@ The **☺ contentment** pill in the top bar opens the Steward's Desk, the first 
 - **Rations** (as in Stronghold). *Lean* half-portions stretch the food a long way, but folk feel the short rations. *Generous* and *Feasts* mean bigger helpings and a merrier village, and the Store empties fast. The desk shows how many days the food would last at the current rations.
 - **Ale.** *Dry* (the barrels last, the taproom sulks), *a pint or two*, or *flowing* (merrier evenings, twice the ale used).
 - **The working week.** *Easy* adds Sunday off (less done, happier folk); *Busy* cancels Highday (more done, wearier folk).
+- **Economy board.** For every good: what's in the Store (against its capacity), what was made and used yesterday, and how many days it would last if yesterday repeated. The chains (barley → flour → bread, barley → ale, apples → pies, vegetables → stew) are checked for their bottleneck, with a plain-spoken warning: *Flour is piling up but the bread shelves are bare: more bakers.* It also warns when food is under a day or the builders are starved of timber.
+- **Building works.** Every project in hand with its progress and what it's waiting for (timber, scrap, hands). Mark one **Do first** and the builders put their backs into it.
+- **Shortages bite.** Famished folk can't put their backs into their work, at their trade or on the building sites. Folk who stay miserable for days start talking about moving to Bree (the Chronicle says so, and the desk lists who and why). Cheer them up and they'll stay, glad they did; leave it, and unattached grown-ups pack a cart and go.
 - **Idle hands.** Trades whose workers are standing idle are flagged on the desk with the reason (*the flour bins are full*, *no letters in the bag*), so you can move hands elsewhere or sell off the surplus.
 - **Workforce** (as in Age of Empires). Every trade shows hands now against hands wanted. Use − and + to set how many each trade should have: folk are moved over from trades that can spare them (the best-suited first) or let go to find other work. *auto* hands a trade back to the village.
 
@@ -293,6 +296,8 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/illness.js` | Flu (laid up abed), sprained ankles, and friends bringing soup |
 | `js/almanac.js` | The seasonal Almanac report: population, contentment, food, coin, renown, stories and advice |
+| `js/economy.js` | The Economy board, chain bottlenecks, building-works priority, hunger slowing work, and unhappy folk moving to Bree |
+| `js/tidy.js` | Unique names, family surnames, and the morning digest of growing-up news |
 | `js/hud.js` | HUD layout, toast queue, gear menu, chips, charter tracker, the five-section ledger, locked-tool explanations, the Steward's Errands guide, phone layout |
 | `js/hazards.js` | Seasonal hazards with warnings: floods (and levees), droughts, blight, hard frost |
 | `js/balance.js` | Costs for the gifts, policies felt in full, honest forecasts, idle-trade warnings, the Great Fair |
