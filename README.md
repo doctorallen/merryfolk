@@ -227,6 +227,19 @@ At the turn of every season the Almanac opens with a report on the season just g
 
 Then the Steward's clerk gives advice on what to see to next: winter's coming and the jars per head are low, spirits dipped, the village ate more than it made, timber's short, notes are waiting on the board, or a Moot is ready to be called. The last report stays on the Census tab.
 
+### Expeditions beyond the valley
+
+From the Charter, send a brave hobbit to explore beyond the valley: the north hills, the east forest, the southern fens, or along the West Road. It costs 15 pennies and 10 helpings for the pack. They're gone two days, and come back with a tale, 10 renown and a discovery that opens something new:
+
+| Where | What might be found |
+|---|---|
+| North hills | A stone quarry (stone to sell; statues cost half) or upland pasture (half as much wool again) |
+| East forest | Old-growth timber (more from every felling) or wild bees (honey) |
+| Southern fens | A peat bog (winter hearths burn peat before timber) or a clay pit (clay to sell) |
+| West Road | A cache of old coins (+60 pennies, and mathoms) or a friendly hamlet whose wagon comes every Hevensday |
+
+Each region can be explored once.
+
 ### Lore: what the village learns
 
 Every hour of reading by the fire, every letter written, every lesson at the story circle adds a little **lore** (the more schooled the reader, the more). On the **Lore** page of the Charter you choose what the village studies next, and each discovery changes how the village works for good:
@@ -351,6 +364,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/illness.js` | Flu (laid up abed), sprained ankles, and friends bringing soup |
 | `js/almanac.js` | The seasonal Almanac report: population, contentment, food, coin, renown, stories and advice |
+| `js/expeditions.js` | Expeditions to four regions beyond the valley and the discoveries they bring back |
 | `js/cider.js` | Cider: apples pressed by the brewers, poured at the taproom, sold to the caravans |
 | `js/dynamics.js` | Parent-and-child family dynamics on the Kin tab, at dinner and at bedtime |
 | `js/lastwishes.js` | An elder's last wishes before their last adventure, told at the send-off and kept with the stone |

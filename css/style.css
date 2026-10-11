@@ -789,3 +789,8 @@ body.building #minimap { bottom: calc(var(--hud-bottom) + 4px); }
 
 .wg-scen .wg-seg button { min-width: 0; }
 .wg-scen .sub { margin-top: 4px; }
+
+.ex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px; }
+.ex { display: grid; gap: 3px; padding: 6px 8px; border: 1px solid var(--parch-3); border-radius: 4px; background: var(--parch); font-size: 13.5px; align-content: start; }
+.ex b { font-family: var(--font-ui); font-size: 14px; }
+.ex button { justify-self: start; font-size: 12px; padding: 1px 8px; }
