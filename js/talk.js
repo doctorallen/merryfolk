@@ -480,7 +480,7 @@ function spark(s, l, k, base) {
 function roomTalk(h) {
   const rooms = new Map();
   for (const v of Game.villagers) {
-    if (!v.inside || v.stage === 'baby' || v.leaving || register(v) === 'toddler' || (v.task && v.task.a.id === 'sleep')) continue;
+    if (!v.inside || v.stage === 'baby' || v.leaving || register(v) === 'toddler' || (v.task && ['sleep', 'lodge'].includes(v.task.a.id))) continue;
     if (!rooms.has(v.inside)) rooms.set(v.inside, []);
     rooms.get(v.inside).push(v);
   }

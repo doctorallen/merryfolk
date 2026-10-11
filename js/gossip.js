@@ -70,7 +70,7 @@ function tellNews(s, l, n) {
 // Folk who spend time together pass news on: in the same room (the taproom
 // above all, of an evening), or out in the lane within earshot.
 function talkTick(h) {
-  const awake = Game.villagers.filter((v) => v.stage !== 'baby' && !v.leaving && !(v.task && v.task.a.id === 'sleep' && v.task.phase === 'do'));
+  const awake = Game.villagers.filter((v) => v.stage !== 'baby' && !v.leaving && !(v.task && ['sleep', 'lodge', 'sleep_rough', 'nap'].includes(v.task.a.id) && v.task.phase === 'do'));
   for (const s of awake) for (const l of awake) {
     if (s === l) continue;
     const together = s.inside ? s.inside === l.inside : !l.inside && dist(s.x, s.y, l.x, l.y) < 50;
