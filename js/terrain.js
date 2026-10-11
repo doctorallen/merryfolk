@@ -23,7 +23,7 @@ function computeLand(seed) {
   const at = (x, y) => clamp(y, 0, H - 1) * W + clamp(x, 0, W - 1);
   // 1. height, the same land the terraces are painted from
   const h = new Float32Array(N);
-  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) h[y * W + x] = landHeight(nh, x + 0.5, y + 0.5);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) h[y * W + x] = groundHeight(nh, x + 0.5, y + 0.5);
   // 2. slope, and which way it faces (south, towards the bottom of the map, gets the sun)
   const slope = new Float32Array(N), south = new Float32Array(N), sun = new Float32Array(N);
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
@@ -119,4 +119,74 @@ function landColour(view, i) {
     case 'soil': return ['rgba(140,90,40,0.5)', 'rgba(120,200,60,0.35)', 'rgba(200,200,200,0.5)', 'rgba(170,120,200,0.45)'][L.soil[i]];
   }
   return null;
+}
+
+// ---------------------------------------------------------------------------
+// Built ground is levelled. Fields, buildings, the square, pens, orchards,
+// allotments, gardens and the plots surveyed for building each sit on a flat
+// pad at one terrace's height (with a yard's margin for hedges, fences and
+// doorsteps), blending back into the hillside over a couple of tiles, so no
+// terrace bank runs through a barley field or under a bakery.
+// ---------------------------------------------------------------------------
+const PAD_MARGIN = 1, PAD_FADE = 2.5;
+function gatherPads() {
+  const P = [];
+  const rect = (x0, y0, x1, y1) => P.push({ x0: x0 - PAD_MARGIN, y0: y0 - PAD_MARGIN, x1: x1 + PAD_MARGIN, y1: y1 + PAD_MARGIN });
+  for (const f of FIELDS) rect(f.x0, f.y0, f.x1, f.y1);
+  rect(WEED_FIELD.x0, WEED_FIELD.y0, WEED_FIELD.x1, WEED_FIELD.y1);
+  rect(PLAZA.cx - 5, PLAZA.cy - 4, PLAZA.cx + 5, PLAZA.cy + 4);
+  for (const b of Object.values(World.buildings)) rect(b.x0, b.y0 ?? b.y1 - 2, b.x1, b.y1 + 1);
+  for (const p of World.pens || []) rect(p.x0, p.y0, p.x1, p.y1);
+  for (const a of World.allotments || []) rect(a.x0, a.y0, a.x1, a.y1);
+  const o2 = World.orchard2;
+  if (o2) rect(o2.x0, o2.y0, o2.x1, o2.y1);
+  // the old orchard on the Hill, round its rows of trees
+  const old = (World.orchard || []).filter((t) => t.home == null && !(o2 && t.tx >= o2.x0 && t.tx <= o2.x1 && t.ty >= o2.y0 && t.ty <= o2.y1));
+  if (old.length) rect(Math.min(...old.map((t) => t.tx)), Math.min(...old.map((t) => t.ty)), Math.max(...old.map((t) => t.tx)), Math.max(...old.map((t) => t.ty)) + 1);
+  for (const l of World.lots || []) {
+    if (l.kind === 'home') continue; // new holes are dug into their own knolls
+    if (l.x0 != null) rect(l.x0, l.y0, l.x1, l.y1 + (l.kind === 'building' ? 1 : 0));
+    else if (l.tx != null) rect(l.tx - 1, l.ty - 1, l.tx + 1, l.ty + 1);
+  }
+  // each hobbit-hole's garden strip in front of the door
+  for (const h of World.homes) { const [sx, sy] = h.stepTile; rect(sx - 4, sy, sx + 4, sy + 1); }
+  // each pad's height: the average of the ground it covers, set in the middle of a terrace
+  const nh = makeNoise(World.seed + 9);
+  for (const p of P) {
+    let s = 0, n = 0;
+    for (let y = p.y0; y <= p.y1; y++) for (let x = p.x0; x <= p.x1; x++) { s += landHeight(nh, x + 0.5, y + 0.5); n++; }
+    p.h = (Math.floor((s / n) * TERRACES) + 0.5) / TERRACES;
+  }
+  // which pads reach each tile, so a height lookup checks only those
+  const near = Array.from({ length: MAP_W * MAP_H }, () => null);
+  P.forEach((p, k) => {
+    for (let y = Math.max(0, Math.floor(p.y0 - PAD_FADE)); y <= Math.min(MAP_H - 1, Math.ceil(p.y1 + PAD_FADE)); y++)
+      for (let x = Math.max(0, Math.floor(p.x0 - PAD_FADE)); x <= Math.min(MAP_W - 1, Math.ceil(p.x1 + PAD_FADE)); x++) (near[y * MAP_W + x] || (near[y * MAP_W + x] = [])).push(k);
+  });
+  World.pads = P; World.padNear = near;
+}
+// The height of the ground at a point (in tiles): the lie of the land, levelled where it's built on.
+function groundHeight(nh, x, y) {
+  let h = landHeight(nh, x, y);
+  const near = World.padNear && World.padNear[clamp(Math.floor(y), 0, MAP_H - 1) * MAP_W + clamp(Math.floor(x), 0, MAP_W - 1)];
+  if (!near) return h;
+  for (const k of near) {
+    const p = World.pads[k];
+    const dx = Math.max(p.x0 - x, 0, x - (p.x1 + 1)), dy = Math.max(p.y0 - y, 0, y - (p.y1 + 1));
+    const d = Math.hypot(dx, dy);
+    if (d >= PAD_FADE) continue;
+    const t = 1 - d / PAD_FADE;
+    h += (p.h - h) * t * t * (3 - 2 * t);
+  }
+  return h;
+}
+// Does a terrace bank run through this tile, where a tree or bush would stand?
+function onBank(tx, ty) {
+  const nh = World._nh || (World._nh = makeNoise(World.seed + 9));
+  let lv = -1;
+  for (const [fx, fy] of [[0.15, 0.2], [0.85, 0.2], [0.5, 0.6], [0.15, 1.05], [0.85, 1.05], [0.5, 1.4]]) {
+    const l = Math.floor(groundHeight(nh, tx + fx, ty + fy) * TERRACES);
+    if (lv < 0) lv = l; else if (l !== lv) return true;
+  }
+  return false;
 }

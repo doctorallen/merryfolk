@@ -164,7 +164,7 @@ function* buildWorldSteps(cfg) {
   World.gen = typeof cfg === 'object' ? { ...defaultGen(), ...cfg } : defaultGen(cfg);
   const seed = World.gen.seed;
   World.seed = seed;
-  World.land = null; World.grass = []; World.statics = []; World.flowers = [];
+  World.land = null; World.grass = []; World.statics = []; World.flowers = []; World.pads = null; World.padNear = null; World._nh = null;
   const rng = mulberry32(seed);
   const tiles = World.tiles;
   tiles.fill(T.GRASS);
@@ -481,6 +481,9 @@ function* buildWorldSteps(cfg) {
   // --- Pens, a second orchard and allotments, then spare land for the village to grow into ---
   planFarmland();
   planLots(seed);
+  // level the built-on ground, and work the land out again over it
+  gatherPads();
+  computeLand(seed);
   yield 'Pens, orchards and allotments are laid out';
 
   // --- Trees: woods along the borders (thick to the east), copses elsewhere ---
@@ -509,7 +512,7 @@ function* buildWorldSteps(cfg) {
     if (tiles[tIdx(x, y)] !== T.GRASS || World.reserved[tIdx(x, y)] || World.block[tIdx(x, y)] || nearRoad(x, y, 1)) continue;
     let wet = false;
     for (let j = y - 1; j <= y + 1; j++) for (let i = x - 1; i <= x + 1; i++) if (tiles[tIdx(i, j)] === T.WATER) wet = true;
-    if (!wet || treeAt.some(([tx, ty]) => Math.abs(tx - x) < 4 && Math.abs(ty - y) < 3) || rng() > 0.09) continue;
+    if (!wet || treeAt.some(([tx, ty]) => Math.abs(tx - x) < 4 && Math.abs(ty - y) < 3) || rng() > 0.09 || onBank(x, y)) continue;
     const ws = 600 + Math.floor(rng() * 10);
     addStatic(makeTree(ws, 'willow'), x * 16 + 8, (y + 1) * 16 - 2, { gen: { type: 'tree', seed: ws, kind: 'willow' } });
     blk(x, y); treeAt.push([x, y]);
@@ -888,7 +891,7 @@ function computeHeights(seed) {
   const nh = makeNoise(seed + 9);
   const height = new Float32Array(JW * JH), level = new Uint8Array(JW * JH);
   for (let y = 0; y < JH; y++) for (let x = 0; x < JW; x++) {
-    const h = landHeight(nh, x / 8, y / 8);
+    const h = groundHeight(nh, x / 8, y / 8);
     height[y * JW + x] = h;
     level[y * JW + x] = Math.floor(h * TERRACES);
   }

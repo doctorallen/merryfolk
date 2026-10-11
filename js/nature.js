@@ -309,7 +309,7 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
     const p = potential(x, y);
     if (p <= 0 || rng() > p * 2.2 * gen('woods')) continue;
     const kind = kindFor(x, y), r = RADIUS[kind];
-    if (near(x, y, r)) continue;
+    if (near(x, y, r) || onBank(x, y)) continue;
     const [s0, sn] = TREE_SEEDS[kind];
     const tseed = s0 + Math.floor(rng() * sn);
     addStatic(makeTree(tseed, kind), x * 16 + 8 + Math.round((rng() - 0.5) * 4), (y + 1) * 16 - 2, { gen: { type: 'tree', seed: tseed, kind } });
@@ -324,7 +324,7 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
     let trees = 0;
     for (let j = -2; j <= 2; j++) for (let i = -2; i <= 2; i++) if (treeSet.has((x + i) + ',' + (y + j))) trees++;
     const edge = trees >= 1 && trees <= 4, deep = trees > 4;
-    if (rng() > (edge ? 0.16 : deep ? 0.05 : 0.008)) continue;
+    if (rng() > (edge ? 0.16 : deep ? 0.05 : 0.008) || onBank(x, y)) continue;
     const i = y * W + x, soil = World.land.soil[i], sun = World.land.sun[i], moist = World.land.moist[i];
     // round, bramble, thorn, gorse, fern, holly, heather
     let kind;
