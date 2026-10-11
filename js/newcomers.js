@@ -55,11 +55,11 @@ function askExchange(asker, other, task) {
   if (task.data.answer) {
     const [text, place] = task.data.answer;
     task.data.answer = null;
-    other.say(text, 3.6);
+    other.say(text, 3.6, { to: asker });
     if (place && asker.newcomer && !asker.newcomer.places.includes(place)) asker.newcomer.places.push(place);
     return;
   }
-  asker.say(R.pick(asker.isRiftborn() ? ASK_RIFT : ASK_ROAD), 3.6);
+  asker.say(R.pick(asker.isRiftborn() ? ASK_RIFT : ASK_ROAD), 3.6, { to: other });
   // the wary give short answers
   task.data.answer = other.isRiftborn() || riftWary(other) < 0.4 || !asker.isRiftborn() ? R.pick(ANSWERS) : [R.pick(['Er. Couldn\'t say.', 'Hmm? Oh. Not sure.', 'Best ask someone else.']), null];
 }

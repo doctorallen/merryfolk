@@ -137,9 +137,11 @@ class Villager {
   refreshSprites() { this.techTier = techTier(this.tech); this.sprites = buildVillagerSprites(this.genes, this.stage, this.look()); this._portraitKey = null; }
 
   // Longer sentences stay up a little longer.
-  say(text, dur = 3.2) { if (text) this.bubble = { text, t: Math.max(dur, 1.4 + text.length * 0.045) }; }
+  // Speech: `to` someone in a conversation, or `think` for musing aloud to
+  // themselves (drawn as a thought cloud); otherwise an exclamation.
+  say(text, dur = 3.2, opts = {}) { if (text) this.bubble = { text, t: Math.max(dur, 1.4 + text.length * 0.045), to: opts.to || null, think: !!opts.think }; }
   // Says whatever is on their mind, in their own manner of speaking.
-  chatter() { this.say(remark(this)); }
+  chatter() { this.say(remark(this), undefined, { think: true }); }
 
   remember(text, valence = 0) {
     this.memories.unshift({ d: Game.day, t: text, v: valence });
@@ -474,11 +476,11 @@ class Villager {
     // speech and listening
     this.speakT -= dt;
     if (this.speakT <= 0) {
-      this.speakT = R.f(25, 70);
+      this.speakT = R.f(40, 110);
       if (!this.inside && !sleeping) {
         // grown-ups, the better-read especially, tell little ones things
         const kid = this.isGrown() && R.chance(0.3 + this.edu * 0.5) && Game.villagers.find((o) => o.isChild() && !o.inside && dist(o.x, o.y, this.x, this.y) < 70);
-        if (kid) { this.say(instructChild(this, kid)); this.speakT = R.f(15, 35); }
+        if (kid) { this.say(instructChild(this, kid), undefined, { to: kid }); this.speakT = R.f(15, 35); }
         else if (this.task && this.task.a.id === 'chat') { /* the conversation does the talking */ }
         else this.chatter();
       }
@@ -604,14 +606,14 @@ class Villager {
     const reply = task.data.reply;
     if (reply && Game.villagers.includes(reply.who)) {
       task.data.reply = null;
-      reply.who.say(reply.text || lineFor(reply.who, reply.kind, { name: reply.to.first }));
+      reply.who.say(reply.text || lineFor(reply.who, reply.kind, { name: reply.to.first }), undefined, { to: reply.to });
       return;
     }
     const speaker = R.chance(0.5) ? this : p, other = speaker === this ? p : this;
     const mode = task.data.quarrel ? 'quarrel' : task.data.court ? 'court' : null;
     other.pendingReply = null;
     const said = converse(speaker, other, mode);
-    speaker.say(said);
+    speaker.say(said, undefined, { to: other });
     if (Game.selected === speaker || Game.selected === other) devLog('talk', `${speaker.first} to ${other.first}${mode ? ' (' + mode + ')' : ''}: "${said}"`);
     if (mode === 'quarrel') { FX.puff(speaker.x, speaker.y - 20); task.data.reply = { who: other, to: speaker, kind: 'quarrel' }; return; }
     if (mode === 'court' && R.chance(0.6)) FX.hearts((this.x + p.x) / 2, Math.min(this.y, p.y) - 18);

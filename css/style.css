@@ -60,6 +60,7 @@ kbd {
   background: #fffaf0; color: #2a1c12; border: 2px solid #2a1c12; border-radius: 6px; text-align: center; white-space: normal;
 }
 .int-bubble[hidden] { display: none; }
+.int-bubble.think { background: #eef2f6; color: #4a5064; border: 2px solid rgba(90,100,120,0.55); border-radius: 12px; font-style: italic; }
 .int-cap { font-size: 14px; color: var(--ink-2); min-height: 1.3em; font-style: italic; }
 .now.peek { cursor: pointer; }
 .now.peek::after { content: "  Look inside ›"; font-style: normal; font-family: var(--font-ui); font-size: 12px; color: var(--moss); white-space: nowrap; }

@@ -179,7 +179,7 @@ function riftMeeting(a, b) {
   const nov = riftNovelty(), bold = boldness(hill);
   if (!met.includes(rift.id)) {
     met.push(rift.id);
-    hill.say(fillLine(hill, R.pick(RIFT_BRAVE_HELLO).replace('{me}', hill.first), { name: rift.first }), 4);
+    hill.say(fillLine(hill, R.pick(RIFT_BRAVE_HELLO).replace('{me}', hill.first), { name: rift.first }), 4, { to: rift });
     // the reply comes as the conversation's next line
     const lead = a.task && a.task.data && a.task.data.leader ? a.task.data : null;
     if (lead) { lead.reply = { who: rift, to: hill, text: fillLine(rift, R.pick(RIFT_HELLO_BACK), { name: hill.first }) }; lead.talkT = 5; }

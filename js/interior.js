@@ -1278,7 +1278,10 @@ function updateBubbles(L, folk) {
     let b = Interior.bubbles[n];
     if (!b) { b = document.createElement('div'); b.className = 'int-bubble'; layer.appendChild(b); Interior.bubbles.push(b); }
     b.hidden = false;
-    if (b.textContent !== v.bubble.text) b.textContent = v.bubble.text;
+    // a thought cloud for musing, "to Name" for talking to someone
+    const txt = (v.bubble.to ? `to ${v.bubble.to.first}: ` : '') + v.bubble.text;
+    b.classList.toggle('think', !!v.bubble.think);
+    if (b.textContent !== txt) b.textContent = txt;
     b.style.left = ((box.x0 + box.x1) / 2) * S + 'px';
     b.style.top = (box.y0 - 3) * S + 'px';
     n++;

@@ -772,22 +772,45 @@ function renderOverlay() {
   const W = overlay.width / dpr, H = overlay.height / dpr;
   for (const v of Game.villagers) {
     if (v.inside || !v.bubble) continue;
-    const sx = (v.x - cx) * z, sy = ((v._top ?? v.y - 16) - cy) * z - (Game.selected === v || v.iconT > 0 || v.isSick() ? 14 * z : 4);
+    const sx = (v.x - cx) * z;
+    let sy = ((v._top ?? v.y - 16) - cy) * z - (Game.selected === v || v.iconT > 0 || v.isSick() ? 14 * z : 4);
     if (sx < -100 || sx > W + 100 || sy < -40 || sy > H + 40) continue;
     const alpha = Math.min(1, v.bubble.t * 2.5);
     octx.globalAlpha = alpha;
-    octx.font = '600 14px "Pixelify Sans", ui-monospace, monospace';
+    const think = v.bubble.think, to = v.bubble.to;
+    // when both of a pair are talking, one bubble sits above the other's
+    if (to && to.bubble && !to.inside && v.id > to.id && Math.abs(to.x - v.x) < 120) sy -= 40;
+    octx.font = think ? 'italic 500 14px "Alegreya Sans", system-ui, sans-serif' : '600 14px "Pixelify Sans", ui-monospace, monospace';
     // whole sentences wrap onto a few lines
     if (!v.bubble.lines) v.bubble.lines = wrapText(octx, v.bubble.text, 210);
     const lines = v.bubble.lines;
     const tw = Math.max(...lines.map((l) => octx.measureText(l).width));
-    const bw = tw + 16, bh = 8 + lines.length * 17, bx = Math.round(sx - bw / 2), by = Math.round(sy - bh - 8);
+    const bw = tw + 16, bh = 8 + lines.length * 17, bx = Math.round(sx - bw / 2), by = Math.round(sy - bh - (think ? 14 : 8));
+    if (think) {
+      // musing to themselves: a soft thought cloud, trailing little bubbles
+      const fill = 'rgba(236,240,246,0.93)', edge = 'rgba(90,100,120,0.55)';
+      const rr = (x, y, w, h, r) => { octx.beginPath(); octx.moveTo(x + r, y); octx.arcTo(x + w, y, x + w, y + h, r); octx.arcTo(x + w, y + h, x, y + h, r); octx.arcTo(x, y + h, x, y, r); octx.arcTo(x, y, x + w, y, r); octx.closePath(); };
+      octx.fillStyle = edge; rr(bx - 2, by - 2, bw + 4, bh + 4, 10); octx.fill();
+      octx.fillStyle = fill; rr(bx, by, bw, bh, 9); octx.fill();
+      for (const [ox, oy, r] of [[-2, bh + 5, 3.5], [-5, bh + 11, 2.2]]) { octx.fillStyle = edge; octx.beginPath(); octx.arc(sx + ox, by + oy, r + 1, 0, Math.PI * 2); octx.fill(); octx.fillStyle = fill; octx.beginPath(); octx.arc(sx + ox, by + oy, r, 0, Math.PI * 2); octx.fill(); }
+      octx.fillStyle = '#4a5064'; lines.forEach((l, i) => octx.fillText(l, bx + 8, by + 13 + i * 17));
+      continue;
+    }
     octx.fillStyle = 'rgba(42,28,18,0.35)'; octx.fillRect(bx + 3, by + 3, bw, bh);
     octx.fillStyle = '#2a1c12'; octx.fillRect(bx - 2, by - 2, bw + 4, bh + 4);
     octx.fillStyle = v.isGrown() ? '#fffaf0' : '#f0f8ff'; octx.fillRect(bx, by, bw, bh);
-    octx.fillStyle = '#2a1c12'; octx.beginPath(); octx.moveTo(sx - 6, by + bh + 2); octx.lineTo(sx + 2, by + bh + 2); octx.lineTo(sx - 4, by + bh + 9); octx.fill();
-    octx.fillStyle = v.isGrown() ? '#fffaf0' : '#f0f8ff'; octx.beginPath(); octx.moveTo(sx - 4, by + bh - 1); octx.lineTo(sx, by + bh - 1); octx.lineTo(sx - 3.5, by + bh + 4); octx.fill();
+    // the tail leans towards whoever they're talking to
+    const lean = to && !to.inside ? clamp((to.x - v.x) * z * 0.05, -6, 6) : 0;
+    octx.fillStyle = '#2a1c12'; octx.beginPath(); octx.moveTo(sx - 6, by + bh + 2); octx.lineTo(sx + 2, by + bh + 2); octx.lineTo(sx - 4 + lean, by + bh + 9); octx.fill();
+    octx.fillStyle = v.isGrown() ? '#fffaf0' : '#f0f8ff'; octx.beginPath(); octx.moveTo(sx - 4, by + bh - 1); octx.lineTo(sx, by + bh - 1); octx.lineTo(sx - 3.5 + lean * 0.7, by + bh + 4); octx.fill();
     octx.fillStyle = '#2a1c12'; lines.forEach((l, i) => octx.fillText(l, bx + 8, by + 13 + i * 17));
+    // and says who to, in a little tab on top
+    if (to) {
+      octx.font = '600 11px "Pixelify Sans", ui-monospace, monospace';
+      const tag = 'to ' + to.first, tgw = octx.measureText(tag).width + 10;
+      octx.fillStyle = '#2a1c12'; octx.fillRect(bx - 2, by - 15, tgw + 2, 14);
+      octx.fillStyle = '#ffe680'; octx.fillText(tag, bx + 3, by - 5);
+    }
   }
   // the odd baa and moo
   octx.font = '600 12px "Pixelify Sans", ui-monospace, monospace';
