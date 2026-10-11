@@ -17,8 +17,7 @@ const CLIFF_FACE = [16, 40];     // how far a face drops, in world pixels, as th
 const cliffFaceH = (m) => Math.round(CLIFF_FACE[0] + clamp((m - CLIFF_MIN) / 0.3, 0, 1) * (CLIFF_FACE[1] - CLIFF_FACE[0]));
 
 // The mask at a world pixel, blended between tile centres.
-function cliffAt(px, py) {
-  const M = World.cliffMask;
+function cliffAt(px, py, M = World.cliffMask) {
   if (!M) return 0;
   const gx = clamp(px / TILE - 0.5, 0, MAP_W - 1.001), gy = clamp(py / TILE - 0.5, 0, MAP_H - 1.001);
   const ix = Math.floor(gx), iy = Math.floor(gy), wx = gx - ix, wy = gy - iy, i = iy * MAP_W + ix;
@@ -28,8 +27,9 @@ const cliffTile = (tx, ty) => (World.cliff && inMap(tx, ty) ? World.cliff[tIdx(t
 // Inside a rocky stretch the ground steps up a whole terrace along a wavy
 // line, so every stretch has an escarpment for its cliff to follow.
 function cliffRise(x, y) {
-  const m = cliffAt(x * TILE, y * TILE);
+  const m = cliffAt(x * TILE, y * TILE, World.cliffZone);
   if (m <= CLIFF_MIN * 0.6) return 0;
+  if (!World._cliffEdge) return 0;
   const e = World._cliffEdge(x * 0.11, y * 0.11) - 0.5;
   const t = clamp((e + 0.025) / 0.05, 0, 1), s = clamp((m - CLIFF_MIN * 0.6) / (CLIFF_MIN * 0.6), 0, 1);
   // the full terrace where the rock is strong, dying away quickly round its edges
@@ -45,7 +45,7 @@ function nearCliff(tx, ty, r = 3) {
 // Called at world generation once the built ground is levelled, before the
 // hedges, woods and grass go in, so they keep off the rock.
 function computeCliffs(seed) {
-  World.cliffMask = null; World.cliff = null;
+  World.cliffMask = null; World.cliffZone = null; World.cliff = null;
   const k = gen('cliffs');
   if (!k) return;
   World._cliffEdge = makeNoise(seed + 61);
@@ -70,7 +70,7 @@ function computeCliffs(seed) {
     }
   }
   // rocky stretches come and go along the banks, more of them for a craggier valley
-  const nc = makeNoise(seed + 53), lo = 0.53 - (k - 1) * 0.09;
+  const nc = makeNoise(seed + 53), nh0 = makeNoise(seed + 9), lo = 0.53 - (k - 1) * 0.09;
   const M = new Float32Array(N);
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
     const i = y * W + x;
@@ -91,7 +91,38 @@ function computeCliffs(seed) {
     }
     if (zone.length < 30) for (const j of zone) M[j] = 0;
   }
-  World.cliffMask = M;
+  World.cliffZone = M;
+  // crags: on broken ground, the steepest of the natural banks nearer the
+  // village are bare rock too, though the land isn't raised for them
+  const M2 = new Float32Array(M), rf = gen('relief');
+  if (rf) {
+    const thr = 0.055 / Math.sqrt(rf * k);
+    for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+      const i = y * W + x;
+      if (dist[i] < 2 || M2[i] > CLIFF_MIN || tiles[i] !== T.GRASS) continue;
+      const g = Math.hypot(landHeight(nh0, x + 1.5, y + 0.5) - landHeight(nh0, x - 0.5, y + 0.5), landHeight(nh0, x + 0.5, y + 1.5) - landHeight(nh0, x + 0.5, y - 0.5)) / 2;
+      if (g > thr) M2[i] = clamp(CLIFF_MIN + 0.05 + (g - thr) * 10, 0, 0.9);
+    }
+    // a crag is a stretch of bank, not one stone: lone tiles are let go, and
+    // gaps of one tile closed; then the rock spreads a tile either way, so it
+    // still counts once blended between tile centres
+    const one = new Float32Array(M2);
+    for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+      const i = y * W + x;
+      let nb = 0; for (const d of [1, -1, W, -W]) if (one[i + d] > CLIFF_MIN) nb++;
+      if (one[i] > CLIFF_MIN && !nb) M2[i] = M[i];
+      else if (one[i] <= CLIFF_MIN && nb >= 3 && dist[i] >= 2) M2[i] = Math.max(M2[i], CLIFF_MIN + 0.1);
+    }
+    const core = new Float32Array(M2);
+    for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+      const i = y * W + x;
+      if (core[i] > CLIFF_MIN && M[i] <= CLIFF_MIN) {
+        M2[i] = Math.max(M2[i], 0.85);
+        for (const d of [1, -1, W, -W, W + 1, W - 1, -W + 1, -W - 1]) if (dist[i + d] >= 1 && core[i + d] <= CLIFF_MIN) M2[i + d] = Math.max(M2[i + d], 0.7);
+      }
+    }
+  }
+  World.cliffMask = M2;
 
   // which tiles a face covers, or sit at the foot of the rock
   const nh = makeNoise(seed + 9);

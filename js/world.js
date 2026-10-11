@@ -153,8 +153,9 @@ const GEN_OPTIONS = {
   flowers: { label: 'Wildflowers', opts: [['few', 'Few', 0.45], ['plenty', 'Plenty', 1], ['riot', 'A riot', 1.9]] },
   rocks: { label: 'Rocks', opts: [['few', 'Few', 0.45], ['some', 'Some', 1], ['many', 'Many', 1.9]] },
   cliffs: { label: 'Cliffs', opts: [['none', 'None', 0], ['some', 'Some', 1], ['many', 'Many', 1.7]] },
+  relief: { label: 'Relief', opts: [['smooth', 'Smooth', 0], ['broken', 'Broken', 1], ['rugged', 'Rugged', 1.6]] },
 };
-function defaultGen(seed = 1337) { return { seed, hills: 'rolling', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some', cliffs: 'some' }; }
+function defaultGen(seed = 1337) { return { seed, hills: 'rolling', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some', cliffs: 'some', relief: 'broken' }; }
 // The number behind a setting, e.g. gen('woods') → 1.6 for thick woodland.
 function gen(key) {
   const g = World.gen || defaultGen(), o = GEN_OPTIONS[key].opts.find((x) => x[0] === g[key]);
@@ -166,7 +167,7 @@ function buildWorld(cfg) { for (const _ of buildWorldSteps(cfg)); }
 // setup screen can show it taking shape.
 function* buildWorldSteps(cfg) {
   // villages from before there were cliffs keep their valley as it was
-  World.gen = typeof cfg === 'object' ? { ...defaultGen(), cliffs: 'none', ...cfg } : defaultGen(cfg);
+  World.gen = typeof cfg === 'object' ? { ...defaultGen(), cliffs: 'none', relief: 'smooth', ...cfg } : defaultGen(cfg);
   const seed = World.gen.seed;
   World.seed = seed;
   World.land = null; World.grass = []; World.statics = []; World.flowers = []; World.pads = null; World.padNear = null; World._nh = null; World.cliffMask = null; World.cliff = null;
@@ -895,10 +896,20 @@ function landHeight(nh, x, y) {
   const span = north ? ry : MAP_H - ry;
   const away = clamp(Math.abs(y - ry) / span, 0, 1);
   const base = north ? 0.18 + away * 0.62 : 0.12 + away * 0.38;
-  const n = nh(x * 0.045, y * 0.045) - 0.5, n2 = nh(x * 0.12 + 40, y * 0.12 + 40) - 0.5;
+  let n = nh(x * 0.045, y * 0.045) - 0.5, n2 = nh(x * 0.12 + 40, y * 0.12 + 40) - 0.5;
   const valley = clamp((Math.abs(y - ry) - 2) / 9, 0, 1);
-  const k = gen('hills');
-  return clamp((base + n * 0.55 * k + n2 * 0.12 * k) * (0.25 + valley * 0.75), 0, 1);
+  const k = gen('hills'), rf = gen('relief');
+  let h = base;
+  if (rf) {
+    // broken ground: the big swells are pushed towards their tops and bottoms
+    // (flat shelves, steep sides between), ridgelines run where a second
+    // noise crosses its middle, and small knolls and hollows are scattered about
+    n = Math.sign(n) * Math.pow(Math.abs(n) * 2, 0.72) / 2;
+    const ridge = clamp(1 - Math.abs(nh(x * 0.05 + 300, y * 0.05 + 120) - 0.5) * 5, 0, 1);
+    const knoll = nh(x * 0.2 + 500, y * 0.2 + 70) - 0.5;
+    h += (ridge * ridge * 0.17 + Math.sign(knoll) * Math.pow(Math.abs(knoll) * 2, 1.6) * 0.07) * rf * k;
+  }
+  return clamp((h + n * 0.55 * k + n2 * 0.12 * k) * (0.25 + valley * 0.75), 0, 1);
 }
 function computeHeights(seed) {
   const { JW } = World.px, JH = (MAP_H * TILE) / 2;
@@ -934,8 +945,12 @@ function computeHeights(seed) {
 function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
   const { W, H, W2, type, type2, noise, JW, height, level1 } = World.px;
   const JH = H >> 1;
-  const bankCol = { spring: [96, 102, 50], summer: [92, 96, 46], autumn: [120, 98, 54], winter: [168, 180, 196] }[season];
   const lipCol = { spring: [170, 214, 110], summer: [160, 204, 100], autumn: [196, 190, 100], winter: [255, 255, 255] }[season];
+  // the earth of a terrace bank: its face, its darker strata, the stones in it and the roots over it
+  const EARTH = { spring: [118, 88, 54], summer: [112, 84, 50], autumn: [122, 90, 52], winter: [128, 118, 110] }[season];
+  const EARTH_D = { spring: [84, 60, 36], summer: [80, 58, 34], autumn: [88, 62, 36], winter: [92, 86, 84] }[season];
+  const FOOT = { spring: [48, 36, 24], summer: [46, 34, 22], autumn: [50, 36, 24], winter: [70, 72, 84] }[season];
+  const MOSS = { spring: [96, 140, 60], summer: [90, 132, 54], autumn: [124, 124, 58], winter: [236, 242, 250] }[season];
   const R0 = rect || { x0: 0, y0: 0, x1: W, y1: H };
   const hit = (x0, y0, x1, y1) => x1 >= R0.x0 && x0 <= R0.x1 && y1 >= R0.y0 && y0 <= R0.y1;
   const pal = GROUND_PAL[season];
@@ -970,23 +985,43 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
       const cx = px >> 1, cy = py >> 1;
       const hx0 = height[cy * JW + Math.max(0, cx - 3)], hx1 = height[cy * JW + Math.min(JW - 1, cx + 3)];
       const hy0 = height[Math.max(0, cy - 3) * JW + cx], hy1 = height[Math.min(JH - 1, cy + 3) * JW + cx];
-      const lit = clamp(((hx0 - hx1) * 0.7 + (hy0 - hy1)) * 9, -0.22, 0.22);
+      const lit = clamp(((hx0 - hx1) * 0.7 + (hy0 - hy1)) * 12, -0.3, 0.3);
       col = lit > 0 ? lerpC(col, [255, 255, 200], lit * 0.5) : lerpC(col, [10, 30, 20], -lit);
       const pj = py * W + px, lv = level1[pj];
       col = lerpC(col, winter ? [255, 255, 255] : [190, 220, 110], (lv - 1) * 0.05);
       if (World.cliffMask) { const cl = cliffPixel(px, py, lv, col, CLG); if (cl) return cl; }
-      const up = (k) => (py - k * 2 >= 0 ? level1[pj - k * 2 * W] : lv);
+      // A terrace bank is a face of bare earth under a lip of hanging grass,
+      // taller for a bigger drop: strata, stones and roots in it, a dark line
+      // and a shadow along its foot. Where the edge runs up and down the map
+      // the earth shows as a narrow rim down the side.
+      let k = 0, drop = 0;
+      for (let d = 1; d <= 18 && py - d >= 0; d++) { const l = level1[pj - d * W]; if (l > lv) { k = d; drop = l - lv; break; } }
+      const bh = drop ? 6 + drop * 3 + Math.floor(hash2(px >> 2, 31) * 2) : 0;
+      if (k && k <= bh + 4) {
+        const sx = hash2(px, py), strata = (k + Math.floor(hash2(px >> 3, 7) * 3)) % 4 === 0;
+        if (k <= 1 + (hash2(px, 77) < 0.5 ? 1 : 0)) col = lerpC(lipCol, [40, 70, 30], winter ? 0.05 : 0.25);
+        else if (k <= bh - 2) {
+          col = lerpC(EARTH, EARTH_D, clamp(nM(px * 0.3, py * 0.3) * 0.9 + (k / bh) * 0.5 - 0.2, 0, 1));
+          if (strata) col = lerpC(col, EARTH_D, 0.5);
+          if (sx < 0.06) col = winter ? [176, 180, 186] : [146, 136, 120];
+          else if (sx > 0.985) col = [184, 174, 150];
+          if (!winter && k <= 4 && hash2(px, 5) < 0.3 && hash2(px >> 1, py) < 0.7) col = [70, 50, 32];
+          if (!winter && k <= 3 && hash2(px >> 2, 13) < 0.3) col = lerpC(col, MOSS, 0.6);
+          if (winter && k <= 3) col = lerpC(col, [240, 244, 250], 0.7);
+        } else if (k <= bh) col = FOOT;
+        else col = lerpC(col, [20, 30, 16], 0.42 * (1 - (k - bh) / 5));
+        col.bank = k <= bh;
+        return col;
+      }
       const dn1 = py < H - 2 ? level1[pj + 2 * W] : lv;
-      let face = 0;
-      for (let k = 1; k <= 8; k++) if (up(k) > lv) { face = k; break; }
-      if (face && face <= 5) {
-        const tt = face / 5;
-        col = lerpC(col, bankCol, 0.8 - tt * 0.25);
-        if (!winter && hash2(px, py >> 1) < 0.22) col = lerpC(col, [90, 66, 40], 0.6);
-        if (face === 1 && hash2(px, 9) < 0.6) col = lerpC(col, lipCol, 0.5);
-      } else if (face) col = lerpC(col, [16, 34, 20], 0.28 - (face - 6) * 0.08);
-      else if (dn1 < lv) col = lerpC(col, lipCol, 0.45);
-      col.bank = face && face <= 5;
+      if (dn1 < lv) col = lerpC(col, lipCol, 0.45);
+      else {
+        for (let d = 1; d <= 2; d++) {
+          const l = (px + d < W ? level1[pj + d] : lv), r = (px - d >= 0 ? level1[pj - d] : lv);
+          if (l > lv || r > lv) { col = d === 1 ? lerpC(EARTH_D, FOOT, 0.5) : lerpC(col, FOOT, 0.35); col.bank = true; return col; }
+        }
+      }
+      col.bank = false;
       return col;
     }
     if (t === T.PATH) {
@@ -995,6 +1030,18 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
       if (notNear(px, py, T.PATH, 1) && !near(px, py, T.BRIDGE, 1)) return h < 0.3 && !winter ? lerpC(C.G1, C.G2, 0.4) : C.PR;
       col = lerpC(C.P1, C.P2, clamp(nM(px * 0.1 + 50, py * 0.1) * 0.65 + h * 0.4 - 0.05, 0, 1));
       if (notNear(px, py, T.PATH, 3)) col = lerpC(col, C.P1, 0.5);
+      // where the lane climbs a bank it is cut into the earth: a short ramp of
+      // worn steps, darker, with the bank's own earth showing at the top
+      const pj = py * W + px, lv = level1[pj];
+      for (let d = 1; d <= 12 && py - d >= 0; d++) {
+        if (level1[pj - d * W] <= lv) continue;
+        const bh = 6 + (level1[pj - d * W] - lv) * 3;
+        if (d > bh) break;
+        if (d <= 1) return lerpC(col, EARTH_D, 0.6);
+        col = lerpC(col, C.PR, 0.25 + (d / bh) * 0.2);
+        if ((d + (px >> 3)) % 3 === 0) col = lerpC(col, C.P2, 0.35);
+        return col;
+      }
       return col;
     }
     if (t === T.SOIL || t === T.WEED || t === T.FIELD) {
