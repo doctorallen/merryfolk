@@ -184,6 +184,8 @@ function buildWorld(seed) {
   // Pipe-weed field, barley fields
   for (let y = WEED_FIELD.y0; y <= WEED_FIELD.y1; y++) for (let x = WEED_FIELD.x0; x <= WEED_FIELD.x1; x++) tiles[tIdx(x, y)] = T.WEED;
   for (const f of FIELDS) for (let y = f.y0; y <= f.y1; y++) for (let x = f.x0; x <= f.x1; x++) if (tiles[tIdx(x, y)] !== T.PATH) tiles[tIdx(x, y)] = T.FIELD;
+  // the lie of the land: slope, sun, drainage, wetness and soil, for siting what grows where
+  computeLand(seed);
 
   World.block.fill(0);
   World.reserved.fill(0);

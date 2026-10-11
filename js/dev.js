@@ -12,7 +12,7 @@
 
 const DEV_KEY = 'merryfolk-dev';
 const Dev = {
-  on: false, tab: 'brain', overlay: { labels: true, paths: true, grid: false }, filter: 'all', paused: false,
+  on: false, tab: 'brain', overlay: { labels: true, paths: true, grid: false, land: 'off' }, filter: 'all', paused: false,
   events: [], seen: 0, fps: 60, refreshT: 0, built: false,
 };
 const DEV_CATS = ['decide', 'talk', 'story', 'family', 'jobs', 'homes', 'town', 'rift', 'weather', 'party', 'travel'];
@@ -54,6 +54,7 @@ function devBuild() {
       <label><input type="checkbox" id="dev-ov-labels"> labels</label>
       <label><input type="checkbox" id="dev-ov-paths"> paths</label>
       <label><input type="checkbox" id="dev-ov-grid"> grid &amp; lots</label>
+      <label>land <select id="dev-ov-land">${LAND_VIEWS.map((k) => `<option>${k}</option>`).join('')}</select></label>
       <span id="dev-fps"></span>
     </div>
     <div class="dev-body" id="dev-body"></div>`;
@@ -64,6 +65,8 @@ function devBuild() {
     const cb = $('dev-ov-' + k); cb.checked = Dev.overlay[k];
     cb.addEventListener('change', () => { Dev.overlay[k] = cb.checked; devSave(); });
   }
+  const ls = $('dev-ov-land'); ls.value = Dev.overlay.land || 'off';
+  ls.addEventListener('change', () => { Dev.overlay.land = ls.value; devSave(); });
   // clicks inside the body: links to villagers, filters, tools
   $('dev-body').addEventListener('click', (e) => {
     const t = e.target.closest('[data-v],[data-cat],[data-act]');
@@ -277,6 +280,15 @@ function devAct(act) {
 function devOverlay(octx, z, cx, cy, W, H) {
   if (!Dev.on) return;
   const sx = (x) => (x - cx) * z, sy = (y) => (y - cy) * z;
+  // the lie of the land: height, slope, sun, wetness, drainage or soil
+  if (Dev.overlay.land && Dev.overlay.land !== 'off' && World.land) {
+    const tx0 = Math.max(0, Math.floor(cx / 16)), ty0 = Math.max(0, Math.floor(cy / 16));
+    const tx1 = Math.min(MAP_W - 1, Math.ceil((cx + W / z) / 16)), ty1 = Math.min(MAP_H - 1, Math.ceil((cy + H / z) / 16));
+    for (let ty = ty0; ty <= ty1; ty++) for (let tx = tx0; tx <= tx1; tx++) {
+      const col = landColour(Dev.overlay.land, ty * MAP_W + tx);
+      if (col) { octx.fillStyle = col; octx.fillRect(sx(tx * 16), sy(ty * 16), 16 * z + 0.5, 16 * z + 0.5); }
+    }
+  }
   if (Dev.overlay.grid) {
     const tx0 = Math.max(0, Math.floor(cx / 16)), ty0 = Math.max(0, Math.floor(cy / 16));
     const tx1 = Math.min(MAP_W - 1, Math.ceil((cx + W / z) / 16)), ty1 = Math.min(MAP_H - 1, Math.ceil((cy + H / z) / 16));
