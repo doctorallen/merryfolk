@@ -96,7 +96,7 @@ function save() {
       villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
       archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
-      homes: World.homes.map((h) => ({ built: h.built, buildProg: h.buildProg, pantry: h.pantry, chilly: h.chilly, neon: !!h.neon, plots: h.plots.map((p) => [p.stage, p.prog]) })),
+      homes: World.homes.map((h) => ({ built: h.built, buildProg: h.buildProg, pantry: h.pantry, chilly: h.chilly, neon: !!h.neon, plots: h.plots.map((p) => [p.stage, p.prog]), crafts: h.crafts, collection: h.collection })),
       rifts: World.rifts, scars: World.riftScars, riftNext: Game.riftNext, riftsOn: Village.riftsOn, wayHome: Village.wayHome || 0, wayHomeTries: Village.wayHomeTries || 0,
       allot: World.allotments.map((a) => a.plots.map((p) => p.stage)), pens: World.pens.map((p) => p.tend),
       weed: World.weed.map((w) => w.stage), fields: World.fields.map((f) => f.plots.map((p) => p.stage)), herbs: World.herbBeds.map((p) => p.stage),
@@ -132,6 +132,7 @@ function load() {
     if (h.built && !home.built) { home.built = true; furnishHome(home); addHomeFlowers(home); }
     home.buildProg = h.buildProg || 0;
     home.pantry = Object.assign(emptyPantry(), h.pantry || {}); home.chilly = !!h.chilly; home.neon = !!h.neon;
+    home.crafts = h.crafts || {}; home.collection = h.collection || {};
     (h.plots || []).forEach(([s, p], j) => { if (home.plots[j]) { home.plots[j].stage = s; home.plots[j].prog = p; } });
   });
   Village.projects = Village.projects.filter((p) => p.kind !== 'home' || (World.homes[p.homeId] && !World.homes[p.homeId].built));
@@ -481,6 +482,23 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
         break;
       }
       case 'stick': { const x = HR[0] + 1; Q(x, HR[1] - 8, 2, SH - HR[1] + 7, '#7a5a3a'); Q(x, HR[1] - 8, 1, SH - HR[1] + 7, '#9a7a52'); Q(x - 1, HR[1] - 10, 4, 3, '#5a3a22'); break; }
+      case 'whittle': if (dir !== 'up') { const [x, y] = HR; Q(x - 4, y - 4, 5, 3, '#c9a46a'); Q(x - 4, y - 4, 5, 1, '#e0c08a'); Q(x + 1, y - 6, 1, 4, '#c8c8d0'); Q(x + 1, y - 2, 1, 2, '#5a3a22'); if (Math.sin(t * 5 + v.id) > 0.6) Q(x - 6, y + 2, 1, 1, '#e0c08a'); } break;
+      case 'knit': if (dir !== 'up') {
+        const yarn = ['#c84a6a', '#5a8ac8', '#7ab04c', '#e8b84a'][v.id % 4], [x, y] = HR;
+        Q(x - 12, y - 4, 11, 4, yarn); Q(x - 12, y - 4, 11, 1, shade(yarn, 0.25)); Q(x - 13, y - 8, 1, 7, '#d8d8e0'); Q(x, y - 8, 1, 7, '#d8d8e0');
+        Q(x - 8, y + 6, 4, 4, yarn);
+        break;
+      }
+      case 'easel': {
+        // the easel set up in front of them, and a brush in hand
+        const ex = SW + 1;
+        Q(ex + 1, SH - 26, 1, 26, '#7a5030'); Q(ex + 11, SH - 26, 1, 26, '#7a5030'); Q(ex + 6, SH - 30, 1, 30, '#5a3a22');
+        Q(ex, SH - 30, 13, 10, '#f4ead0'); Q(ex, SH - 30, 13, 1, '#7a5030'); Q(ex + 1, SH - 29, 11, 4, '#9fd4f2'); Q(ex + 1, SH - 25, 11, 3, '#5c8f3e');
+        if (Math.sin(t * 2 + v.id) > 0) Q(ex + 4, SH - 26, 2, 1, '#c84a3a');
+        Q(ex, SH - 20, 13, 2, '#8a6440');
+        if (dir !== 'up') { const [x, y] = HR; Q(x, y - 6, 1, 6, '#7a5030'); Q(x, y - 7, 1, 1, '#c84a3a'); }
+        break;
+      }
       case 'gadget': { const [x, y] = [HR[0] - 3, HR[1] - 4]; Q(x, y, 7, 5, '#2a2a32'); Q(x + 1, y + 1, 5, 2, Math.sin(t * 4 + v.id) > -0.3 ? expressed(v.genes).neon : '#1a4a50'); Q(x + 2, y + 4, 3, 1, '#4a4a52'); break; }
     }
   };

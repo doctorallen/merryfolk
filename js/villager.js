@@ -62,6 +62,7 @@ class Villager {
     this.born = o.born ?? 0;
     this.expecting = o.expecting ?? null;
     this.lastFood = o.lastFood ?? null;
+    this.hobbies = o.hobbies ?? null; this.hobbySkill = o.hobbySkill ?? {}; this.hobbyMat = o.hobbyMat ?? {}; this.birds = o.birds ?? 0;
     this.inside = null; this.task = null; this.path = null; this.pathI = 0; this.queue = [];
     this.facing = 'down'; this.pose = 'stand'; this.walkDist = 0; this.animT = Math.random() * 10;
     this.bubble = null; this.iconT = 0; this.lastAction = null; this.cool = {};
@@ -431,6 +432,8 @@ class Villager {
       chill *= 1.2 - g.hardiness * 0.5;
       // a warm woollen jumper helps
       if (Village.woollens && this.isGrown()) chill *= 0.7;
+      // or something a knitter in the family made
+      else if ((homeCrafts(this.home()).knitting || 0) >= 2) chill *= 0.8;
     }
     d.cold += (chill - d.cold) * rate * (chill > d.cold ? 0.35 : 0.6);
     // body chemistry: ale wears off, germs run their course, toxins pass
@@ -700,6 +703,7 @@ class Villager {
       foodLike: this.foodLike, rel: this.rel, love: this.love, skills: this.skills, edu: Math.round(this.edu * 1000) / 1000, eduFrom: this.eduFrom,
       tech: Math.round(this.tech * 1000) / 1000, visor: this.visor, lost: Math.round(this.lost * 1000) / 1000, memories: this.memories, job: this.job,
       playerJob: this.playerJob, wary: this.wary, pouch: this.pouch, stats: this.stats, born: this.born, expecting: this.expecting, lastFood: this.lastFood,
+      hobbies: this.hobbies, hobbySkill: this.hobbySkill, hobbyMat: this.hobbyMat, birds: this.birds,
     };
   }
 }

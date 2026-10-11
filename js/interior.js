@@ -30,7 +30,8 @@ const IP = (x, y, c) => IR(x, y, 1, 1, c);
 function interiorKey(h) {
   const res = residentsOf(h);
   return [h.id, h.neon ? 1 : 0, h.chilly ? 1 : 0, World.season, PANTRY_KINDS.map((k) => Math.min(12, h.pantry[k] || 0)).join('.'),
-    res.map((v) => `${v.id}${v.stage[0]}${v.spouse ?? ''}${v.job || ''}${v.isRiftborn() ? 'r' : ''}`).join(',')].join('|');
+    res.map((v) => `${v.id}${v.stage[0]}${v.spouse ?? ''}${v.job || ''}${v.isRiftborn() ? 'r' : ''}${hobbyAge(v) ? hobbiesOf(v).join('+') : ''}${v.birds ? Math.min(30, v.birds) : ''}`).join(','),
+    JSON.stringify(homeCrafts(h)), JSON.stringify(homeCollection(h))].join('|');
 }
 
 function interiorLayout(h) {
@@ -66,13 +67,18 @@ function interiorLayout(h) {
   rooms.push({ kind: 'parlour' }, { kind: 'hall' }, { kind: 'kitchen' }, { kind: 'pantry' });
   for (const b of right) rooms.push(b);
   if (study) rooms.push({ kind: 'study', variant: study, lost });
+  // hobby rooms: a workshop for the makers, a curio room for the collectors
+  const makes = (k) => res.some((v) => hasHobby(v, k)) || (homeCrafts(h)[k] || 0) > 0;
+  const workshop = ['carving', 'basketry', 'pottery', 'painting'].filter(makes);
+  if (workshop.length) rooms.push({ kind: 'workshop', crafts: workshop });
+  if (res.some((v) => hasHobby(v, 'collecting') || hasHobby(v, 'birdwatching')) || collectionTotal(h) >= 4) rooms.push({ kind: 'curio', birds: Math.max(0, ...res.map((v) => v.birds || 0)) });
   const kitchenSeats = (rs) => clamp(rs.filter((v) => v.stage !== 'baby').length, 2, 4);
   const hallI = rooms.findIndex((r) => r.kind === 'hall');
   let x = PAD;
   rooms.forEach((r, i) => {
     r.side = i < hallI ? -1 : i > hallI ? 1 : 0;
     r.w = r.kind === 'hall' ? 62 : r.kind === 'parlour' ? (h.grand ? 176 : 136) : r.kind === 'kitchen' ? 96 + kitchenSeats(res) * 20 + 6
-      : r.kind === 'pantry' ? 58 : r.kind === 'study' ? 90
+      : r.kind === 'pantry' ? 58 : r.kind === 'study' ? 90 : r.kind === 'workshop' ? 56 + r.crafts.length * 22 : r.kind === 'curio' ? 84
       : Math.max(96, 30 + r.beds.reduce((s, b) => s + b.w, 0) + 14 * (r.beds.length - 1) + 26);
     r.x0 = x; r.x1 = x + r.w; x = r.x1 + WT;
   });
@@ -94,7 +100,7 @@ function interiorLayout(h) {
   };
   // windows: as many as the hole has from outside, in the rooms that face front
   const want = Math.max(1, h.windows.length);
-  const order = rooms.filter((r) => r.kind === 'parlour' || r.kind === 'kitchen').concat(rooms.filter((r) => r.kind === 'bed' || r.kind === 'nursery' || r.kind === 'study'));
+  const order = rooms.filter((r) => r.kind === 'parlour' || r.kind === 'kitchen').concat(rooms.filter((r) => r.kind === 'bed' || r.kind === 'nursery' || r.kind === 'study' || r.kind === 'workshop'));
   let nw = 0;
   for (const r of order) if (nw < want) { r.win = true; nw++; }
   if (h.grand) rooms.find((r) => r.kind === 'parlour').win2 = true;
@@ -102,7 +108,7 @@ function interiorLayout(h) {
   for (const r of rooms) {
     // a lantern in each room, clear of the windows
     const cx = Math.round((r.x0 + r.x1) / 2);
-    r.lampX = r.kind === 'hall' ? r.x0 + 12 : L.wins.some((w) => w.room === r && Math.abs(w.x - cx) < 18) ? cx + (r.side < 0 ? 24 : -24) : cx;
+    r.lampX = r.kind === 'hall' ? r.x0 + 12 : r.kind === 'curio' ? r.x0 + 44 : L.wins.some((w) => w.room === r && Math.abs(w.x - cx) < 18) ? cx + (r.side < 0 ? 24 : -24) : cx;
     r.path = new Path2D();
     r.path.moveTo(r.x0, FLOOR_B + 3);
     for (let x = r.x0; x < r.x1; x++) { const t = L.top(r, x); r.path.lineTo(x, t); r.path.lineTo(x + 1, t); }
@@ -141,6 +147,7 @@ function placeRoom(L, r) {
       const a = add({ t: 'arm', x: hx + dx, col: L.neon ? ['#ff3aa8', '#3af0ff'][k] : ['#8a3a2a', '#3a5a3a', '#4a4a7a', '#7a5a2a'][(h.id + k) % 4] });
       a.seat = seat({ kind: 'arm', x: hx + dx, y: 104, item: a });
     }
+    if (L.res.some((v) => hasHobby(v, 'knitting'))) { add({ t: 'yarn', x: hx + 50 }); hot(hx + 46, 92, hx + 60, 104, () => `A basket of wool and needles. ${homeCrafts(h).knitting || 0} knitted things so far.`); }
     if (h.grand) { add({ t: 'books', x: r.x0 + 6, w: 22 }); add({ t: 'books', x: r.x1 - 28, w: 22 }); }
     else { add({ t: 'lamp', x: r.x0 + 10 }); add({ t: 'books', x: r.x1 - 20, w: 16 }); }
     if (r.win && !win(hx - 36, 52)) r.win = false;
@@ -199,6 +206,37 @@ function placeRoom(L, r) {
     if (r.lost) { add({ t: 'board', x: dx + 2 }); hot(dx, 38, dx + 38, 64, () => `Sketches of a city, a map of the rifts, red string everywhere. ${wayHomeWord()}`); }
     if (r.win && !win(r.x1 - 50, 50)) r.win = false;
     hot(r.x0, 66, r.x0 + 50, 104, () => r.variant === 'tinker' ? (L.neon ? 'A humming bench of salvaged rift-tech, wired into the hill.' : 'A workbench of gears, springs and half-mended things.') : r.variant === 'herbs' ? 'Herbs drying, a mortar and pestle, jars of remedies.' : 'A writing desk heaped with letters and stories.');
+  } else if (r.kind === 'workshop') {
+    r.name = r.crafts.length === 1 && r.crafts[0] === 'painting' ? 'The studio' : 'The workshop';
+    const C = homeCrafts(h);
+    let x = r.x0 + 6;
+    const makers = r.crafts.filter((k) => k !== 'painting');
+    if (makers.length) {
+      add({ t: 'workbench', x, carving: r.crafts.includes('carving') });
+      L.spots.bench = { x: x + 22, y: 104 };
+      hot(x, 50, x + 44, 104, () => `The workbench: chisels, knives and a vice${C.carving ? `. ${C.carving} carved animals so far` : ''}.`);
+      add({ t: 'craftshelf', x: x + 2, w: 40, carvings: C.carving || 0, pots: C.pottery || 0 });
+      x += 50;
+    }
+    if (r.crafts.includes('basketry')) { add({ t: 'baskets', x, n: Math.min(8, C.basketry || 0) }); hot(x, 80, x + 18, 104, () => `${C.basketry || 0} baskets, and a bundle of reeds soaking.`); x += 22; }
+    if (r.crafts.includes('pottery')) { add({ t: 'wheel', x }); L.spots.wheel = { x: x + 10, y: 104 }; hot(x, 80, x + 20, 104, () => `The potter's wheel. ${C.pottery || 0} pots fired so far.`); x += 22; }
+    if (r.crafts.includes('painting')) {
+      add({ t: 'easel', x, n: Math.min(4, C.painting || 0), seed: h.id });
+      L.spots.easel = { x: x + 8, y: 106 };
+      hot(x, 50, x + 20, 104, () => `An easel, and ${C.painting || 0} finished paintings of the valley.`);
+    }
+    if (r.win && !win(r.x1 - 16, 46)) r.win = false;
+  } else if (r.kind === 'curio') {
+    r.name = 'The curio room';
+    const Co = homeCollection(h);
+    add({ t: 'cabinet', x: r.x0 + 6, col: Co });
+    L.spots.cabinet = { x: r.x0 + 22, y: 106 };
+    hot(r.x0 + 6, 46, r.x0 + 40, 104, () => {
+      const parts = Object.keys(COLLECT_KINDS).filter((k) => Co[k]).map((k) => `${Co[k]} ${COLLECT_KINDS[k][Co[k] === 1 ? 0 : 1]}`);
+      return parts.length ? `The cabinet of curiosities: ${parts.join(', ')}.` : 'An empty cabinet, waiting for treasures.';
+    });
+    add({ t: 'frames', x: r.x0 + 48, flowers: Co.flowers || 0, butterflies: Co.butterflies || 0, low: !r.birds });
+    if (r.birds) { add({ t: 'birdchart', x: r.x0 + 46, n: r.birds }); hot(r.x0 + 44, 64, r.x0 + 78, 92, () => `A chart of the birds of the valley: ${r.birds} kinds spotted, each one sketched and named.`); }
   }
   // the trades of the household, hung on the wall
   if (r.kind === 'hall') {
@@ -621,6 +659,102 @@ function drawItem(L, it, part, t = 0) {
       for (let s = 0; s < 3; s++) { const sy = b - 32 + s * 12; IR(x + 1, sy, 22, 2, p.l); for (let k = 0; k < 4; k++) { IR(x + 2 + k * 5, sy - 6, 4, 6, ['#5a8a6a', '#8a5a7a', '#a88a3a', '#5a6a9a'][(k + s) % 4]); IR(x + 2 + k * 5, sy - 7, 4, 1, '#c8c0b0'); } }
       return;
     }
+    case 'workbench': {
+      if (part !== 'back') return;
+      const w = 44;
+      // a pegboard of tools
+      IR(x + 2, b - 52, 40, 20, p.d); IR(x + 3, b - 51, 38, 18, '#a8865a');
+      for (let yy = 0; yy < 18; yy += 4) for (let xx = 0; xx < 38; xx += 4) IP(x + 4 + xx, b - 50 + yy, '#7a5a3a');
+      IR(x + 7, b - 49, 1, 12, '#7a5030'); IR(x + 6, b - 49, 3, 3, '#8a8a94');
+      IR(x + 13, b - 48, 1, 10, '#7a5030'); IR(x + 13, b - 39, 2, 3, '#c8c8d0');
+      IR(x + 19, b - 49, 7, 4, '#8a8a94'); IR(x + 22, b - 45, 1, 8, '#7a5030');
+      IR(x + 30, b - 48, 8, 1, '#c8c8d0'); IR(x + 30, b - 47, 2, 6, '#7a5030');
+      // the bench, a vice, and something half-made
+      IR(x, b - 18, w, 3, p.l); IR(x, b - 18, w, 1, p.h); IR(x + 1, b - 15, 3, 15, p.d); IR(x + w - 4, b - 15, 3, 15, p.d); IR(x + 4, b - 6, w - 8, 2, p.m);
+      IR(x + w - 10, b - 22, 6, 4, '#5a5a64'); IR(x + w - 9, b - 23, 4, 1, '#7a7a84');
+      if (it.carving) { IR(x + 10, b - 23, 6, 5, '#c9a46a'); IR(x + 11, b - 25, 3, 2, '#c9a46a'); IP(x + 12, b - 24, '#2a1c12'); }
+      for (let k = 0; k < 9; k++) IP(x + 6 + ((k * 13) % 32), b + 2 + (k % 3), '#d8b47a');
+      return;
+    }
+    case 'craftshelf': {
+      if (part !== 'back') return;
+      const w = it.w;
+      for (const sy of [b - 66, b - 58]) { IR(x, sy, w, 2, p.l); IR(x, sy + 2, w, 1, p.d); }
+      // carvings on the upper shelf, pots on the lower
+      const woods = ['#c9a46a', '#a8742a', '#8a5a3a', '#d8b47a'];
+      for (let k = 0; k < Math.min(9, it.carvings); k++) { const cx2 = x + 2 + k * 4, c = woods[k % 4]; IR(cx2, b - 69, 3, 3, c); IP(cx2 + (k % 2 ? 2 : 0), b - 70, c); }
+      const glaze = ['#5a7aa8', '#a85a3a', '#7a9a5a', '#c8b07a', '#8a5a8a'];
+      for (let k = 0; k < Math.min(8, it.pots); k++) { const cx2 = x + 2 + k * 5, c = glaze[k % 5]; IR(cx2, b - 62, 4, 4, c); IR(cx2 + 1, b - 63, 2, 1, c); IP(cx2 + 1, b - 61, shade(c, 0.3)); }
+      return;
+    }
+    case 'baskets': {
+      if (part !== 'back') return;
+      for (let k = 0; k < it.n; k++) {
+        const bx = x + (k % 2) * 7 + (k >= 4 ? 3 : 0), by = b - 6 - Math.floor(k / 2) * 5;
+        IR(bx, by, 10, 5, '#b88a4a'); for (let j = 0; j < 10; j += 2) IP(bx + j, by + 1 + (j % 4 ? 1 : 0), '#8a6230'); IR(bx, by, 10, 1, '#d8aa6a');
+      }
+      // a bundle of reeds
+      for (let k = 0; k < 6; k++) IR(x + 14 + k, b - 26 + (k % 2) * 2, 1, 24, k % 2 ? '#a8a85a' : '#8a8a4a');
+      return;
+    }
+    case 'wheel': {
+      if (part !== 'back') return;
+      IR(x + 3, b - 10, 14, 10, p.m); IR(x + 3, b - 10, 14, 1, p.h);
+      IR(x, b - 12, 20, 2, '#6a6a74'); IR(x + 8, b - 16, 5, 4, '#a8684a'); IR(x + 9, b - 17, 3, 1, '#b8785a');
+      IR(x + 15, b - 4, 7, 4, p.d); // the stool
+      return;
+    }
+    case 'easel': {
+      if (part !== 'back') return;
+      IR(x + 2, b - 44, 1, 44, p.m); IR(x + 13, b - 44, 1, 44, p.m); IR(x + 7, b - 40, 1, 40, p.d);
+      landscape(x, b - 42, 16, 12, it.seed);
+      IR(x, b - 29, 16, 2, p.l);
+      // finished canvases leaning on the wall, and one or two hung up
+      for (let k = 0; k < it.n; k++) landscape(x + 18 + k * 2, b - 12 - k, 10, 12 - k, it.seed + k + 1);
+      for (let k = 0; k < Math.min(2, it.n); k++) { IR(x - 1 + k * 16, b - 62, 16, 12, '#7a5030'); landscape(x + k * 16, b - 61, 14, 10, it.seed + 10 + k); }
+      return;
+    }
+    case 'cabinet': {
+      if (part !== 'back') return;
+      const w = 34, C = it.col;
+      IR(x, b - 54, w, 54, p.d); IR(x + 2, b - 52, w - 4, 46, shade(L.wall, -0.28));
+      const rows = [['stones', '#8a8a84', '#b8b8b0'], ['shells', '#c8a878', '#e8d8b8'], ['feathers', '#5a7aa8', '#e8e8e0'], ['conkers', '#7a3a1a', '#a85a2a'], ['coins', '#c8a03a', '#f8e08a'], ['trinkets', '#3af0ff', '#ff3aa8']];
+      rows.forEach(([k, c1, c2], i) => {
+        const sy = b - 46 + i * 7;
+        IR(x + 2, sy + 4, w - 4, 1, p.l);
+        const n = Math.min(10, C[k] || 0);
+        for (let j = 0; j < n; j++) { IR(x + 3 + j * 3, sy + 1, 2, 3, j % 2 ? c1 : c2); }
+      });
+      // the glass, catching the light
+      X.globalAlpha = 0.1; IR(x + 2, b - 52, w - 4, 46, '#e8f4ff'); X.globalAlpha = 1;
+      for (let k = 0; k < 10; k++) IP(x + 5 + k, b - 50 + k, 'rgba(255,255,255,0.5)');
+      IR(x + w / 2 - 1, b - 52, 1, 46, p.d); IR(x, b - 6, w, 6, p.m); IP(x + w / 2 + 2, b - 30, '#b8902a');
+      return;
+    }
+    case 'frames': {
+      if (part !== 'back') return;
+      const f = (fx, fy, kind, n) => {
+        IR(fx, fy, 12, 12, '#6a4428'); IR(fx + 1, fy + 1, 10, 10, '#f4ead0');
+        if (!n) return;
+        if (kind === 'flowers') { IR(fx + 5, fy + 4, 1, 6, '#5c8f3e'); for (const [dx, dy, c] of [[4, 3, '#e04a5a'], [6, 3, '#e04a5a'], [5, 2, '#f2d24a'], [3, 6, '#5c8f3e']]) IP(fx + dx, fy + dy, c); }
+        else { for (const [dx, dy] of [[3, 4], [4, 5], [7, 4], [6, 5], [3, 6], [7, 6]]) IP(fx + dx, fy + dy, '#e8742a'); IR(fx + 5, fy + 3, 1, 5, '#2a1c12'); }
+      };
+      const fy = it.low ? 64 : 54;
+      f(x, fy, 'flowers', it.flowers); f(x + 15, fy, 'butterflies', it.butterflies);
+      return;
+    }
+    case 'birdchart': {
+      if (part !== 'back') return;
+      IR(x - 2, 70, 34, 22, '#6a4428'); IR(x - 1, 71, 32, 20, '#f4ead0');
+      for (let k = 0; k < Math.min(24, it.n); k++) { const bx = x + 1 + (k % 8) * 4, by = 73 + Math.floor(k / 8) * 6; IR(bx, by + 1, 3, 2, ['#8a5a3a', '#5a6a8a', '#c84a3a', '#6a6a5a'][k % 4]); IP(bx + 2, by, '#2a1c12'); }
+      return;
+    }
+    case 'yarn': {
+      if (part !== 'back') return;
+      IR(x, b - 6, 10, 6, '#b88a4a'); IR(x, b - 6, 10, 1, '#d8aa6a');
+      disc(X, x + 3, b - 7, 2, '#c84a6a'); disc(X, x + 7, b - 8, 2, '#5a8ac8'); IR(x + 5, b - 13, 1, 7, '#d8d8e0'); IR(x + 7, b - 12, 1, 6, '#d8d8e0');
+      return;
+    }
     case 'board': {
       if (part !== 'back') return;
       const y = 38;
@@ -637,6 +771,17 @@ function drawItem(L, it, part, t = 0) {
       return;
     }
   }
+}
+
+// A little landscape in a frame: sky, the Hill, and a hobbit-hole door.
+function landscape(x, y, w, hh, seed) {
+  const r = mulberry32(seed * 977 + 13);
+  const sky = ['#9fd4f2', '#f2c89a', '#c8d8e8', '#b8a8d8'][Math.floor(r() * 4)];
+  IR(x, y, w, hh, '#7a5030'); IR(x + 1, y + 1, w - 2, hh - 2, sky);
+  const hz = y + 1 + Math.floor((hh - 2) * (0.45 + r() * 0.2));
+  for (let k = 1; k < w - 1; k++) { const top = hz - Math.round(Math.sin((k / w) * Math.PI) * (2 + r() * 1.5)); IR(x + k, top, 1, y + hh - 1 - top, k % 3 ? '#5c8f3e' : '#4a7a32'); }
+  if (r() < 0.6) { const dx = x + 2 + Math.floor(r() * (w - 6)); IP(dx, hz, '#c84a3a'); }
+  if (r() < 0.5) IP(x + w - 4, y + 2, '#fff2a0');
 }
 
 // The tools of the household's trades, hung up in the hall.
@@ -718,7 +863,7 @@ function portraitSprite(a) {
 // Where each person inside is, and what they're doing
 // ---------------------------------------------------------------------------
 const SIT_TASKS = new Set(['eat_home', 'eat_item', 'ale_item']);
-const ARM_TASKS = new Set(['tea', 'read', 'read_item', 'smoke', 'leaf_item', 'nap', 'remedy_item']);
+const ARM_TASKS = new Set(['tea', 'read', 'read_item', 'smoke', 'leaf_item', 'nap', 'remedy_item', 'hobby_knitting']);
 function spotFor(v, L, taken) {
   const id = v.task ? v.task.a.id : null;
   const free = (list) => list.find((s) => !taken.has(s));
@@ -738,6 +883,11 @@ function spotFor(v, L, taken) {
   if (ARM_TASKS.has(id)) { const s = free(L.seats.filter((s) => s.kind === 'arm')) || free(L.seats.filter((s) => s.kind === 'chair')); if (s) return sitAt(s); }
   if ((id === 'seek_home' || id === 'rift_lost' || id === 'school') && L.spots.desk && !taken.has(L.spots.desk)) return sitAt(L.spots.desk);
   if (id === 'bake_home' && L.spots.oven) return { x: L.spots.oven.x, y: 104, pose: 'work', face: 'up' };
+  // hobbies at home: at the bench, the wheel, the easel or the cabinet
+  if ((id === 'hobby_carving' || id === 'hobby_basketry') && L.spots.bench) return { x: L.spots.bench.x, y: 104, pose: 'work', face: 'up' };
+  if (id === 'hobby_pottery' && (L.spots.wheel || L.spots.bench)) { const s = L.spots.wheel || L.spots.bench; return { x: s.x, y: 104, pose: 'work', face: 'up' }; }
+  if (id === 'hobby_painting' && L.spots.easel) return { x: L.spots.easel.x, y: 106, pose: 'work', face: 'up' };
+  if (id === 'hobby_collecting' && L.spots.cabinet) return { x: L.spots.cabinet.x, y: 106, pose: 'stand', face: 'up' };
   if (id === 'tend_baby' && L.cradles.length) { const c = L.cradles[0]; return { x: c.x + c.w + 6, y: 106, pose: 'stand', face: 'left' }; }
   if (id === 'nurse') { const pt = v.task.target && v.task.target.patient; const bed = pt && L.beds.find((b) => b.who.includes(pt.id)); if (bed) return { x: bed.x + bed.w + 6, y: 106, pose: 'stand', face: 'left' }; }
   if (id === 'deliver' && L.spots.hall) return { x: L.spots.hall.x, y: 106, pose: 'stand', face: 'up' };

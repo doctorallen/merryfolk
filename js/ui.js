@@ -311,7 +311,7 @@ function panelNature(v) {
 
 function panelMind(v) {
   let h = '<h3>Habits (learned)</h3>';
-  const keys = HABIT_KEYS.filter((a) => v.canDo(ACTIONS[a]));
+  const keys = HABIT_KEYS.filter((a) => v.canDo(ACTIONS[a]) && (!ACTIONS[a].hobby || hasHobby(v, ACTIONS[a].hobby)));
   const ranked = keys.map((a) => [a, v.weights[a] * (v.genes.taste[a] || 1)]).sort((a, b) => b[1] - a[1]);
   h += '<div class="habits">';
   for (const [a, w] of ranked.slice(0, 4)) h += `<div class="habit"><span>${ACTION_NAMES[a]}</span>${bar(w / 2.4, 'good')}</div>`;
@@ -324,6 +324,7 @@ function panelMind(v) {
     if (v.wary > 0.1) h += `<div><b>Has learned</b> to be wary of toadstools${v.wary > 0.5 ? ' (very!)' : ''}</div>`;
     h += '</div>';
   }
+  if (hobbyAge(v)) h += `<h3>Hobbies</h3><ul class="edu-fx">${hobbyLines(v).map((t) => `<li>${t}</li>`).join('')}</ul>`;
   const lvl = eduLevel(v.edu);
   h += `<h3>Education</h3><div class="drive"><span class="dl">${lvl[1]}</span>${bar(v.edu, 'good')}</div>`;
   h += `<div class="likes"><div><b>Speaks</b> ${{ baby: 'in babbles and gurgles', toddler: 'in toddler talk, a word or two at a time', child: 'like a chatty little one', bright: 'like a bright, bookish little one', plain: 'plainly, in good honest words', common: 'like most folk in the Shire', fine: 'rather grandly, quoting books' }[register(v)]}${v.techTier >= 2 ? ', thick with rift-talk' : v.techTier === 1 ? ', with a sprinkle of rift-talk' : ''}</div>`;
