@@ -1,0 +1,13 @@
+#!/bin/sh
+# Stamps js/version.js with the next sequential build number (the number of
+# commits including this one) and today's date, so every commit carries its
+# own version and the game shows it in the corner.
+n=$(( $(git rev-list --count HEAD 2>/dev/null || echo 0) + 1 ))
+d=$(date -u +%Y-%m-%d)
+cat > js/version.js <<EOV
+'use strict';
+// The build stamp shown in the corner. Written by .githooks/pre-commit on
+// every commit: v<number of commits> and the date.
+const BUILD_INFO = 'v$n · $d';
+EOV
+git add js/version.js

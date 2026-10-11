@@ -128,4 +128,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 
 ## Deployment
 
+Every commit is stamped with a sequential version (v1, v2, …) by `.githooks/pre-commit`, which writes `js/version.js`; the game shows it in the bottom-right corner. After cloning, run `git config core.hooksPath .githooks` once to turn the hook on.
+
+
 Every push to `main` runs `.github/workflows/pages.yml`. It checks the JavaScript syntax and that every script in `index.html` exists, then publishes `index.html`, `css/` and `js/` to GitHub Pages. Pull requests run the checks without deploying.
