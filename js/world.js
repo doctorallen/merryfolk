@@ -365,12 +365,15 @@ function* buildWorldSteps(cfg) {
     addStatic(benchImg, bx * 16 + 8, ty * 16 + 12, { sortBias: -1 });
     World.benches.push(makeSpot(bx * 16 + 8, ty * 16 + 12, 'down', 'sit', 'bench')); res(tx, ty);
   }
-  const lampImg = makeLampPost();
+  const lampImg = makeLampPost(false), lampLit = makeLampPost(true);
   for (const [lx, ly] of [[61.5, 25], [66.5, 27.5], [62.4, 33.5], [66.3, 39.5], [66.4, 45.4], [78.6, 45], [64.6, 17.6], [62.6, 51], [65.6, 59.5],
     [62.6, 69.5], [56.5, 29], [80.6, 28.6], [24.5, 31.5], [47, 21], [91, 24.6], [101, 37.6], [27.6, 51.6], [100.5, 59.6], [83.6, 43.5]]) {
     const tx = Math.floor(lx), ty = Math.floor(ly - 0.5);
     if (World.block[tIdx(tx, ty)] || tileAt(tx, ty) === T.WATER || tileAt(tx, ty) === T.HILL) continue;
-    addStatic(lampImg, lx * 16, ly * 16, { snow: true }); World.lamps.push({ x: lx * 16, y: ly * 16 - 22 }); blk(tx, ty);
+    const st = addStatic(lampImg, lx * 16, ly * 16, { snow: true });
+    st.alt = st.baseAlt = lampLit;
+    World.lamps.push({ x: lx * 16, y: ly * 16 - 22, footX: lx * 16 + (walkable(tx + 1, ty) ? 9 : -9), footY: ly * 16 + 2, st, lit: false, litAt: 0 });
+    blk(tx, ty);
   }
 
   // --- Story circle beneath an old oak ---

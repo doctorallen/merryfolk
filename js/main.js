@@ -92,7 +92,7 @@ function newVillage() {
 function save() {
   try {
     const data = {
-      v: 2, world: World.gen, time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
+      v: 2, world: World.gen, lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
       villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
       archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
@@ -116,6 +116,7 @@ function load() {
   try { data = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { return false; }
   if (!data || data.v !== 2 || !data.villagers || !data.villagers.length) return false;
   Game.time = data.time; NEXT_ID = data.nextId || 1;
+  (data.lamps || []).forEach((on, i) => { const l = World.lamps[i]; if (l) { l.lit = !!on; l.litAt = Game.time - 60; l.st.useAlt = l.lit; } });
   Game.weather = data.weather || 'clear'; Game.raining = Game.weather === 'rain' || Game.weather === 'storm'; Game.rainUntil = data.rainUntil || 0;
   Game.party = Object.assign({ on: false, until: 0, planned: null, reason: '' }, data.party || {});
   Game.archive = data.archive || {}; Game.away = data.away || []; Game.stats = data.stats || {}; Game.census = data.census || []; Game.lastTraveller = data.lastTraveller ?? -9;
@@ -615,7 +616,8 @@ function collectLights() {
     L.push({ x: b.left + b.w / 2, y: b.bottom - 24, r: 44, a: 0.8, warm: true });
   }
   riftLights(L);
-  World.lamps.forEach((l, i) => L.push({ x: l.x, y: l.y + 2, r: 46 * (0.96 + Math.sin(tReal * 7 + i) * 0.04), a: 0.95, warm: true }));
+  // only the lamps the lamplighter has lit, brightening as the wick takes
+  World.lamps.forEach((l, i) => { if (l.lit) L.push({ x: l.x, y: l.y + 2, r: 46 * (0.96 + Math.sin(tReal * 7 + i) * 0.04) * Math.min(1, 0.4 + (Game.time - l.litAt) / 8), a: 0.95 * Math.min(1, 0.3 + (Game.time - l.litAt) / 6), warm: true }); });
   if (Game.party.on) {
     for (const p of World.partyPoles) L.push({ x: p.x, y: p.y + 8, r: 42, a: 0.85, col: '#ffcf70' });
     L.push({ x: PARTY.danceX * 16 + 8, y: PARTY.danceY * 16, r: 90, a: 0.9, col: '#ffcf70' });

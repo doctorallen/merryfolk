@@ -126,7 +126,7 @@ function assignJobs(announce = true) {
       if (v.stage === 'elder' && j !== 'storyteller' && v.age > ELDER_DAYS * 1.2) continue;
       const n = need(j);
       // the trades that only want one or two never take on extra hands
-      if (n <= 0 && ['storyteller', 'herbalist', 'postie', 'innkeeper', 'tinker', 'nanny'].includes(j)) continue;
+      if (n <= 0 && ['storyteller', 'herbalist', 'postie', 'innkeeper', 'tinker', 'nanny', 'lamplighter'].includes(j)) continue;
       const s = jobFit(v, j) + (n > 0 ? 30 + n * 10 : -25 + n * 10);
       if (s > bs) { bs = s; best = j; }
     }

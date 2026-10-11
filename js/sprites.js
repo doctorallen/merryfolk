@@ -1063,11 +1063,13 @@ function makeTable() {
   return outlineCanvas(c, OUTLINE);
 }
 
-function makeLampPost() {
+// An oil lamp on a post: dark glass until the lamplighter has been round.
+function makeLampPost(lit = false) {
   const [c, x] = makeCanvas(8, 26);
   x.fillStyle = '#3a2a1a'; x.fillRect(3, 6, 2, 19); x.fillRect(1, 24, 6, 2);
   x.fillStyle = '#2a1c12'; x.fillRect(1, 0, 6, 7);
-  x.fillStyle = '#e8c86a'; x.fillRect(2, 2, 4, 4);
+  if (lit) { x.fillStyle = '#ffd860'; x.fillRect(2, 2, 4, 4); x.fillStyle = '#fff6c8'; x.fillRect(3, 3, 2, 2); }
+  else { x.fillStyle = '#5a6066'; x.fillRect(2, 2, 4, 4); x.fillStyle = '#8a9298'; x.fillRect(2, 2, 1, 2); }
   return c;
 }
 
