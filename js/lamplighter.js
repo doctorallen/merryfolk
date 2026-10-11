@@ -98,8 +98,9 @@ ACTION_NAMES.work_lamps = 'Lighting the lamps';
       t._passT = (t._passT ?? 0) - dt;
       if (t._passT <= 0) {
         t._passT = 0.5;
-        const round = t.target.round, cur = t.target.lamp;
-        const by = lampsToDo(round).filter((l) => l !== cur && dist(this.x, this.y, l.footX, l.footY) < 56)
+        const round = t.target.round, cur = t.target.lamp, dCur = dist(this.x, this.y, cur.footX, cur.footY);
+        // only one nearer than where they're headed, or two lamps side by side would have them turning back and forth all night
+        const by = lampsToDo(round).filter((l) => l !== cur && dist(this.x, this.y, l.footX, l.footY) < Math.min(56, dCur))
           .sort((a, b) => dist(this.x, this.y, a.footX, a.footY) - dist(this.x, this.y, b.footX, b.footY))[0];
         if (by && this.repathTo(by.footX, by.footY)) {
           if (cur.claimed === this.id) cur.claimed = null;
