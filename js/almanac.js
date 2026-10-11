@@ -77,7 +77,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (announce && World.season !== before && Game.started) {
       const rep = almanacReport();
       Game.almanac = almanacSnapshot();
-      if (rep) setTimeout(() => showAlmanac(rep), 30);
+      if (rep) setTimeout(() => queueMoot(() => showAlmanac(rep), 'almanac'), 30);
     }
     if (!Game.almanac) Game.almanac = almanacSnapshot();
     return r;

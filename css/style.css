@@ -759,3 +759,9 @@ body.building #panel { display: none !important; }
 body.building #minimap { bottom: calc(var(--hud-bottom) + 4px); }
 #panel:not([hidden]) ~ #minimap { display: none; }
 @media (max-width: 760px) { #minimap { display: none; } }
+
+.pill.petition { background: #f2e2a8; color: #5a3a12; }
+.facs { display: grid; gap: 3px; margin-bottom: 4px; }
+.fac { display: grid; grid-template-columns: minmax(0, 1fr) 110px 70px; gap: 8px; align-items: center; font-size: 14px; }
+.fac .bar { display: block; width: 100%; }
+.moot-opt.later { background: transparent; border-style: dashed; }

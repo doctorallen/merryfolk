@@ -17,6 +17,13 @@ function measureHud() {
   if (bottom) root.style.setProperty('--hud-bottom', Math.round(window.innerHeight - bottom.getBoundingClientRect().top + 8) + 'px');
 }
 
+// --- Dialogs take turns: a Moot, a petition and the Almanac never trample each other ---
+const MootQ = [];
+function queueMoot(fn, tag) { if ($('moot').hidden) { fn(); return; } if (tag) for (let i = MootQ.length - 1; i >= 0; i--) if (MootQ[i].tag === tag) MootQ.splice(i, 1); fn.tag = tag; MootQ.push(fn); }
+window.addEventListener('DOMContentLoaded', () => {
+  new MutationObserver(() => { if ($('moot').hidden && MootQ.length) setTimeout(() => { if ($('moot').hidden && MootQ.length) MootQ.shift()(); }, 400); }).observe($('moot'), { attributes: true, attributeFilter: ['hidden'] });
+});
+
 // --- Toasts: a queue below the top bar ----------------------------------------
 const ToastQ = [];
 function showToasts() {

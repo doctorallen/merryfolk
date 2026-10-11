@@ -152,6 +152,18 @@ The toolbar's gifts come out of somewhere:
 
 Fireworks in the party field start a party at most once a night.
 
+### Petitions and the village's interests
+
+Every couple of days one of the village's interests brings a petition to the Steward:
+- **The farmers:** plough a new field? all hands to the harvest for a day?
+- **The craftsfolk:** fell the old copse for timber? a brewing contest with Store barley? a trade pact with Bree for a Sunday caravan?
+- **The elders:** a quiet hour with no hammering? longer school hours?
+- **The young folk:** a dance every Highday?
+- **The rift-folk:** neon lights in the square, from salvage?
+- **The little ones:** a swing on the party tree?
+
+Each is a real choice with a cost and a benefit, and each pleases some and disappoints others. A 📜 Petition chip pulses in the top bar until you answer; you can think it over, but leave it a day and it's taken as a no. How each interest feels about the Steward (*devoted*, *pleased*, *neutral*, *grumbling*, *fed up*) is shown on the Steward's Desk. Folk whose interest is listened to are cheerful about it; those who feel ignored grumble. Moots, petitions and the Almanac wait their turn rather than interrupting each other.
+
 ### Charters, renown and the eras of Thistledown
 
 The **coin pill** (pennies and the village's rank) in the top bar opens the **Charter** tab.
@@ -302,6 +314,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/illness.js` | Flu (laid up abed), sprained ankles, and friends bringing soup |
 | `js/almanac.js` | The seasonal Almanac report: population, contentment, food, coin, renown, stories and advice |
+| `js/petitions.js` | Petitions from the village's interests (choices with trade-offs) and their standing with the Steward |
 | `js/production.js` | Player-laid fields, orchards, woodlots and hives; soil-based crop yields; the minimap |
 | `js/economy.js` | The Economy board, chain bottlenecks, building-works priority, hunger slowing work, and unhappy folk moving to Bree |
 | `js/tidy.js` | Unique names, family surnames, and the morning digest of growing-up news |
