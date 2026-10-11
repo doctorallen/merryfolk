@@ -524,14 +524,16 @@ function buildWorld(seed) {
     for (const [tx, ty] of treeAt) if (Math.abs(tx - x) <= 2 && Math.abs(ty - y) <= 2) trees++;
     if (trees >= 2) woodsCands.push([x, y, trees]);
   }
-  woodsCands.sort(() => rng() - 0.5);
+  // mushrooms like it damp and shady; herbs like sunny, dry ground at the woods' edge
+  const damp = (x, y) => landAt('moist', x, y) * 1.5 + (landAt('soil', x, y) === SOIL.CLAY ? 0.3 : 0) + rng() * 0.4;
+  woodsCands.sort((a, b) => damp(b[0], b[1]) - damp(a[0], a[1]));
   const farFrom = (list, x, y, d) => !list.some((m) => Math.abs(m.tx - x) < d && Math.abs(m.ty - y) < d);
   for (const [x, y] of woodsCands) {
     if (World.mushrooms.length < 22 && farFrom(World.mushrooms, x, y, 6)) {
       World.mushrooms.push({ tx: x, ty: y, x: x * 16 + 8, y: y * 16 + 12, amount: 2 + Math.floor(rng() * 2), regrow: 0, claimed: null, toad: rng() < 0.3 });
       continue;
     }
-    if (World.wildHerbs.length < 14 && farFrom(World.wildHerbs, x, y, 7) && farFrom(World.mushrooms, x, y, 2)) {
+    if (World.wildHerbs.length < 14 && farFrom(World.wildHerbs, x, y, 7) && farFrom(World.mushrooms, x, y, 2) && landAt('sun', x, y) > 0.5 && landAt('moist', x, y) < 0.45) {
       World.wildHerbs.push({ tx: x, ty: y, x: x * 16 + 8, y: y * 16 + 12, amount: 2, regrow: 0, claimed: null });
     }
   }
@@ -549,12 +551,7 @@ function buildWorld(seed) {
   plantNature(rng, addStatic, blk);
 
   // --- Decorative wildflowers ---
-  for (let k = 0; k < 300; k++) {
-    const x = Math.floor(rng() * MAP_W), y = Math.floor(rng() * MAP_H);
-    if (tiles[tIdx(x, y)] !== T.GRASS && tiles[tIdx(x, y)] !== T.LAWN) continue;
-    if (World.block[tIdx(x, y)]) continue;
-    World.flowers.push({ x: x * 16 + Math.floor(rng() * 8) + 4, y: y * 16 + Math.floor(rng() * 8) + 10, seed: Math.floor(rng() * 9999), ground: true });
-  }
+  plantWildflowers(rng);
   for (const h of World.homes) if (h.built) addHomeFlowers(h);
 
   // --- Ducks ---
@@ -1010,9 +1007,12 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
     const patches = {};
     for (const f of World.flowers) {
       if (!hit(f.x - 10, f.y - 10, f.x + 10, f.y + 10)) continue;
-      if (season === 'autumn' && f.ground && (f.seed % 3)) continue;
-      const k = f.seed;
-      ctx.drawImage(hd(patches[k] || (patches[k] = makeFlowerPatch(k))), (f.x - 9 - org.x) * GS, (f.y - 10 - org.y) * GS);
+      // wild kinds only show in their season; the old mixed patches thin out in autumn
+      if (f.kind && FLOWER_KINDS[f.kind] && !FLOWER_KINDS[f.kind].seasons.includes(season)) continue;
+      if (!f.kind && season === 'autumn' && f.ground && (f.seed % 3)) continue;
+      const k = (f.kind || '') + f.seed;
+      const img = patches[k] || (patches[k] = makeFlowerPatch(f.seed, f.kind));
+      ctx.drawImage(hd(img), (f.x - 9 - org.x) * GS, (f.y - img.height + 2 - org.y) * GS);
     }
   }
 }

@@ -123,44 +123,114 @@ function makeRock(seed, size) {
   return outlineCanvas(c, '#2e2a26');
 }
 
-// Scatters long grass, reeds and rocks over the open country, once the map
-// and its trees are laid out.
+// What's around a tile, for siting things by habitat.
+function habitat(x, y, treeNear) {
+  const tiles = World.tiles;
+  const near = (r, test) => { for (let j = y - r; j <= y + r; j++) for (let i = x - r; i <= x + r; i++) if (inMap(i, j) && test(tiles[tIdx(i, j)], i, j)) return true; return false; };
+  const shade = near(1, (t, i, j) => treeNear.has(i + ',' + j));
+  return {
+    shade,
+    edge: !shade && near(3, (t, i, j) => treeNear.has(i + ',' + j)),
+    field: near(1, (t) => t === T.FIELD || t === T.WEED || t === T.SOIL),
+    road: near(1, (t) => t === T.PATH || t === T.COBBLE || t === T.BRIDGE),
+    moist: landAt('moist', x, y), soil: landAt('soil', x, y), sun: landAt('sun', x, y), slope: slopeN(x, y),
+    flow: landAt('flow', x, y), water: landAt('distWater', x, y),
+  };
+}
+
+// Long grass, reeds and rocks, where they'd really be: hay meadow on the
+// flood ground, a long fringe along the woods, rushes down the wet runnels and
+// reeds at the water's edge; rocky outcrops where the banks are steep and the
+// soil thin, gravel in the runnels, and cairns of stones cleared off the fields.
 function plantNature(rng, addStatic, blk) {
   const tiles = World.tiles;
   World.grass = [];
   const noise = makeNoise(World.seed + 31);
   const open = (x, y) => inMap(x, y) && tiles[tIdx(x, y)] === T.GRASS && !World.reserved[tIdx(x, y)] && !World.block[tIdx(x, y)];
-  const near = (x, y, r, test) => { for (let j = y - r; j <= y + r; j++) for (let i = x - r; i <= x + r; i++) if (inMap(i, j) && test(tiles[tIdx(i, j)], i, j)) return true; return false; };
-  const roadish = (t) => t === T.PATH || t === T.COBBLE || t === T.BRIDGE;
   const treeNear = new Set((World.treeAt || []).map(([x, y]) => x + ',' + y));
-  for (let y = 1; y < MAP_H - 1; y++) for (let x = 1; x < MAP_W - 1; x++) {
-    if (!open(x, y) || near(x, y, 1, roadish)) continue;
-    const water = near(x, y, 1, (t) => t === T.WATER);
-    const woods = near(x, y, 2, (t, i, j) => treeNear.has(i + ',' + j));
-    const meadow = noise(x * 0.09, y * 0.09);
-    let n = 0;
-    if (water) n = rng() < 0.75 ? 2 + Math.floor(rng() * 2) : 0;
-    else if (meadow > 0.58) n = rng() < 0.7 ? 1 + Math.floor(rng() * 3) : 0;
-    else if (woods) n = rng() < 0.4 ? 1 + Math.floor(rng() * 2) : 0;
-    else if (rng() < 0.06) n = 1;
-    for (let k = 0; k < n; k++) World.grass.push({ x: x * 16 + 2 + Math.floor(rng() * 12), y: y * 16 + 4 + Math.floor(rng() * 12), v: water && rng() < 0.7 ? 6 + Math.floor(rng() * 2) : Math.floor(rng() * 6), ph: rng() * 6 });
-  }
-  // rocks: pebbles and stones anywhere open, boulders in the woods and on the banks
+  const tuft = (x, y, v) => World.grass.push({ x: x * 16 + 2 + Math.floor(rng() * 12), y: y * 16 + 4 + Math.floor(rng() * 12), v, ph: rng() * 6 });
   let boulders = 0;
-  for (let k = 0; k < 900; k++) {
-    const x = 1 + Math.floor(rng() * (MAP_W - 2)), y = 1 + Math.floor(rng() * (MAP_H - 2));
-    if (!open(x, y) || near(x, y, 1, roadish)) continue;
-    const woods = near(x, y, 2, (t, i, j) => treeNear.has(i + ',' + j)), water = near(x, y, 2, (t) => t === T.WATER);
-    const r = rng();
-    let size;
-    if ((woods || water) && r < 0.35 && boulders < 40) size = r < 0.12 ? 3 : 2;
-    else if (r < 0.55) size = 0;
-    else if (r < 0.8) size = 1;
-    else continue;
-    if (rng() > (woods || water ? 0.5 : 0.18)) continue;
-    const seed = Math.floor(rng() * 9999);
-    const img = makeRock(seed, size);
-    addStatic(img, x * 16 + 8 + Math.round((rng() - 0.5) * 6), y * 16 + 13, { sortBias: size < 2 ? -6 : 0 });
+  const rock = (x, y, size, bias = 0) => {
+    const img = makeRock(Math.floor(rng() * 9999), size);
+    addStatic(img, x * 16 + 8 + Math.round((rng() - 0.5) * 6), y * 16 + 13, { sortBias: size < 2 ? -6 : bias });
     if (size >= 2) { blk(x, y); boulders++; }
+  };
+  for (let y = 1; y < MAP_H - 1; y++) for (let x = 1; x < MAP_W - 1; x++) {
+    if (!open(x, y)) continue;
+    const hb = habitat(x, y, treeNear);
+    if (hb.road) continue;
+    // grass and reeds
+    let n = 0, reed = false;
+    if (hb.water <= 1.5) { reed = true; n = rng() < 0.8 ? 2 + Math.floor(rng() * 2) : 0; }
+    else if (hb.flow > 25 && hb.slope < 0.8) { reed = rng() < 0.6; n = rng() < 0.55 ? 1 + Math.floor(rng() * 2) : 0; }
+    else if (hb.soil === SOIL.ALLUVIUM) n = rng() < 0.7 ? 2 + Math.floor(rng() * 2) : 0;
+    else if (hb.edge || hb.shade) n = rng() < 0.45 ? 1 + Math.floor(rng() * 2) : 0;
+    else if (hb.soil === SOIL.CLAY) n = rng() < 0.4 ? 1 + Math.floor(rng() * 2) : 0;
+    else if (hb.soil === SOIL.THIN) n = rng() < 0.04 ? 1 : 0;
+    else n = noise(x * 0.09, y * 0.09) > 0.6 ? (rng() < 0.55 ? 1 + Math.floor(rng() * 2) : 0) : rng() < 0.05 ? 1 : 0;
+    for (let k = 0; k < n; k++) tuft(x, y, reed && rng() < 0.75 ? 6 + Math.floor(rng() * 2) : Math.floor(rng() * 6));
+    // rocks
+    const r = rng();
+    if (hb.soil === SOIL.THIN && hb.slope > 0.9 && r < 0.12 && boulders < 45) rock(x, y, r < 0.04 ? 3 : 2);
+    else if (hb.soil === SOIL.THIN && r < 0.06) rock(x, y, 1);
+    else if (hb.flow > 40 && hb.water > 1.5 && r < 0.18) rock(x, y, 0);
+    else if (hb.field && r < 0.035) { rock(x, y, 1); if (rng() < 0.6) rock(x, y, 0); }
+    else if (hb.shade && r < 0.015 && boulders < 45) rock(x, y, 2);
+    else if (r < 0.006) rock(x, y, 0);
+  }
+}
+
+// Wildflowers by habitat: buttercups, daisies and clover in the meadows,
+// bluebells and wood anemones under the trees, marsh marigolds, irises and
+// ragged robin in wet ground, poppies and cornflowers at the field edges,
+// primroses, campion, foxgloves and asters along the woods, harebells and
+// thyme on the thin dry banks. They grow in drifts, and only in their season.
+const FLOWER_KINDS = {
+  buttercup: { cols: [['#f2d24a', '#fff2a0']], seasons: ['spring', 'summer'] },
+  daisy: { cols: [['#ffffff', '#f2d24a']], seasons: ['spring', 'summer', 'autumn'] },
+  clover: { cols: [['#c86aa8', '#e8a0c8']], seasons: ['summer'] },
+  bluebell: { cols: [['#5a6ad8', '#8a9aff']], seasons: ['spring'], bell: true },
+  anemone: { cols: [['#f4f0f8', '#ffffff']], seasons: ['spring'] },
+  marigold: { cols: [['#f2b81a', '#ffe070']], seasons: ['spring', 'summer'] },
+  iris: { cols: [['#e8c82a', '#fff08a']], seasons: ['summer'], tall: true },
+  robin: { cols: [['#e86aa8', '#ffb0d0']], seasons: ['summer'] },
+  primrose: { cols: [['#f4e88a', '#fffac8']], seasons: ['spring'] },
+  campion: { cols: [['#e85a8a', '#ffa0c0']], seasons: ['spring', 'summer'] },
+  poppy: { cols: [['#e8322a', '#ff8a6a']], seasons: ['summer'] },
+  cornflower: { cols: [['#3a6ae8', '#8ab0ff']], seasons: ['summer'] },
+  foxglove: { cols: [['#b05ac8', '#e0a0f0']], seasons: ['summer'], tall: true, bell: true },
+  harebell: { cols: [['#7a8ae8', '#b8c0ff']], seasons: ['summer', 'autumn'], bell: true },
+  thyme: { cols: [['#c87ab0', '#e8b0d8']], seasons: ['summer'] },
+  aster: { cols: [['#9a6ad8', '#c8b0ff']], seasons: ['autumn'] },
+};
+function flowerKindFor(hb, rng) {
+  const pick = (a) => a[Math.floor(rng() * a.length)];
+  if (hb.moist > 0.62 || hb.water <= 2) return [pick(['marigold', 'iris', 'robin', 'marigold']), 0.5];
+  if (hb.shade) return [pick(['bluebell', 'bluebell', 'anemone']), 0.4];
+  if (hb.field) return [pick(['poppy', 'poppy', 'cornflower']), 0.4];
+  if (hb.edge) return [pick(['primrose', 'campion', 'foxglove', 'aster']), 0.32];
+  if (hb.soil === SOIL.THIN) return [pick(['harebell', 'thyme']), 0.3];
+  if (hb.soil === SOIL.ALLUVIUM || (hb.soil === SOIL.LOAM && hb.sun > 0.5)) return [pick(['buttercup', 'daisy', 'clover', 'buttercup']), 0.25];
+  return [pick(['daisy', 'buttercup']), 0.05];
+}
+function plantWildflowers(rng) {
+  const tiles = World.tiles;
+  const treeNear = new Set((World.treeAt || []).map(([x, y]) => x + ',' + y));
+  const ok = (x, y) => inMap(x, y) && (tiles[tIdx(x, y)] === T.GRASS || tiles[tIdx(x, y)] === T.LAWN) && !World.block[tIdx(x, y)];
+  let placed = 0;
+  for (let k = 0; k < 2600 && placed < 420; k++) {
+    const x = Math.floor(rng() * MAP_W), y = Math.floor(rng() * MAP_H);
+    if (!ok(x, y)) continue;
+    const hb = habitat(x, y, treeNear);
+    const [kind, p] = flowerKindFor(hb, rng);
+    if (rng() > p) continue;
+    // a drift of the same kind
+    const n = 1 + Math.floor(rng() * 3);
+    for (let d = 0; d < n; d++) {
+      const fx = x + (d ? Math.round((rng() - 0.5) * 2.4) : 0), fy = y + (d ? Math.round((rng() - 0.5) * 2) : 0);
+      if (!ok(fx, fy)) continue;
+      World.flowers.push({ x: fx * 16 + Math.floor(rng() * 8) + 4, y: fy * 16 + Math.floor(rng() * 8) + 10, seed: Math.floor(rng() * 9999), kind, ground: true });
+      placed++;
+    }
   }
 }

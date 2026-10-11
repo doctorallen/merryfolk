@@ -797,16 +797,27 @@ function makeBush(seed, season = 'summer') {
   return winter ? addSnow(o, 0, base, 2, seed) : o;
 }
 
-function makeFlowerPatch(seed) {
+function makeFlowerPatch(seed, kind) {
   const rng = mulberry32(seed);
-  const [c, x] = makeCanvas(18, 12);
+  const K = kind && FLOWER_KINDS[kind];
+  const tall = K && K.tall;
+  const [c, x] = makeCanvas(18, tall ? 16 : 12);
+  const top = tall ? 4 : 0;
   const cols = [['#f2d24a', '#fff2a0'], ['#e85a6a', '#ffb0b8'], ['#8a6ad8', '#c8b8ff'], ['#f4f0f4', '#ffffff'], ['#e8862a', '#ffc070'], ['#4a7ae8', '#a8c8ff']];
-  const pick = [cols[Math.floor(rng() * cols.length)], cols[Math.floor(rng() * cols.length)]];
+  const pick = K ? [K.cols[0], K.cols[0]] : [cols[Math.floor(rng() * cols.length)], cols[Math.floor(rng() * cols.length)]];
   for (let k = 0; k < 7; k++) {
-    const px = 2 + Math.floor(rng() * 14), py = 3 + Math.floor(rng() * 6);
+    const px = 2 + Math.floor(rng() * 14), py = 3 + top + Math.floor(rng() * 6);
+    const [a, b] = pick[k % 2];
+    if (tall) {
+      // a spike of bells (foxglove) or a tall flag (iris)
+      x.fillStyle = '#3f7a32'; x.fillRect(px, py - 4, 1, 8);
+      if (K.bell) { for (let j = 0; j < 4; j++) { x.fillStyle = j % 2 ? b : a; x.fillRect(px + (j % 2 ? 1 : -1), py - 4 + j * 2, 1, 2); } }
+      else { x.fillStyle = a; x.fillRect(px - 1, py - 5, 3, 2); x.fillStyle = b; x.fillRect(px, py - 6, 1, 1); x.fillStyle = '#4a8a3a'; x.fillRect(px + 1, py - 2, 1, 5); }
+      continue;
+    }
     x.fillStyle = '#3f7a32'; x.fillRect(px, py + 1, 1, 3);
     if (rng() < 0.5) x.fillRect(px + 1, py + 2, 1, 1);
-    const [a, b] = pick[k % 2];
+    if (K && K.bell) { x.fillStyle = a; x.fillRect(px + 1, py, 1, 2); x.fillRect(px - 1, py + 1, 1, 2); x.fillStyle = b; x.fillRect(px + 1, py, 1, 1); continue; }
     x.fillStyle = a; x.fillRect(px - 1, py, 3, 1); x.fillRect(px, py - 1, 1, 3);
     x.fillStyle = b; x.fillRect(px, py, 1, 1);
   }
