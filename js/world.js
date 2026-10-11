@@ -562,6 +562,7 @@ function* buildWorldSteps(cfg) {
   plantWildflowers(rng);
   yield 'Wildflowers come up in drifts';
   for (const h of World.homes) if (h.built) addHomeFlowers(h);
+  for (const h of World.homes) plantHill(h);
 
   // --- Ducks ---
   World.ducks = [0, 1, 2, 3].map((i) => ({ x: (POND.cx + i - 1.5) * 16, y: POND.cy * 16 + (i % 2) * 6, a: rng() * 6, t: 0 }));

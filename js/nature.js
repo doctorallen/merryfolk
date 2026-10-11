@@ -234,6 +234,53 @@ function plantWildflowers(rng) {
   }
 }
 
+// A hobbit-hole's hill grows wild on top: clumps of long grass, drifts of
+// wildflowers (a spring kind, a summer kind and one that lasts into autumn,
+// so the hill is never bare of colour) and a fern, heather or leafy plant or
+// two. All of it keeps off the stone face, the door and windows, and clear of
+// the chimneys and the roof window. Each hill's planting comes from its home,
+// so it's the same every time the village is loaded.
+function plantHill(h) {
+  const sh = homeShape(h.def, h.id, Math.round(h.doorY / 16) - 1);
+  const rng = mulberry32(h.id * 7717 + 91);
+  const pick = (a) => a[Math.floor(rng() * a.length)];
+  const cx = sh.hcx * 16, cy = sh.hcy * 16, rx = sh.hrx * 16, ry = sh.hry * 16;
+  const keepClear = [h.chimney, h.chimney2, h.roofWin].filter(Boolean);
+  const size = (rx * ry) / 5000; // a big hill gets more of everything
+  const ok = (x, y, edge = 0.86) => {
+    if (sh.u(x / 16, y / 16) > edge) return false;
+    const b = sh.bottom(x / 16);
+    if (b == null || y > b * 16 - 24) return false;
+    return !keepClear.some((c) => Math.abs(c.x - x) < 10 && y > c.y - 16 && y < c.y + 8);
+  };
+  // long grass grows in a few thick clumps, thinner between
+  const clumps = Array.from({ length: 3 + Math.floor(rng() * 3) }, () => [cx + (rng() - 0.5) * rx * 1.4, cy + (rng() - 0.6) * ry * 1.1]);
+  for (let y = cy - ry; y < cy + ry; y += 6) for (let x = cx - rx; x < cx + rx; x += 6) {
+    const tx = Math.round(x + (rng() - 0.5) * 5), ty = Math.round(y + (rng() - 0.5) * 4);
+    if (!ok(tx, ty)) continue;
+    const near = Math.min(...clumps.map(([qx, qy]) => Math.hypot(qx - tx, (qy - ty) * 1.4)));
+    if (rng() < 0.12 + 0.62 * Math.exp(-(near * near) / (2 * 15 * 15))) World.grass.push({ x: tx, y: ty, v: Math.floor(rng() * 6), ph: rng() * 6 });
+  }
+  // drifts of wildflowers
+  const kinds = [pick(['buttercup', 'primrose', 'campion', 'bluebell']), pick(['clover', 'poppy', 'thyme', 'foxglove', 'cornflower']), pick(['daisy', 'harebell', 'aster'])];
+  for (let d = 0, n = 2 + Math.round(size * 1.6) + Math.floor(rng() * 3); d < n; d++) {
+    const kind = kinds[d % kinds.length], ax = cx + (rng() - 0.5) * rx * 1.5, ay = cy + (rng() - 0.65) * ry * 1.2;
+    for (let k = 0, m = 3 + Math.floor(rng() * 3); k < m; k++) {
+      const fx = Math.round(ax + (rng() - 0.5) * 22), fy = Math.round(ay + (rng() - 0.5) * 12);
+      if (ok(fx, fy, 0.82)) World.flowers.push({ x: fx, y: fy, seed: Math.floor(rng() * 9999), kind, ground: true });
+    }
+  }
+  // a fern, a sprig of heather or a leafy plant or two (the bush kinds by seed: 0 round, 4 fern, 6 heather)
+  const plants = [0, 4, 6];
+  for (let k = 0, n = 1 + Math.round(size * 0.5) + Math.floor(rng() * 2), tries = 0; k < n && tries < 30; tries++) {
+    const x = Math.round(cx + (rng() - 0.5) * rx * 1.4), y = Math.round(cy + (rng() - 0.7) * ry * 1.1);
+    if (!ok(x, y, 0.78) || World.statics.some((s) => Math.abs(s.x - x) < 16 && Math.abs(s.y - y) < 12)) continue;
+    const seed = 700 + Math.floor(rng() * 40) * 7 + pick(plants);
+    World._addStatic(makeBush(seed), x, y, { gen: { type: 'bush', seed } });
+    k++;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Woods by suitability. Woodland grows where nobody has cleared it: on the
 // steep, thin-soiled banks and wet clay that nobody farms, thick along the

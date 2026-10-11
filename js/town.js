@@ -251,7 +251,9 @@ function openLot(lot, silent = false) {
     home.siteStatic = World._addStatic(makeConstruction(), home.doorX + 2, home.doorY + 10, { snow: true });
     const bs = 601 + (home.id % 3);
     World._addStatic(makeBush(bs), (d.cx - d.rx * 0.45 + (home.id % 2)) * 16, (d.cy - d.ry * 0.3) * 16, { gen: { type: 'bush', seed: bs } });
-    World.flowers = World.flowers.filter((f) => { const nx = (f.x / 16 - d.cx - 0.5) / (d.rx + 0.5), ny = (f.y / 16 - d.cy - 0.5) / (d.ry + 0.5); return nx * nx + ny * ny > 1; });
+    const offKnoll = (o) => { const nx = (o.x / 16 - d.cx - 0.5) / (d.rx + 0.5), ny = (o.y / 16 - d.cy - 0.5) / (d.ry + 0.5); return nx * nx + ny * ny > 1; };
+    World.flowers = World.flowers.filter(offKnoll); World.grass = World.grass.filter(offKnoll);
+    plantHill(home);
   } else if (lot.kind === 'building') {
     for (let y = lot.y0; y <= lot.y1; y++) for (let x = lot.x0; x <= lot.x1; x++) World._blk(x, y);
   } else if (lot.kind === 'well') {
