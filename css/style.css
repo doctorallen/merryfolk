@@ -28,6 +28,41 @@ kbd {
 }
 
 #game { position: fixed; inset: 0; }
+
+/* Inside a hobbit-hole: a live cutaway in a card over the village */
+#interior {
+  position: absolute; left: 10px; right: 10px; top: 76px; z-index: 4; display: flex; flex-direction: column; gap: 6px;
+  max-height: calc(100% - 190px); padding: 10px 12px 10px; background: var(--parch); color: var(--ink);
+}
+#interior[hidden] { display: none; }
+#panel:not([hidden]) ~ #interior { right: 360px; }
+.int-head { display: flex; justify-content: space-between; align-items: start; gap: 10px; }
+.int-who { min-width: 0; }
+.int-head h2 { font-family: var(--font-ui); font-size: 20px; margin: 0; color: var(--moss); line-height: 1.1; text-wrap: balance; }
+.int-ctl { display: flex; gap: 4px; align-items: center; flex: none; }
+.int-ctl button:not(.x) { font-family: var(--font-ui); min-width: 30px; padding: 2px 8px; background: var(--parch-2); border: 1px solid var(--parch-3); border-radius: 4px; cursor: pointer; }
+.int-folk { display: flex; flex-wrap: wrap; gap: 4px; }
+.int-folk:empty { display: none; }
+.int-chip {
+  font-family: var(--font-ui); font-size: 13px; padding: 1px 8px 1px 18px; border-radius: 999px; cursor: pointer; position: relative;
+  background: var(--parch-2); border: 1px solid var(--parch-3); color: var(--ink-3);
+}
+.int-chip::before { content: ""; position: absolute; left: 7px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: var(--parch-3); }
+.int-chip.home { color: var(--ink); }
+.int-chip.home::before { background: var(--moss-2); }
+.int-chip.sel { border-color: var(--ink); box-shadow: 0 1px 0 var(--ink); }
+.int-wrap { overflow: auto; min-height: 0; flex: 0 1 auto; border-radius: 4px; background: #1a120c; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.int-stage { position: relative; width: max-content; margin: 0 auto; }
+#int-cv { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+#int-bubbles { position: absolute; inset: 0; pointer-events: none; }
+.int-bubble {
+  position: absolute; transform: translate(-50%, -100%); max-width: 200px; width: max-content; padding: 3px 8px; font-size: 13px; line-height: 1.25;
+  background: #fffaf0; color: #2a1c12; border: 2px solid #2a1c12; border-radius: 6px; text-align: center; white-space: normal;
+}
+.int-bubble[hidden] { display: none; }
+.int-cap { font-size: 14px; color: var(--ink-2); min-height: 1.3em; font-style: italic; }
+.now.peek { cursor: pointer; }
+.now.peek::after { content: "  Look inside ›"; font-style: normal; font-family: var(--font-ui); font-size: 12px; color: var(--moss); white-space: nowrap; }
 /* no text selection, magnifier or callout when a finger rests on the village */
 #view { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 #view { position: absolute; left: 0; top: 0; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; cursor: grab; }
@@ -337,6 +372,11 @@ textarea { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: 
   .how div { grid-template-columns: 1fr; gap: 0; }
   .tool { min-width: 58px; font-size: 11px; }
   #toast { top: 120px; }
+  #interior, #panel:not([hidden]) ~ #interior { left: 6px; right: 6px; top: calc(6px + env(safe-area-inset-top, 0px)); z-index: 6; max-height: calc(100% - 120px); padding: 8px; }
+  #panel:not([hidden]) ~ #interior { max-height: calc(100% - 52vh - 110px); }
+  #panel:not([hidden]) ~ #interior .int-cap { display: none; }
+  .int-head h2 { font-size: 17px; }
+  .int-cap { font-size: 13px; }
   .tool-hint { display: none; }
   #intro h1 { font-size: 34px; }
 }

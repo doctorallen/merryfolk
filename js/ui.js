@@ -108,6 +108,7 @@ function buildUI() {
   $('btn-zoomout').addEventListener('click', () => zoomStep(-1));
   $('roster-close').addEventListener('click', () => { $('roster').hidden = true; });
   $('panel-close').addEventListener('click', () => selectVillager(null));
+  $('p-now').addEventListener('click', () => { const v = Game.selected; if (v && v.inside && v.inside.kind === 'home') openInterior(v.inside); });
   $('b-pat').addEventListener('click', doPat);
   $('b-tut').addEventListener('click', doTut);
   $('b-teach').addEventListener('click', doTeach);
@@ -236,6 +237,9 @@ function renderPanel(full) {
   $('p-mood').textContent = 'Mood: ' + v.moodWord();
   $('p-mood').dataset.level = v.mood() > 0.6 ? 'good' : v.mood() > 0.35 ? 'mid' : 'low';
   $('p-now').textContent = v.inside && !v.carried ? (v.task ? (v.task.a.label2 ? v.task.a.label2(v) : v.task.a.label) : 'Indoors') + ` (inside ${v.inside.name})` : v.activity();
+  const peek = !!(v.inside && v.inside.kind === 'home' && !v.carried && Interior.home !== v.inside);
+  $('p-now').classList.toggle('peek', peek);
+  $('p-now').title = peek ? `Look inside ${v.inside.name}` : '';
   $('b-teach').hidden = v.stage === 'baby' || v.edu > 0.95;
   document.querySelectorAll('#panel .tabs button').forEach((b) => b.classList.toggle('active', b.dataset.tab === Game.panelTab));
   const body = $('p-body');
@@ -647,10 +651,17 @@ function openPost(v) {
 // Hover info for places
 // ---------------------------------------------------------------------------
 function namesInside(b) { return b.inside.map((id) => (Game.villagers.find((v) => v.id === id) || {}).first).filter(Boolean); }
-function placeAt(wx, wy) {
+function homeAt(wx, wy) {
   for (const h of World.homes) {
     const d = h.def, nx = (wx / 16 - d.cx - 0.5) / d.rx, ny = (wy / 16 - d.cy - 0.5) / d.ry;
-    if (nx * nx + ny * ny < 1) {
+    if (nx * nx + ny * ny < 1) return h;
+  }
+  return null;
+}
+function placeAt(wx, wy) {
+  {
+    const h = homeAt(wx, wy);
+    if (h) {
       if (!h.built) {
         const p = Village.projects.find((x) => x.homeId === h.id);
         if (p) return [h.name, `A new hobbit-hole being dug: ${Math.round(p.prog * 100)}% done`, `Timber in the Store: ${Village.stores.wood} (${firewoodReserve()} kept back for hearths)`];
@@ -662,6 +673,7 @@ function placeAt(wx, wy) {
       const lines = [h.name, `${res.length} living here · larder: ${pantryTotal(h)} helpings`, h.chilly ? 'The hearth is cold: no timber!' : inside.length ? 'Inside: ' + inside.join(', ') : 'Nobody home just now'];
       if (h.neon) lines.push('Wired up: neon arch, sky-dish and a sun-glass panel');
       else if (rp) lines.push(`The tinkers are wiring it up: ${Math.round(rp.prog * 100)}% done`);
+      lines.push('Click to look inside');
       return lines;
     }
   }
@@ -739,6 +751,7 @@ function openIntro(first) {
 }
 function closeModals() {
   if (Game.started) { $('intro').hidden = true; Game.introOpen = false; }
+  closeInterior();
   $('roster').hidden = true; $('village').hidden = true; $('tree').hidden = true; $('post').hidden = true;
 }
 

@@ -77,6 +77,16 @@
     <ol id="log"></ol>
   </section>
 
+  <section id="interior" class="card" hidden aria-label="Inside a hobbit-hole">
+    <div class="int-head">
+      <div class="int-who"><h2 id="int-title">A hobbit-hole</h2><div id="int-sub" class="sub"></div></div>
+      <div class="int-ctl"><button id="int-zout" title="Smaller" aria-label="Smaller">−</button><button id="int-zin" title="Bigger" aria-label="Bigger">+</button><button id="int-close" class="x" aria-label="Close">×</button></div>
+    </div>
+    <div id="int-folk" class="int-folk"></div>
+    <div id="int-wrap" class="int-wrap"><div class="int-stage"><canvas id="int-cv"></canvas><div id="int-bubbles"></div></div></div>
+    <div id="int-cap" class="int-cap"></div>
+  </section>
+
   <div id="roster" class="card" hidden>
     <div class="roster-head"><h3>Folk of Thistledown</h3><button id="roster-close" class="x" aria-label="Close">×</button></div>
     <div id="roster-list"></div>
@@ -154,6 +164,7 @@
   <script src="js/rift.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/dev.js"></script>
+<script src="js/interior.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

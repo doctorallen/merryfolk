@@ -15,6 +15,7 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 | Look around | Drag the map, or WASD / arrow keys |
 | Zoom | Mouse wheel, `+` / `−` |
 | Select a villager | Click them; `Tab` cycles through everyone |
+| Look inside a hobbit-hole | Click it (or *Look inside* on an indoor villager's panel) |
 | Pat (reward) / tut-tut (discourage) | Click the selected villager again or `P` / `T` |
 | Give a lesson | `E` (or the Teach button) |
 | Pick a villager up | Drag them with the hand, drop them anywhere |
@@ -25,6 +26,18 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 | Developer mode | `` ` `` (backtick), or the Dev button |
 
 The village saves to `localStorage` every in-game hour and when you leave the page. **?** → *Start a fresh village* resets it. One in-game day takes 8 real minutes at 1×, and each season lasts three days.
+
+## Inside the hobbit-holes
+
+Click any finished hobbit-hole to open a live cutaway of it. The view is from deep in the hill, looking out toward the round front door. Rooms and folk are drawn at the same double resolution as the folk outside.
+
+- **Built from the household.** There's a bed for everyone who lives there: a double for each married couple, small beds for the children and a cradle for each baby. There are bedrooms enough for all of them, chairs round the kitchen table for everyone, and coats on the hall pegs. The hall wall carries the tools of their trades. A study appears for storytellers, posties, herbalists and tinkers (and for rift-born households).
+- **Real contents.** The pantry shelves hold what's actually in the larder, loaf for loaf. A bare larder gets a cobweb and a hopeful mouse. The parlour has portraits of the family, and sepia ones of parents who have left. The hearth is cold when there's no timber.
+- **Live.** Whoever's home is in there: asleep in their own bed, at the table for supper, by the fire with tea, at the range baking, or pottering from room to room. People come in by the front door, and speech bubbles show what they're saying.
+- **Time and weather.** The windows show the real sky, rain and snow. Rooms darken at night, the lanterns come on while anyone's awake, and the fire is banked once everyone's in bed.
+- **Neon retrofits.** Wired-up homes get dark walls, neon strips and screens. Lost rift-born keep a corkboard of sketches and red string as they work out the way home.
+
+Hover over anything for a closer look. Click a villager inside to open their panel. The `−` / `+` buttons resize the cutaway, and it scrolls sideways for bigger homes.
 
 ## Developer mode
 
@@ -95,6 +108,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 | `js/actions.js` | The action catalogue: leisure, family, courtship, school and every trade |
 | `js/society.js` | The Common Store, trade assignment, courtship, births, homes, adventures, the archive |
 | `js/ui.js` | Toolbar, HUD, the five-tab inspector, the village ledger, family trees |
+| `js/interior.js` | Hobbit-hole interiors: room layout from the household, furniture, larder, lighting and folk inside |
 | `js/dev.js` | Developer mode: decision explanations, the event log, world stats, tools and map overlays |
 | `js/main.js` | Game loop, seasons and weather, rendering, input, saving |
 

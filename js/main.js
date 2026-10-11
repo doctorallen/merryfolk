@@ -974,7 +974,7 @@ function updateHover() {
   Game.hovered = villagerAt(wx, wy);
   const p = Game.hovered ? null : placeAt(wx, wy);
   Game.hoverPlace = p ? { lines: p, sx: pointer.x, sy: pointer.y } : null;
-  view.style.cursor = Game.carrying ? 'grabbing' : Game.tool !== 'hand' ? 'copy' : Game.hovered ? 'pointer' : pointer.down ? 'grabbing' : 'grab';
+  view.style.cursor = Game.carrying ? 'grabbing' : Game.tool !== 'hand' ? 'copy' : Game.hovered || (p && homeAt(wx, wy)?.built) ? 'pointer' : pointer.down ? 'grabbing' : 'grab';
 }
 
 function cycleVillager(dir) {
@@ -997,6 +997,8 @@ function handleClick(sx, sy) {
     else selectVillager(v);
     if (v) Sound.click();
     else {
+      const h = homeAt(wx, wy);
+      if (h && h.built) { openInterior(h); return; }
       // shoo rabbits and crows with a click
       for (const r of World.rabbits) if (dist(r.x, r.y, wx, wy) < 14) { r.flee = 40; r.fx = wx; r.fy = wy; FX.puff(r.x, r.y - 4); }
       for (const c of World.crows) if (c.state === 'peck' && dist(c.x, c.y, wx, wy) < 40) { c.state = 'fly'; c.leaving = true; c.tx = c.x + R.f(-300, 300); c.ty = -60; }
@@ -1077,6 +1079,7 @@ function frame(now) {
     render(fxDt, dtReal);
     renderOverlay();
     devFrame(dtReal);
+    interiorFrame(dtReal);
     hudT -= dtReal;
     if (hudT <= 0) { hudT = 0.25; updateHUD(); }
   } catch (e) {
@@ -1109,6 +1112,7 @@ function boot() {
   centerOn(PLAZA.cx * 16, (PLAZA.cy - 2) * 16);
   buildUI();
   setupInput();
+  setupInterior();
   devLoad();
   renderLog();
   updateSoundBtn();
