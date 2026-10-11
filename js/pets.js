@@ -115,8 +115,15 @@ function stepPet(p, tx, ty, speed, dt) {
 }
 function updatePets(dtMin, hour) {
   for (const p of petsList()) {
-    const home = World.homes[p.homeId];
-    if (!home || !home.built || !residentsOf(home).length) continue;
+    let home = World.homes[p.homeId];
+    if (!home || !home.built || !residentsOf(home).length) {
+      // the family has moved out: the pet goes along with its person, or waits indoors for whoever comes next
+      const o = p.owner != null && Game.villagers.find((v) => v.id === p.owner && !v.leaving);
+      const to = o && o.homeId >= 0 && World.homes[o.homeId];
+      if (!to || !to.built || petOf(to)) { p.inside = true; continue; }
+      p.homeId = to.id; home = to;
+      if (!p.inside) p.route = null;
+    }
     const night = hour >= 21 || hour < 6.5;
     const wantIn = night || Game.raining || (World.season === 'winter' && Game.weather === 'snow');
     if (p.say) { p.say.t -= dtMin / 3; if (p.say.t <= 0) p.say = null; }
