@@ -703,13 +703,19 @@ function render(dtReal, dtWall = dtReal) {
   const gx = clamp(cx, 0, mw), gy = clamp(cy, 0, mh);
   const gw = Math.min(mw - gx, cam.w), gh = Math.min(mh - gy, cam.h);
   if (gw > 0 && gh > 0) {
-    ctx.drawImage(World.ground, gx * GS, gy * GS, gw * GS, gh * GS, gx, gy, gw, gh);
-    if (World.prevGround && World.groundFade > 0) {
-      ctx.globalAlpha = World.groundFade; ctx.drawImage(World.prevGround, gx * GS, gy * GS, gw * GS, gh * GS, gx, gy, gw, gh); ctx.globalAlpha = 1;
-      // fades run on the clock on the wall, so they finish even while the game is paused
-      World.groundFade -= dtWall * (World.groundFadeRate || 0.5);
-      if (World.groundFade <= 0) World.prevGround = null;
+    // the ground, chunk by chunk, each fading from its old painting when it has one
+    for (const ch of Ground.over(gx, gy, gx + gw, gy + gh)) {
+      const r = ch.r, sx0 = Math.max(gx, r.x0), sy0 = Math.max(gy, r.y0), sx1 = Math.min(gx + gw, r.x1), sy1 = Math.min(gy + gh, r.y1);
+      if (sx1 <= sx0 || sy1 <= sy0) continue;
+      ctx.drawImage(ch.c, (sx0 - r.x0) * GS, (sy0 - r.y0) * GS, (sx1 - sx0) * GS, (sy1 - sy0) * GS, sx0, sy0, sx1 - sx0, sy1 - sy0);
+      if (ch.prev && ch.fade > 0) {
+        ctx.globalAlpha = ch.fade; ctx.drawImage(ch.prev, (sx0 - r.x0) * GS, (sy0 - r.y0) * GS, (sx1 - sx0) * GS, (sy1 - sy0) * GS, sx0, sy0, sx1 - sx0, sy1 - sy0); ctx.globalAlpha = 1;
+        // fades run on the clock on the wall, so they finish even while the game is paused
+        ch.fade -= dtWall * ch.fadeRate;
+        if (ch.fade <= 0) ch.prev = null;
+      }
     }
+    Ground.trim();
   }
   drawWater(ctx, cr);
   for (const h of World.homes) {
@@ -1225,8 +1231,7 @@ function handleClick(sx, sy) {
 }
 
 function plantFlowers(x, y, seed) {
-  const g = World.ground.getContext('2d');
-  g.drawImage(hd(makeFlowerPatch(seed)), (x - 9) * GS, (y - 10) * GS);
+  Ground.draw(hd(makeFlowerPatch(seed)), x - 9, y - 10);
   World.flowers.push({ x, y, seed });
 }
 

@@ -161,7 +161,6 @@ function finishFreshVillage() {
   Game.stats = {};
   newVillage();
   applySeasonToStatics('spring');
-  World.prevGround = null; World.paintJob = null;
   paintGroundSoon('spring');
   FX.initAmbient();
   Game.lastHour = Math.floor(Game.time / 60); Game.lastDay = Game.day = 1; Game.festivalDay = -1;

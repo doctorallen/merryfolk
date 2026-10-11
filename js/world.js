@@ -910,7 +910,8 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
   const notNear = (px, py, t, r) => at(px + r, py) !== t || at(px - r, py) !== t || at(px, py + r) !== t || at(px, py - r) !== t;
 
   // a middling noise for the speckle of the grass and the lanes
-  const nM = makeNoise(World.seed * 7 + 3);
+  // (kept between chunks: it costs as much to make as a chunk takes to paint)
+  const nM = World._nM && World._nM.seed === World.seed ? World._nM.fn : (World._nM = { seed: World.seed, fn: makeNoise(World.seed * 7 + 3) }).fn;
   // how deep the water is at a pixel: 0 at the bank to 1 well out in the stream
   const DEPTH_R = [2, 4, 7, 11, 16];
   const depthAt = (px, py) => { let k = 0; for (const r of DEPTH_R) { if (notNear(px, py, T.WATER, r)) break; k++; } return k / DEPTH_R.length; };
@@ -1075,11 +1076,21 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
         put(px, py, detail(t, base, px, py));
       }
     }
-    // tufts of grass: a little dark chevron, or a pair of light tips
-    if (!winter) for (let cy = Math.floor(y0 / 5) * 5; cy < y0 + rows; cy += 5) for (let cx = Math.floor(R0.x0 / 5) * 5; cx < R0.x1; cx += 5) {
+    // tufts of grass: a little dark chevron, or a pair of light tips. A tuft
+    // rooted just outside this patch (or slice) still gets its pixels inside
+    // it, so patches join without a gap in the tufts.
+    const inside = (x, y) => x >= R0.x0 && x < R0.x1 && y >= y0 && y < y0 + rows;
+    const plainAt = (x, y) => {
+      if (inside(x, y)) return plain[(y - y0) * RW + x - R0.x0];
+      if (x < 0 || y < 0 || x >= W || y >= H) return 0;
+      const t = type[y * W + x];
+      return (t === T.GRASS || t === T.LAWN) && !colorAt(t, x, y).bank && !near(x, y, T.WATER, 3) ? 1 : 0;
+    };
+    if (!winter) for (let cy = Math.floor((y0 - 5) / 5) * 5; cy < y0 + rows + 5; cy += 5) for (let cx = Math.floor((R0.x0 - 5) / 5) * 5; cx < R0.x1 + 5; cx += 5) {
       const hh = hash2(cx * 7 + 11, cy * 13 + 5), x = cx + Math.floor(hash2(cx, cy * 3) * 4), y = cy + 1 + Math.floor(hash2(cx * 5, cy) * 3);
-      if (x < R0.x0 + 1 || x >= R0.x1 - 3 || y < y0 || y >= y0 + rows - 1 || !plain[(y - y0) * RW + x - R0.x0]) continue;
-      const i = ((y - y0) * GS * QW + (x - R0.x0) * GS) * 4, base = [d[i], d[i + 1], d[i + 2]];
+      if (x + 2 < R0.x0 || x >= R0.x1 || y + 1 < y0 || y - 1 >= y0 + rows || !plainAt(x, y)) continue;
+      // (the tuft's colour comes from the ground's own, not from a tuft already drawn over it, so every patch agrees)
+      const base = detail(type[y * W + x], colorAt(type[y * W + x], x, y), x, y);
       if (hh < 0.26) { const dk = lerpC(base, [16, 40, 14], 0.42); put(x, y + 1, dk); put(x + 1, y, dk); put(x + 2, y + 1, dk); }
       else if (hh < 0.44) { const lt = lerpC(base, season === 'autumn' ? [230, 210, 120] : [200, 240, 140], 0.45); put(x, y, lt); put(x + 1, y - 1, lt); }
     }
@@ -1110,7 +1121,8 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
   if (season !== 'winter') {
     const patches = {};
     for (const f of World.flowers) {
-      if (!hit(f.x - 10, f.y - 10, f.x + 10, f.y + 10)) continue;
+      // a patch is 18 wide and up to 16 tall, drawn with its foot a couple of pixels below f.y
+      if (!hit(f.x - 10, f.y - 16, f.x + 10, f.y + 3)) continue;
       // wild kinds only show in their season; the old mixed patches thin out in autumn
       if (f.kind && FLOWER_KINDS[f.kind] && !FLOWER_KINDS[f.kind].seasons.includes(season)) continue;
       if (!f.kind && season === 'autumn' && f.ground && (f.seed % 3)) continue;
@@ -1139,62 +1151,145 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
 }
 const DITHER_STEP = 14;
 
-// A quick flat sketch of the ground, tile by tile, shown for the moment it
-// takes to paint the real thing in the background (which then fades in).
-function quickGround(season) {
-  const [c, x] = makeCanvas(MAP_W * TILE * GS, MAP_H * TILE * GS);
+// ---------------------------------------------------------------------------
+// The ground is kept in chunks of 32×32 tiles, each its own canvas. A chunk
+// is made when it first comes into view, showing a flat sketch of its tiles
+// until its real painting is done (the nearest to the camera first, a few
+// milliseconds a frame), and is let go again when it has been out of sight
+// longest, so a big valley never holds more than a score of them. A change
+// of season repaints each chunk as it is seen, fading from the old one.
+// ---------------------------------------------------------------------------
+const CHUNK_T = 32, CHUNK_PX = CHUNK_T * TILE, CHUNK_MAX = 20;
+// A flat sketch of the tiles in a rectangle, for the moment before the real painting.
+function sketchGround(x, season, r) {
   const pal = GROUND_PAL[season], S = TILE * GS;
   const col = { [T.LAWN]: pal.L2, [T.PATH]: pal.P1, [T.WATER]: pal.W1, [T.BRIDGE]: '#8a6440', [T.SOIL]: pal.S1, [T.WEED]: pal.S1, [T.FIELD]: pal.S2, [T.COBBLE]: '#958f84' };
-  x.fillStyle = pal.G1; x.fillRect(0, 0, c.width, c.height);
-  for (let ty = 0; ty < MAP_H; ty++) for (let tx = 0; tx < MAP_W; tx++) {
+  x.fillStyle = pal.G1; x.fillRect(0, 0, (r.x1 - r.x0) * GS, (r.y1 - r.y0) * GS);
+  for (let ty = r.y0 >> 4; ty < (r.y1 + 15) >> 4; ty++) for (let tx = r.x0 >> 4; tx < (r.x1 + 15) >> 4; tx++) {
     const k = col[World.tiles[tIdx(tx, ty)]];
-    if (k) { x.fillStyle = k; x.fillRect(tx * S, ty * S, S, S); }
+    if (k) { x.fillStyle = k; x.fillRect(tx * S - r.x0 * GS, ty * S - r.y0 * GS, S, S); }
   }
-  World.ground = c; World.groundSeason = season;
 }
-// Shows the sketch and paints the real ground behind it.
-function paintGroundSoon(season) { quickGround(season); startSeasonPaint(season); World.paintJob.urgent = true; }
-
+const Ground = {
+  chunks: new Map(), season: 'spring', stamp: 0, urgent: false,
+  cols() { return Math.ceil(MAP_W / CHUNK_T); },
+  rows() { return Math.ceil(MAP_H / CHUNK_T); },
+  rect(cx, cy) { const x0 = cx * CHUNK_PX, y0 = cy * CHUNK_PX; return { x0, y0, x1: Math.min(MAP_W * TILE, x0 + CHUNK_PX), y1: Math.min(MAP_H * TILE, y0 + CHUNK_PX) }; },
+  // starts afresh in a season: every chunk is made again as it is seen
+  reset(season) { this.chunks.clear(); this.season = season; this.urgent = true; World.paintJob = { season, urgent: true }; },
+  // the chunk at chunk coordinates, sketched if it is new
+  get(cx, cy, touch = true) {
+    const k = cy * 1024 + cx;
+    let ch = this.chunks.get(k);
+    if (!ch) {
+      const r = this.rect(cx, cy);
+      const [c, x] = makeCanvas((r.x1 - r.x0) * GS, (r.y1 - r.y0) * GS);
+      sketchGround(x, this.season, r);
+      ch = { cx, cy, r, c, season: this.season, painted: false, prev: null, fade: 0, fadeRate: 3, gen: null, next: null, used: 0 };
+      this.chunks.set(k, ch);
+    }
+    if (touch) ch.used = ++this.stamp;
+    return ch;
+  },
+  // the chunks a rectangle of the world (in pixels) touches
+  over(x0, y0, x1, y1, touch = true) {
+    const out = [];
+    const cx0 = Math.max(0, Math.floor(x0 / CHUNK_PX)), cx1 = Math.min(this.cols() - 1, Math.floor((x1 - 1) / CHUNK_PX));
+    const cy0 = Math.max(0, Math.floor(y0 / CHUNK_PX)), cy1 = Math.min(this.rows() - 1, Math.floor((y1 - 1) / CHUNK_PX));
+    for (let cy = cy0; cy <= cy1; cy++) for (let cx = cx0; cx <= cx1; cx++) out.push(this.get(cx, cy, touch));
+    return out;
+  },
+  // whether a chunk still wants painting in the current season
+  wants(ch) { return !ch.painted || ch.season !== this.season; },
+  // runs the painting for a while: the chunks nearest the camera first
+  step(budgetMs) {
+    const cam = Game.cam, mx = cam.x + cam.w / 2, my = cam.y + cam.h / 2;
+    const t0 = performance.now();
+    // whatever is on screen, or a chunk's width off it, gets a chunk, so it is painted before it is drawn
+    this.over(cam.x - CHUNK_PX, cam.y - CHUNK_PX, cam.x + cam.w + CHUNK_PX, cam.y + cam.h + CHUNK_PX, false);
+    const todo = [...this.chunks.values()].filter((ch) => this.wants(ch));
+    if (!todo.length) { this.urgent = false; World.paintJob = null; return; }
+    const d = (ch) => Math.hypot((ch.r.x0 + ch.r.x1) / 2 - mx, (ch.r.y0 + ch.r.y1) / 2 - my);
+    todo.sort((a, b) => d(a) - d(b));
+    for (const ch of todo) {
+      if (!ch.gen) { const [c] = makeCanvas(ch.c.width, ch.c.height); ch.next = c; ch.gen = paintGroundGen(this.season, c, ch.r, { x: ch.r.x0, y: ch.r.y0 }); }
+      while (performance.now() - t0 < budgetMs) {
+        if (ch.gen.next().done) {
+          ch.prev = ch.c; ch.fade = 1; ch.fadeRate = ch.painted ? 0.5 : 3;
+          ch.c = ch.next; ch.next = null; ch.gen = null; ch.season = this.season; ch.painted = true;
+          World.paintStamp = (World.paintStamp || 0) + 1;
+          break;
+        }
+      }
+      if (performance.now() - t0 >= budgetMs) return;
+    }
+    // everything in sight is painted: no need to hurry any more
+    if (!this.over(cam.x, cam.y, cam.x + cam.w, cam.y + cam.h, false).some((ch) => this.wants(ch))) this.urgent = false;
+  },
+  // lets go of the chunks seen longest ago once there are too many
+  trim() {
+    if (this.chunks.size <= CHUNK_MAX) return;
+    const all = [...this.chunks.entries()].sort((a, b) => a[1].used - b[1].used);
+    for (const [k, ch] of all) { if (this.chunks.size <= CHUNK_MAX) break; if (ch.used === this.stamp) continue; this.chunks.delete(k); }
+  },
+  // draws a sprite onto the ground (a flower patch someone has sown)
+  draw(img, x, y) {
+    for (const ch of this.over(x, y, x + img.width / GS, y + img.height / GS, false)) if (ch.painted) ch.c.getContext('2d').drawImage(img, (x - ch.r.x0) * GS, (y - ch.r.y0) * GS);
+  },
+  // paints every chunk now, in one go
+  paintAll(season) {
+    this.reset(season);
+    for (let cy = 0; cy < this.rows(); cy++) for (let cx = 0; cx < this.cols(); cx++) {
+      const ch = this.get(cx, cy, false);
+      const g = paintGroundGen(season, ch.c, ch.r, { x: ch.r.x0, y: ch.r.y0 });
+      while (!g.next().done) { /* paint every slice */ }
+      ch.painted = true; ch.season = season;
+    }
+    this.urgent = false; World.paintJob = null;
+  },
+};
+World.ground = Ground;
+// Shows a sketch of the ground and paints the real thing behind it, nearest first.
+function paintGroundSoon(season) { Ground.reset(season); }
 // Paints the whole ground synchronously.
-function paintGround(season) {
-  const [c] = makeCanvas(MAP_W * TILE * GS, MAP_H * TILE * GS);
-  const g = paintGroundGen(season, c);
-  while (!g.next().done) { /* paint every slice */ }
-  World.ground = c;
-  World.groundSeason = season;
-}
-
-// Starts painting a season in the background; the frame loop calls stepPaint().
+function paintGround(season) { Ground.paintAll(season); }
+// Starts repainting for a season in the background; the frame loop calls stepPaint().
 function startSeasonPaint(season) {
-  const urgent = !!(World.paintJob && World.paintJob.urgent);
-  const [c] = makeCanvas(MAP_W * TILE * GS, MAP_H * TILE * GS);
-  World.paintJob = { season, canvas: c, gen: paintGroundGen(season, c), urgent };
+  const urgent = Ground.urgent;
+  Ground.season = season;
+  for (const ch of Ground.chunks.values()) { ch.gen = null; ch.next = null; }
+  World.paintJob = { season, urgent };
 }
 function stepPaint(budgetMs = 6) {
-  const job = World.paintJob;
-  if (!job) return;
-  const t0 = performance.now();
-  while (performance.now() - t0 < budgetMs) {
-    if (job.gen.next().done) {
-      World.prevGround = World.ground; World.groundFade = 1; World.groundFadeRate = job.urgent ? 3 : 0.5;
-      World.ground = job.canvas; World.groundSeason = job.season; World.paintJob = null;
-      return;
-    }
-  }
+  if (!World.paintJob || !Game.cam) return;
+  Ground.step(budgetMs);
 }
 // Repaints a rectangle of the current ground (after a tile change). The patch
 // is painted on a scratch canvas with a margin, so mounds and flowers that
-// straddle its edge come out whole, then copied in.
+// straddle its edge come out whole, then copied into the chunks it touches.
 function repaintRect(x, y, w, h) {
   x = Math.max(0, Math.floor(x)); y = Math.max(0, Math.floor(y));
   w = Math.min(MAP_W * TILE - x, Math.ceil(w)); h = Math.min(MAP_H * TILE - y, Math.ceil(h));
   const M = 96;
   const rect = { x0: Math.max(0, x - M), y0: Math.max(0, y - M), x1: Math.min(MAP_W * TILE, x + w + M), y1: Math.min(MAP_H * TILE, y + h + M) };
   computePixelTypes(World.seed, rect);
-  const [c] = makeCanvas((rect.x1 - rect.x0) * GS, (rect.y1 - rect.y0) * GS);
-  const g = paintGroundGen(World.groundSeason || 'summer', c, rect, { x: rect.x0, y: rect.y0 });
-  while (!g.next().done) { /* small patch: paint it all at once */ }
-  World.ground.getContext('2d').drawImage(c, (x - rect.x0) * GS, (y - rect.y0) * GS, w * GS, h * GS, x * GS, y * GS, w * GS, h * GS);
+  const chunks = Ground.over(x, y, x + w, y + h, false);
+  const patches = {};
+  for (const ch of chunks) {
+    // a chunk still painting for a new season starts again, so it takes in the change
+    if (ch.gen) { ch.gen = null; ch.next = null; }
+    if (!ch.painted) { sketchGround(ch.c.getContext('2d'), ch.season, ch.r); continue; }
+    let patch = patches[ch.season];
+    if (!patch) {
+      const [c] = makeCanvas((rect.x1 - rect.x0) * GS, (rect.y1 - rect.y0) * GS);
+      const g = paintGroundGen(ch.season, c, rect, { x: rect.x0, y: rect.y0 });
+      while (!g.next().done) { /* small patch: paint it all at once */ }
+      patch = patches[ch.season] = c;
+    }
+    const sx0 = Math.max(x, ch.r.x0), sy0 = Math.max(y, ch.r.y0), sx1 = Math.min(x + w, ch.r.x1), sy1 = Math.min(y + h, ch.r.y1);
+    if (sx1 <= sx0 || sy1 <= sy0) continue;
+    ch.c.getContext('2d').drawImage(patch, (sx0 - rect.x0) * GS, (sy0 - rect.y0) * GS, (sx1 - sx0) * GS, (sy1 - sy0) * GS, (sx0 - ch.r.x0) * GS, (sy0 - ch.r.y0) * GS, (sx1 - sx0) * GS, (sy1 - sy0) * GS);
+  }
 }
 
 const MOUND_PAL = {
@@ -1365,7 +1460,7 @@ function setMapSize(w, h) {
   MAP_W = w; MAP_H = h;
   const n = w * h;
   World.tiles = new Uint8Array(n); World.block = new Uint8Array(n); World.reserved = new Uint8Array(n);
-  World.px = null; World.land = null; World.tileLevel = null; World.ground = null; World.prevGround = null; World.paintJob = null;
+  World.px = null; World.land = null; World.tileLevel = null; Ground.chunks.clear(); World.paintJob = null;
   World.cliffMask = null; World.cliffZone = null; World.cliff = null; World._mini = null;
   PF.g = new Float32Array(n); PF.f = new Float32Array(n); PF.from = new Int32Array(n); PF.stamp = new Uint32Array(n); PF.closed = new Uint32Array(n); PF.gen = 0;
   PF.cap = Math.round((30000 * n) / (128 * 96));
