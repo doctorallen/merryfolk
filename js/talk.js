@@ -563,7 +563,8 @@ function roomTalk(h) {
       if (isSpecial) feel(this, 'special', sp.name);
       const taste = food ? (this.genes.food[food] || 1) * (this.foodLike[food] || 1) : 1;
       // a recommendation put to the test
-      const n = (this.heard || []).find((x) => x.a === id && x.w > 1 && x.until > Game.time);
+      // (a dish they were told about is only put to the test by eating that dish)
+      const n = (this.heard || []).find((x) => x.a === id && x.w > 1 && x.until > Game.time && (!x.dish || x.dish === food));
       if (n) {
         const liked = food ? taste >= 1 : joy > 0.4;
         const src = personById(n.fromId);
