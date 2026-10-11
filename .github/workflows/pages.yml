@@ -35,6 +35,8 @@ jobs:
           mkdir -p _site
           cp -r index.html css js _site/
           touch _site/.nojekyll
+          stamp="build ${{ github.run_number }} · ${GITHUB_SHA::7} · $(date -u +'%Y-%m-%d %H:%M') UTC"
+          printf "'use strict';\nconst BUILD_INFO = '%s';\n" "$stamp" > _site/js/version.js
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

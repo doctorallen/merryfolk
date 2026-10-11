@@ -103,6 +103,7 @@ function buildUI() {
   $('btn-help').addEventListener('click', () => openIntro(false));
   $('btn-folk').addEventListener('click', () => { const r = $('roster'); r.hidden = !r.hidden; if (!r.hidden) renderRoster(); });
   $('btn-village').addEventListener('click', toggleVillage);
+  $('build').textContent = BUILD_INFO;
   $('btn-zoomin').addEventListener('click', () => zoomStep(1));
   $('btn-dev').addEventListener('click', () => devToggle());
   $('btn-zoomout').addEventListener('click', () => zoomStep(-1));

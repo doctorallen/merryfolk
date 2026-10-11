@@ -510,3 +510,10 @@ body.dev-on #chronicle { visibility: hidden; }
   /* the Brain tab shows the selected villager, so the panel and toolbar step aside */
   body.dev-on #panel, body.dev-on #bottom { display: none; }
 }
+
+/* the build stamp, so you can tell when a new version has arrived */
+#build {
+  position: absolute; right: 8px; bottom: calc(4px + env(safe-area-inset-bottom, 0px)); z-index: 3; pointer-events: none;
+  font: 11px/1 "Share Tech Mono", ui-monospace, Menlo, monospace; color: rgba(255, 250, 235, 0.85);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6), 0 0 3px rgba(0, 0, 0, 0.5); white-space: nowrap;
+}
