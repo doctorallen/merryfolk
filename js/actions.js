@@ -752,7 +752,7 @@ const ACTIONS = {
       const p = task.target.plot;
       let grain = 0;
       for (const f of World.fields) for (const q of f.plots) {
-        if (q.ty !== p.ty || Math.abs(q.tx - p.tx) > 3) continue;
+        if (Math.abs(q.ty - p.ty) > 1 || Math.abs(q.tx - p.tx) > 4) continue;
         if (q.stage === 4) { grain += 4; q.stage = 1; q.prog = 0; }
         else if (q.stage === 0) { q.stage = 1; q.prog = 0; }
       }

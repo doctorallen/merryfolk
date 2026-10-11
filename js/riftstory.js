@@ -108,7 +108,7 @@ function giveArc(v) {
     const v = af(r);
     if (!v) return v;
     // sometimes it's the very person someone's been missing (of the right sex, and age)
-    const waiting = riftBorn().filter((o) => o !== v && o.arc && !o.arc.lost.found && (o.arc.lost.sex || v.genes.sex) === v.genes.sex && v.isGrown() && o.isGrown());
+    const waiting = riftBorn().filter((o) => o !== v && o.arc && !o.arc.lost.found && (o.arc.lost.sex || v.genes.sex) === v.genes.sex && v.isGrown() && o.isGrown() && !Game.villagers.some((x) => x !== v && x.first === o.arc.lost.name));
     if (waiting.length && R.chance(0.35)) {
       const o = R.pick(waiting), rel = o.arc.lost.rel, oldName = v.first;
       v.first = o.arc.lost.name; o.arc.lost.found = true;
