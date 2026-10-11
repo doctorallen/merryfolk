@@ -90,6 +90,7 @@ function madePiece(v, k, extra = '') {
       C[k] = Math.max(0, C[k] - 1);
       const OC = homeCrafts(o.home()); OC[k] = Math.min(60, (OC[k] || 0) + 1);
       o.remember(`${v.first} gave me a ${what} they made.`, 2);
+      feel(o, 'present', v.first); feel(v, 'gave_gift', o.first);
       v.bond(o, 0.05);
       devLog('story', `${v.first} gave ${o.first} a ${what}`);
     }

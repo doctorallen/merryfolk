@@ -54,6 +54,7 @@ class Villager {
     this.lost = o.lost ?? 0;
     this.techTier = techTier(this.tech);
     this.memories = o.memories ?? [];
+    this.moodlets = o.moodlets ?? [];
     this.job = o.job ?? null;
     this.playerJob = o.playerJob ?? false;
     this.wary = o.wary ?? 0;
@@ -158,6 +159,7 @@ class Villager {
     if (after > before && after >= 2 && this.isGrown()) {
       const word = ['', '', 'skilled', 'expert', 'master'][after];
       this.remember(`Became ${word === 'expert' ? 'an' : 'a'} ${word} hand at ${SKILL_LABEL[skill].toLowerCase()}.`, 1);
+      feel(this, 'skill_up', SKILL_LABEL[skill].toLowerCase());
       if (after >= 3) chronicle(`${this.name()} has become ${after === 4 ? 'a master' : 'an expert'} at ${SKILL_LABEL[skill].toLowerCase()}.`, 'learn');
     }
   }
@@ -461,6 +463,7 @@ class Villager {
       d.hunger -= rate * 0.16; d.thirst -= rate * 0.16; d.lonely -= rate * 0.2;
     }
     for (const k of DRIVES) d[k] = clamp(d[k], 0, 1);
+    moodTick(this, dt);
     if (this.stage === 'baby' || this.isChild()) { d.craving = 0; d.industry = 0; }
 
     if (this.bubble) { this.bubble.t -= dt / Game.minPerSec; if (this.bubble.t <= 0) this.bubble = null; }
@@ -646,6 +649,7 @@ class Villager {
         this.love[other.id] = l; other.love[this.id] = l;
         this.bond(other, 0.05);
         other.remember(`${this.first} brought me flowers.`, 2);
+        feel(other, 'flowers', this.first); feel(this, 'gave_gift', other.first);
         return;
       }
       if (other.isBusyForChat()) { this.abort(); this.cool.chat = Game.time + 20; return; }
@@ -713,6 +717,7 @@ class Villager {
       playerJob: this.playerJob, wary: this.wary, pouch: this.pouch, stats: this.stats, born: this.born, expecting: this.expecting, lastFood: this.lastFood,
       battery: this.battery, newcomer: this.newcomer, lodgeDay: this.lodgeDay, refusedDay: this.refusedDay,
       hobbies: this.hobbies, hobbySkill: this.hobbySkill, hobbyMat: this.hobbyMat, birds: this.birds,
+      moodlets: (this.moodlets || []).filter((m) => m.until > Game.time),
     };
   }
 }

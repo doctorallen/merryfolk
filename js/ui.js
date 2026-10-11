@@ -253,6 +253,7 @@ function renderPanel(full) {
     body.querySelectorAll('[data-d]').forEach((i) => { const val = v.drives[i.dataset.d]; i.style.width = Math.round(val * 100) + '%'; i.dataset.level = val > 0.7 ? 'high' : val > 0.4 ? 'mid' : 'low'; });
     body.querySelectorAll('[data-c]').forEach((i) => { i.style.width = Math.round(clamp(v.chem[i.dataset.c], 0, 1) * 100) + '%'; });
     const hc = body.querySelector('.health'); if (hc) hc.innerHTML = healthChips(v);
+    const fc = body.querySelector('.feelings'); if (fc) { const html = feelingChips(v); if (fc._html !== html) { fc.innerHTML = html; fc._html = html; } }
     return;
   }
   if (!full) return;
@@ -271,8 +272,17 @@ function renderPanel(full) {
   });
 }
 
+// How they feel, and why.
+function feelingChips(v) {
+  const f = feelingsOf(v);
+  if (!f.length) return '<span class="chip mid">Nothing much either way</span>';
+  return f.slice(0, 8).map(([label, val, left]) => `<span class="chip ${val > 0 ? 'good' : 'bad'}" title="${val > 0 ? 'Lifts' : 'Sinks'} their mood${left != null && left < 5000 ? ` for another ${fmtSpan(left)}` : ''}">${val > 0 ? '+' : '−'}${Math.max(1, Math.round(Math.abs(val) * 30))} ${escapeHtml(label)}</span>`).join('');
+}
+function fmtSpan(m) { return m >= 90 ? `${Math.round(m / 60)} hours` : `${Math.max(1, Math.round(m))} minutes`; }
+
 function panelLife(v) {
-  let h = '<h3>Needs</h3>';
+  let h = v.stage === 'baby' ? '' : `<h3>Feelings</h3><div class="chips feelings">${feelingChips(v)}</div>`;
+  h += '<h3>Needs</h3>';
   for (const d of DRIVES) {
     if ((d === 'craving' || d === 'industry') && !v.isGrown()) continue;
     if (d === 'craving' && v.genes.pipeLove < 0.15) continue;

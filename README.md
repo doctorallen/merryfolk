@@ -90,6 +90,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 
 ### Life in the village
 
+- **Feelings.** Besides their needs, folk carry a handful of passing feelings, each with a reason and a while to last: *Danced at the party*, *Had my favourite: honey cakes*, *Slept soundly*, *Had words with Rose*, *Caught in the rain*, *Slept rough*, *A present from Bilbo*, *Just married!*, *A new baby in the family*, *Proud of my new carved badger*, *Getting good at baking*. Some are states and last as long as the state does: merrily tipsy, a sore head, warm and cosy by the fire on an autumn evening, a cold hearth at home, no roof of one's own, happily married. Each lifts or sinks their mood a little (within limits), they're listed with their weight on the villager's Life tab, and whatever's most on their mind comes out when they muse aloud.
 - **Trades.** Grown-ups take up a trade: farmer, herder, miller, baker, brewer, innkeeper, leaf-grower, fisher, woodwright, herbalist, orchard-keeper, postie, storyteller, nanny or (for the rift-minded) tinker. The choice comes from their talents, the skills they've practised, their family's trade, what they watched as an apprentice child, and what the village is short of. Trades can change as experience grows, and you can steer anyone from their Work tab.
 - **Skills.** Nine skills improve with practice, faster with talent and education. Better hands produce more.
 - **The economy.** Everything flows through the Common Store: barley → flour → bread, barley → ale, apples and honey → pies and cakes, vegetables and fish → the innkeeper's stew, timber → hearths and new homes, herbs → remedies. Food spoils (except in winter's cold), larders are stocked from the Store, and in lean times folk grind barley at home.
@@ -126,6 +127,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 | `js/genetics.js` | Genome, inheritance, dominance, mutation, posting villagers as codes |
 | `js/world.js` | Map layout, seasonal ground painting, places, crops, critters, A* pathfinding |
 | `js/worldgen_ui.js` | The *Shape your valley* setup screen and the stage-by-stage generation map |
+| `js/moodlets.js` | Feelings: passing moods with reasons, what brings them on, and how they lift or sink mood |
 | `js/terrain.js` | The lie of the land: height, slope, sun, drainage and flow, wetness, soil |
 | `js/nature.js` | Wind, swaying trees, long grass and reeds, rocks |
 | `js/fx.js` | Particles, fireworks, weather (rain, storms, snow, fog, leaves, petals), lighting |
