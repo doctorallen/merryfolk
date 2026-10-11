@@ -212,7 +212,7 @@ function* buildWorldSteps(cfg) {
   World.statics = [];
   World.benches = []; World.fishing = []; World.shade = []; World.mushrooms = []; World.weed = []; World.fields = []; World.herbBeds = [];
   World.wildHerbs = []; World.woodSpots = []; World.orchard = []; World.hives = []; World.hens = []; World.storySeats = [];
-  World.partySpots = []; World.partySeats = []; World.lamps = []; World.partyPoles = []; World.flowers = []; World.buildings = {};
+  World.partySpots = []; World.partySeats = []; World.lamps = []; World.dug = new Set(); World.partyPoles = []; World.flowers = []; World.buildings = {};
   const res = (x, y, r = 0) => { for (let j = y - r; j <= y + r; j++) for (let i = x - r; i <= x + r; i++) if (inMap(i, j)) World.reserved[tIdx(i, j)] = 1; };
   const blk = (x, y) => { if (inMap(x, y)) { World.block[tIdx(x, y)] = 1; World.reserved[tIdx(x, y)] = 1; } };
   const addStatic = (img, x, y, opts = {}) => {

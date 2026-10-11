@@ -30,7 +30,7 @@ const BUILD_TOOLS = [
   { id: 'raise', label: 'Raise', icon: 'snow', kind: 'brush', unit: 70, hint: 'Click to raise the ground a terrace (3×3)' },
   { id: 'lower', label: 'Lower', icon: 'hoe', kind: 'brush', unit: 70, hint: 'Click to lower the ground a terrace (3×3)' },
   { id: 'pond', label: 'Pond', icon: 'fish', kind: 'paint', unit: 18, hint: 'Drag to dig a pond' },
-  { id: 'fill', label: 'Fill in', icon: 'wood', kind: 'paint', unit: 18, hint: 'Drag to fill in water you dug (not the river)' },
+  { id: 'fill', label: 'Fill in', icon: 'wood', kind: 'paint', unit: 18, hint: 'Drag to fill in a pond you dug' },
   { id: 'home', label: 'Hobbit-hole', icon: 'house', kind: 'site', hint: 'Click to stake out a knoll for a new hobbit-hole: the woodwrights will dig it' },
   { id: 'well', label: 'Well', icon: 'cup', kind: 'site', hint: 'Click to sink a new well' },
   { id: 'civic', label: 'Buildings', icon: 'hammer', kind: 'site', hint: 'Choose where the village\'s next public building goes' },
@@ -78,7 +78,7 @@ function tileWhy(tool, tx, ty) {
       if (t !== T.GRASS && t !== T.LAWN) return 'Only on grass';
       if (blocked) return 'Something\'s in the way';
       return underBuilding(tx, ty) ? 'Too close to a building' : '';
-    case 'fill': return t !== T.WATER ? 'Not water' : RIVER_NEAR(tx, ty) ? 'That\'s the river' : '';
+    case 'fill': return t !== T.WATER ? 'Not water' : RIVER_NEAR(tx, ty) ? 'That\'s the river' : !(World.dug && World.dug.has(tIdx(tx, ty))) ? 'Only ponds you dug can be filled in' : '';
   }
   return '';
 }
@@ -196,7 +196,7 @@ function applyPlanTile(p, i, quiet) {
       return null;
     }
     case 'pond': World.tiles[idx] = T.WATER; World.block[idx] = 0; World.grass = World.grass.filter((g) => Math.floor(g.x / 16) !== x || Math.floor(g.y / 16) !== y); World.flowers = World.flowers.filter((f) => Math.floor(f.x / 16) !== x || Math.floor(f.y / 16) !== y); (World.dug || (World.dug = new Set())).add(idx); break;
-    case 'fill': World.tiles[idx] = T.GRASS; break;
+    case 'fill': World.tiles[idx] = T.GRASS; if (World.dug) World.dug.delete(idx); break;
     case 'clear': {
       for (const s of staticsOnTile(x, y).filter(clearable)) {
         World.statics.splice(World.statics.indexOf(s), 1);
