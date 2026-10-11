@@ -421,7 +421,7 @@ function drawBuildOverlay() {
   const show = Build.on || plansList().length;
   if (!show) return;
   const z = Game.zoom, cam = Game.cam, cx = Math.round(cam.x * RS) / RS, cy = Math.round(cam.y * RS) / RS;
-  const S = (wx, wy) => [(wx - cx) * z, (wy - cy) * z];
+  const S = (wx, wy) => groundScreen(wx, wy, cx, cy, z);
   octx.save();
   octx.imageSmoothingEnabled = false;
   // the plans: pencilled tiles, stakes, progress
@@ -430,9 +430,9 @@ function drawBuildOverlay() {
     octx.globalAlpha = Build.on ? 0.9 : 0.6;
     for (const [i, [x, y]] of p.tiles.entries()) {
       if (i < p.done) continue;
-      const [sx, sy] = S(x * 16, y * 16);
-      octx.fillStyle = waiting ? 'rgba(200,120,60,0.18)' : 'rgba(255,240,180,0.2)'; octx.fillRect(sx, sy, 16 * z, 16 * z);
-      octx.setLineDash([3, 3]); octx.strokeStyle = waiting ? '#c8783c' : '#5a3a22'; octx.lineWidth = 1; octx.strokeRect(sx + 0.5, sy + 0.5, 16 * z - 1, 16 * z - 1); octx.setLineDash([]);
+      tilePath(octx, x, y, x, y, cx, cy, z);
+      octx.fillStyle = waiting ? 'rgba(200,120,60,0.18)' : 'rgba(255,240,180,0.2)'; octx.fill();
+      octx.setLineDash([3, 3]); octx.strokeStyle = waiting ? '#c8783c' : '#5a3a22'; octx.lineWidth = 1; octx.stroke(); octx.setLineDash([]);
     }
     const [x0, y0] = p.tiles[0], [sx, sy] = S(x0 * 16 + 8, y0 * 16 - 2);
     octx.fillStyle = '#6e4628'; octx.fillRect(sx - 1, sy - 4 * z, 2, 6 * z); octx.fillStyle = '#e8c24a'; octx.fillRect(sx + 1, sy - 4 * z, 4 * z, 2 * z);
@@ -448,23 +448,23 @@ function drawBuildOverlay() {
       const s = siteFor(tool, hx, hy);
       if (s && !s.why) { const [a, b, c, d] = s.rect; tiles = []; for (let y = b; y <= d; y++) for (let x = a; x <= c; x++) tiles.push([x, y]); for (const t of s.spur) tiles.push(t); }
       else { tiles = [[hx, hy]]; why = s ? s.why : 'Not here'; }
-      for (const [x, y] of tiles) { const [sx, sy] = S(x * 16, y * 16); octx.fillStyle = why ? 'rgba(220,70,60,0.35)' : 'rgba(120,200,90,0.3)'; octx.fillRect(sx, sy, 16 * z, 16 * z); }
+      for (const [x, y] of tiles) { tilePath(octx, x, y, x, y, cx, cy, z); octx.fillStyle = why ? 'rgba(220,70,60,0.35)' : 'rgba(120,200,90,0.3)'; octx.fill(); }
     } else if (tool === 'cancel') {
       const p = planAt(hx, hy);
       why = p ? (p.prog > 0 ? 'Already under way' : `Cancel this ${BTOOL[p.tool].label.toLowerCase()} plan`) : 'No plan here';
-      const [sx, sy] = S(hx * 16, hy * 16); octx.strokeStyle = '#c83a2a'; octx.lineWidth = 2; octx.strokeRect(sx, sy, 16 * z, 16 * z);
+      tilePath(octx, hx, hy, hx, hy, cx, cy, z); octx.strokeStyle = '#c83a2a'; octx.lineWidth = 2; octx.stroke();
     } else {
       tiles = Build.drag ? Build.drag.tiles : strokeTiles(tool, [hx, hy], [hx, hy]);
       let bad = 0;
       for (const [x, y] of tiles) {
         const w = tileWhy(tool, x, y); if (w) { bad++; why = why || w; }
-        const [sx, sy] = S(x * 16, y * 16);
-        octx.fillStyle = w ? 'rgba(220,70,60,0.32)' : 'rgba(120,200,90,0.32)'; octx.fillRect(sx, sy, 16 * z, 16 * z);
+        tilePath(octx, x, y, x, y, cx, cy, z);
+        octx.fillStyle = w ? 'rgba(220,70,60,0.32)' : 'rgba(120,200,90,0.32)'; octx.fill();
       }
       if (bad < tiles.length) why = '';
       // a ghost of the thing itself
       const g = ['bench', 'lamp', 'tree', 'statue', 'fountain'].includes(tool) ? SPR_GHOST(tool) : null;
-      if (g && !why) { const [sx, sy] = S(hx * 16 + 8 - g.width / 2, hy * 16 + 14 - g.height); octx.globalAlpha = 0.6; octx.drawImage(g, sx, sy, g.width * z, g.height * z); octx.globalAlpha = 1; }
+      if (g && !why) { const [fx, fy] = S(hx * 16 + 8, hy * 16 + 14), k = liftScreen(1, z); octx.globalAlpha = 0.6; octx.drawImage(g, fx - (g.width / 2) * k, fy - g.height * k, g.width * k, g.height * k); octx.globalAlpha = 1; }
       if (!why && tiles.length) {
         const ok = tiles.filter(([x, y]) => !tileWhy(tool, x, y)).length;
         why = `${ok} tile${ok === 1 ? '' : 's'}${T0.cost ? ' · ' + Object.entries(T0.cost).map(([k, n]) => `${n} ${k === 'wood' ? 'timber' : k === 'coin' ? 'pennies' : k}`).join(', ') : ''}`;

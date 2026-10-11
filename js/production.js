@@ -159,7 +159,7 @@ window.addEventListener('DOMContentLoaded', () => {
     let t;
     if (Build.tool === 'field') { const s = siteFor('field', hx, hy); if (!s || s.why) return; t = `Soil here: ${Math.round(s.soil * 100)}% barley yield`; }
     else t = `Soil: ${SOIL_WORD[soilAt(hx, hy)]}`;
-    const sx = (hx * 16 + 16 - cx) * z + 12, sy = (hy * 16 - cy) * z + 42;
+    const [gx, gy] = groundScreen(hx * 16 + 16, hy * 16, cx, cy, z), sx = gx + 12, sy = gy + 42;
     octx.font = '600 12px "Pixelify Sans", monospace';
     const tw = octx.measureText(t).width;
     octx.fillStyle = 'rgba(42,28,18,0.85)'; octx.fillRect(sx - 6, sy - 9, tw + 12, 18);

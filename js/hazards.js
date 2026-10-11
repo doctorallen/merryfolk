@@ -162,18 +162,18 @@ function drawHazard() {
   if (z.k === 'flood') {
     const tiles = z.state === 'on' ? World.flooded : (Build.on ? new Set(floodTiles()) : null);
     if (tiles) for (const i of tiles) {
-      const x = i % MAP_W, y = (i / MAP_W) | 0, sx = (x * 16 - cx) * zm, sy = (y * 16 - cy) * zm;
-      if (sx < -40 || sy < -40 || sx > W || sy > H) continue;
+      const x = i % MAP_W, y = (i / MAP_W) | 0, [sx, sy] = groundScreen(x * 16, y * 16, cx, cy, zm);
+      if (sx < -80 || sy < -40 || sx > W + 40 || sy > H) continue;
       octx.fillStyle = z.state === 'on' ? `rgba(70,120,170,${0.45 + Math.sin(tReal * 2 + x * 0.5) * 0.05})` : 'rgba(70,120,200,0.22)';
-      octx.fillRect(sx, sy, 16 * zm + 0.5, 16 * zm + 0.5);
+      tilePath(octx, x, y, x, y, cx, cy, zm); octx.fill();
     }
   }
   if (z.k === 'blight' && z.state === 'on') {
     const f = World.fields[z.field];
-    if (f) { octx.fillStyle = 'rgba(120,90,40,0.35)'; octx.fillRect((f.x0 * 16 - cx) * zm, (f.y0 * 16 - cy) * zm, (f.x1 - f.x0 + 1) * 16 * zm, (f.y1 - f.y0 + 1) * 16 * zm); }
+    if (f) { octx.fillStyle = 'rgba(120,90,40,0.35)'; tilePath(octx, f.x0, f.y0, f.x1, f.y1, cx, cy, zm); octx.fill(); }
   }
   if (z.k === 'drought' && z.state === 'on' && Build.on && World.watered) {
-    for (let y = 0; y < MAP_H; y++) for (let x = 0; x < MAP_W; x++) if (World.watered[y * MAP_W + x]) { const sx = (x * 16 - cx) * zm, sy = (y * 16 - cy) * zm; if (sx > -20 && sy > -20 && sx < W && sy < H) { octx.fillStyle = 'rgba(90,160,230,0.12)'; octx.fillRect(sx, sy, 16 * zm + 0.5, 16 * zm + 0.5); } }
+    for (let y = 0; y < MAP_H; y++) for (let x = 0; x < MAP_W; x++) if (World.watered[y * MAP_W + x]) { const [sx, sy] = groundScreen(x * 16, y * 16, cx, cy, zm); if (sx > -60 && sy > -20 && sx < W + 40 && sy < H) { octx.fillStyle = 'rgba(90,160,230,0.12)'; tilePath(octx, x, y, x, y, cx, cy, zm); octx.fill(); } }
   }
   octx.restore();
 }

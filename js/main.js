@@ -967,6 +967,17 @@ function camDrag(x0, y0, dx, dy) { Game.cam.x = x0 - dx / Game.zoom; Game.cam.y 
 function headScreen(v, cx, cy, z) { return [(v.x - cx) * z, ((v._top ?? v.y - 16) - cy) * z]; }
 function groundScreen(x, y, cx, cy, z) { return [(x - cx) * z, (y - cy) * z]; }
 function liftScreen(px, z) { return px * z; }
+// The outline of a block of tiles on the overlay (inclusive tile coords): a
+// rectangle here, a diamond in the isometric view.
+function tilePath(ctx, x0, y0, x1, y1, cx, cy, z) {
+  const pts = [[x0, y0], [x1 + 1, y0], [x1 + 1, y1 + 1], [x0, y1 + 1]].map(([a, b]) => groundScreen(a * 16, b * 16, cx, cy, z));
+  ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < 4; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath();
+}
+// A circle on the ground, of r world pixels about (x, y).
+function groundCircle(ctx, x, y, r, cx, cy, z) {
+  ctx.beginPath();
+  for (let k = 0; k <= 32; k++) { const a = (k / 32) * Math.PI * 2, [sx, sy] = groundScreen(x + Math.cos(a) * r, y + Math.sin(a) * r, cx, cy, z); k ? ctx.lineTo(sx, sy) : ctx.moveTo(sx, sy); }
+}
 function screenToWorld(sx, sy) { return [Game.cam.x + sx / Game.zoom, Game.cam.y + sy / Game.zoom]; }
 
 // The villager under a point. A fingertip is much bigger than a mouse pointer,

@@ -10,8 +10,7 @@
 //   sx = (x - y) * 2 * zoom,   sy = (x + y - z) * zoom
 // where z is a height in the same units. Things not yet drawn the new way
 // (animals, crops, props) are drawn upright from their old sprites.
-// The classic view stays available from the ⚙ menu, and build mode uses it
-// for now.
+// The classic view stays available from the ⚙ menu.
 // ---------------------------------------------------------------------------
 
 const Iso = {
@@ -830,7 +829,7 @@ const Iso = {
   groundScreen = function (x, y, cx, cy, z) { return Iso.active() ? w2s(x, y) : _groundScreen(x, y, cx, cy, z); };
   liftScreen = function (px, z) { return Iso.active() ? px * Iso.zoom * 0.9 : _liftScreen(px, z); };
   // overlays that still speak in flat world positions only make sense in the classic view
-  for (const name of ['devOverlay', 'drawAppealAndPins', 'drawHazard']) {
+  for (const name of ['devOverlay']) {
     const orig = window[name]; if (typeof orig !== 'function') continue;
     window[name] = function (...a) { if (!Iso.active()) return orig.apply(this, a); };
   }
@@ -859,14 +858,6 @@ const Iso = {
     vctx.imageSmoothingEnabled = Iso.active();
     const btn = document.getElementById('btn-view'); if (btn) btn.textContent = Iso.on ? 'Classic view' : 'Isometric view';
   }
-  // build mode draws its plans and ghosts on the classic map for now
-  const _setBuildMode = setBuildMode;
-  setBuildMode = function (on) {
-    const before = Iso.active(), center = before ? [Iso.cx, Iso.cy] : [Game.cam.x + Game.cam.w / 2, Game.cam.y + Game.cam.h / 2];
-    Iso.suspended = !!on;
-    if (before !== Iso.active()) applyView(center);
-    return _setBuildMode(on);
-  };
   window.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('btn-view');
     if (btn) { btn.textContent = Iso.on ? 'Classic view' : 'Isometric view'; btn.addEventListener('click', () => setView(!Iso.on)); }

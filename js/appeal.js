@@ -137,22 +137,22 @@ function drawAppealAndPins() {
   const W = overlay.width / dpr, H = overlay.height / dpr;
   octx.save();
   if (Build.showAppeal) {
-    const x0 = Math.max(0, Math.floor(cx / 16)), y0 = Math.max(0, Math.floor(cy / 16)), x1 = Math.min(MAP_W - 1, Math.ceil((cx + W / z) / 16)), y1 = Math.min(MAP_H - 1, Math.ceil((cy + H / z) / 16));
+    const x0 = Math.max(0, Math.floor(cam.x / 16)), y0 = Math.max(0, Math.floor(cam.y / 16)), x1 = Math.min(MAP_W - 1, Math.ceil((cam.x + cam.w) / 16)), y1 = Math.min(MAP_H - 1, Math.ceil((cam.y + cam.h) / 16));
     for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
       const a = appealAt(x, y);
       const t = clamp(a / 7, 0, 1);
       octx.fillStyle = a < 0.5 ? 'rgba(160,110,60,0.28)' : `rgba(${Math.round(255 - 140 * t)},${Math.round(210 + 30 * t)},${Math.round(90 + 60 * t)},${0.12 + t * 0.3})`;
-      octx.fillRect((x * 16 - cx) * z, (y * 16 - cy) * z, 16 * z + 0.5, 16 * z + 0.5);
+      tilePath(octx, x, y, x, y, cx, cy, z); octx.fill();
     }
   }
   // request pins
   for (const r of requestsList()) {
-    const sx = (r.tx * 16 + 8 - cx) * z, sy = (r.ty * 16 - cy) * z;
+    const [sx, sy] = groundScreen(r.tx * 16 + 8, r.ty * 16, cx, cy, z);
     if (sx < -40 || sy < -40 || sx > W + 40 || sy > H + 40) continue;
     octx.fillStyle = '#c83a2a'; octx.beginPath(); octx.arc(sx, sy - 14, 9, 0, Math.PI * 2); octx.fill();
     octx.beginPath(); octx.moveTo(sx - 5, sy - 9); octx.lineTo(sx + 5, sy - 9); octx.lineTo(sx, sy); octx.fill();
     octx.fillStyle = '#fff6dc'; octx.font = '700 12px "Pixelify Sans", monospace'; octx.textAlign = 'center'; octx.fillText('!', sx, sy - 13); octx.textAlign = 'left';
-    octx.strokeStyle = 'rgba(200,58,42,0.5)'; octx.setLineDash([4, 4]); octx.beginPath(); octx.arc(sx, sy - 6, 6 * 16 * z, 0, Math.PI * 2); octx.stroke(); octx.setLineDash([]);
+    octx.strokeStyle = 'rgba(200,58,42,0.5)'; octx.setLineDash([4, 4]); groundCircle(octx, r.tx * 16 + 8, r.ty * 16 + 8, 6 * 16, cx, cy, z); octx.stroke(); octx.setLineDash([]);
   }
   octx.restore();
 }
@@ -192,7 +192,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!Build.on || !Build.hover || !Build.showAppeal) return;
     const [hx, hy] = Build.hover, a = appealAt(hx, hy);
     const z = Game.zoom, cx = Math.round(Game.cam.x * RS) / RS, cy = Math.round(Game.cam.y * RS) / RS;
-    const sx = (hx * 16 + 16 - cx) * z + 12, sy = (hy * 16 - cy) * z + 22;
+    const [gx, gy] = groundScreen(hx * 16 + 16, hy * 16, cx, cy, z), sx = gx + 12, sy = gy + 22;
     octx.font = '600 12px "Pixelify Sans", monospace';
     const t = `${appealWord(a)} (${a.toFixed(1)})`, tw = octx.measureText(t).width;
     octx.fillStyle = 'rgba(42,28,18,0.85)'; octx.fillRect(sx - 6, sy - 9, tw + 12, 18);
