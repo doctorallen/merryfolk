@@ -150,8 +150,18 @@ function updateSoundBtn() {
 // ---------------------------------------------------------------------------
 // Selecting and teaching villagers
 // ---------------------------------------------------------------------------
+// While a rift-born is selected the whole interface glitches over to neon.
+function setRiftMode(on) {
+  const b = document.body;
+  if (b.classList.contains('rift-mode') === on) return;
+  b.classList.toggle('rift-mode', on);
+  b.classList.remove('glitching'); void b.offsetWidth; b.classList.add('glitching');
+  clearTimeout(setRiftMode.t); setRiftMode.t = setTimeout(() => b.classList.remove('glitching'), 450);
+}
+
 function selectVillager(v) {
   Game.selected = v;
+  setRiftMode(!!v && v.isRiftborn());
   if (!v) Game.follow = false;
   $('panel').hidden = !v;
   if (v) { drawPortrait($('portrait'), v.genes, v.stage, false, v.look()); v._portraitKey = portraitKey(v); renderPanel(true); }
@@ -309,6 +319,7 @@ function panelMind(v) {
   const lvl = eduLevel(v.edu);
   h += `<h3>Education</h3><div class="drive"><span class="dl">${lvl[1]}</span>${bar(v.edu, 'good')}</div>`;
   h += `<div class="likes"><div><b>Speaks</b> ${{ baby: 'in babbles and gurgles', child: 'like a chatty little one', bright: 'like a bright, bookish little one', plain: 'plainly, in good honest words', common: 'like most folk in the Shire', fine: 'rather grandly, quoting books' }[register(v)]}${v.techTier >= 2 ? ', thick with rift-talk' : v.techTier === 1 ? ', with a sprinkle of rift-talk' : ''}</div>`;
+  if (v.isRiftborn()) h = h.replace(/<b>Speaks<\/b> [^<]*/, `<b>Speaks</b> in clipped rift-talk${v.tech < 0.7 ? ', softened with a few hill-folk sayings' : ''}`);
   const from = Object.entries(v.eduFrom).filter(([, x]) => x > 0.005).sort((a, b) => b[1] - a[1]);
   if (from.length) h += `<div><b>Learned from</b> ${from.slice(0, 4).map(([k]) => EDU_SOURCES[k] || k).join(', ')}</div>`;
   h += `</div><ul class="edu-fx">${eduEffects(v).map((t) => `<li>${t}</li>`).join('')}</ul>`;

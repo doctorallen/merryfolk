@@ -344,3 +344,72 @@ textarea { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: 
 }
 .build-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(80px, 160px); gap: 10px; align-items: center; margin: 3px 0; }
 .build-row .bar { display: block; }
+
+/* ---------- rift mode: the interface goes cyberpunk while a rift-born is selected ---------- */
+body.rift-mode, .rift-skin {
+  --parch: #0f111b;
+  --parch-2: #181b2b;
+  --parch-3: #2a2f4e;
+  --ink: #bff6ff;
+  --ink-2: #7fd6e6;
+  --ink-3: #c27aff;
+  --moss: #7aff5a;
+  --moss-2: #3af0ff;
+  --brass: #ff3aa8;
+  --berry: #ff4a6a;
+  --dusk: #07080e;
+  --shadow: rgba(180, 90, 255, 0.35);
+  --font-ui: "Share Tech Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-body: "Rajdhani", "Share Tech Mono", system-ui, sans-serif;
+  --hover: #23284a;
+  --hi: #2a1f44;
+  color-scheme: dark;
+}
+.card, .tabs button, .controls button, .tool, .bar, .now, .chip, #portrait { transition: background-color .35s, border-color .35s, color .35s, box-shadow .35s; }
+body.rift-mode .card {
+  border-color: var(--moss-2);
+  background-image: repeating-linear-gradient(0deg, rgba(58, 240, 255, 0.045) 0 1px, transparent 1px 3px);
+  box-shadow: 0 0 0 1px var(--parch-3) inset, 0 0 14px rgba(58, 240, 255, 0.28), 4px 4px 0 var(--shadow);
+}
+body.rift-mode .brand { color: var(--moss-2); text-shadow: 2px 0 0 rgba(255, 58, 168, 0.75), -2px 0 0 rgba(58, 240, 255, 0.5); letter-spacing: 2px; text-transform: uppercase; }
+body.rift-mode .who h2 { color: #ffffff; text-transform: uppercase; letter-spacing: 1.5px; animation: rift-glitch 4.5s steps(1) infinite; }
+body.rift-mode #panel h3, body.rift-mode .modal-body h3 { color: var(--brass); }
+body.rift-mode #panel h3::before { content: "// "; color: var(--moss-2); }
+body.rift-mode .body, body.rift-mode #panel, body.rift-mode #log li { font-size: 15.5px; }
+body.rift-mode #portrait { background: linear-gradient(#1a0f2e 0 55%, #0a2a2e 55%); border-color: var(--brass); box-shadow: 0 0 10px rgba(255, 58, 168, 0.5); }
+body.rift-mode .now { font-style: normal; border-left: 3px solid var(--brass); }
+body.rift-mode .now::before { content: "> "; color: var(--moss); font-family: var(--font-ui); }
+body.rift-mode .controls button:hover, body.rift-mode .actions button:hover, body.rift-mode .tabs button:hover, body.rift-mode .tool:hover { background: var(--hover); }
+body.rift-mode .tool.active, body.rift-mode .tnode.me { background: var(--hi); }
+body.rift-mode .controls button.active, body.rift-mode .actions button.active { background: var(--moss-2); color: #07080e; }
+body.rift-mode .pill { color: #07080e; }
+body.rift-mode .mood[data-level="mid"] { color: #ffd23a; }
+body.rift-mode .bar { border-width: 1px; box-shadow: 0 0 6px rgba(58, 240, 255, 0.25); }
+body.rift-mode .actions .good { background: #12341f; } body.rift-mode .actions .bad { background: #3a1222; }
+body.rift-mode .chip.good { background: #12341f; } body.rift-mode .chip.mid { background: #3a3010; border-color: #ffd23a; } body.rift-mode .chip.bad { background: #3a1222; }
+body.rift-mode .note { background: var(--hi); }
+body.rift-mode .stars { color: #ffd23a; }
+body.rift-mode textarea { background: #07080e; color: var(--ink); }
+body.rift-mode #log li { border-bottom-color: var(--parch-3); }
+body.rift-mode #log time::before { content: "[ "; } body.rift-mode #log time::after { content: " ]"; }
+body.rift-mode #toast { background: #07080e; color: var(--ink); }
+body.rift-mode .rel a { color: var(--moss-2); }
+body.rift-mode .tool-hint { color: var(--ink); background: rgba(7, 8, 14, 0.82); }
+body.glitching .card { animation: rift-shake .42s steps(2) 1; }
+@keyframes rift-glitch {
+  0%, 92% { text-shadow: 2px 0 0 rgba(255, 58, 168, 0.7), -2px 0 0 rgba(58, 240, 255, 0.6); transform: none; }
+  93% { text-shadow: -4px 0 0 rgba(255, 58, 168, 0.9), 4px 0 0 rgba(58, 240, 255, 0.9); transform: translateX(2px); }
+  95% { text-shadow: 3px 1px 0 rgba(122, 255, 90, 0.8), -3px -1px 0 rgba(255, 58, 168, 0.8); transform: translateX(-2px) skewX(-8deg); }
+  97% { text-shadow: 2px 0 0 rgba(255, 58, 168, 0.7), -2px 0 0 rgba(58, 240, 255, 0.6); transform: none; }
+}
+@keyframes rift-shake {
+  0% { transform: translate(0, 0); filter: hue-rotate(0deg); }
+  25% { transform: translate(-3px, 1px); filter: hue-rotate(90deg) saturate(2); }
+  50% { transform: translate(3px, -1px); filter: hue-rotate(-60deg); }
+  75% { transform: translate(-1px, 0); filter: hue-rotate(30deg) saturate(1.6); }
+  100% { transform: translate(0, 0); filter: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.rift-mode .who h2, body.glitching .card { animation: none; }
+}
+
