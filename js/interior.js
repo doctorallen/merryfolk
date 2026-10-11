@@ -745,7 +745,7 @@ function spotFor(v, L, taken) {
 
 function updateFolk(L, dt) {
   const h = L.h, byId = new Map(Game.villagers.map((v) => [v.id, v]));
-  const inside = h.inside.map((id) => byId.get(id)).filter((v) => v && !v.carried);
+  const inside = h.inside.map((id) => byId.get(id)).filter((v) => v && !v.carried && !v.heldBy);
   const taken = new Set();
   const seen = new Set();
   const sp = SPEEDS[Game.speedIdx];

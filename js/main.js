@@ -163,6 +163,8 @@ function load() {
       const b = o.inside[0] === 'h' ? World.homes[+o.inside.slice(1)] : World.buildings[o.inside.slice(1)];
       if (b) v.enterBuilding(b);
     }
+    // a baby who was out in someone's arms is back in the cradle
+    if (v.stage === 'baby' && !v.inside) v.enterBuilding(v.home());
     const t = nearestWalkable(Math.floor(v.x / 16), Math.floor((v.y - 2) / 16));
     if (t && !walkable(Math.floor(v.x / 16), Math.floor((v.y - 2) / 16))) { v.x = t[0] * 16 + 8; v.y = t[1] * 16 + 12; }
   });
@@ -475,6 +477,17 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
   if (dir === 'up') drawProp();
   blit(ctx, spr, sx, sy, flip);
   if (dir !== 'up') drawProp();
+  // a baby in their arms, swaddled, across the chest
+  if (v.holding && v.holding.length && dir !== 'up') {
+    v.holding.forEach((id, k) => {
+      const b = personById(id), bs = b && b.sprites.held;
+      if (!bs) return;
+      const [cx0, cy0] = an.chest || [9.5, 18];
+      const bx = Math.round(cx0) + 1 - (bs.width >> 1) + (dir === 'side' ? 2 : k * 5 - (v.holding.length - 1) * 2), by = cy0 - 2 - k * 3;
+      blit(ctx, bs, sx + (flip ? SW - bx - bs.width : bx) / RS, sy + by / RS, flip);
+      b._top = sy; b._sx = sx;
+    });
+  }
   if (v.leaving) { Q(dir === 'side' ? 3 : 1, 15, 6, 9, '#6a4a2a'); Q(dir === 'side' ? 3 : 1, 15, 6, 2, '#8a6a42'); Q(dir === 'side' ? 4 : 2, 19, 4, 1, '#4a2e1a'); }
   // a red scarf in winter
   if (World.season === 'winter' && v.isGrown() && !v.inside && dir !== 'up' && v.stage !== 'baby') {
@@ -486,7 +499,7 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
 }
 
 function drawThought(ctx, v) {
-  if (v.inside || v.carried) return;
+  if (v.inside || v.carried || v.heldBy) return;
   const show = v.iconT > 0 || Game.selected === v;
   let iconKey = v.task && v.task.a.icon;
   if (v.isSick() && (!iconKey || Game.selected !== v)) iconKey = 'sick';
@@ -633,7 +646,7 @@ function render(dtReal, dtWall = dtReal) {
     for (const m of World.wildHerbs) if (m.amount > 0 && inView(m.x, m.y)) list.push({ y: m.y - 2, img: SPR.herbWild, x: m.x - 7, iy: m.y - 12 });
   }
   for (const it of World.items) if (inView(it.x, it.y)) list.push({ y: it.y, img: SPR.items[it.kind], x: it.x - Math.floor(SPR.items[it.kind].width / 2), iy: it.y - SPR.items[it.kind].height + 2 });
-  for (const v of Game.villagers) if (!v.inside && !v.carried && inView(v.x, v.y)) list.push({ y: v.y, v });
+  for (const v of Game.villagers) if (!v.inside && !v.carried && !v.heldBy && inView(v.x, v.y)) list.push({ y: v.y, v });
   for (const r of World.rabbits) if (inView(r.x, r.y)) list.push({ y: r.y, img: SPR.rabbit[r.moving && Math.floor(r.hop * 2) % 2 ? 1 : 0], x: Math.round(r.x) - 5, iy: Math.round(r.y) - 9, flip: r.face < 0 });
   for (const an of World.animals) if (inView(an.x, an.y)) {
     const spr = SPR[an.kind][an.coat][an.graze > 0 ? (Math.floor(tReal * 1.5 + an.x) % 3 === 0 ? 1 : 0) : Math.floor(tReal * 4 + an.x) % 2];
@@ -827,7 +840,7 @@ function villagerAt(wx, wy, touch = pointer.touch) {
   const pad = touch ? Math.max(0, 22 / Game.zoom - 4) : 0;
   let best = null, bd = 1e9;
   for (const v of Game.villagers) {
-    if (v.inside || v.carried) continue;
+    if (v.inside || v.carried || v.heldBy) continue;
     const top = v._top ?? v.y - 16;
     if (wx >= v.x - 7 - pad && wx <= v.x + 7 + pad && wy >= top - 2 - pad && wy <= v.y + 3 + pad) {
       const d = Math.abs(wy - (v.y - 7)) + Math.abs(wx - v.x);

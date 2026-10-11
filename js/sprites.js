@@ -376,9 +376,27 @@ function folkBaby(B, view) {
   return { g, anchors: { mouth: [10, 8], handR: [14, 12], handL: [5, 12], chest: [10, 12] } };
 }
 
+// ----- a baby in someone's arms: a swaddled bundle, a face peeking out -----
+function folkBundle() {
+  const W = 13, H = 10;
+  const g = Array.from({ length: H }, () => Array(W).fill('.'));
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const head = ((x - 3.6) / 3.2) ** 2 + ((y - 3.5) / 3.1) ** 2 < 1;
+    const wrap = ((x - 6.5) / 6.6) ** 2 + ((y - 6) / 4.1) ** 2 < 1 && y >= 2;
+    if (head && x <= 5) g[y][x] = x >= 5 ? 'S' : 's';
+    else if (wrap) g[y][x] = y >= 8 || x >= 11 || (x + y) % 6 === 0 ? 'C' : 'c';
+    else if (head) g[y][x] = 'S';
+  }
+  // a wisp of hair, sleepy eyes and rosy cheeks, and the blanket tucked round
+  for (const [x, y] of [[2, 0], [3, 0], [4, 0], [1, 1], [5, 1]]) g[y][x] = 'h';
+  g[3][2] = 'd'; g[3][5] = 'd'; g[4][1] = 'r'; g[4][6] = 'r'; g[5][3] = 'm';
+  for (let x = 6; x <= 11; x++) g[3][x] = x % 2 ? 'C' : 'c';
+  return g;
+}
+
 // Turns a grid into a double-resolution canvas with a single half-pixel outline.
 function folkCanvas(grid, pal) {
-  const H = grid.length, W = FOLK_W;
+  const H = grid.length, W = grid[0].length;
   const [c, x] = makeCanvas(W + 2, H + 2);
   const solid = (i, j) => j >= 0 && j < H && i >= 0 && i < W && grid[j][i] !== '.' && pal[grid[j][i]];
   for (let j = -1; j <= H; j++) for (let i = -1; i <= W; i++) {
@@ -399,6 +417,7 @@ function buildVillagerSprites(genes, stage, look = {}) {
     pal.c = mix(ex.vest, '#fff8e8', 0.65); pal.C = mix(ex.vest, '#fff8e8', 0.3);
     const f = make(folkBaby(B, 'down')), b = make(folkBaby(B, 'up'));
     for (const pose of ['stand', 'walk1', 'walk2', 'sit']) { out.down[pose] = f; out.up[pose] = b; out.side[pose] = f; }
+    out.held = folkCanvas(folkBundle(), pal);
     return out;
   }
   for (const pose of ['stand', 'walk1', 'walk2', 'sit']) {

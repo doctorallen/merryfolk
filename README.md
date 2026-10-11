@@ -88,6 +88,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
   - *Rift ways* are culture rather than blood, so they spread: by chatting, sharing a pint, living under the same roof (children most of all), gawking at an open rift and jacking in at the Relay. Folk who take them up wear neon trim, then synth-weave and visors, and slip into rift-talk. The rift-born soften too, swapping synth-weave for wool waistcoats. The chronicle marks when a tenth, a quarter, half and three-quarters of the hill-folk have gone rift-minded.
   - Tinkers salvage scrap from open rifts and the glittering scars they leave behind, retrofit hobbit-holes whose families have gone rift (neon arch round the door, a blinking sky-dish, a sun-glass panel, cool blue windows at night), and raise rift buildings as their numbers grow: the Relay Mast, the Glowworm (a neon tavern) and the Sun-Glass Array (hearths burn half the firewood).
   - Fewer come through when the larders are bare or it's winter. The *Travellers* ledger shows how far rift ways have spread, can open a rift on demand, and can stop rifts opening altogether.
+- **Babies are never left alone.** A baby is always with a parent (or, with no parents in the village, the grown-ups they live with): in the cradle at home while a parent is in, or carried in their arms whenever they go out. A parent holding a baby keeps to gentle things (meals, a stroll, a natter, the Store, the story circle), and not work or ale, so one parent stays home while the other works. Babies crawl on the grass only right beside a parent who's sitting or working outdoors. If a little one is ever found alone, the nearest parent drops everything and comes for them; one with nobody at all is taken in by kin or a kindly family.
 - **Adventures.** Bold villagers take short trips and send letters home through the postie, then return with tales, trinkets or a spouse met far away. Elders eventually set off on a last great adventure, sometimes hand in hand. When the village is small, travellers from over the hills bring new blood.
 
 ## Files
@@ -105,6 +106,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 | `js/farm.js` | Animal pens, the second orchard, allotments and farm animals |
 | `js/rift.js` | Rifts, the Riftfolk, rift ways spreading, neon retrofits, tinkers' actions and rift-talk |
 | `js/villager.js` | Drives, body chemistry, the learning brain, imitation, memories, speech |
+| `js/family.js` | Family care: who minds the little ones, carrying babies, fetching a little one found alone, fostering |
 | `js/actions.js` | The action catalogue: leisure, family, courtship, school and every trade |
 | `js/society.js` | The Common Store, trade assignment, courtship, births, homes, adventures, the archive |
 | `js/ui.js` | Toolbar, HUD, the five-tab inspector, the village ledger, family trees |

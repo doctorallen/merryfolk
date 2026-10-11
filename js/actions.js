@@ -201,6 +201,7 @@ function queueDelivery(v, res, amt, label) {
 function sweetheartOf(v) { return v.sweetheart ? Game.villagers.find((o) => o.id === v.sweetheart) : null; }
 function babiesOf(v) { return Game.villagers.filter((b) => b.stage === 'baby' && b.parents.includes(v.id)); }
 function babiesInHome(v) { return Game.villagers.filter((b) => b.stage === 'baby' && b.homeId === v.homeId); }
+function crawlMinder(v) { return carersOf(v).find((c) => !c.inside && c.task && c.task.phase === 'do' && dist(c.x, c.y, v.x, v.y) < 8 * 16); }
 function sickFolk() { return Game.villagers.filter((o) => o.isSick() && !o.leaving); }
 function anyStoryteller() {
   return Game.villagers.find((o) => o.task && o.task.a.id === 'work_story' && o.task.phase === 'do');
@@ -637,10 +638,11 @@ const ACTIONS = {
   },
   crawl: {
     label: 'Crawling about', icon: 'baby', sat: { bored: -0.5 }, dur: 25, pose: 'walk', stages: ['baby'],
-    avail: () => !Game.raining && World.season !== 'winter',
+    // only out on the grass right beside a parent who's sitting or working outdoors
+    avail: (v) => !Game.raining && World.season !== 'winter' && !!crawlMinder(v),
     time: (h) => (isDay(h) ? 1 : 0),
     extra: () => 0.15,
-    target: (v) => randomNearby(v, 1.5, v.home().stepX, v.home().stepY + 20),
+    target: (v) => { const c = crawlMinder(v); return c ? randomNearby(v, 1, c.x, c.y + 6) : null; },
   },
   cradle: {
     label: 'Gurgling in the cradle', icon: 'baby', sat: { bored: -0.4, cold: -0.4 }, dur: 40, pose: 'inside', stages: ['baby'],

@@ -188,6 +188,7 @@ class Villager {
     if (a.job && a.job !== this.job && !(a.jobs && a.jobs.includes(this.job))) return no(`needs a ${JOBS[a.job] ? JOBS[a.job].label.toLowerCase() : a.job}`);
     if (a.avail && !a.avail(this, h)) return no('not possible now');
     if (this.cool[a.id] && this.cool[a.id] > Game.time) return no(`cooling down, ${Math.ceil(this.cool[a.id] - Game.time)} min`);
+    if (this._arms && !ARMS_OK.has(a.id)) return no('has a baby to look after');
     let s = 0;
     if (ex) { ex.relief = []; ex.mul = []; }
     for (const d in a.sat) {
@@ -208,6 +209,8 @@ class Villager {
     if (this.isSick() && a.id !== 'sleep' && a.id !== 'remedy_item') mul('poorly', 0.4);
     if (this.stage === 'elder' && (a.id === 'party' || a.id === 'play')) mul('elderly', 0.7);
     if (this.lastAction === a.id && a.id !== 'sleep' && !a.job) mul('did it last', 0.75);
+    // with a baby to mind, home is the easier place to be
+    if (this._arms && !HOME_ACTS.has(a.id)) mul('baby in arms', 0.6);
     // once out at work, they tend to stay on for another stint rather than trudge home
     if (a.job && this.lastJobAt && Game.time - this.lastJobAt < 40 && this.lastJob === a.id) mul('on a roll', 2);
     const noise = Math.random() * 0.03;
@@ -220,6 +223,7 @@ class Villager {
   // its runners-up, for dev mode.
   think(h) {
     this.thinkDelay = 2;
+    this._arms = this.isGrown() ? armsFull(this) : 0;
     if (this.queue.length) {
       const q = this.queue.shift();
       if (this.begin(q.a, h, q.extra)) { this.noteDecision(q.a.id, 'queued', []); return; }
@@ -256,6 +260,8 @@ class Villager {
     const task = { a, phase: 'go', target, t: a.dur * R.f(0.8, 1.2), data: {}, before: { ...this.drives } };
     if (target.spot) { target.spot.occ = this.id; task.spot = target.spot; target.x = target.spot.x; target.y = target.spot.y; target.facing = target.spot.facing; }
     if (target.building) { target.x = target.building.stepX; target.y = target.building.stepY; }
+    // nobody walks out and leaves a baby on their own
+    if (this.isGrown() && !takeLittleOnes(this, a, target)) { this.releaseTask(task); this.cool[a.id] = Game.time + 20; return false; }
     if (a.start && !a.start(this, task, extra)) { this.releaseTask(task); return false; }
     if (this.inside && target.building === this.inside) { this.task = task; this.arrive(); return true; }
     if (this.inside) this.exitBuilding();
@@ -427,8 +433,8 @@ class Villager {
     if (d.cold > 0.75 && c.germs === 0 && c.immune < 0.2 && Math.random() < rate * 0.04 * (1.2 - g.hardiness)) this.catchCold('the chill');
     const achTarget = Math.max(c.germs * 0.75, c.toxin * 0.9, c.hangover * 0.7);
     d.ache += (achTarget - d.ache) * rate * 0.6;
-    // a baby indoors with a grown-up of the house gets fed and cuddled
-    if (baby && this.inside && this.inside.kind === 'home' && this.inside.inside.some((id) => { const o = Game.villagers.find((x) => x.id === id); return o && o.isGrown(); })) {
+    // a baby in someone's arms, or indoors with a grown-up of the house, gets fed and cuddled
+    if (baby && (this.heldBy || (this.inside && this.inside.kind === 'home' && this.inside.inside.some((id) => { const o = Game.villagers.find((x) => x.id === id); return o && o.isGrown(); })))) {
       d.hunger -= rate * 0.16; d.thirst -= rate * 0.16; d.lonely -= rate * 0.2;
     }
     for (const k of DRIVES) d[k] = clamp(d[k], 0, 1);
@@ -437,6 +443,12 @@ class Villager {
     if (this.bubble) { this.bubble.t -= dt / Game.minPerSec; if (this.bubble.t <= 0) this.bubble = null; }
     if (this.iconT > 0) this.iconT -= dt / Game.minPerSec;
     if (this.carried) return;
+    if (this.heldBy) { updateHeld(this); if (this.heldBy) return; }
+    if (baby) {
+      // every few minutes a little one checks there's someone with them
+      this.careT = (this.careT ?? R.f(0, 3)) - dt;
+      if (this.careT <= 0) { this.careT = 3; careCheck(this); }
+    }
 
     // speech and listening
     this.speakT -= dt;
@@ -594,7 +606,7 @@ class Villager {
     if (d < 15) {
       const a = task.a;
       this.path = null;
-      if (a.id === 'tend_baby' || a.id === 'nurse') {
+      if (a.id === 'tend_baby' || a.id === 'nurse' || a.id === 'fetch_child') {
         task.phase = 'do'; this.pose = 'stand'; this.facing = other.x < this.x ? 'left' : 'right'; task.before = { ...this.drives };
         return;
       }
