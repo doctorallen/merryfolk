@@ -62,6 +62,7 @@ class Villager {
     this.born = o.born ?? 0;
     this.expecting = o.expecting ?? null;
     this.lastFood = o.lastFood ?? null;
+    this.newcomer = o.newcomer ?? null; this.lodgeDay = o.lodgeDay ?? null; this.refusedDay = o.refusedDay ?? null;
     this.hobbies = o.hobbies ?? null; this.hobbySkill = o.hobbySkill ?? {}; this.hobbyMat = o.hobbyMat ?? {}; this.birds = o.birds ?? 0;
     this.inside = null; this.task = null; this.path = null; this.pathI = 0; this.queue = [];
     this.facing = 'down'; this.pose = 'stand'; this.walkDist = 0; this.animT = Math.random() * 10;
@@ -192,6 +193,7 @@ class Villager {
     if (this._arms && !ARMS_OK.has(a.id)) return no('has a baby to look after');
     if (this._kids && !kidsOk(a, h)) return no('has little ones in tow');
     if (this._stuck && !HOME_ACTS.has(a.id) && a.id !== 'work_nanny') return no('minding the nursery');
+    if (this.homeId < 0 && HOMELESS_NO.has(a.id)) return no('has no home yet');
     if (this.isChild()) { const why = kidBlock(this, a); if (why) return no(why); }
     let s = 0;
     if (ex) { ex.relief = []; ex.mul = []; }
@@ -269,7 +271,7 @@ class Villager {
       if (plan) { this.queue.unshift({ a, extra: { ...(extra || {}), dropped: true } }); return this.begin(ACTIONS.drop_off, h, plan); }
     }
     const target = a.target(this, h, extra);
-    if (!target) { this.cool[a.id] = Game.time + 30; return false; }
+    if (!target || (target.building && target.building.kind === 'nowhere')) { this.cool[a.id] = Game.time + 30; return false; }
     const task = { a, phase: 'go', target, t: a.dur * R.f(0.8, 1.2), data: {}, before: { ...this.drives } };
     if (target.spot) { target.spot.occ = this.id; task.spot = target.spot; target.x = target.spot.x; target.y = target.spot.y; target.facing = target.spot.facing; }
     if (target.building) { target.x = target.building.stepX; target.y = target.building.stepY; }
@@ -371,6 +373,7 @@ class Villager {
     if (!a.queued) this.weights[a.id] = clamp(w, 0.35, 2.2);
     this.stats[a.id] = (this.stats[a.id] || 0) + 1;
     if (a.id === 'chat' && task.partner) this.bond(task.partner, task.data.quarrel ? -0.04 : 0.03);
+    if (a.id === 'chat' && task.partner && task.data.ask) newcomerMet(this, task.partner);
     if (!a.queued) this.lastAction = a.id;
     if (a.job) { this.lastJobAt = Game.time; this.lastJob = a.id; }
     this.releaseTask(task);
@@ -595,6 +598,8 @@ class Villager {
     if (task.data.talkT > 0 || !task.data.leader) return;
     task.data.talkT = R.f(5, 9);
     // the listener answers what was just said, then someone starts a new thread
+    // a newcomer asking their questions
+    if (task.data.ask) { askExchange(this, p, task); return; }
     const reply = task.data.reply;
     if (reply && Game.villagers.includes(reply.who)) {
       task.data.reply = null;
@@ -648,7 +653,7 @@ class Villager {
       const sweet = this.sweetheart === other.id || this.spouse === other.id;
       const f = this.rel[other.id] ?? 0.1;
       const quarrel = !sweet && Math.random() < (this.genes.temper + other.genes.temper) * 0.06 + (f < 0 ? 0.35 : 0) - (this.genes.merriness + other.genes.merriness) * 0.03;
-      const data = { leader: true, talkT: 0, quarrel, court: sweet && this.isGrown() };
+      const data = { leader: true, talkT: 0, quarrel, court: sweet && this.isGrown(), ask: a.id === 'ask_around' };
       this.task = { a: ACTIONS.chat, phase: 'do', target: { x: this.x, y: this.y }, t: dur, data, partner: other, before: { ...this.drives }, chatLock: true };
       other.task = { a: ACTIONS.chat, phase: 'do', target: { x: other.x, y: other.y }, t: dur, data: { quarrel, court: data.court }, partner: this, before: { ...other.drives }, chatLock: true };
       if (quarrel) {
@@ -703,6 +708,7 @@ class Villager {
       foodLike: this.foodLike, rel: this.rel, love: this.love, skills: this.skills, edu: Math.round(this.edu * 1000) / 1000, eduFrom: this.eduFrom,
       tech: Math.round(this.tech * 1000) / 1000, visor: this.visor, lost: Math.round(this.lost * 1000) / 1000, memories: this.memories, job: this.job,
       playerJob: this.playerJob, wary: this.wary, pouch: this.pouch, stats: this.stats, born: this.born, expecting: this.expecting, lastFood: this.lastFood,
+      newcomer: this.newcomer, lodgeDay: this.lodgeDay, refusedDay: this.refusedDay,
       hobbies: this.hobbies, hobbySkill: this.hobbySkill, hobbyMat: this.hobbyMat, birds: this.birds,
     };
   }

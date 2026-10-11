@@ -167,6 +167,7 @@ function riftShy(a, b) {
   rift.say(R.pick(RIFT_SHUNNED_SAY), 3);
   rift.cool.chat = Game.time + 25;
   hill.remember(`One of the rift-folk, ${rift.first}, tried to talk to me. I made my excuses.`, 0);
+  if (rift.newcomer) { rift.newcomer.refused++; if (rift.newcomer.refused === 3) rift.remember('Third one today who wouldn\'t talk to me. Do I look that strange?', -1); }
   return true;
 }
 
@@ -236,9 +237,8 @@ function arriveFromRift(r) {
   // a crew often includes a pair, so they have someone to court
   const sex = r.lastSex && R.chance(0.6) ? (r.lastSex === 'f' ? 'm' : 'f') : (R.chance(0.5) ? 'f' : 'm');
   r.lastSex = sex;
-  const home = emptiestHome();
   const v = new Villager({
-    genes: riftGenes(sex), first: riftName(sex), surname: R.pick(RIFT_SURNAMES), age: R.f(CHILD_DAYS + 1, 17), homeId: home.id,
+    genes: riftGenes(sex), first: riftName(sex), surname: R.pick(RIFT_SURNAMES), age: R.f(CHILD_DAYS + 1, 17), homeId: -1,
     x: r.x, y: r.y + 4, born: Game.day, pouch: 0, tech: 1, visor: R.chance(0.5),
   });
   v.edu = R.f(0.4, 0.85);
@@ -247,15 +247,16 @@ function arriveFromRift(r) {
   v.drives.bored = 0;
   v.lost = 1;
   v.remember('Stepped through a rift into a green, quiet world with no signal at all. Where am I?', -1);
+  // a stranger: no home, no trade, nobody they know
+  startNewcomer(v);
   Game.villagers.push(v);
   // the rift-born stick together; hill-folk are wary but kindly
   for (const o of Game.villagers) if (o !== v) { const k = o.isRiftborn() ? 0.45 : 0.05; o.rel[v.id] = k; v.rel[o.id] = k; }
   v.say(R.pick(RIFT_ARRIVE_SAY), 6);
   v.begin({ ...ACTIONS.stroll, target: () => ({ x: PLAZA.cx * 16, y: (PLAZA.cy + 1) * 16, facing: 'down' }) }, Game.hour);
   for (const col of ['#c050ff', '#5af8ff']) FX.sparkle(r.x, r.y - 20, col);
-  assignJobs(true);
   const eye = expressed(v.genes).chrome ? ', one eye glinting chrome' : v.visor ? ', a glowing visor over their eyes' : '';
-  chronicle(`${v.name()} stepped out of the rift, blinking at the sunshine${eye}. ${v.pron.They} has been given a bed in ${home.name}.`, 'rift');
+  chronicle(`${v.name()} stepped out of the rift, blinking at the sunshine${eye}, with a bag of strange gadgets and nowhere to stay.`, 'rift');
   return v;
 }
 

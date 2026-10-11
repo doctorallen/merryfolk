@@ -117,7 +117,7 @@ function assignJobs(announce = true) {
       v.job = null;
     }
   }
-  const pool = Game.villagers.filter((v) => v.isGrown() && !v.job && !v.leaving && !v.playerJob);
+  const pool = Game.villagers.filter((v) => v.isGrown() && !v.job && !v.leaving && !v.playerJob && !v.newcomer);
   pool.sort((a, b) => b.age - a.age);
   for (const v of pool) {
     let best = null, bs = -1e9;
@@ -143,7 +143,7 @@ function assignJobs(announce = true) {
   // the grown-ups (often a parent of little ones themselves) takes it up
   if (need('nanny') > 0) {
     const short = (j) => need(j) > 0 || counts[j] <= 1;
-    const cands = Game.villagers.filter((v) => v.isGrown() && !v.leaving && !v.playerJob && v.job !== 'nanny' && !(v.stage === 'elder' && v.age > ELDER_DAYS * 1.2) && (!v.job || !short(v.job)));
+    const cands = Game.villagers.filter((v) => v.isGrown() && !v.leaving && !v.playerJob && !v.newcomer && v.job !== 'nanny' && !(v.stage === 'elder' && v.age > ELDER_DAYS * 1.2) && (!v.job || !short(v.job)));
     const v = cands.sort((a, b) => jobFit(b, 'nanny') - jobFit(a, 'nanny'))[0];
     if (v) {
       if (v.job) counts[v.job]--;
@@ -322,12 +322,14 @@ function welcomeTraveller(data, quiet = false, sex = null) {
     for (const s of SKILLS) v.skills[s] = R.f(0, 25) * v.genes.apt[s];
   }
   v.remember('Arrived in Thistledown along the West Road.', 1);
+  // a stranger finds their feet before they find a home and a trade
+  if (!quiet) startNewcomer(v);
   Game.villagers.push(v);
   v.begin({ ...ACTIONS.stroll, target: () => ({ x: PLAZA.cx * 16, y: (PLAZA.cy + 1) * 16, facing: 'down' }) }, Game.hour);
   v.say('Hello! Is this Thistledown?', 5);
   for (const o of Game.villagers) if (o !== v) { o.rel[v.id] = 0.1; v.rel[o.id] = 0.1; }
   assignJobs(!quiet);
-  if (!quiet) { chronicle(`A traveller, ${v.name()}, has come walking up the West Road and means to settle in ${home.name}.`, 'birth'); Game.lastTraveller = Game.day; }
+  if (!quiet) { chronicle(`A traveller, ${v.name()}, has come walking up the West Road, looking for somewhere to stay.`, 'birth'); Game.lastTraveller = Game.day; }
   return { ok: true, v };
 }
 
@@ -438,6 +440,7 @@ function dailySociety() {
   // jobs, homes, building
   assignJobs(true);
   settleHomes(false);
+  newcomersDaily();
   planTown();
 
   // departures: last adventures for the old, short trips for the bold
