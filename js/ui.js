@@ -322,8 +322,22 @@ function panelNature(v) {
   return h;
 }
 
+// What they're wishing for, and the dream of their life.
+function wishesHtml(v) {
+  if (v.stage === 'baby') return '';
+  let h = '<h3>Wishes</h3>';
+  const ws = wishesOf(v);
+  if (!ws.length) h += '<div class="note">Content with things as they are, for now.</div>';
+  else h += '<ul class="wishes">' + ws.map((w) => { const W = WISHES[w.k]; return `<li><b>${escapeHtml(wishText(w))}</b>${W && W.hint ? `<span class="hint">${escapeHtml(W.hint)}</span>` : ''}</li>`; }).join('') + '</ul>';
+  if (v.isGrown()) {
+    if (v.dream) { const p = dreamProgress(v); h += `<h3>Dream</h3><div class="dream"><span>${escapeHtml(dreamText(v.dream))}</span>${bar(p, p > 0.66 ? 'good' : 'mid')}</div>`; }
+    if (v.dreamsDone && v.dreamsDone.length) h += `<div class="likes">${v.dreamsDone.filter((d) => !d.quiet).map((d) => `<div><b>Lived the dream</b> ${escapeHtml(d.text.charAt(0).toLowerCase() + d.text.slice(1))} (day ${d.day})</div>`).join('')}</div>`;
+  }
+  return h;
+}
+
 function panelMind(v) {
-  let h = '<h3>Habits (learned)</h3>';
+  let h = wishesHtml(v) + '<h3>Habits (learned)</h3>';
   const keys = HABIT_KEYS.filter((a) => v.canDo(ACTIONS[a]) && (!ACTIONS[a].hobby || hasHobby(v, ACTIONS[a].hobby)));
   const ranked = keys.map((a) => [a, v.weights[a] * (v.genes.taste[a] || 1)]).sort((a, b) => b[1] - a[1]);
   h += '<div class="habits">';
