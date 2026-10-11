@@ -1266,7 +1266,7 @@ function boot() {
   updateSoundBtn();
   openIntro(true);
   window.addEventListener('beforeunload', save);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) save(); Sound.setHidden(document.hidden); });
   requestAnimationFrame(frame);
 }
 // A loaded winter village should look wintry straight away.

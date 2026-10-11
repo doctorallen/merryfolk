@@ -40,6 +40,15 @@ const Sound = {
     this.master.gain.setTargetAtTime(on ? this.volume : 0, t, 0.3);
   },
 
+  // All sound stops while the game's tab is hidden (the whole audio engine is
+  // suspended, so the music, ambience and rain all pause where they are) and
+  // picks up again on return, if sound is on.
+  setHidden(hidden) {
+    if (!this.ctx) return;
+    if (hidden) this.ctx.suspend();
+    else if (this.enabled) this.ctx.resume();
+  },
+
   midi(n) { return 440 * Math.pow(2, (n - 69) / 12); },
 
   tone(freq, t, dur, { type = 'triangle', vol = 0.15, attack = 0.01, vib = 0, bus = this.musicBus, rev = 0.3 } = {}) {
@@ -103,6 +112,9 @@ const Sound = {
     const night = Game.darkness > 0.4;
     const beatDur = this.mode === 'jig' ? 60 / 300 : 60 / (night ? 84 : World.season === 'winter' ? 88 : 100);
     const beats = this.mode === 'jig' ? 6 : 3;
+    // if the timer fell behind (a throttled background tab), skip the missed
+    // notes rather than playing them all at once
+    if (this.nextTime < this.ctx.currentTime - 0.1) this.nextTime = this.ctx.currentTime + 0.05;
     while (this.nextTime < this.ctx.currentTime + 0.35) {
       const bar = this.phrase[this.phraseBar];
       const t = this.nextTime;
