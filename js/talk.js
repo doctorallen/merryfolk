@@ -659,7 +659,7 @@ function apprenticeHtml(v) {
   const m = masterOf(v);
   if (m && v.master) {
     const c = v.master.craft, [t] = craftParts(c), lvl = craftLevel(v, c);
-    h += `<h3>Apprenticeship</h3><div class="sub">Apprentice to <b>${escapeHtml(m.name())}</b>${t === 'skill' ? ` (${craftTitle(m, c)})` : ''} in ${craftLabel(c)}, since day ${v.master.since + 1}: ${v.master.lessons} lesson${v.master.lessons === 1 ? '' : 's'} so far.</div>`;
+    h += `<h3>Apprenticeship</h3><div class="sub">Apprentice to <b>${escapeHtml(m.name())}</b>${t === 'skill' ? ` (${craftTitle(m, c)})` : ''} in ${craftLabel(c)}, since day ${v.master.since}: ${v.master.lessons} lesson${v.master.lessons === 1 ? '' : 's'} so far.</div>`;
     const goal = Math.max(v.master.start + 1, Math.min(GRADUATE_AT[t], craftLevel(m, c) - 5));
     h += `<div class="drive"><span class="dl">Towards finishing</span>${bar(clamp((lvl - v.master.start) / (goal - v.master.start), 0, 1), 'good')}</div>`;
   }
