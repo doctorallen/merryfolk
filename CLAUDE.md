@@ -45,14 +45,15 @@ For visual changes, look at the screenshots, and compare against a `git archive 
   - Most sprites are drawn at world size, then doubled pixel for pixel by `hd()`/`blit()` (`sprites.js`).
   - Villagers alone are drawn natively at double resolution on a half-pixel grid (`folkCanvas`), and carry `.hd`.
 - **Outlines.** `outlineCanvas()` (`util.js`) rings a sprite in a darkened shade of its own colours. The colour argument is ignored.
-- **Ground.** `paintGroundGen` (`world.js`) paints the ground into one big canvas, one colour per world pixel. It runs in slices, so a season change never stalls a frame. It then paints the hobbit-hole hills (`paintMound`), bridges and flower patches. A final pass makes everything chunky and dithers it with a 4×4 Bayer pattern (`BAYER4`, `DITHER_STEP`).
-  - After changing tiles, call `repaintRect` or `refreshGround`.
+- **Ground.** The ground lives in `Ground` (`world.js`): chunks of 32×32 tiles, each its own canvas, made when first seen (a flat sketch at once, the real painting nearest the camera first, a few milliseconds a frame in `stepPaint`) and let go when out of sight longest (`CHUNK_MAX`). `paintGroundGen` paints a rectangle one colour per world pixel, then the hobbit-hole hills (`paintMound`), bridges and flower patches, and a final pass makes everything chunky and dithers it with a 4×4 Bayer pattern (`BAYER4`, `DITHER_STEP`). Everything it draws is placed by absolute coordinates, so chunks join without seams: keep it that way (no decisions that depend on the rectangle's edges).
+  - After changing tiles, call `repaintRect` or `refreshGround`. To draw onto the ground, use `Ground.draw`.
+  - `MAP_W`/`MAP_H` are variables; `setMapSize` (before building a world) remakes every map-sized array.
 - **Scenery.** Statics (trees, bushes, buildings, props) carry a `gen` recipe and are re-made per season through `seasonalImage` (cached).
   - Long grass, tall grass, weeds and reeds are entries in `World.grass`, drawn by `drawTuft` (`nature.js`). Their `v` field selects the kind:
     - 0–7: grass and reeds
     - from `WILD_V` (100): the wild plants
     - from `TALL_V` (300): the tall grass
-- **Draw order.** Everything standing is y-sorted in `render()`, so tall grass in front of a villager covers them.
+- **Draw order.** Everything standing is y-sorted in `render()`, so tall grass in front of a villager covers them. Statics and grass come from `Scene` buckets (8×8 tiles) under the camera, not a scan of the whole map; the buckets rebuild when a list's length changes and once a second.
 - **Light.** Night light is stepped pools (`Light.render`, `fx.js`), and the house interiors (`interior.js`) do the same. Avoid smooth gradients in world art.
 - **Trees and bushes.** These are built procedurally per seed (`makeTree`, `makeBush`) and placed by habitat (`nature.js`: `plantWoods`, `plantNature`, `plantWildflowers`, `plantHill`) using soil, moisture, shade and settlement data from `terrain.js`.
 

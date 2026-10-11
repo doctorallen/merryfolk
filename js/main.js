@@ -688,6 +688,39 @@ function collectLights() {
   return L;
 }
 
+// The scenery and the grass are kept in buckets of 8×8 tiles, so a frame
+// looks only at the buckets under the camera rather than every piece on the
+// map. A bucket index is made again when its list has been changed (added
+// to, cut or replaced), and once a second regardless, in case a piece moved.
+const Scene = {
+  cell: 128, by: new Map(),
+  index(list) {
+    let e = this.by.get(list);
+    const now = performance.now();
+    if (e && e.n === list.length && now - e.at < 1000) return e.map;
+    const map = new Map();
+    for (const it of list) {
+      const k = ((it.y / this.cell) | 0) * 4096 + ((it.x / this.cell) | 0);
+      let a = map.get(k); if (!a) map.set(k, a = []);
+      a.push(it);
+    }
+    // only the live lists are kept, so a list that was replaced is let go
+    if (this.by.size > 8) for (const key of this.by.keys()) if (key !== World.statics && key !== World.grass) this.by.delete(key);
+    this.by.set(list, { map, n: list.length, at: now });
+    return map;
+  },
+  // calls fn for every item of the list inside the rectangle (world pixels)
+  gather(list, x0, y0, x1, y1, fn) {
+    const map = this.index(list), c = this.cell;
+    const cx0 = Math.max(0, Math.floor(x0 / c)), cx1 = Math.floor(x1 / c), cy0 = Math.max(0, Math.floor(y0 / c)), cy1 = Math.floor(y1 / c);
+    for (let cy = cy0; cy <= cy1; cy++) for (let cx = cx0; cx <= cx1; cx++) {
+      const a = map.get(cy * 4096 + cx);
+      if (!a) continue;
+      for (const it of a) if (it.x > x0 && it.x < x1 && it.y > y0 && it.y < y1) fn(it);
+    }
+  },
+};
+
 function render(dtReal, dtWall = dtReal) {
   const cam = Game.cam;
   const ctx = vctx;
@@ -729,8 +762,9 @@ function render(dtReal, dtWall = dtReal) {
   // y-sorted drawables
   const list = [];
   const inView = (x, y, mx = 100, my = 140) => x > cx - mx && x < cx + cam.w + mx && y > cy - 20 && y < cy + cam.h + my;
-  for (const s of World.statics) if (!s.hidden && inView(s.x, s.y)) list.push({ y: s.sortY, s });
-  for (const g of World.grass || []) if (inView(g.x, g.y, 20, 30)) list.push({ y: g.y, g });
+  // the scenery and grass near the camera, from their buckets, rather than every piece on the map
+  Scene.gather(World.statics, cx - 100, cy - 20, cx + cam.w + 100, cy + cam.h + 140, (s) => { if (!s.hidden) list.push({ y: s.sortY, s }); });
+  Scene.gather(World.grass || [], cx - 20, cy - 20, cx + cam.w + 20, cy + cam.h + 30, (g) => list.push({ y: g.y, g }));
   for (const h of World.homes) if (h.built) for (const p of h.plots) if (inView(p.x, p.y)) list.push({ y: p.y, img: SPR.crops[h.cropType][p.stage], x: p.x - 7, iy: p.y - 12 });
   const winter = World.season === 'winter';
   if (!winter) {
