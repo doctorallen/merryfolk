@@ -124,7 +124,7 @@ function giveArc(v) {
       if (typeof renderLog === 'function') renderLog();
       giveArc(v);
       const back = { mother: o.genes.sex === 'f' ? 'daughter' : 'son', father: o.genes.sex === 'f' ? 'daughter' : 'son', son: v.genes.sex === 'f' ? 'mother' : 'father', daughter: v.genes.sex === 'f' ? 'mother' : 'father', sister: o.genes.sex === 'f' ? 'sister' : 'brother', brother: o.genes.sex === 'f' ? 'sister' : 'brother', partner: 'partner', 'best friend': 'best friend' }[rel] || 'family';
-      v.arc.lost = { name: o.first, rel: back, sex: o.genes.sex, found: true };
+      if (v.arc) v.arc.lost = { name: o.first, rel: back, sex: o.genes.sex, found: true };
       v.memories = v.memories.filter((m) => !/I hope they're safe/.test(m.t));
       o.memories = o.memories.filter((m) => !/I hope they're safe/.test(m.t));
       o.rel[v.id] = 0.95; v.rel[o.id] = 0.95;
