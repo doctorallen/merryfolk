@@ -112,7 +112,7 @@ function assignJobs(announce = true) {
   // retirement
   for (const v of Game.villagers) {
     if (v.stage === 'elder' && v.job && v.job !== 'storyteller' && v.age > ELDER_DAYS * 1.2 && !v.playerJob) {
-      counts[v.job]--; if (announce) chronicle(`${v.name()} has retired after many years as the village ${JOBS[v.job].label.toLowerCase()}, and means to put ${v.pron.their} feet up.`, 'info');
+      counts[v.job]--; if (announce) chronicle(`${v.name()} has retired ${Object.entries(v.stats).filter(([k]) => ACTIONS[k] && ACTIONS[k].job === v.job).reduce((s, [, n]) => s + n, 0) > 25 ? 'after many years as the village ' + JOBS[v.job].label.toLowerCase() : 'from ' + JOBS[v.job].label.toLowerCase() + ' work after a short spell'}, and means to put ${v.pron.their} feet up.`, 'info');
       v.remember(`Retired after years as a ${JOBS[v.job].label.toLowerCase()}.`, 1);
       v.job = null;
     }
@@ -163,7 +163,7 @@ function assignJobs(announce = true) {
     let best = null, bs = jobFit(v, v.job) + 20;
     for (const j in JOBS) { if (j === v.job || need(j) <= 0 || j === 'storyteller' || (Game.jobPlan && typeof Game.jobPlan[j] === 'number' && counts[j] >= Game.jobPlan[j])) continue; const s = jobFit(v, j) + need(j) * 8; if (s > bs) { bs = s; best = j; } }
     if (best && R.chance(essentialGap ? 0.8 : 0.35)) {
-      chronicle(`${v.first} has hung up the ${JOBS[v.job].label.toLowerCase()}'s apron to become a ${JOBS[best].label.toLowerCase()}.`, 'work');
+      chronicle(`${v.first} has hung up the ${JOBS[v.job].label.toLowerCase()}'s apron to become ${aAn(JOBS[best].label.toLowerCase())}.`, 'work');
       v.remember(`Changed trade: ${JOBS[v.job].label} to ${JOBS[best].label}.`, 0);
       devLog('jobs', `${v.first} switched ${v.job} → ${best} (${v.job} over-staffed, fit for ${best} ${Math.round(bs)})`);
       counts[v.job]--; counts[best]++; v.job = best;
@@ -288,7 +288,10 @@ function returnFromTrip(entry) {
   const v = new Villager(entry.data);
   v.x = WEST_EXIT.x + 16; v.y = WEST_EXIT.y;
   if (!World.homes[v.homeId] || !World.homes[v.homeId].built) v.homeId = emptiestHome().id;
-  const tale = R.pick(['a troll who turned to stone at dawn', 'a river of silver fish', 'a mountain with snow on top in summer', 'a market with forty kinds of cheese', 'the edge of the map', 'a very rude goblin', 'a lake as clear as glass']);
+  const TALES = ['a troll who turned to stone at dawn', 'a river of silver fish', 'a mountain with snow on top in summer', 'a market with forty kinds of cheese', 'the edge of the map', 'a very rude goblin', 'a lake as clear as glass', 'a bridge older than the Shire', 'an inn where the beds were made for Big Folk', 'a field of sunflowers taller than a hobbit', 'a wizard who asked the way', 'a sea that went on for ever', 'a forest where the trees whispered', 'elves singing in the night', 'a dwarf who sold maps of nowhere'];
+  Game.talesUsed = (Game.talesUsed || []).slice(-8);
+  const tale = R.pick(TALES.filter((t) => !Game.talesUsed.includes(t)));
+  Game.talesUsed.push(tale);
   const trinket = R.pick(['a shiny brass button', 'a smooth blue stone', 'a pressed foreign flower', 'a tiny silver bell', 'a map with a hole in it', 'a jar of strange honey']);
   v.remember(`Came home from adventuring with ${trinket}.`, 2);
   v.skills.lore = Math.min(100, v.skills.lore + 8);
@@ -367,7 +370,7 @@ function dailySociety() {
   // births of expected little ones
   for (const v of vs.slice()) {
     if (!v.expecting || v.expecting.due > Game.day) continue;
-    const other = vs.find((o) => o.id === v.expecting.with) || person(v.expecting.with);
+    const other = vs.find((o) => o.id === v.expecting.with) || person(v.expecting.with) || ((Game.away || []).find((a) => a.id === v.expecting.with) || {}).data;
     v.expecting = null;
     if (!other) continue;
     const n = R.chance(0.05 + v.genes.fertility * 0.05) ? 2 : 1;
@@ -395,7 +398,7 @@ function dailySociety() {
         if (l > bv && (a.rel[b.id] || 0) > 0.2) { bv = l; best = b; }
       }
       if (best) {
-        a.sweetheart = best.id; best.sweetheart = a.id;
+        a.sweetheart = best.id; best.sweetheart = a.id; a.sweetDay = best.sweetDay = Game.day;
         chronicle(`${a.first} and ${best.first} have been seen walking out together. Sweethearts, by the look of it!`, 'love');
         a.remember(`Started walking out with ${best.first}.`, 2); best.remember(`Started walking out with ${a.first}.`, 2);
       }
@@ -413,14 +416,14 @@ function dailySociety() {
       a.remember(`Parted ways with ${b.first}.`, -1); b.remember(`Parted ways with ${a.first}.`, -1);
       continue;
     }
-    if (l >= 0.6) { const yes = R.chance(0.6); devLog('family', `${a.first} & ${b.first}: love ${l.toFixed(2)}, wedding roll (60%) → ${yes ? 'wed!' : 'not yet'}`); if (yes) wed(a, b); }
+    if (l >= 0.6 && a.sweetDay !== Game.day) { const yes = R.chance(0.6); devLog('family', `${a.first} & ${b.first}: love ${l.toFixed(2)}, wedding roll (60%) → ${yes ? 'wed!' : 'not yet'}`); if (yes) wed(a, b); }
   }
 
   // expecting
   for (const a of vs) {
     if (!a.spouse || a.stage !== 'adult' || a.expecting || a.leaving) continue;
     const b = vs.find((x) => x.id === a.spouse);
-    if (!b || b.id < a.id || b.stage !== 'adult' || b.expecting) continue;
+    if (!b || b.id < a.id || b.stage !== 'adult' || b.expecting || a.wedDay === Game.day) continue;
     const kids = vs.filter((x) => x.parents.includes(a.id)).length + Object.values(Game.archive).filter((x) => x.parents.includes(a.id)).length;
     const want = 2 + Math.round(((a.genes.fertility + b.genes.fertility) / 2) * 3);
     if (kids >= want || vs.length + 1 >= MAX_POP) continue;
@@ -460,7 +463,7 @@ function dailySociety() {
     }
   }
   for (const v of vs) {
-    if (v.leaving || v.stage !== 'adult' || v.genes.bravery < 0.65 || v.expecting) continue;
+    if (v.leaving || v.stage !== 'adult' || v.genes.bravery < 0.65 || v.expecting || (v.spouse && (personById(v.spouse) || {}).expecting)) continue;
     if (vs.some((b) => b.stage === 'baby' && b.parents.includes(v.id))) continue;
     if (R.chance(0.05 * v.genes.bravery)) { startAdventure(v, 'trip'); break; }
   }

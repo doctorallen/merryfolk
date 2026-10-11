@@ -90,7 +90,7 @@ function findFragment(k, by) {
 
 // --- Character arcs ------------------------------------------------------------------
 function giveArc(v) {
-  if (v.arc || !v.isRiftborn()) return;
+  if (v.arc || !v.isRiftborn() || v.parents.length) return;
   const sk = R.pick(Object.keys(ARC_SKILLS));
   const rel = R.pick(LOST_REL);
   const sex = /mother|sister|daughter/.test(rel) ? 'f' : /father|brother|son/.test(rel) ? 'm' : (R.chance(0.5) ? 'f' : 'm');
@@ -311,7 +311,7 @@ function storyTick() {
     2: () => rb.length >= 3,
     3: () => rb.some((v) => Game.villagers.some((o) => !o.isRiftborn() && (o.rel[v.id] || 0) > 0.45)) || S.suppers > 0,
     4: () => builtCivic('dynamo') || builtCivic('turbine') || (World.rifts.length === 0 && Game.stats.riftCamp),
-    5: () => builtCivic('relay'),
+    5: () => builtCivic('relay') || (Game.day - (S.stageDay || 0) >= 4 && riftPower().water + riftPower().wind + riftPower().sun >= 2),
     6: () => S.frags.length >= 4 && Game.villagers.some((v) => !v.isRiftborn() && v.tech >= RIFT_TIERS[0]),
     7: () => rb.length && housed / rb.length >= 0.5 && !!Game.stats.firstHybrid,
     8: () => (S.stage >= 7 && ((builtCivic('dynamo') && builtCivic('turbine')) || Game.day - (S.stageDay || 0) >= 4)) || (yearOf(Game.day) >= 3 && S.stage >= 5),
@@ -332,7 +332,7 @@ function cluesHourly(h) {
   const S = story();
   if (S.stage < 2) return;
   if (h === 21 && builtCivic('relay') && R.chance(0.35)) findFragment('relay', null);
-  if (h === 21 && isSingNight(Game.day) && World.inn && Game.villagers.some((v) => v.isRiftborn() && v.inside === World.inn) && R.chance(0.5)) findFragment('lullaby', Game.villagers.find((v) => v.isRiftborn() && v.inside === World.inn));
+  if (h >= 19 && h <= 22 && isSingNight(Game.day) && World.inn && Game.villagers.some((v) => v.isRiftborn() && v.inside === World.inn) && R.chance(0.6)) findFragment('lullaby', Game.villagers.find((v) => v.isRiftborn() && v.inside === World.inn));
   if (h === 23 && builtCivic('dynamo') && builtCivic('turbine') && World.rifts.length && R.chance(0.4)) findFragment('gold', null);
 }
 // The newcomer policy at work, each morning.

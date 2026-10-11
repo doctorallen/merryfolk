@@ -19,7 +19,7 @@ const TRADERS = [
   { key: 'bree', name: 'Barliman the Bree carter', sells: ['wood', 'flour', 'cheese', 'remedy'], buys: ['grain', 'leaf', 'ale', 'wool', 'apple', 'honey'], wants: ['leaf', 'ale', 'grain'] },
   { key: 'dwarf', name: 'Dwalin\'s cousin, a dwarf pedlar', sells: ['wood', 'remedy', 'scrap'], buys: ['ale', 'cake', 'pie', 'honey', 'cheese', 'bread'], wants: ['cake', 'pie', 'ale'], masons: true },
   { key: 'took', name: 'a Tookland cheesemonger', sells: ['cheese', 'honey', 'egg', 'apple'], buys: ['wool', 'grain', 'veg', 'fish', 'herbs'], wants: ['wool', 'herbs', 'fish'] },
-  { key: 'rift', name: 'Vex, a rift scavenger', sells: ['scrap', 'remedy', 'wood'], buys: ['bread', 'veg', 'fish', 'stew', 'apple', 'cheese'], wants: ['bread', 'fish'], rift: true },
+  { key: 'rift', name: 'Vex the rift scavenger', sells: ['scrap', 'remedy', 'wood'], buys: ['bread', 'veg', 'fish', 'stew', 'apple', 'cheese'], wants: ['bread', 'fish'], rift: true },
 ];
 const RES_WORD = { grain: 'barley', flour: 'flour', bread: 'loaves', pie: 'pies', cake: 'seed-cakes', veg: 'vegetables', fish: 'fish', apple: 'apples', egg: 'eggs', honey: 'honey', ale: 'ale', leaf: 'pipe-weed', wood: 'timber', herbs: 'herbs', remedy: 'remedies', cheese: 'cheese', wool: 'wool', scrap: 'scrap', stew: 'stew' };
 

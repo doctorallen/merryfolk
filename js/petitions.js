@@ -164,7 +164,7 @@ function answerPetition(i) {
   if (o.fn) o.fn();
   for (const [f, n] of Object.entries(o.fx || {})) shiftStanding(f, n);
   Game.petition = null;
-  chronicle(`The Steward answered the petition (${pt.title.charAt(0).toLowerCase() + pt.title.slice(1)}): ${o.label.toLowerCase()}.`, 'info');
+  chronicle(`${pt.title}: the Steward said "${o.label}".`, 'info');
   for (const [f, n] of Object.entries(o.fx || {})) for (const v of members(f)) if (!v.inside && R.chance(0.25)) v.say(n > 0 ? R.pick(['Hurrah for the Steward!', 'That\'s more like it.', 'Well said!']) : R.pick(['Hmph.', 'Typical.', 'Nobody listens to us.']), 2.4);
 }
 function openPetition() {

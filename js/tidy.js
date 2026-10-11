@@ -28,9 +28,10 @@ function uniqueFirst(v) {
     return baby;
   };
   const af = arriveFromRift;
-  arriveFromRift = function (r) { const v = af(r); if (v) uniqueFirst(v); return v; };
+  const renamed = (v, old) => { if (!v || v.first === old) return; for (const l of Game.log.slice(0, 4)) if (l.text.includes(old)) l.text = l.text.split(old).join(v.first); if (typeof renderLog === 'function') renderLog(); };
+  arriveFromRift = function (r) { const v = af(r); if (v) { const old = v.first; uniqueFirst(v); renamed(v, old); } return v; };
   const wt = welcomeTraveller;
-  welcomeTraveller = function (data, quiet, sex) { const r = wt(data, quiet, sex); if (r && r.v && !data) uniqueFirst(r.v); return r; };
+  welcomeTraveller = function (data, quiet, sex) { const r = wt(data, quiet, sex); if (r && r.v && !data) { const old = r.v.first; uniqueFirst(r.v); renamed(r.v, old); } return r; };
 }
 // the morning digest
 const DIGEST = /(is toddling about now|has come of age!|is getting on a bit, and has gone a little grey)/;

@@ -254,7 +254,7 @@ function wishesHourly(h) {
         v.dream = null;
         feel(v, 'dream', text.charAt(0).toLowerCase() + text.slice(1), 1440 * 4);
         v.remember(`Lived my dream: ${text.toLowerCase()}.`, 3);
-        chronicle(`${v.name()} has lived ${v.pron.their} dream: ${text.charAt(0).toLowerCase() + text.slice(1)}.`, 'love');
+        chronicle(`${v.name()} has lived ${v.pron.their} dream: ${(text.charAt(0).toLowerCase() + text.slice(1)).replace(/\bmy\b/g, v.pron.their).replace(/\bme\b/g, v.pron.them)}.`, 'love');
         if (!v.inside) FX.sparkle(v.x, v.y - 20, '#ffe680');
       }
     }

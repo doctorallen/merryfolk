@@ -58,6 +58,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const w = wed;
   wed = function (a, b) {
     const r = w(a, b);
+    a.wedDay = b.wedDay = Game.day;
     if (!a.inside) { a.say('I do!', 3, { to: b }); FX.hearts(a.x, a.y - 20); }
     if (!b.inside) { b.say('And so do I!', 3, { to: a }); FX.hearts(b.x, b.y - 20); }
     for (const o of Game.villagers) if (o !== a && o !== b && !o.inside && o.stage !== 'baby' && ((o.rel[a.id] || 0) > 0.4 || (o.rel[b.id] || 0) > 0.4) && R.chance(0.6)) o.say(R.pick(['Hurrah for the happy couple!', 'Doesn\'t she look a picture?', 'Kiss! Kiss!', 'I always knew!']), 3);

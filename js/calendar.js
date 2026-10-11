@@ -113,7 +113,7 @@ function birthdayMorning(v) {
     for (const o of others) v.queue.push({ a: ACTIONS.give_present, extra: { to: o } });
   }
   const n = housemates.length + (v.isGrown() ? v.queue.filter((q) => q.a.id === 'give_present').length : 0);
-  chronicle(`It's ${v.name()}'s birthday! ${v.isGrown() ? `True to custom, ${v.pron.they} ${n ? `has a present for ${n === 1 ? 'one lucky hobbit' : n + ' folk'}` : 'is keeping it quiet'}.` : 'There are presents, and probably cake.'}`, 'party');
+  (Game._bdays || (Game._bdays = [])).push(v.isGrown() ? `${v.name()}${n ? ` (presents for ${n === 1 ? 'one lucky hobbit' : ['', '', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'][n] || n}${n > 1 ? ' folk' : ''})` : ''}` : `little ${v.first}`);
 }
 
 function calendarMorning() {
@@ -121,7 +121,10 @@ function calendarMorning() {
   if (isMarketDay(day)) chronicle('It\'s Trewsday, market day. Baskets out: the square will be busy.', 'info');
   else if (isRestDay(day)) chronicle('Highday: the day of rest. Tools down, kettles on.', 'info');
   else if (isSingNight(day)) chronicle('Mersday. There\'ll be a sing-song at the Tipsy Badger tonight.', 'info');
+  Game._bdays = [];
   for (const v of Game.villagers) { delete v._bdayGiven; if (birthdayToday(v) && !v.leaving) birthdayMorning(v); }
+  const b = Game._bdays; Game._bdays = [];
+  if (b.length) chronicle(`${b.length === 1 ? 'A birthday today' : 'Birthdays today'}: ${b.length > 1 ? b.slice(0, -1).join(', ') + ' and ' + b[b.length - 1] : b[0]}. True to custom, the birthday folk give the presents.`, 'party');
 }
 
 window.addEventListener('DOMContentLoaded', () => {

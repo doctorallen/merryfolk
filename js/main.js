@@ -227,7 +227,7 @@ function simulate(dt) {
   }
   if (Game.party.on && Game.time > Game.party.until) {
     Game.party.on = false;
-    chronicle('The last lanterns are blown out in the party field. What a night!', 'info');
+    if (Game.party.reason && !['evening', 'highday', 'fireworks'].includes(Game.party.reason)) chronicle('The last lanterns are blown out in the party field. What a night!', 'info');
   }
 }
 
@@ -277,7 +277,7 @@ function onHour(h) {
       Game.weather = season === 'winter' ? 'snow' : season === 'summer' && Math.random() < 0.4 ? 'storm' : 'rain';
       Game.raining = Game.weather !== 'snow';
       Game.rainUntil = Game.time + R.f(60, 200);
-      if (Game.rainNoteDay !== Game.day) {
+      if (Game.rainNoteDay !== Game.day && (Game.weather !== 'rain' || R.chance(0.4))) {
         Game.rainNoteDay = Game.day;
         chronicle({ rain: 'It\'s coming on to rain. Good for the gardens, at least.', storm: 'Thunder rumbles over the hills. Everyone\'s dashing for cover!', snow: 'Snow is falling softly on Thistledown.' }[Game.weather], 'info');
       }

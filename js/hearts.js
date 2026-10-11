@@ -157,7 +157,7 @@ function holdContests(occasion) {
     w.rivalScore = (w.rivalScore || 0) + 1;
     feel(w, 'won', what); addSentiment(l, w, 'prickly', `winning ${what}`, 5); addSentiment(w, l, 'admiring', 'giving me a good run', 4);
     w.remember(`Won ${what} at the ${occasion}, beating ${l.first}!`, 2); l.remember(`${w.first} beat me for ${what} at the ${occasion}. Next year.`, -1);
-    held.push(`${w.first} beat ${l.first} for ${what}`);
+    held.push(`${w.first}'s ${CONTESTS[sk] ? CONTESTS[sk][1] : 'entry'} beat ${l.first}'s`);
     // rivals who've become friends at heart shake hands
     if (v.spouse === o.id || v.sweetheart === o.id) { v.rival = o.rival = null; continue; }
     if ((v.rel[o.id] ?? 0) > 0.55) {
@@ -184,7 +184,7 @@ const INSPIRATIONS = {
   baking: { text: (v) => `${v.name()} is struck by a baking fit and has filled every tin in the village with seed-cake.`, fx: (v) => { Village.produce('cake', 6); Village.produce('pie', 4); } },
   creative: { text: (v) => `${v.name()} is inspired: ${v.pron.they}'s working on something wonderful and won't say what.`, fx: (v) => { v.inspired = Game.time + 1440; } },
   matchmaker: { text: (v) => `${v.name()} has decided it's high time some people got together, and is making introductions.`, fx: (v) => matchmake(v) },
-  wanderlust: { text: (v) => `${v.name()} woke with itchy feet and walked the whole valley before breakfast, and came back with something odd.`, fx: (v) => { if (v.homeId >= 0 && typeof newMathom === 'function') { const m = newMathom(v.home(), 'trip'); m.name = R.pick(['curious green stone', 'bird\'s nest with a blue egg in it', 'old horseshoe', 'bottle with a note in it']); } } },
+  wanderlust: { text: (v) => `${v.name()} woke with itchy feet and walked the whole valley before breakfast, and came back with ${v._oddity ? aAn(v._oddity) : 'something odd'} for the mantelpiece.`, fx: (v) => { v._oddity = R.pick(['curious green stone', 'bird\'s nest with a blue egg in it', 'old horseshoe', 'bottle with a note in it', 'fossil shaped like a snail', 'arrowhead of shining flint']); if (v.homeId >= 0 && typeof newMathom === 'function') { const m = newMathom(v.home(), 'trip'); m.name = v._oddity; } } },
 };
 const SULKS = {
   holeup: { text: (v) => `${v.first} has shut ${v.pron.them}self indoors with the curtains drawn and won't come out.`, line: 'Leave me be.' },
@@ -207,6 +207,12 @@ function moodSwingsHourly() {
     const m = v.mood();
     v.highT = m > 0.84 ? (v.highT || 0) + 1 : 0;
     v.lowT = m < 0.28 ? (v.lowT || 0) + 1 : 0;
+    // an inspired spell pays off
+    if (v.inspired && Game.time > v.inspired) {
+      v.inspired = null;
+      const ks = hobbyAge(v) ? hobbiesOf(v).filter((x) => HOBBIES[x].made) : [];
+      if (ks.length && v.homeId >= 0) { const hk = R.pick(ks), what = `fine ${HOBBIES[hk].made[0]}`; madePiece(v, hk, what); chronicle(`${v.first} has finished what ${v.pron.they} was working on: a ${what}, the best ${v.pron.they}'s made.`, 'learn'); }
+    }
     if (v.sulk) {
       if (Game.time > v.sulk.until || m > 0.55) { feel(v, 'sulk_over'); v.sulk = null; }
       continue;
@@ -214,7 +220,7 @@ function moodSwingsHourly() {
     if (v.highT >= 6 && R.chance(0.06) && (Game.lastInspired || -9) < Game.day) {
       const k = R.pick(Object.keys(INSPIRATIONS));
       Game.lastInspired = Game.day;
-      feel(v, 'inspired'); INSPIRATIONS[k].fx(v); chronicle(INSPIRATIONS[k].text(v), 'learn');
+      feel(v, 'inspired'); INSPIRATIONS[k].fx(v); if (k !== 'matchmaker') chronicle(INSPIRATIONS[k].text(v), 'learn');
       if (!v.inside) FX.sparkle(v.x, v.y - 20, '#ffe680');
       // and, once in a lifetime, a fey mood: a masterpiece
       if (k === 'creative') maybeMasterpiece(v);

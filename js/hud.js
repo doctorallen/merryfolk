@@ -79,13 +79,16 @@ function renderErrand() {
   if (!el) return;
   const T = tut();
   document.querySelectorAll('.tut-glow').forEach((x) => x.classList.remove('tut-glow'));
-  if (!Game.started || Game.introOpen || T.off || T.step >= ERRANDS.length) { el.hidden = true; return; }
+  if (!Game.started || Game.introOpen || T.off || T.step >= ERRANDS.length) { el.hidden = true; document.body.classList.remove('errand-on'); return; }
+  document.body.classList.add('errand-on');
   const E = ERRANDS[T.step];
   if (E.done()) { T.step++; if (T.step >= ERRANDS.length) { toast('That\'s the Steward\'s errands done. Thistledown is yours to shape!', 'party'); Game.renown = (Game.renown || 0) + 5; } el._t = null; return renderErrand(); }
   el.hidden = false;
   if (el._t !== T.step) {
     el._t = T.step;
-    el.innerHTML = `<b>Steward's errand ${T.step + 1} of ${ERRANDS.length}</b><span>${escapeHtml(E.text)}</span><button class="err-skip">Skip guide</button>`;
+    const touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+    const text = touch ? E.text.replace(/ \(or press P\)/, '').replace(/^Click /, 'Tap ').replace(/ click /g, ' tap ') : E.text;
+    el.innerHTML = `<b>Steward's errand ${T.step + 1} of ${ERRANDS.length}</b><span>${escapeHtml(text)}</span><button class="err-skip">Skip guide</button>`;
     el.querySelector('.err-skip').addEventListener('click', () => { T.off = true; renderErrand(); });
   }
   if (E.target) { const t = document.querySelector(E.target); if (t) t.classList.add('tut-glow'); }
@@ -126,7 +129,8 @@ window.addEventListener('DOMContentLoaded', () => {
     box.appendChild(el);
     requestAnimationFrame(() => el.classList.add('show'));
     ToastQ.push({ el, text, until: performance.now() + 3800 });
-    while (ToastQ.length > 3) { const t = ToastQ.shift(); t.el.remove(); }
+    const most = window.innerWidth < 760 ? 1 : 3;
+    while (ToastQ.length > most) { const t = ToastQ.shift(); t.el.remove(); }
   };
   // the gear menu
   $('btn-gear').addEventListener('click', (e) => { e.stopPropagation(); $('gear-menu').hidden = !$('gear-menu').hidden; });
@@ -163,7 +167,7 @@ window.addEventListener('DOMContentLoaded', () => {
   };
   // selection hides the toolbar on phones (the panel becomes a bottom sheet)
   const sv = selectVillager;
-  selectVillager = function (v) { const r = sv(v); document.body.classList.toggle('has-sel', !!v); return r; };
+  selectVillager = function (v) { const prev = Game.selected; const r = sv(v); document.body.classList.toggle('has-sel', !!v); if (v !== prev && $('lesson')) $('lesson').textContent = ''; return r; };
   // locked build tools say why, with their era on the button
   const rb = renderBuildBar;
   renderBuildBar = function () {

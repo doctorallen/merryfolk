@@ -567,7 +567,7 @@ class Villager {
     if (this.chem.germs > 0 || this.chem.immune > 0.3) return;
     this.chem.germs = 0.12; this.chem.peaked = false;
     this.remember(`Caught a cold from ${from}.`, -1);
-    if (R.chance(0.5)) chronicle(`${this.first} has come down with the sniffles.`, 'sick');
+    if (R.chance(0.2)) chronicle(`${this.first} has come down with the sniffles.`, 'sick');
   }
 
   socialTick(dt) {

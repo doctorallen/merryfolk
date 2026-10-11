@@ -794,3 +794,20 @@ body.building #minimap { bottom: calc(var(--hud-bottom) + 4px); }
 .ex { display: grid; gap: 3px; padding: 6px 8px; border: 1px solid var(--parch-3); border-radius: 4px; background: var(--parch); font-size: 13.5px; align-content: start; }
 .ex b { font-family: var(--font-ui); font-size: 14px; }
 .ex button { justify-self: start; font-size: 12px; padding: 1px 8px; }
+/* ---------- phone fixes (QA round 2) ---------- */
+@media (max-width: 760px) {
+  #panel { top: auto !important; max-height: 58vh; }
+  .gear-menu { left: 0; right: auto; }
+  #errand { top: auto !important; bottom: calc(var(--hud-bottom) + 44px); z-index: 9; }
+  body.has-sel #errand { bottom: calc(58vh + 16px); }
+  body.errand-on #objectives { display: none; }
+  #roster { left: 10px; right: 10px; width: auto; }
+  #toasts .toast { font-size: 13px; padding: 5px 10px; }
+}
+#errand { z-index: 9; }
+@media (pointer: coarse) {
+  kbd { display: none; }
+  #errand .err-skip, .obj-x, .log-filters button, #bb-undo, #bb-done, .lore-card button, #ch-moot, .wg-seg button, .ch-r button, .int-head button, .ex button, .ec-o button, .ec-p button { min-height: 40px; min-width: 40px; }
+  .rel a[data-v], .likes a[data-v], .friend a { display: inline-block; padding: 8px 2px; }
+}
+#bb-done { background: var(--moss); color: var(--parch); }

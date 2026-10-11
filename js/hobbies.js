@@ -80,7 +80,7 @@ function madePiece(v, k, extra = '') {
   const n = v.stats['made_' + k];
   if ([10, 25, 50].includes(n)) {
     v.remember(`Finished my ${n}th ${H.made[0]}.`, 2);
-    chronicle(`${v.name()} has made ${n} ${H.made[1]} now. ${{ carving: 'A whole menagerie lines the shelves', basketry: 'There are baskets in every corner', pottery: 'Every jar in the house is one of theirs', knitting: 'Nobody in the family goes cold', painting: 'The walls are filling up with the valley in every season' }[k] || 'It\'s quite a collection'} at ${home.name}.`, 'learn');
+    chronicle(`${v.name()} has made ${n} ${H.made[1]} now. ${{ carving: 'A whole menagerie lines the shelves', basketry: 'There are baskets in every corner', pottery: `Every jar in the house is one of ${v.genes.sex === 'f' ? 'hers' : 'his'}`, knitting: 'Nobody in the family goes cold', painting: 'The walls are filling up with the valley in every season' }[k] || 'It\'s quite a collection'} at ${home.name}.`, 'learn');
   }
   // a present for a friend in another hole
   if (R.chance(0.22)) {
