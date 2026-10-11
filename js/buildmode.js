@@ -19,7 +19,7 @@
 
 const BUILD_TOOLS = [
   { id: 'path', label: 'Path', icon: 'pack', kind: 'paint', unit: 4, hint: 'Drag to lay a footpath across the grass' },
-  { id: 'flowers', label: 'Flowers', icon: 'heart', kind: 'paint', unit: 3, hint: 'Drag to sow wildflowers' },
+  { id: 'flowers', label: 'Flowers', icon: 'heart', kind: 'paint', unit: 3, cost: { coin: 1 }, hint: 'Drag to sow wildflowers (a penny for the seed)' },
   { id: 'tree', label: 'Tree', icon: 'leaf', kind: 'point', unit: 18, hint: 'Click to plant a young tree' },
   { id: 'hedge', label: 'Hedge', icon: 'herb', kind: 'line', unit: 7, hint: 'Drag a straight line to plant a hawthorn hedge' },
   { id: 'bench', label: 'Bench', icon: 'chat', kind: 'point', unit: 35, cost: { wood: 2 }, hint: 'Click to put a bench (2 timber)' },

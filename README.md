@@ -255,7 +255,7 @@ Coin also pays for statues and fountains, and selling counts towards charters.
 
 Press **Build** (or <kbd>B</kbd>) to shape Thistledown yourself. Pick a tool and click or drag on the map:
 - **Path:** drag a footpath across the grass.
-- **Flowers:** sow a bed of wildflowers in season.
+- **Flowers** (a penny): sow a bed of wildflowers in season.
 - **Tree:** plant a young oak, birch, apple or poplar.
 - **Hedge:** drag a straight hawthorn hedgerow.
 - **Bench** (2 timber): a place to sit and gossip.
