@@ -606,3 +606,12 @@ body.dev-on #chronicle { visibility: hidden; }
 .ch-era { display: grid; gap: 2px; font-size: 15px; margin-bottom: 4px; }
 .ch-era .met { color: var(--moss); font-weight: 600; }
 #buildbar .tool.locked { opacity: 0.45; filter: grayscale(1); }
+
+/* ---------- the market ---------- */
+.mk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.mk-grid h4 { margin: 4px 0; font-family: var(--font-ui); color: var(--ink-2); }
+.mk-row { display: grid; grid-template-columns: 20px 1fr 34px 42px auto auto; gap: 6px; align-items: center; font-size: 14px; padding: 2px 0; }
+.mk-row.want span:nth-child(2) { font-weight: 700; color: var(--moss); }
+.mk-row .mk-p { font-variant-numeric: tabular-nums; font-family: var(--font-ui); text-align: right; }
+.mk-row button { font-size: 12px; padding: 1px 6px; }
+@media (max-width: 640px) { .mk-grid { grid-template-columns: 1fr; } }

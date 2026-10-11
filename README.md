@@ -109,6 +109,21 @@ The **coin pill** (pennies and the village's rank) in the top bar opens the **Ch
 
   Locked tools show greyed in the build bar, saying what unlocks them.
 
+### The market and the caravans
+
+On Trewsday (market day) a trader's wagon rolls up the West Road and stands in the square from eight till five. Once Thistledown is a Market Town, traders come on Mersday too. Each trader is different:
+- the Bree carter
+- a dwarf pedlar from the Blue Mountains
+- a Tookland cheesemonger
+- once the rift-folk have come, a rift scavenger with a cart of salvage
+
+Open the **Market** tab of the ledger to trade:
+- **Sell** what the village can spare. Each trader pays half as much again for the two things they want most, and the price falls as you sell them more. A ⚠ warns when the Store is low on food.
+- **Buy** what it's short of, such as timber, flour, cheese, remedies or scrap. Prices rise as you buy.
+- **Dwarf masons** (40 pennies, from the pedlar) double the pace of every building job for two days.
+
+Coin also pays for statues and fountains, and selling counts towards charters.
+
 ### Shaping the village (build mode)
 
 Press **Build** (or <kbd>B</kbd>) to shape Thistledown yourself. Pick a tool and click or drag on the map:
@@ -176,6 +191,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/worldgen_ui.js` | The *Shape your valley* setup screen and the stage-by-stage generation map |
 | `js/steward.js` | The Steward's Desk: rations, ale and working-week policies, contentment and migration, workforce allocation |
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
+| `js/market.js` | Market-day caravans: traders, prices, selling and buying, dwarf masons, the wagon in the square |
 | `js/buildmode.js` | Build mode: the tool palette, ghost previews, plans the villagers build, terraforming, ponds, new lots |
 | `js/pets.js` | Cats and dogs: adoption, following their person, pottering near home, being stroked |
 | `js/gossip.js` | News spreading through conversations, shared rooms, dinner tables and the taproom |
