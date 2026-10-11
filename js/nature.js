@@ -55,6 +55,8 @@ function tuftSprite(v, season, lean) {
   const key = v + ':' + season + ':' + lean;
   let c = TUFT_CACHE.get(key);
   if (c) return c;
+  if (v >= TALL_V) { c = tallSprite(v, season, lean); TUFT_CACHE.set(key, c); return c; }
+  if (v >= WILD_V) { c = wildSprite(v, season, lean); TUFT_CACHE.set(key, c); return c; }
   let ctx;
   [c, ctx] = makeCanvas(TUFT_W, TUFT_H);
   const rng = mulberry32(v * 977 + 5);
@@ -88,7 +90,213 @@ function drawTuft(ctx, g) {
   const w = windAt(g.x, g.y) + Math.sin(tReal * 2.6 + g.ph) * 0.25 * Wind.s;
   const lean = clamp(Math.round(w * 1.6), -1, 2);
   const spr = tuftSprite(g.v, World.season, lean);
-  ctx.drawImage(spr, Math.round(g.x - TUFT_W / 2), Math.round(g.y - TUFT_H + 1));
+  ctx.drawImage(spr, Math.round(g.x - spr.width / 2), Math.round(g.y - spr.height + 1));
+}
+
+// ----- tall grass -----
+// Thick stands of meadow grass, eight to twelve pixels high: planted close,
+// so a grown hobbit walking through is hidden half to three-quarters of the
+// way up by the stems in front of them, and a little one nearly to the chin. Seed heads in summer, gold in
+// autumn, flattened straw in winter. A tuft's v of TALL_V and up, six variants.
+const TALL_V = 300, TALL_W = 13, TALL_H = 17;
+function tallSprite(v, season, lean) {
+  const [c, x] = makeCanvas(TALL_W, TALL_H);
+  const rng = mulberry32((v - TALL_V) * 389 + 11);
+  const winter = season === 'winter';
+  // five shades from the shadowed foot of the stand to the sunlit tips, and a seed-head colour
+  const cols = { spring: ['#1e4a1c', '#2e6a26', '#468e30', '#68ae44', '#90cc5e', '#a8d070'], summer: ['#1c461a', '#2a6224', '#3e7e2c', '#5c9c3a', '#80b84c', '#cabe82'], autumn: ['#4a4a1e', '#6a6428', '#8c8236', '#b0a24c', '#cebc66', '#e0cc88'], winter: ['#5a4a30', '#6e5c3a', '#8e7a52', '#ae9a6c', '#c8b88e', '#d8ccaa'] }[season];
+  for (let i = 0, n = winter ? 5 : 10 + Math.floor(rng() * 3); i < n; i++) {
+    const bx = 1 + Math.round(rng() * (TALL_W - 3));
+    const h = Math.round((8 + rng() * 4.5) * (winter ? 0.6 : 1));
+    const bend = ((rng() - 0.5) * 1.6 + lean * 1.4) * (winter ? 2 : 1);
+    const tone = rng() < 0.35 ? -1 : rng() < 0.3 ? 1 : 0; // some stems darker, some lighter
+    for (let j = 0; j < h; j++) {
+      const f = j / h, k = clamp((f < 0.25 ? 0 : f < 0.55 ? 1 : f < 0.85 ? 2 : 3) + tone, 0, 4);
+      x.fillStyle = cols[k];
+      x.fillRect(Math.round(bx + bend * f * f), TALL_H - 1 - j, 1, 1);
+    }
+    // a seed head on the odd tall stem
+    if (h >= 11 && !winter && season !== 'spring' && rng() < 0.4) { x.fillStyle = cols[5]; const tx = Math.round(bx + bend); x.fillRect(tx, TALL_H - h - 1, 1, 2); }
+  }
+  return c;
+}
+
+// ----- weeds and wild plants -----
+// Twelve kinds, each through the year and swaying like the long grass: a
+// tuft's v of WILD_V and up is a wild plant, its kind and one of four
+// variants (height and lean) packed in. Broad-leaved ones get an outline.
+const WILD = ['dandelion', 'nettle', 'dock', 'thistle', 'parsley', 'plantain', 'clover', 'bracken', 'foxtail', 'sorrel', 'ragwort', 'horsetail'];
+const WILD_V = 100, WILD_W = 15, WILD_H = 20;
+const wildV = (kind, rng) => WILD_V + WILD.indexOf(kind) * 4 + Math.floor(rng() * 4);
+function wildSprite(v, season, lean) {
+  const kind = WILD[Math.floor((v - WILD_V) / 4) % WILD.length], vr = (v - WILD_V) % 4;
+  const [c, x] = makeCanvas(WILD_W, WILD_H);
+  const rng = mulberry32(v * 131 + 7);
+  const P = (px, py, col) => { px = Math.round(px); py = Math.round(py); if (px >= 0 && py >= 0 && px < WILD_W && py < WILD_H) { x.fillStyle = col; x.fillRect(px, py, 1, 1); } };
+  const B = WILD_H - 1, C = 7;
+  const win = season === 'winter', aut = season === 'autumn', spr = season === 'spring';
+  const G = { spring: ['#2e6424', '#4a8a30', '#7cbc48'], summer: ['#24521e', '#3a7428', '#62a03a'], autumn: ['#4a5a1e', '#6e7a2a', '#9a9a3a'], winter: ['#5a4a32', '#7a6a48', '#a89870'] }[season];
+  const DEAD = ['#4a3420', '#6e5034', '#94744a'];
+  const L = win ? DEAD : G;
+  // a stem rising h pixels from (sx, B), bending with the wind; gives its x at each height
+  const stem = (sx, h, col, tilt = 0) => { const b = lean * 0.9 + tilt; const at = (j) => Math.round(sx + b * (j / h) * (j / h)); for (let j = 0; j < h; j++) P(at(j), B - j, col); return at; };
+  // a leaf from (x0, y0) out along angle a, len long, widest in the middle
+  const leaf = (x0, y0, a, len, wmax, cols, vein) => {
+    const dx = Math.cos(a), dy = -Math.sin(a);
+    for (let i = 0; i <= len; i++) {
+      const w = Math.round(wmax * Math.sin((Math.PI * i) / len));
+      for (let k = -w; k <= w; k++) P(x0 + dx * i - dy * k, y0 + dy * i + dx * k, k < 0 ? cols[2] : cols[1]);
+      if (vein) P(x0 + dx * i, y0 + dy * i, vein);
+    }
+  };
+  // a low rosette of toothed leaves
+  const rosette = (r, cols, teeth) => {
+    for (let k = -r; k <= r; k++) P(C + k, B, cols[0]);
+    for (let k = -r + 1; k <= r - 1; k++) if (!teeth || Math.abs(k) < r - 2 || k % 2) P(C + k, B - 1, cols[1]);
+    for (let k = -1; k <= 1; k++) P(C + k, B - 2, cols[2]);
+    if (teeth) { P(C - r + 1, B - 2, cols[1]); P(C + r - 1, B - 2, cols[1]); }
+  };
+  let outline = false;
+  // in winter the low rosettes lie under the snow
+  if (win && (kind === 'dandelion' || kind === 'plantain' || kind === 'clover')) return c;
+  switch (kind) {
+    case 'dandelion': {
+      rosette(win ? 3 : 4 + (vr % 2), L, true); outline = true;
+      if (win) break;
+      const h = 4 + vr, at = stem(C + (vr % 2 ? 1 : -1), h, G[1]), hx = at(h - 1), hy = B - h;
+      if (aut ? vr < 2 : spr || vr < 3) {
+        if (aut || (!spr && vr === 2)) { for (const [i, j] of [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1]]) P(hx + i, hy + j, '#f4f4ee'); P(hx, hy, '#c8c8c0'); }
+        else { for (const [i, j] of [[-1, 0], [1, 0], [0, -1], [-1, -1], [1, -1]]) P(hx + i, hy + j, '#f2d24a'); P(hx, hy, '#e8a020'); }
+      }
+      break;
+    }
+    case 'nettle': {
+      // upright stems, staggered, with pairs of drooping toothed leaves
+      for (let k = 0, n = 2 + (vr % 2); k < n; k++) {
+        const h = (win ? 6 : 9) + vr + Math.floor(rng() * 3), at = stem(C - 3 + k * 3 + Math.round(rng()), h, L[0], (rng() - 0.5) * 0.8);
+        if (win) continue;
+        for (let j = 2 + (k % 2); j < h - 1; j += 3) { const lx = at(j); P(lx - 1, B - j, G[1]); P(lx - 2, B - j + 1, G[1]); P(lx - 3, B - j + 2, G[0]); P(lx + 1, B - j, G[2]); P(lx + 2, B - j + 1, G[1]); P(lx + 3, B - j + 2, G[0]); if (!spr && !aut) P(lx, B - j + 1, '#9aa860'); }
+        P(at(h - 1), B - h, G[2]); P(at(h - 1) - 1, B - h + 1, G[1]); P(at(h - 1) + 1, B - h + 1, G[1]);
+      }
+      break;
+    }
+    case 'dock': {
+      outline = true;
+      const cols = win ? DEAD : G, vein = vr % 2 ? '#8a3a2a' : null;
+      if (!win) { leaf(C, B, 2.7, 7, 2, cols, vein); leaf(C, B, 0.45, 7, 2, cols, vein); leaf(C, B, 1.55, 6, 2, cols, vein); }
+      if (!spr) {
+        // a slim spike of rusty seed clusters
+        const h = 11 + vr, at = stem(C + 1, h, win ? DEAD[0] : '#6a5a2a');
+        const seed = aut || win ? ['#6a3418', '#8a4a22', '#a8622a'] : ['#7a7a3a', '#9a7a3a', '#a8903a'];
+        for (let j = h - 7; j < h; j++) P(at(j) + (j % 2 ? 1 : -1), B - j, seed[j % 3]);
+      }
+      break;
+    }
+    case 'thistle': {
+      outline = true;
+      if (!win) { rosette(4, L, true); P(C - 4, B - 1, '#c8d8a0'); P(C + 4, B - 1, '#c8d8a0'); }
+      if (spr) break;
+      const h = 7 + vr, at = stem(C, h, L[0]);
+      for (let j = 3; j < h - 2; j += 3) { const lx = at(j); P(lx - 1, B - j, L[1]); P(lx - 2, B - j - 1, L[2]); P(lx + 1, B - j, L[1]); P(lx + 2, B - j - 1, L[2]); if (!win) { P(lx - 3, B - j - 1, '#c8d8a0'); P(lx + 3, B - j - 1, '#c8d8a0'); } }
+      const hx = at(h - 1), hy = B - h;
+      P(hx - 1, hy + 1, L[1]); P(hx, hy + 1, L[2]); P(hx + 1, hy + 1, L[1]); P(hx, hy + 2, L[0]);
+      const top = win ? ['#6e5034', '#94744a'] : aut ? ['#f0ece0', '#d8d4c8'] : ['#b05ac8', '#d890e8'];
+      P(hx - 1, hy, top[0]); P(hx, hy, top[1]); P(hx + 1, hy, top[0]); P(hx, hy - 1, top[1]);
+      break;
+    }
+    case 'parsley': {
+      // feathery leaves low down, a tall stem branching into lacy umbels
+      for (let k = 0; k < 16; k++) { const lx = C + Math.round((rng() - 0.5) * 10), ly = B - Math.floor(rng() * 5); if (!win) P(lx, ly, rng() < 0.5 ? G[1] : G[2]); }
+      const h = (win ? 9 : 12) + vr, at = stem(C, h, win ? DEAD[1] : G[0], (vr - 1.5) * 0.4);
+      const head = win ? ['#6e5034', '#94744a'] : aut ? ['#7a5a32', '#9a7a4a'] : spr ? ['#f4f4ec', '#ffffff', '#d8d8c8'] : ['#a8b878', '#c8d098', '#8a9a5a'];
+      const umbel = (hx, hy, r) => {
+        for (let k = -r; k <= r; k++) { P(hx + k * 0.6, hy + 2 - Math.abs(k) * 0.3, L[0]); if (!win || k % 2) P(hx + k, hy, head[(k + 9) % head.length]); }
+        for (let k = -r + 1; k <= r - 1; k++) if (!win || !(k % 2)) P(hx + k, hy - 1, head[(k + 10) % head.length]);
+      };
+      umbel(at(h - 1), B - h, 3);
+      // side branches with smaller umbels
+      const j1 = h - 4 - (vr % 2), sx = at(j1);
+      for (let k = 1; k <= 3; k++) P(sx - k, B - j1 - k, win ? DEAD[1] : G[0]);
+      umbel(sx - 4, B - j1 - 4, 2);
+      if (vr > 1) { const j2 = h - 6, s2 = at(j2); for (let k = 1; k <= 2; k++) P(s2 + k, B - j2 - k, win ? DEAD[1] : G[0]); umbel(s2 + 3, B - j2 - 3, 2); }
+      break;
+    }
+    case 'plantain': {
+      outline = true;
+      for (const [a, len] of [[2.75, 5], [0.4, 5], [2.2, 4], [0.95, 4]]) leaf(C, B, a, len, 1, L, L[0]);
+      if (spr || win) break;
+      for (let k = 0, n = 1 + (vr % 2); k < n; k++) {
+        const h = 6 + vr + k, at = stem(C - 1 + k * 2, h, aut ? '#7a6a3a' : G[0], (k - 0.5) * 0.6);
+        for (let j = h - 3; j < h; j++) P(at(j), B - j, aut ? '#5a4a2a' : '#6a5a3a');
+        if (!aut) P(at(h - 2) + 1, B - h + 2, '#e8e0c0');
+      }
+      break;
+    }
+    case 'clover': {
+      outline = true;
+      for (let k = 0, n = win ? 4 : 8; k < n; k++) { const lx = C + Math.round((rng() - 0.5) * 9), ly = B - Math.floor(rng() * 3); P(lx, ly, L[1]); P(lx + 1, ly, L[1]); P(lx, ly - 1, L[2]); }
+      if (win) break;
+      const red = vr % 2, head = aut ? ['#8a6a4a', '#a8865a'] : red ? ['#c86aa8', '#e8a0c8'] : ['#f4f0f4', '#e8d8e8'];
+      for (let k = 0, n = aut ? 1 : 2 + (vr >> 1); k < n; k++) { const hx = C - 3 + k * 3 + Math.round(rng()), hy = B - 4 - Math.floor(rng() * 2); P(hx, hy + 1, G[0]); P(hx, hy, head[0]); P(hx + 1, hy, head[1]); P(hx, hy - 1, head[1]); P(hx + 1, hy - 1, head[0]); }
+      break;
+    }
+    case 'bracken': {
+      // fronds that rise and arch over, with leaflets down each side
+      const cols = win ? ['#5a3a20', '#6e4a2a'] : aut ? ['#8a4a1a', '#b8682a'] : [G[1], G[2]];
+      for (let k = 0, n = 2 + (vr % 2); k < n; k++) {
+        const dir = k % 2 ? 1 : -1, len = (win ? 6 : 10) + vr + Math.floor(rng() * 2), rise = win ? 0.5 : 1.25;
+        for (let t = 0; t < len; t++) {
+          const f = t / len, fx = C + dir * (t * 0.55 + f * f * 3) + lean * 0.6 * f, fy = B - t * rise + f * f * len * (win ? 0.2 : 0.75);
+          P(fx, fy, cols[0]);
+          if (t > 1) { const lf = Math.max(1, Math.round((1 - f) * 2.5)); for (let q = 1; q <= lf; q++) { P(fx - dir * q * 0.5 - 0.5, fy + q * 0.5 - (t % 2), cols[1]); P(fx + dir * q * 0.5 + 0.5, fy + q - (t % 2), cols[t % 2]); } }
+        }
+        if (spr && k === 0) { P(C + dir * 2, B - len + 1, '#7cbc48'); P(C + dir * 3, B - len + 2, '#4a8a30'); }
+      }
+      break;
+    }
+    case 'foxtail': {
+      const blade = win ? DEAD : G;
+      for (let k = 0; k < 4; k++) { const bx = C - 3 + k * 2, h = 3 + Math.floor(rng() * 3); for (let j = 0; j < h; j++) P(bx + Math.round(lean * 0.4 * (j / h)), B - j, blade[j < h / 2 ? 0 : 1]); }
+      const plume = win ? '#a08a62' : aut ? '#b89a5a' : spr ? '#8ab04a' : '#d8c890', tip = win ? '#c0aa80' : spr ? '#a8c868' : '#f0e2b0';
+      for (let k = 0, n = 2 + (vr % 2); k < n; k++) {
+        const h = 9 + vr + Math.floor(rng() * 3), at = stem(C - 2 + k * 2, h, win ? DEAD[1] : G[1], (k - 1) * 0.7 + (win ? 1.5 : 0));
+        for (let j = h - 4; j < h; j++) P(at(j), B - j, plume);
+        P(at(h - 1), B - h, tip);
+      }
+      break;
+    }
+    case 'sorrel': {
+      for (const a of [2.6, 0.55]) leaf(C, B, a, 3, 1, L, null);
+      const head = win ? ['#6e5034', '#94744a'] : aut ? ['#7a2a14', '#9a4020'] : spr ? ['#8a6a3a', '#a07a40'] : ['#c8402a', '#a83020'];
+      for (let k = 0, n = 2 + (vr % 2); k < n; k++) {
+        const h = 8 + vr + Math.floor(rng() * 3), at = stem(C - 2 + k * 2, h, win ? DEAD[0] : '#5a6a2a', (k - 1) * 0.6);
+        // little whorls of seed spaced up the top of each spike
+        for (let j = h - 6 + k; j < h; j += 2) { P(at(j) + 1, B - j, head[0]); P(at(j) - 1, B - j + 1, head[1]); }
+        P(at(h - 1), B - h, head[1]);
+      }
+      break;
+    }
+    case 'ragwort': {
+      // a leafy stem branching into a flat spray of yellow daisies
+      const h = 8 + vr, at = stem(C, h, L[0]);
+      for (let j = 2; j < h - 3; j += 2) { const lx = at(j); P(lx + (j % 4 ? 1 : -1), B - j, L[1]); P(lx + (j % 4 ? 2 : -2), B - j - 1, L[2]); }
+      const hx = at(h - 1), hy = B - h, top = win ? ['#6e5034', '#94744a'] : spr ? [G[1], G[2]] : aut ? ['#c89a2a', '#a87a1a'] : ['#f2c81a', '#e8a820'];
+      for (const d of [-1, 1]) { P(hx + d, hy + 1, L[0]); P(hx + d * 2, hy, L[0]); P(hx + d * 3, hy - 1, L[0]); }
+      for (const [dx, dy] of [[0, -1], [-2, -2], [2, -2], [-4, -2], [4, -2], [-1, -3], [1, -3], [-3, -3], [3, -3]]) P(hx + dx, hy + dy, top[(dx + dy + 10) % 2]);
+      break;
+    }
+    case 'horsetail': {
+      const cols = win ? DEAD : aut ? ['#6a6a24', '#8a8a30', '#aaa848'] : G;
+      for (let k = 0, n = 3 + (vr % 2); k < n; k++) {
+        const h = 6 + vr + Math.floor(rng() * 4), at = stem(C - 3 + k * 2, h, cols[1], (rng() - 0.5) * 0.8);
+        // whorls of fine needles, sloping down, staggered between stems
+        for (let j = 2 + (k % 2); j < h - 1; j += 2) P(at(j) + (j % 4 < 2 ? 1 : -1), B - j + 1, cols[0]);
+        P(at(h - 1), B - h, cols[2]);
+      }
+      break;
+    }
+  }
+  return outline ? outlineCanvas(c) : c;
 }
 
 // ----- rocks -----
@@ -148,6 +356,20 @@ function plantNature(rng, addStatic, blk) {
   const open = (x, y) => inMap(x, y) && tiles[tIdx(x, y)] === T.GRASS && !World.reserved[tIdx(x, y)] && !World.block[tIdx(x, y)];
   const treeNear = new Set((World.treeAt || []).map(([x, y]) => x + ',' + y));
   const tuft = (x, y, v) => World.grass.push({ x: x * 16 + 2 + Math.floor(rng() * 12), y: y * 16 + 4 + Math.floor(rng() * 12), v, ph: rng() * 6 });
+  // stands of tall grass grow in patches out in the open, away from the lanes and doorsteps
+  const tallN = makeNoise(World.seed + 57);
+  const tallAt = (x, y, hb, steady) => !hb.road && !hb.field && !hb.shade && hb.water > 1.5 && World.land.settled && World.land.settled[tIdx(x, y)] >= 2
+    && tallN(x * 0.13, y * 0.13) + (steady ? 0 : (hash2(x * 7, y * 13) - 0.5) * 0.05) > (hb.soil === SOIL.ALLUVIUM ? 0.6 : 0.66);
+  const tallPatch = (x, y, hb) => {
+    // planted close in staggered rows, so the stems in front hide whoever walks through;
+    // thinner towards the edge of the stand, so it frays out into the meadow
+    let edge = 0;
+    for (const [i, j] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (!inMap(x + i, y + j) || !tallAt(x + i, y + j, habitat(x + i, y + j, treeNear), true)) edge++;
+    for (let py = 2; py < 16; py += 4) for (let px = (py & 4) ? 3 : 0; px < 16; px += 6) {
+      if (edge && rng() < 0.18 * edge) continue;
+      World.grass.push({ x: x * 16 + px + Math.floor(rng() * 3), y: y * 16 + py + Math.floor(rng() * 2), v: TALL_V + Math.floor(rng() * 6), ph: rng() * 6 });
+    }
+  };
   let boulders = 0;
   const rock = (x, y, size, bias = 0) => {
     const img = makeRock(Math.floor(rng() * 9999), size);
@@ -157,6 +379,20 @@ function plantNature(rng, addStatic, blk) {
   for (let y = 1; y < MAP_H - 1; y++) for (let x = 1; x < MAP_W - 1; x++) {
     if (!open(x, y)) continue;
     const hb = habitat(x, y, treeNear);
+    if (tallAt(x, y, hb)) { tallPatch(x, y, hb); continue; }
+    // weeds by habitat, in ones and twos
+    const pick = (a) => a[Math.floor(rng() * a.length)], settled = World.land.settled ? World.land.settled[tIdx(x, y)] : 99;
+    let weeds = null, wp = 0;
+    if (hb.road) { weeds = ['dandelion', 'plantain', 'plantain', 'clover']; wp = 0.16; }
+    else if (hb.water <= 2.5 || hb.moist > 0.72) { weeds = ['horsetail', 'horsetail', 'dock']; wp = 0.14; }
+    else if (hb.field) { weeds = ['thistle', 'ragwort', 'dock', 'sorrel']; wp = 0.22; }
+    else if (hb.shade) { weeds = ['bracken', 'bracken', 'nettle', 'parsley']; wp = 0.08; }
+    else if (hb.edge) { weeds = ['parsley', 'parsley', 'nettle', 'foxtail']; wp = 0.15; }
+    else if (settled <= 3) { weeds = ['nettle', 'dock', 'dandelion', 'clover']; wp = 0.1; }
+    else if (hb.soil === SOIL.THIN) { weeds = ['thistle', 'ragwort', 'foxtail']; wp = 0.14; }
+    else if (hb.soil === SOIL.ALLUVIUM) { weeds = ['sorrel', 'foxtail', 'clover']; wp = 0.12; }
+    else { weeds = ['dandelion', 'clover', 'plantain', 'sorrel', 'sorrel', 'foxtail', 'thistle']; wp = 0.06; }
+    if (rng() < wp) { const kind = pick(weeds); for (let k = 0, n = rng() < 0.4 ? 2 : 1; k < n; k++) tuft(x, y, wildV(kind, rng)); }
     if (hb.road) continue;
     // grass and reeds
     let n = 0, reed = false;
@@ -269,6 +505,12 @@ function plantHill(h) {
       const fx = Math.round(ax + (rng() - 0.5) * 22), fy = Math.round(ay + (rng() - 0.5) * 12);
       if (ok(fx, fy, 0.82)) World.flowers.push({ x: fx, y: fy, seed: Math.floor(rng() * 9999), kind, ground: true });
     }
+  }
+  // a few weeds among the grass
+  const hillWeeds = ['clover', 'dandelion', 'sorrel', 'foxtail', 'foxtail', 'thistle', 'ragwort'];
+  for (let k = 0, n = 2 + Math.round(size * 1.5) + Math.floor(rng() * 3); k < n; k++) {
+    const x = Math.round(cx + (rng() - 0.5) * rx * 1.5), y = Math.round(cy + (rng() - 0.6) * ry * 1.2);
+    if (ok(x, y)) World.grass.push({ x, y, v: wildV(pick(hillWeeds), rng), ph: rng() * 6 });
   }
   // a fern, a sprig of heather or a leafy plant or two (the bush kinds by seed: 0 round, 4 fern, 6 heather)
   const plants = [0, 4, 6];
