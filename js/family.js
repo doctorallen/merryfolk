@@ -65,7 +65,8 @@ function kinWord(kid, o) {
 const ARMS_OK = new Set(['sleep', 'eat_home', 'eat_inn', 'tea', 'well', 'chat', 'stroll', 'market', 'read', 'potter', 'tend_baby', 'watch', 'party',
   'read_item', 'eat_item', 'remedy_item', 'bake_home', 'fetch_child', 'collect_child', 'drop_off', 'work_story']);
 const NOT_WITH_KIDS = new Set(['ale', 'smoke', 'ale_item', 'leaf_item', 'nap', 'nurse']);
-function kidsOk(a, h) { return !NOT_WITH_KIDS.has(a.id) && !(a.id === 'party' && (h >= 21.5 || h < 6)); }
+// and with little ones in tow, home by their bedtime
+function kidsOk(a, h) { return !NOT_WITH_KIDS.has(a.id) && (HOME_ACTS.has(a.id) || !(h >= 20.5 || h < 6)); }
 const HOME_ACTS = new Set(['sleep', 'eat_home', 'tea', 'potter', 'bake_home', 'tend_baby']);
 
 // ----- the nursery -----
@@ -248,6 +249,12 @@ function followMinder(v, task, dt) {
     // and watch them at work
     if (mt && mt.phase === 'do' && mt.a.job && JOBS[m.job]) v.practice(JOBS[m.job].skill, dt, 0.25);
   };
+  // past a little one's bedtime, whoever has them heads for home
+  const late = Game.hour >= 20.75 || Game.hour < 6;
+  if (late && m.task && !HOME_ACTS.has(m.task.a.id) && !m.task.a.queued && m.task.phase === 'do' && m.task.t > 1) {
+    m.task.t = 1;
+    if (R.chance(0.5)) m.say(R.pick(['Come on, past your bedtime.', 'Home time, sleepyhead.', 'Let\'s get you to bed.']), 2.4);
+  }
   if (m.inside) {
     if (v.inside === m.inside) {
       v.path = null; v.pose = 'inside'; task.phase = 'do';
@@ -515,3 +522,68 @@ Object.assign(ACTION_NAMES, {
   held: 'Being carried', tag_along: 'Tagging along', wait_kid: 'Waiting for a grown-up', nursery: 'The nursery', fetch_child: 'Fetching little ones',
   collect_child: 'Collecting little ones', drop_off: 'Dropping off little ones', work_nanny: 'Nannying',
 });
+
+// ----- family routines -----
+// Dinner is eaten together at home, round the kitchen table: whoever's about
+// at dinnertime makes for home if the family's there, and eating together
+// draws them closer. At bedtime a parent tells the little ones a story and
+// tucks them in.
+const DINNER = [17.75, 19.5];
+function isDinner(h) { return h >= DINNER[0] && h < DINNER[1]; }
+function householdOf(v) { return Game.villagers.filter((o) => o !== v && o.homeId === v.homeId && !o.leaving && o.stage !== 'baby'); }
+// Somebody of the house is home (or on the way) for dinner.
+function familyDinnerOn(v) {
+  const home = v.home();
+  return householdOf(v).some((o) => o.inside === home || (o.task && o.task.a.id === 'eat_home' && o.task.target.building === home));
+}
+function familyDinnerTick(v, task) {
+  if (task.data.together || !isDinner(Game.hour) || v.inside !== v.home()) return;
+  const at = householdOf(v).filter((o) => o.inside === v.home() && o.task && o.task.a.id === 'eat_home' && o.task.phase === 'do');
+  if (!at.length) return;
+  task.data.together = true;
+  for (const o of at) v.bond(o, 0.02);
+  v.drives.lonely = Math.max(0, v.drives.lonely - 0.25);
+  if (v.stats.dinnerDay !== Game.day) {
+    v.stats.dinnerDay = Game.day;
+    const all = residentsOf(v.home()).filter((o) => o.stage !== 'baby');
+    if (all.length >= 3 && all.every((o) => o.inside === v.home()) && Game.stats.familyDinnerNote !== Game.day && R.chance(0.35)) {
+      Game.stats.familyDinnerNote = Game.day;
+      chronicle(`The whole household at ${v.home().name} sat down to dinner together tonight: ${all.map((o) => o.first).join(', ').replace(/, ([^,]*)$/, ' and $1')}.`, 'info');
+    }
+    if (R.chance(0.3)) v.remember(`Dinner with the family at ${v.home().name}.`, 1);
+  }
+}
+// The little ones a grown-up might tell a bedtime story to.
+function storyKids(v) {
+  if (!v.isGrown() || v.inside !== v.home()) return [];
+  return Game.villagers.filter((k) => k.isChild() && k.years() < 12 && k.homeId === v.homeId && k.inside === v.home() && k.storyDay !== Game.day && !(k.task && k.task.a.id === 'sleep'));
+}
+const BEDTIME = ['Once upon a time, in a hole in the ground...', 'And the dragon curled up and went to sleep. Just like you.', 'Night night. Sleep tight.', 'One more page, then lights out.', 'And they all lived happily ever after. The end.'];
+
+Object.assign(ACTIONS, {
+  bedtime_story: {
+    label: 'Telling a bedtime story', icon: 'book', sat: { lonely: -0.3, bored: -0.2 }, dur: 20, pose: 'inside', stages: ADULT,
+    label2: (v) => { const ks = storyKids(v); return ks.length ? `Telling ${ks.map((k) => k.first).join(' and ')} a bedtime story` : 'Telling a bedtime story'; },
+    avail: (v) => storyKids(v).length > 0,
+    time: (h) => (h >= 19 && h < 21.5 ? 1 : 0),
+    extra: (v) => 1.4 + v.genes.fertility * 0.4 + v.edu * 0.3,
+    target: (v) => ({ building: v.home() }),
+    tick: (v, task, dt) => {
+      if (Math.random() < dt * 0.03) v.say(R.pick(BEDTIME), 3);
+      for (const k of storyKids(v)) learn(k, dt * 0.0002 * (0.5 + v.edu), 'home');
+    },
+    done: (v) => {
+      // and then it's bed
+      for (const k of storyKids(v)) {
+        k.storyDay = Game.day;
+        k.bond(v, 0.03);
+        k.drives.lonely = Math.max(0, k.drives.lonely - 0.4);
+        k.abort(); k.queue = [];
+        k.begin(ACTIONS.sleep, Game.hour);
+      }
+    },
+  },
+});
+ACTIONS.bedtime_story.id = 'bedtime_story';
+ACTION_NAMES.bedtime_story = 'Bedtime stories';
+HOME_ACTS.add('bedtime_story');

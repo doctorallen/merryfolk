@@ -888,6 +888,7 @@ function spotFor(v, L, taken) {
   if (id === 'hobby_pottery' && (L.spots.wheel || L.spots.bench)) { const s = L.spots.wheel || L.spots.bench; return { x: s.x, y: 104, pose: 'work', face: 'up' }; }
   if (id === 'hobby_painting' && L.spots.easel) return { x: L.spots.easel.x, y: 106, pose: 'work', face: 'up' };
   if (id === 'hobby_collecting' && L.spots.cabinet) return { x: L.spots.cabinet.x, y: 106, pose: 'stand', face: 'up' };
+  if (id === 'bedtime_story') { const k = L.res.find((o) => o.isChild()); const bed = k && L.beds.find((b) => b.who.includes(k.id)); if (bed) return { x: bed.x + bed.w + 6, y: 106, pose: 'stand', face: 'left' }; }
   if (id === 'tend_baby' && L.cradles.length) { const c = L.cradles[0]; return { x: c.x + c.w + 6, y: 106, pose: 'stand', face: 'left' }; }
   if (id === 'nurse') { const pt = v.task.target && v.task.target.patient; const bed = pt && L.beds.find((b) => b.who.includes(pt.id)); if (bed) return { x: bed.x + bed.w + 6, y: 106, pose: 'stand', face: 'left' }; }
   if (id === 'deliver' && L.spots.hall) return { x: L.spots.hall.x, y: 106, pose: 'stand', face: 'up' };

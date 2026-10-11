@@ -284,7 +284,8 @@ function onHour(h) {
   // evening hearths, parties and fireworks
   if (h === 19) lightHearths();
   if (h === 18 && !Game.party.on && !Game.raining) {
-    if (Game.party.planned || Game.day % 3 === 0 || Math.random() < 0.25) startParty(Game.party.planned || 'evening');
+    // a do every few days, and the festivals, weddings and comings of age
+    if (Game.party.planned || Game.day % 4 === 0 || Math.random() < 0.08) startParty(Game.party.planned || 'evening');
   }
   if (h === 22 && Game.party.on && !Game.raining) fireworkShow(PARTY.danceX * 16 + 8, (PARTY.danceY - 3) * 16, Game.party.reason === 'midsummer' ? 18 : 9);
   if (h === 23 && Game.party.on && Game.party.reason === 'midsummer') fireworkShow(PARTY.danceX * 16 + 8, (PARTY.danceY - 3) * 16, 14);

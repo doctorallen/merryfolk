@@ -261,9 +261,11 @@ const ACTIONS = {
     label: 'Having a bite at home', icon: 'plate', sat: { hunger: -0.7, thirst: -0.1, bored: -0.05 }, dur: 40, pose: 'sit', prop: 'plate', meal: true,
     avail: (v) => pantryTotal(v.home()) > 0 && v.chem.toxin < 0.5 && v.drives.hunger > 0.2,
     trait: (v) => 0.7 + v.genes.appetite * 0.6,
+    // dinner is a family affair, eaten indoors round the table
+    time: (h, v) => (isDinner(h) && familyDinnerOn(v) ? 2 : 1),
     target: (v, h) => {
       const home = v.home();
-      if (Game.raining || h >= 20.5 || h < 7 || World.season === 'winter' || !home.bench || home.bench.occ) return { building: home };
+      if (Game.raining || h >= 20.5 || h < 7 || World.season === 'winter' || !home.bench || home.bench.occ || isDinner(h)) return { building: home };
       return { spot: home.bench };
     },
     start: (v, task) => {
@@ -274,13 +276,15 @@ const ACTIONS = {
       Village.use(k, 1, true);
       return true;
     },
+    tick: (v, task) => familyDinnerTick(v, task),
     done: (v, task) => afterMeal(v, task.data.food),
   },
   eat_inn: {
     label: 'Dining at the inn', icon: 'plate', sat: { hunger: -0.75, thirst: -0.3, lonely: -0.3, bored: -0.2, cold: -0.3 }, dur: 55, pose: 'sit', prop: 'plate', meal: true, social: true,
     avail: (v) => !!pickFood(v, Village.stores, ['stew', 'pie', 'fish', 'bread', 'cake', 'veg']) && v.chem.toxin < 0.5 && v.drives.hunger > 0.2,
-    time: (h) => (h >= 11 && h < 23 ? (h >= 17 ? 1.25 : 1) : 0.15),
-    trait: (v) => 0.6 + v.genes.sociability * 0.5,
+    // a treat now and then, not every meal: family folk eat at home at dinnertime
+    time: (h, v) => (h >= 11 && h < 23 ? (h >= 17 ? 1.1 : 0.9) : 0.15) * (isDinner(h) && householdOf(v).length ? 0.4 : 1),
+    trait: (v) => 0.42 + v.genes.sociability * 0.45,
     target: (v, h) => innTarget(v, h),
     start: (v, task) => {
       const k = pickFood(v, Village.stores, ['stew', 'pie', 'fish', 'bread', 'cake', 'veg']);
