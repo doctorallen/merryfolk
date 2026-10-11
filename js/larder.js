@@ -73,7 +73,8 @@ function winterReckoning() {
     if (per >= 3) { full++; for (const v of res) feel(v, 'larder_full'); }
     else if (per < 1) { bare++; for (const v of res) feel(v, 'larder_bare'); }
   }
-  chronicle(`Winter is in. ${full ? `${full} hole${full > 1 ? 's go' : ' goes'} into it with shelves full of jam, pickles and smoked fish` : 'Hardly anyone has put much by'}${bare ? `, and ${bare} ${bare > 1 ? 'have' : 'has'} worryingly bare shelves` : ''}.`, full >= bare ? 'season' : 'sick');
+  const num = (n) => (['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][n] || n);
+  chronicle(`Winter is in. ${full ? `${num(full)} hole${full > 1 ? 's go' : ' goes'} into it with shelves full of jam, pickles and smoked fish` : 'Hardly anyone has put much by'}${bare ? `, and ${num(bare)} ${bare > 1 ? 'have' : 'has'} worryingly bare shelves` : ''}.`, full >= bare ? 'season' : 'sick');
 }
 
 window.addEventListener('DOMContentLoaded', () => {

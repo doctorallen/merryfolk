@@ -135,6 +135,8 @@ window.addEventListener('DOMContentLoaded', () => {
     $('hud-era').textContent = `${ERAS[era()].name}${next ? ` · ${prog}%` : ''}`;
     $('hud-era').title = next ? `On the way to ${next.name}: ${prog}% of the way. Open the Charter.` : 'Thistledown is a Shire Town.';
     renderObjectives(); renderErrand();
+    // keep the build bar's counts and requests fresh
+    if (Build.on && (Game._bbAt == null || Math.abs(Game.time - Game._bbAt) > 20) && !Build.drag) { Game._bbAt = Game.time; const hint = $('bb-hint'); if (!hint || !hint.querySelector('#bb-charter')) renderBuildBar(); }
   };
   // the coin chip opens the market, not the charter
   const coin = $('hud-coin'), fresh = coin.cloneNode(true); coin.replaceWith(fresh);

@@ -285,7 +285,12 @@ ACTIONS.work_plan = {
     let spot = walkable(tx, ty) && p.tool !== 'pond' ? [tx, ty] : null;
     if (!spot) for (const [dx, dy] of [[0, 1], [1, 0], [-1, 0], [0, -1], [1, 1], [-1, 1]]) if (walkable(tx + dx, ty + dy)) { spot = [tx + dx, ty + dy]; break; }
     if (!spot) spot = nearestWalkable(tx, ty);
-    if (!spot) return null;
+    if (!spot || !findPath(Math.floor(v.x / 16), Math.floor((v.y - 2) / 16), spot[0], spot[1])) {
+      p.unreachable = (p.unreachable || 0) + 1;
+      if (p.unreachable === 4) chronicle(`Nobody can find a way to the ${BTOOL[p.tool].label.toLowerCase()} you planned: it's cut off. Lay a path to it, or cancel the plan.`, 'build');
+      return null;
+    }
+    p.unreachable = 0;
     return { x: spot[0] * 16 + 8 + R.i(-3, 3), y: spot[1] * 16 + 12, plan: p, faceTo: { x: tx * 16 + 8, y: ty * 16 + 8 } };
   },
   start: (v, task) => {
@@ -384,7 +389,7 @@ function drawBuildOverlay() {
     const [x0, y0] = p.tiles[0], [sx, sy] = S(x0 * 16 + 8, y0 * 16 - 2);
     octx.fillStyle = '#6e4628'; octx.fillRect(sx - 1, sy - 4 * z, 2, 6 * z); octx.fillStyle = '#e8c24a'; octx.fillRect(sx + 1, sy - 4 * z, 4 * z, 2 * z);
     if (p.prog > 0) { const w = 18 * z, f = clamp(p.prog / p.work, 0, 1); octx.fillStyle = '#2a1c12'; octx.fillRect(sx - w / 2, sy - 7 * z, w, 3); octx.fillStyle = '#7ab04c'; octx.fillRect(sx - w / 2, sy - 7 * z, w * f, 3); }
-    if (waiting && Build.on) { octx.font = '600 12px "Pixelify Sans", monospace'; octx.fillStyle = '#7a3a1a'; octx.fillText('waiting for timber', sx + 6, sy - 10); }
+    if ((waiting || p.unreachable >= 4) && Build.on) { octx.font = '600 12px "Pixelify Sans", monospace'; octx.fillStyle = '#7a3a1a'; octx.fillText(p.unreachable >= 4 ? 'can\'t reach it' : `waiting for ${Object.keys(p.cost || {}).map((k) => (k === 'wood' ? 'timber' : k === 'coin' ? 'pennies' : k)).join(' and ')}`, sx + 6, sy - 10); }
   }
   octx.globalAlpha = 1;
   if (Build.on && Build.hover) {
@@ -456,7 +461,14 @@ function buildPointer(e, phase) {
     return true;
   }
   if (phase === 'move' && Build.drag) {
-    if (T0.kind === 'paint') { const k = tileKey(tx, ty); if (!Build.drag.seen.has(k)) { Build.drag.seen.add(k); Build.drag.tiles.push([tx, ty]); } }
+    if (T0.kind === 'paint') {
+      const last = Build.drag.tiles[Build.drag.tiles.length - 1] || [tx, ty];
+      const n = Math.max(Math.abs(tx - last[0]), Math.abs(ty - last[1]));
+      for (let i = 1; i <= n; i++) {
+        const x = Math.round(last[0] + (tx - last[0]) * i / n), y = Math.round(last[1] + (ty - last[1]) * i / n), k = tileKey(x, y);
+        if (!Build.drag.seen.has(k)) { Build.drag.seen.add(k); Build.drag.tiles.push([x, y]); }
+      }
+    }
     else Build.drag.tiles = strokeTiles(tool, Build.drag.start, [tx, ty]);
     return true;
   }

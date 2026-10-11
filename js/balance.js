@@ -27,9 +27,15 @@ feelingsLift = function (v) {
 
 // charters that can't be met, or are met already
 CHARTER_KINDS.ale.size = [40, 55, 65];
-CHARTER_KINDS.lamps.size = [3, 6, 10];
-CHARTER_KINDS.lamps.text = (n) => `Light ${n} more lamps than the village had (build lamp-posts)`;
-CHARTER_KINDS.lamps.val = (c) => World.lamps.filter((l) => l.lit).length - (c.lampBase ?? World.lamps.length);
+CHARTER_KINDS.lamps.size = [2, 4, 6];
+CHARTER_KINDS.lamps.text = (n) => `Put up ${n} new lamp-posts for the lamplighter`;
+CHARTER_KINDS.lamps.val = (c) => World.lamps.length - (c.lampBase ?? World.lamps.length);
+// letters ever delivered, so progress never slips back when someone leaves
+CHARTER_KINDS.letters.val = () => Game.stats.letters || 0;
+{
+  const dl = deliverLetters;
+  deliverLetters = function (home, by) { const n = dl(home, by); Game.stats.letters = (Game.stats.letters || 0) + n; return n; };
+}
 {
   const nc = newCharter;
   newCharter = function (skip) { const c = nc(skip); if (c && c.k === 'lamps') c.lampBase = World.lamps.length; return c; };

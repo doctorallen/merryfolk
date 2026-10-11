@@ -131,7 +131,7 @@ function newcomersDaily() {
     if (offers.length && R.chance(found ? 0.8 : 0.4)) {
       const [h, host] = offers[0];
       moveHome(v, h);
-      chronicle(`${host.first} has taken ${v.first} in as a lodger at ${h.name}${v.isRiftborn() ? ', the first hill-folk household to give one of the rift-folk a roof' : ''}.`, v.isRiftborn() ? 'rift' : 'info');
+      chronicle(`${host.first} has taken ${v.first} in as a lodger at ${h.name}${v.isRiftborn() && !host.isRiftborn() && !Game.stats.firstRiftLodger ? (Game.stats.firstRiftLodger = true, ', the first hill-folk household to give one of the rift-folk a roof') : ''}.`, v.isRiftborn() ? 'rift' : 'info');
       v.remember(`${host.first} offered me a bed at ${h.name}. I could have cried.`, 3);
       host.remember(`Took ${v.first} in as a lodger.`, 1);
       v.bond(host, 0.12);

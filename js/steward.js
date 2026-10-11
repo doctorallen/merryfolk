@@ -184,7 +184,7 @@ function stewardHTML() {
   const t = jobTargets(), counts = jobCounts();
   for (const j of Object.keys(JOBS)) {
     const planned = typeof jobPlan()[j] === 'number';
-    h += `<div class="st-job">${iconHTML(JOBS[j].icon)}<span>${JOBS[j].label}</span><span class="st-n">${counts[j] || 0}<small>/${t[j] ?? 0}</small></span><button data-job="${j}" data-d="-1" aria-label="Fewer ${JOBS[j].label}s">−</button><button data-job="${j}" data-d="1" aria-label="More ${JOBS[j].label}s">+</button>${planned ? `<button data-job="${j}" data-d="auto" class="st-auto" title="Let the village decide">auto</button>` : ''}</div>`;
+    h += `<div class="st-job">${iconHTML(JOBS[j].icon)}<span>${JOBS[j].label}</span><span class="st-n">${counts[j] || 0}<small>/${t[j] ?? 0}</small></span><button data-job="${j}" data-d="-1" aria-label="Fewer ${JOBS[j].label}s">−</button><button data-job="${j}" data-d="1" aria-label="More ${JOBS[j].label}s">+</button><button data-job="${j}" data-d="auto" class="st-auto" title="Let the village decide" style="visibility:${planned ? 'visible' : 'hidden'}">auto</button></div>`;
   }
   h += '</div><div class="sub">Numbers are hands now / hands wanted. Set a trade yourself with − and +; "auto" hands it back to the village. Changes are made at once, and folk who are moved on look for other work.</div>';
   return h;
@@ -194,7 +194,7 @@ function hookStewardUI(body) {
   body.querySelectorAll('[data-job]').forEach((b) => b.addEventListener('click', () => {
     const j = b.dataset.job, P = jobPlan();
     if (b.dataset.d === 'auto') delete P[j];
-    else P[j] = Math.max(0, (typeof P[j] === 'number' ? P[j] : jobTargets()[j] ?? 0) + +b.dataset.d);
+    else P[j] = Math.max(0, (jobCounts()[j] || 0) + +b.dataset.d);
     trimTrades();
     renderVillage();
   }));

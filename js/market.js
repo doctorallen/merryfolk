@@ -68,6 +68,9 @@ function sell(k, n) {
 }
 function buy(k, n) {
   const c = caravan(); if (!c) return;
+  const room = Math.max(0, Math.floor(storeCap(k) - (Village.stores[k] || 0)));
+  if (room <= 0) { toast(`The Store can't hold any more ${RES_WORD[k]}.`, 'info'); return; }
+  n = Math.min(n, room);
   let cost = 0, got = 0;
   for (let i = 0; i < n; i++) { const p = buyPrice(k); if ((Game.coin || 0) < Math.round(cost + p)) break; cost += p; got++; c.bought[k] = (c.bought[k] || 0) + 1; }
   cost = Math.round(cost);
@@ -141,7 +144,7 @@ function marketHTML() {
     h += `<div class="mk-row${c.wants.includes(k) ? ' want' : ''}">${iconHTML(k === 'grain' ? 'grain' : k === 'leaf' ? 'leaf' : k === 'ale' ? 'mug' : k === 'wool' ? 'wool' : k === 'honey' ? 'honey' : k === 'apple' ? 'apple' : k === 'cheese' ? 'cheese' : k === 'fish' ? 'fish' : k === 'veg' ? 'veg' : k === 'bread' ? 'bread' : k === 'pie' ? 'pie' : k === 'cake' ? 'cake' : k === 'herbs' ? 'herb' : k === 'stew' ? 'stew' : 'sack')}<span>${RES_WORD[k]}</span><span class="sub">${have}${food && Village.foodTotal() < need ? ' ⚠' : ''}</span><span class="mk-p">${sellPrice(k).toFixed(1)}p</span><button data-sell="${k}" data-n="5" ${have < 1 ? 'disabled' : ''}>Sell 5</button><button data-sell="${k}" data-n="20" ${have < 1 ? 'disabled' : ''}>20</button></div>`;
   }
   h += '</div><div><h4>Buy</h4>';
-  for (const k of t.sells) h += `<div class="mk-row">${iconHTML(k === 'wood' ? 'wood' : k === 'remedy' ? 'remedy' : k === 'scrap' ? 'chip' : k === 'cheese' ? 'cheese' : k === 'honey' ? 'honey' : k === 'egg' ? 'egg' : k === 'apple' ? 'apple' : k === 'flour' ? 'flour' : 'sack')}<span>${RES_WORD[k]}</span><span class="sub">${Math.floor(Village.stores[k] || 0)}</span><span class="mk-p">${buyPrice(k).toFixed(1)}p</span><button data-buy="${k}" data-n="5">Buy 5</button><button data-buy="${k}" data-n="20">20</button></div>`;
+  for (const k of t.sells) h += `<div class="mk-row">${iconHTML(k === 'wood' ? 'wood' : k === 'remedy' ? 'remedy' : k === 'scrap' ? 'chip' : k === 'cheese' ? 'cheese' : k === 'honey' ? 'honey' : k === 'egg' ? 'egg' : k === 'apple' ? 'apple' : k === 'flour' ? 'flour' : 'sack')}<span>${RES_WORD[k]}</span><span class="sub">${Math.floor(Village.stores[k] || 0)}</span><span class="mk-p">${buyPrice(k).toFixed(1)}p</span><button data-buy="${k}" data-n="5" title="About ${Math.round(buyPrice(k) * 5)}p">Buy 5</button><button data-buy="${k}" data-n="20" title="About ${Math.round(buyPrice(k) * 20 * 1.3)}p">20</button></div>`;
   if (t.masons) h += `<div class="mk-row"><span>⚒</span><span>Dwarf masons, two days</span><span></span><span class="mk-p">40p</span><button id="mk-masons" ${masonsOn() ? 'disabled' : ''}>Hire</button></div>`;
   h += '</div></div>';
   if (Village.foodTotal() < need) h += '<p class="sub">⚠ The Store is low on food: think twice before selling it.</p>';

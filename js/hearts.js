@@ -137,7 +137,7 @@ function pickRivals() {
   for (const v of Game.villagers) {
     if (!v.isGrown() || v.rival != null || v.leaving || v.genes.temper < 0.5 || !R.chance(0.08)) continue;
     const skill = v.job ? JOBS[v.job].skill : topTalents(v.genes, 1)[0];
-    const o = Game.villagers.filter((x) => x !== v && x.isGrown() && x.rival == null && !x.leaving && x.spouse !== v.id && !related(v, x) && (x.job ? JOBS[x.job].skill : '') === skill && (v.rel[x.id] ?? 0.1) < 0.5)
+    const o = Game.villagers.filter((x) => x !== v && x.isGrown() && x.rival == null && !x.leaving && x.spouse !== v.id && v.sweetheart !== x.id && (v.love[x.id] || 0) < 0.3 && !related(v, x) && (x.job ? JOBS[x.job].skill : '') === skill && (v.rel[x.id] ?? 0.1) < 0.5)
       .sort((a, b) => b.genes.temper - a.genes.temper)[0];
     if (!o) continue;
     v.rival = o.id; o.rival = v.id; v.rivalSkill = o.rivalSkill = skill; v.rivalScore = o.rivalScore = 0;
@@ -159,6 +159,7 @@ function holdContests(occasion) {
     w.remember(`Won ${what} at the ${occasion}, beating ${l.first}!`, 2); l.remember(`${w.first} beat me for ${what} at the ${occasion}. Next year.`, -1);
     held.push(`${w.first} beat ${l.first} for ${what}`);
     // rivals who've become friends at heart shake hands
+    if (v.spouse === o.id || v.sweetheart === o.id) { v.rival = o.rival = null; continue; }
     if ((v.rel[o.id] ?? 0) > 0.55) {
       v.rival = o.rival = null;
       chronicle(`After all their contests, ${v.first} and ${o.first} shook hands at the ${occasion} and called it a draw. Friends, now, for good.`, 'love');
@@ -196,7 +197,7 @@ function matchmake(v) {
   for (let i = 0; i < singles.length; i++) for (let j = i + 1; j < singles.length; j++) if (canCourt(singles[i], singles[j])) {
     const a = singles[i], b = singles[j];
     const l = clamp((a.love[b.id] || 0) + 0.25, 0, 1); a.love[b.id] = l; b.love[a.id] = l; a.bond(b, 0.1);
-    chronicle(`Thanks to ${v.first}'s matchmaking, ${a.first} and ${b.first} have been seen walking out together.`, 'love');
+    chronicle(`${v.first} has taken it upon ${v.pron.them}self to nudge ${a.first} and ${b.first} together. Watch this space.`, 'love');
     return;
   }
 }
@@ -218,10 +219,10 @@ function moodSwingsHourly() {
       // and, once in a lifetime, a fey mood: a masterpiece
       if (k === 'creative') maybeMasterpiece(v);
     }
-    if (v.lowT >= 6 && R.chance(0.1)) {
+    if (v.lowT >= 10 && R.chance(0.04)) {
       const k = R.pick(Object.keys(SULKS));
       v.sulk = { k, until: Game.time + 600 };
-      chronicle(`${SULKS[k].text(v)} A visit from a friend might help.`, 'sick');
+      if (R.chance(0.6)) chronicle(`${SULKS[k].text(v)} A visit from a friend might help.`, 'sick');
     }
   }
 }
@@ -243,7 +244,7 @@ function moodSwingsHourly() {
     f(v, key, x, mins);
     if (v && v.sulk && ['good_chat', 'got_letter', 'patted', 'present', 'flowers', 'supper'].includes(key)) {
       v.sulk = null; f(v, 'sulk_over');
-      if (key !== 'patted') chronicle(`${v.first} has come out of ${v.pron.their} sulk, thanks to ${x || 'a little kindness'}.`, 'love');
+      if (key !== 'patted' && R.chance(0.4)) chronicle(`${v.first} has come out of ${v.pron.their} sulk, thanks to ${x || 'a little kindness'}.`, 'love');
     }
   };
 }

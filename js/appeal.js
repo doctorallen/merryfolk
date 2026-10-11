@@ -78,7 +78,7 @@ const REQUESTS = {
   path: { tools: ['path'], lines: ['My boots are always muddy near {p}. A path, perhaps?'], icon: 'pack' },
   statue: { tools: ['statue', 'fountain'], lines: ['Something grand for {p}: a statue, say, to make the village proud.'], icon: 'ring', era: 2 },
 };
-function placeName(tx, ty) {
+function reqPlaceName(tx, ty) {
   const h = World.homes.filter((x) => x.built).sort((a, b) => dist(a.stepX, a.stepY, tx * 16, ty * 16) - dist(b.stepX, b.stepY, tx * 16, ty * 16))[0];
   const b = Object.values(World.buildings).sort((a, c) => dist(a.stepX, a.stepY, tx * 16, ty * 16) - dist(c.stepX, c.stepY, tx * 16, ty * 16))[0];
   if (Math.abs(ty + 0.5 - RIVER_Y(tx + 0.5)) < 5) return 'the river';
@@ -107,7 +107,7 @@ function postRequest() {
   }[k] || (() => false))());
   if (!lacks.length) return;
   const k = R.pick(lacks), Q = REQUESTS[k];
-  const r = { id: (Game.reqSeq = (Game.reqSeq || 0) + 1), k, by: who.id, tx, ty, place: placeName(tx, ty), text: R.pick(Q.lines).replace('{p}', placeName(tx, ty)), day: Game.day, since: (Game.planDone || []).length };
+  const r = { id: (Game.reqSeq = (Game.reqSeq || 0) + 1), k, by: who.id, tx, ty, place: reqPlaceName(tx, ty), text: R.pick(Q.lines).replace('{p}', reqPlaceName(tx, ty)), day: Game.day, since: (Game.planDone || []).length };
   requestsList().push(r);
   if (!who.inside) who.say('I\'ve put a note up on the board in the square.', 3);
   chronicle(`${who.first} has pinned a note to the board in the square: "${r.text}"`, 'info');

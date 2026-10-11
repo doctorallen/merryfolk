@@ -48,7 +48,9 @@ function petWord(p) { return `${PET_COATS[p.kind][p.coat][2]} ${p.kind}`; }
 
 function adoptPet(home, kind, namer) {
   const coat = Math.floor(Math.random() * PET_COATS[kind].length);
-  const p = { id: (Game.petSeq = (Game.petSeq || 0) + 1), kind, coat, name: R.pick(PET_NAMES[kind]), homeId: home.id, x: home.stepX, y: home.stepY + 6, tx: null, ty: null, face: 1, state: 'sit', t: 5, inside: false, since: Game.day, owner: namer ? namer.id : null };
+  const taken = new Set(petsList().map((q) => q.name).concat(Game.villagers.map((v) => v.first)));
+  const free = PET_NAMES[kind].filter((n) => !taken.has(n));
+  const p = { id: (Game.petSeq = (Game.petSeq || 0) + 1), kind, coat, name: R.pick(free.length ? free : PET_NAMES[kind]), homeId: home.id, x: home.stepX, y: home.stepY + 6, tx: null, ty: null, face: 1, state: 'sit', t: 5, inside: false, since: Game.day, owner: namer ? namer.id : null };
   petsList().push(p);
   const res = residentsOf(home).filter((v) => v.stage !== 'baby');
   for (const v of res) { feel(v, 'new_pet', p.kind); v.remember(`We took in ${p.name}, a ${petWord(p)}.`, 2); }

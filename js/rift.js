@@ -257,7 +257,8 @@ function arriveFromRift(r) {
   v.begin({ ...ACTIONS.stroll, target: () => ({ x: PLAZA.cx * 16, y: (PLAZA.cy + 1) * 16, facing: 'down' }) }, Game.hour);
   for (const col of ['#c050ff', '#5af8ff']) FX.sparkle(r.x, r.y - 20, col);
   const eye = expressed(v.genes).chrome ? ', one eye glinting chrome' : v.visor ? ', a glowing visor over their eyes' : '';
-  chronicle(`${v.name()} stepped out of the rift, blinking at the sunshine${eye}, with a bag of strange gadgets and nowhere to stay.`, 'rift');
+  const light = Game.hour >= 20.5 || Game.hour < 5.5 ? 'blinking in the lantern-light' : Game.raining ? 'squinting into the rain' : 'blinking at the sunshine';
+  chronicle(`${v.name()} stepped out of the rift, ${light}${eye}, with a bag of strange gadgets and nowhere to stay.`, 'rift');
   return v;
 }
 

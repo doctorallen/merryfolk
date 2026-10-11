@@ -41,7 +41,10 @@ function addNews(text, kind) {
 }
 // Some news the speaker has that the listener hasn't, freshest first, and not about the listener.
 function newsToTell(s, l) {
-  return newsList().find((n) => Game.day - n.day <= 4 && knowsNews(s, n) && !knowsNews(l, n) && !n.text.includes(l.first + ' '));
+  // never news about the listener, the speaker, or either of their households
+  const about = (v) => [v.first, v.surname, v.homeId >= 0 ? v.home().name : null].filter(Boolean);
+  const names = about(l).concat(about(s));
+  return newsList().find((n) => Game.day - n.day <= 4 && knowsNews(s, n) && !knowsNews(l, n) && !names.some((w) => n.text.includes(w)));
 }
 function tellNews(s, l, n) {
   n.knowers.push(l.id);

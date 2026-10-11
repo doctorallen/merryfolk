@@ -34,7 +34,7 @@ const RIFT_STAGES = [
   { name: 'The first kettle', beat: 'Someone brought the rift-folk a pot of tea. It\'s a small thing, but the village noticed.' },
   { name: 'Lights in the hollow', beat: 'The rift-folk\'s machines are turning on river and wind. The lane by their camp is bright enough to read by, and three people did.' },
   { name: 'The Relay sings', beat: 'The Relay hums at dusk, half static and half lullaby. The old folk stop to listen without knowing why.' },
-  { name: 'Mungo\'s name', beat: 'In the mathom-chest at Bag-and-Barrel Hall: a ledger, and a name. Mungo Fernsby, tinker. Walked into green lightning carrying a kettle. Not returned. Thistledown sent the first stranger into the world long before the world sent any back.' },
+  { name: 'Mungo\'s name', beat: 'Someone opened the old mathom-chest at Bag-and-Barrel Hall and found a ledger with a name in it. Thistledown sent the first stranger into the world long before the world sent any back.' },
   { name: 'Two hearths', beat: 'Two hearths, one village: half the rift-folk are under a roof of their own, and a child has been born to both peoples. There was a feast, with neon bunting.' },
   { name: 'The Long Dim', beat: 'Every night now the rifts gutter like candles near the end of the wick. Something old is remembering the way home. The Steward has called a Moot.' },
 ];
@@ -49,11 +49,11 @@ const FRAGMENTS = {
   voice: { title: 'The Lamplighter\'s voice', text: '"Mungo told me of a place where the dark was soft. I sent my children to find it. Thank you for keeping the lamps low."' },
 };
 const ARC_SKILLS = {
-  courier: { label: 'a courier', job: 'postie', skill: 'lore', turn: (v, o) => `${v.first} carried a letter through the rain to ${o.first}, who'd never said a word to ${v.pron.them}. ${o.first} made ${v.pron.them} a pot of tea, and they sat till the kettle went cold.` },
+  courier: { label: 'a courier', job: 'postie', skill: 'lore', turn: (v, o) => `${v.first} carried a letter through the rain to ${o.first}${o.memories.some((m) => /made my excuses/.test(m.t)) ? `, who'd once crossed the lane to avoid ${v.pron.them}` : ''}. ${o.first} made ${v.pron.them} a pot of tea, and they sat till the kettle went cold.` },
   gridtech: { label: 'a grid-tech', job: 'miller', skill: 'tinkering', turn: (v, o) => `${v.first} fixed the squeak in ${o.first}'s mill-wheel that nobody had fixed in forty years. "Your river does what our whole grid did," ${v.pron.they} said, "and it never sends an invoice."` },
-  medic: { label: 'a street medic', job: 'herbalist', skill: 'herbalism', turn: (v, o) => `${v.first} sat up all night with ${o.first}'s poorly little one, by gadget-light and willow-bark tea. ${o.first} hasn't a word to say against the rift-folk now.` },
+  medic: { label: 'a street medic', job: 'herbalist', skill: 'herbalism', turn: (v, o) => (Game.villagers.some((k) => !k.isGrown() && k.parents.includes(o.id)) ? `${v.first} sat up all night with ${o.first}'s poorly little one, by gadget-light and willow-bark tea. ${o.first} hasn't a word to say against the rift-folk now.` : `${v.first} set ${o.first}'s sprained wrist with a gadget and a splint, gentler than any herbalist. ${o.first} hasn't a word to say against the rift-folk now.`) },
   cook: { label: 'a noodle-stall cook', job: 'innkeeper', skill: 'cooking', turn: (v, o) => `${v.first} cooked ${o.first} a bowl of mushroom noodles. ${o.first} had seconds, then thirds, then asked for the recipe.` },
-  teacher: { label: 'a schoolteacher', job: 'storyteller', skill: 'lore', turn: (v, o) => `${v.first} taught ${o.first}'s children to count in binary with acorns. ${o.first} came to complain and stayed to learn.` },
+  teacher: { label: 'a schoolteacher', job: 'storyteller', skill: 'lore', turn: (v, o) => `${v.first} taught ${Game.villagers.some((k) => !k.isGrown() && k.parents.includes(o.id)) ? o.first + "'s children" : 'the little ones'} to count in binary with acorns. ${o.first} came to complain and stayed to learn.` },
   grower: { label: 'a rooftop grower', job: 'farmer', skill: 'farming', turn: (v, o) => `${v.first} showed ${o.first} how the city grew lettuces on rooftops under lamps. ${o.first} showed ${v.pron.them} real rain. They both said "well I never" at the same time.` },
 };
 const HOME_MEMORIES = ['rain on neon', 'the noodle stall under the overpass', 'the hum of the city at night', 'the rooftop gardens', 'trains that never stopped', 'the Lamplighter\'s glow on the clouds', 'a window full of screens', 'the night market'];
@@ -92,7 +92,11 @@ function findFragment(k, by) {
 function giveArc(v) {
   if (v.arc || !v.isRiftborn()) return;
   const sk = R.pick(Object.keys(ARC_SKILLS));
-  v.arc = { home: R.pick(HOME_MEMORIES), lost: { name: R.pick(R.chance(0.5) ? RIFT_NAMES_F : RIFT_NAMES_M), rel: R.pick(LOST_REL), found: false }, skill: sk, turned: false };
+  const rel = R.pick(LOST_REL);
+  const sex = /mother|sister|daughter/.test(rel) ? 'f' : /father|brother|son/.test(rel) ? 'm' : (R.chance(0.5) ? 'f' : 'm');
+  const used = new Set(Game.villagers.map((o) => o.first).concat(Game.villagers.filter((o) => o.arc).map((o) => o.arc.lost.name)));
+  const pool = (sex === 'f' ? RIFT_NAMES_F : RIFT_NAMES_M).filter((n) => !used.has(n));
+  v.arc = { home: R.pick(HOME_MEMORIES), lost: { name: R.pick(pool.length ? pool : (sex === 'f' ? RIFT_NAMES_F : RIFT_NAMES_M)), rel, sex, found: false }, skill: sk, turned: false };
   v.skills[ARC_SKILLS[sk].skill] = Math.max(v.skills[ARC_SKILLS[sk].skill] || 0, 25 + Math.random() * 15);
   v.remember(`I keep thinking of ${v.arc.home}, and of my ${v.arc.lost.rel}, ${v.arc.lost.name}. I hope they're safe.`, -1);
 }
@@ -103,17 +107,34 @@ function giveArc(v) {
   arriveFromRift = function (r) {
     const v = af(r);
     if (!v) return v;
-    // sometimes it's the very person someone's been missing
-    const waiting = riftBorn().filter((o) => o !== v && o.arc && !o.arc.lost.found);
+    // sometimes it's the very person someone's been missing (of the right sex, and age)
+    const waiting = riftBorn().filter((o) => o !== v && o.arc && !o.arc.lost.found && (o.arc.lost.sex || v.genes.sex) === v.genes.sex && v.isGrown() && o.isGrown());
     if (waiting.length && R.chance(0.35)) {
-      const o = R.pick(waiting);
+      const o = R.pick(waiting), rel = o.arc.lost.rel, oldName = v.first;
       v.first = o.arc.lost.name; o.arc.lost.found = true;
+      // parents are older, children younger
+      if (/mother|father/.test(rel)) v.age = Math.max(v.age, o.age + R.f(6, 10));
+      if (/son|daughter/.test(rel)) v.age = Math.min(v.age, Math.max(CHILD_DAYS + 0.5, o.age - R.f(6, 10)));
+      v.stage = v.lifeStage(); v.refreshSprites();
+      if (/mother|father/.test(rel)) o.parents.push(v.id);
+      if (/son|daughter/.test(rel)) v.parents.push(o.id);
+      if (rel === 'partner' && !o.spouse && !v.spouse) { o.spouse = v.id; v.spouse = o.id; o.sweetheart = v.id; v.sweetheart = o.id; }
+      // the arrival line already went out under the old name
+      for (const l of Game.log.slice(0, 3)) if (l.text.includes(oldName)) l.text = l.text.split(oldName).join(v.first);
+      if (typeof renderLog === 'function') renderLog();
       giveArc(v);
-      v.arc.lost = { name: o.first, rel: 'family', found: true };
+      const back = { mother: o.genes.sex === 'f' ? 'daughter' : 'son', father: o.genes.sex === 'f' ? 'daughter' : 'son', son: v.genes.sex === 'f' ? 'mother' : 'father', daughter: v.genes.sex === 'f' ? 'mother' : 'father', sister: o.genes.sex === 'f' ? 'sister' : 'brother', brother: o.genes.sex === 'f' ? 'sister' : 'brother', partner: 'partner', 'best friend': 'best friend' }[rel] || 'family';
+      v.arc.lost = { name: o.first, rel: back, sex: o.genes.sex, found: true };
+      v.memories = v.memories.filter((m) => !/I hope they're safe/.test(m.t));
+      o.memories = o.memories.filter((m) => !/I hope they're safe/.test(m.t));
       o.rel[v.id] = 0.95; v.rel[o.id] = 0.95;
       feel(o, 'reunion', v.first); feel(v, 'reunion', o.first);
+      o.remember(`${v.first} came through the rift. My ${rel}, safe and sound!`, 3); v.remember(`Found ${o.first} again, here of all places.`, 3);
       o.lost = Math.max(0, (o.lost || 0) - 0.4);
-      chronicle(`${o.first} saw who stepped out of the rift and ran across the meadow: it was ${v.first}, ${o.pron.their} ${o.arc.lost.rel}, safe and sound. Half the village cried, and the other half pretended not to.`, 'rift');
+      // they live together from now on
+      if (o.homeId >= 0 && residentsOf(o.home()).length < HOME_CAP(o.home())) moveHome(v, o.home());
+      else if (v.homeId >= 0 && o.homeId < 0) moveHome(o, v.home());
+      chronicle(`${o.first} saw who stepped out of the rift and ran across the meadow: it was ${v.first}, ${o.pron.their} ${rel}, safe and sound. Half the village cried, and the other half pretended not to.`, 'rift');
     } else giveArc(v);
     if (story().frags.length === 0 || (R.chance(0.15) && !story().frags.includes('sigil'))) findFragment('sigil', v);
     return v;
@@ -124,7 +145,7 @@ function arcsDaily() {
   for (const v of riftBorn()) {
     giveArc(v);
     if (!v.arc || v.arc.turned || !v.isGrown()) continue;
-    const f = Object.entries(v.rel).map(([id, r]) => [Game.villagers.find((o) => o.id === +id), r]).filter(([o, r]) => o && !o.isRiftborn() && o.isGrown() && r >= 0.6).sort((a, b) => b[1] - a[1])[0];
+    const f = Object.entries(v.rel).map(([id, r]) => [Game.villagers.find((o) => o.id === +id), r]).filter(([o, r]) => o && !o.isRiftborn() && o.isGrown() && r >= 0.6 && o.spouse !== v.id && v.spouse !== o.id && o.sweetheart !== v.id && (o.love[v.id] || 0) < 0.3 && !related(o, v)).sort((a, b) => b[1] - a[1])[0];
     if (!f) continue;
     const o = f[0];
     v.arc.turned = o.id;
@@ -172,7 +193,7 @@ function teachCustom(a, b) {
   const k = R.pick(opts);
   const c = S.customs[k] || (S.customs[k] = { knowers: [a.id], tradition: false });
   if (!c.knowers.includes(a.id)) c.knowers.push(a.id);
-  c.knowers.push(b.id);
+  if (!c.knowers.includes(b.id)) c.knowers.push(b.id);
   if (!a.inside) a.say(CUSTOMS[k].line, 3, { to: b });
   if (!c.tradition && c.knowers.filter((id) => Game.villagers.some((v) => v.id === id)).length >= 8) {
     c.tradition = true;
@@ -232,7 +253,8 @@ function askMoot(title, text, options) {
     const b = document.createElement('button');
     b.className = 'moot-opt';
     b.innerHTML = `<b>${escapeHtml(o.label)}</b><span>${escapeHtml(o.desc)}</span>`;
-    b.addEventListener('click', () => { el.hidden = true; Game.introOpen = false; o.fn(); renderVillage && !$('village').hidden && renderVillage(); });
+    if (o.disabled) { b.disabled = true; b.classList.add('disabled'); }
+    else b.addEventListener('click', () => { el.hidden = true; Game.introOpen = false; o.fn(); if (!$('village').hidden) renderVillage(); });
     box.appendChild(b);
   }
   el.hidden = false; Game.introOpen = true;
@@ -255,15 +277,15 @@ function setRiftPolicy(p) {
 function longDimMoot() {
   const power = builtCivic('dynamo') && builtCivic('turbine');
   askMoot('The Long Dim', 'The rifts gutter every night. Through them, faintly, the rift-folk can see their city going dark, light by light. On the Relay, the old voice says: "Mungo told me of a place where the dark was soft." What will Thistledown do?', [
-    { label: 'Hearthlink', desc: power ? 'Lend the village\'s river and wind power through the Relay. The rifts become steady golden doors: visits both ways, letters from Neverdark, and the rift-folk can go home and come back. Hearths burn a little more timber in winter.' : 'Needs the River Dynamo and the Wind Turbine built first.', fn: () => (power ? finale('hearthlink') : longDimMoot()) },
+    { label: 'Hearthlink', desc: power ? 'Lend the village\'s river and wind power through the Relay. The rifts become steady golden doors: visits both ways, letters from Neverdark, and the rift-folk can go home and come back. Hearths burn a little more timber in winter.' : 'Needs the River Dynamo and the Wind Turbine built first.', disabled: !power, fn: () => finale('hearthlink') },
     { label: 'Soft close', desc: 'Sing the rifts shut on Midsummer\'s Eve. No more arrivals, and no way back: the rift-folk become Thistledowners for good, and the longing for home fades.', fn: () => finale('softclose') },
+    ...(power ? [] : [{ label: 'Not yet', desc: 'Ask the Moot again once the River Dynamo and Wind Turbine are built (or in a few days).', fn: () => { const S = story(); S.stage = 7; S.stageDay = Game.day; chronicle('The Moot broke up without deciding. "Build the dynamo and the turbine first," said the tinkers, "then we\'ll talk."', 'rift'); } }]),
     { label: 'Let it drift', desc: 'Do nothing. The rifts come and go as they will, and the Lamplighter fades slowly on the other side.', fn: () => finale('drift') },
   ]);
 }
 function finale(k) {
   const S = story(); S.finale = k;
   if (k === 'hearthlink') {
-    findFragment('voice', null);
     chronicle('Thistledown lent its sunshine, river and wind to a city that had forgotten them. It was the largest loan the village ever made, and nobody asked for it back. The rifts glow gold now, steady as doorways, and Neverdark has seen its first stars.', 'rift');
     for (const v of riftBorn()) { v.lost = 0; feel(v, 'era', 'bridge between two worlds'); }
   } else if (k === 'softclose') {
@@ -292,16 +314,18 @@ function storyTick() {
     5: () => builtCivic('relay'),
     6: () => S.frags.length >= 4 && Game.villagers.some((v) => !v.isRiftborn() && v.tech >= RIFT_TIERS[0]),
     7: () => rb.length && housed / rb.length >= 0.5 && !!Game.stats.firstHybrid,
-    8: () => S.stage >= 7 || (yearOf(Game.day) >= 3 && S.stage >= 5),
+    8: () => (S.stage >= 7 && ((builtCivic('dynamo') && builtCivic('turbine')) || Game.day - (S.stageDay || 0) >= 4)) || (yearOf(Game.day) >= 3 && S.stage >= 5),
   }[next];
   if (!ok || !ok()) return;
-  S.stage = next;
-  chronicle(RIFT_STAGES[next].beat, 'rift');
+  if (S.stageDay != null && Game.day - S.stageDay < 1 && next > 2) return;
+  S.stage = next; S.stageDay = Game.day;
+  const when = Game.hour >= 15 && Game.hour < 18 ? 'at teatime' : Game.hour < 6 || Game.hour >= 21 ? 'in the dead of night' : Game.hour < 12 ? 'in the middle of second breakfast' : 'over luncheon';
+  chronicle(RIFT_STAGES[next].beat.replace('at teatime', when), 'rift');
   if (next === 1) for (const o of Game.villagers) if (!o.isRiftborn() && o.isGrown() && R.chance(0.6)) feel(o, 'uneasy');
   if (next === 2 && !S.policy) setTimeout(firstMoot, 50);
   if (next === 6) { findFragment('ledger', null); S.wary = (S.wary || 1) * 0.5; }
   if (next === 7) { for (const v of Game.villagers) if (v.stage !== 'baby') feel(v, 'festival'); Game.party.planned = 'twohearths'; for (const v of rb) if (v.newcomer) v.newcomer = null; }
-  if (next === 8) setTimeout(longDimMoot, 50);
+  if (next === 8) { findFragment('voice', null); setTimeout(longDimMoot, 50); }
 }
 // Clues that only turn up at certain times.
 function cluesHourly(h) {
@@ -360,7 +384,7 @@ function riftsHTML() {
     h += '</div>';
   }
   const cs = Object.entries(S.customs);
-  if (cs.length) h += `<h3>Customs shared</h3><div class="likes">${cs.map(([k, c]) => `<div>${c.tradition ? '★' : '·'} ${escapeHtml(CUSTOMS[k].name)} <span class="sub">(${c.knowers.length} know it${c.tradition ? '; a tradition' : ''})</span></div>`).join('')}</div>`;
+  if (cs.length) h += `<h3>Customs shared</h3><div class="likes">${cs.map(([k, c]) => `<div>${c.tradition ? '★' : '·'} ${escapeHtml(CUSTOMS[k].name)} <span class="sub">(${c.knowers.filter((id) => Game.villagers.some((v) => v.id === id)).length} know it${c.tradition ? '; a tradition' : ''})</span></div>`).join('')}</div>`;
   return h;
 }
 

@@ -17,7 +17,7 @@ function newMathom(home, origin = 'old') {
   return m;
 }
 function mathomsAt(h) { return (Game.mathoms || []).filter((m) => m.home === h.id); }
-const aAn = (s) => (/^[aeiou]/i.test(s) ? 'an ' : 'a ') + s;
+const aAn = (s) => (/^(one|uni|use|eu)/i.test(s) ? 'a ' : /^[aeiou]/i.test(s) ? 'an ' : 'a ') + s;
 
 // a present might well be a mathom, given on
 {

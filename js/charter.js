@@ -18,8 +18,8 @@
 
 const ERAS = [
   { name: 'Hamlet', blurb: 'A handful of hobbit-holes round a well.' },
-  { name: 'Village', need: { folk: 30, renown: 60, charters: 3, content: 50 }, unlock: ['raise', 'lower', 'pond', 'fill'], blurb: 'Shape the land: raise and lower the ground, dig and fill ponds.' },
-  { name: 'Market Town', need: { folk: 42, renown: 180, charters: 8, content: 55, civic: 2 }, unlock: ['civic', 'well', 'statue'], blurb: 'Choose where public buildings go, sink new wells, raise statues on the green; the caravans come twice a week.' },
+  { name: 'Village', need: { folk: 30, renown: 60, charters: 3, content: 50 }, unlock: ['raise', 'lower', 'pond', 'fill', 'civic', 'well'], blurb: 'Shape the land (raise and lower the ground, dig and fill ponds), sink new wells and choose where public buildings go.' },
+  { name: 'Market Town', need: { folk: 42, renown: 180, charters: 8, content: 55, civic: 2 }, unlock: ['statue'], blurb: 'Raise statues on the green; the caravans come twice a week.' },
   { name: 'Shire Town', need: { folk: 55, renown: 400, charters: 15, content: 62, civic: 4 }, unlock: ['fountain'], blurb: 'A town of the Shire: fountains, and a Great Fair every season.' },
 ];
 const ERA_TOOLS = new Set(ERAS.flatMap((e) => e.unlock || []));
@@ -111,7 +111,7 @@ function holdMoot() {
   if (typeof renderBuildBar === 'function') renderBuildBar();
   renderVillage();
 }
-MOODLETS.era = ['Thistledown is a {x} now!', 0.12, 2880, ['A {x}! Who\'d have thought it.', 'Proud to live in a {x}, I am.']];
+MOODLETS.era = ['Proud of our village: a {x} now', 0.12, 2880, ['A {x}! Who\'d have thought it.', 'Proud to live in a {x}, I am.']];
 
 // --- The tab in the ledger --------------------------------------------------------
 function charterHTML() {

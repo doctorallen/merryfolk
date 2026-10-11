@@ -293,6 +293,7 @@ function panelLife(v) {
   for (const [k, l] of [['ale', 'Tipsiness'], ['germs', 'Germs'], ['toxin', 'Toxins'], ['immune', 'Immunity']]) h += `<div class="drive small"><span class="dl">${l}</span><span class="bar thin"><i data-c="${k}" class="c-${k}" style="width:${Math.round(clamp(v.chem[k], 0, 1) * 100)}%"></i></span></div>`;
   h += '</div>';
   const home = v.home();
+  if (v.homeId < 0) return h + '<div class="pocket">No home of their own yet.</div>';
   const larder = PANTRY_KINDS.filter((k) => home.pantry[k] > 0).map((k) => `${home.pantry[k]} ${FOODS[k].label}`).join(', ') || 'bare!';
   h += `<div class="pocket">${v.isGrown() && v.genes.pipeLove > 0.15 ? `Leaf pouch: ${v.pouch} pinch${v.pouch === 1 ? '' : 'es'}<br>` : ''}Larder at home: ${larder}${jarsTotal(home) ? ` · ${jarsTotal(home)} jars put by for winter` : ''}${home.chilly ? '<br><b>The hearth at home is cold. No timber!</b>' : ''}</div>`;
   if (v.expecting) { const o = person(v.expecting.with); h += `<div class="note">Expecting a little one with ${link(o)} any day now!</div>`; }
@@ -418,7 +419,7 @@ function panelKin(v) {
   const pet = v.homeId >= 0 ? petOf(v.home()) : null;
   if (pet) h += `<h3>Pet</h3><div class="likes"><div><b>${escapeHtml(pet.name)}</b>, the household's ${petWord(pet)}${pet.owner === v.id ? `, who follows ${v.first} everywhere` : ''}</div></div>`;
   const ms = v.homeId >= 0 ? mathomsAt(v.home()) : [];
-  if (ms.length) h += `<h3>Mathoms at home</h3><div class="likes">${ms.slice(0, 6).map((m) => `<div>${escapeHtml(aAn(m.name))}${m.passed ? ` <span class="sub">(given on ${m.passed} time${m.passed > 1 ? 's' : ''})</span>` : m.origin === 'trip' ? ' <span class="sub">(from an adventure)</span>' : ''}</div>`).join('')}${ms.length > 6 ? `<div class="sub">and ${ms.length - 6} more in the cupboard under the stairs</div>` : ''}</div>`;
+  if (ms.length) h += `<h3>Mathoms at home</h3><div class="likes">${ms.slice(0, 6).map((m) => `<div>${escapeHtml(aAn(m.name))}${m.passed ? ` <span class="sub">(given on ${m.passed === 1 ? 'once' : m.passed === 2 ? 'twice' : m.passed + ' times'})</span>` : m.origin === 'trip' ? ' <span class="sub">(from an adventure)</span>' : ''}</div>`).join('')}${ms.length > 6 ? `<div class="sub">and ${ms.length - 6} more in the cupboard under the stairs</div>` : ''}</div>`;
   if (v.heirlooms && v.heirlooms.length) h += `<h3>Keepsakes</h3><div class="likes">${v.heirlooms.map((k) => `<div>${escapeHtml(k.name)} <span class="sub">(handed down on day ${k.day})</span></div>`).join('')}</div>`;
   const others = Object.entries(v.rel).map(([id, f]) => [Game.villagers.find((o) => o.id === +id), f]).filter(([o]) => o && o.id !== v.spouse && !v.parents.includes(o.id) && !o.parents.includes(v.id));
   const friends = others.filter(([, f]) => f > 0.3).sort((a, b) => b[1] - a[1]).slice(0, 6);

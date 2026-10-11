@@ -112,7 +112,7 @@ function assignJobs(announce = true) {
   // retirement
   for (const v of Game.villagers) {
     if (v.stage === 'elder' && v.job && v.job !== 'storyteller' && v.age > ELDER_DAYS * 1.2 && !v.playerJob) {
-      counts[v.job]--; if (announce) chronicle(`${v.name()} has retired after many years as the village ${JOBS[v.job].label.toLowerCase()}, and means to put their feet up.`, 'info');
+      counts[v.job]--; if (announce) chronicle(`${v.name()} has retired after many years as the village ${JOBS[v.job].label.toLowerCase()}, and means to put ${v.pron.their} feet up.`, 'info');
       v.remember(`Retired after years as a ${JOBS[v.job].label.toLowerCase()}.`, 1);
       v.job = null;
     }
@@ -135,7 +135,7 @@ function assignJobs(announce = true) {
     devLog('jobs', `${v.first} took up ${best} (score ${Math.round(bs)}: fit ${Math.round(jobFit(v, best))}, ${counts[best]}/${targets[best]} now)`);
     if (announce) {
       const fam = v.parents.some((p) => { const pp = person(p); return pp && pp.job === best; });
-      chronicle(`${v.name()} has taken up the ${JOBS[best].label.toLowerCase()}'s trade${fam ? ', just like their parent before them' : ''}.`, 'work');
+      chronicle(`${v.name()} has taken up the ${JOBS[best].label.toLowerCase()}'s trade${fam ? `, just like ${v.pron.their} parent before ${v.pron.them}` : ''}.`, 'work');
       v.remember(`Became the village ${JOBS[best].label.toLowerCase()}.`, 1);
     }
   }
@@ -143,7 +143,7 @@ function assignJobs(announce = true) {
   // the grown-ups (often a parent of little ones themselves) takes it up
   if (need('nanny') > 0) {
     const short = (j) => need(j) > 0 || counts[j] <= 1;
-    const cands = Game.villagers.filter((v) => v.isGrown() && !v.leaving && !v.playerJob && !v.newcomer && v.job !== 'nanny' && !(v.stage === 'elder' && v.age > ELDER_DAYS * 1.2) && (!v.job || !short(v.job)));
+    const cands = Game.villagers.filter((v) => v.isGrown() && !v.leaving && !v.playerJob && !v.newcomer && v.job !== 'nanny' && !(v.stage === 'elder' && v.age > ELDER_DAYS * 1.2) && (!v.job || !short(v.job)) && !(v.job && Game.jobPlan && typeof Game.jobPlan[v.job] === 'number' && counts[v.job] <= Game.jobPlan[v.job]));
     const v = cands.sort((a, b) => jobFit(b, 'nanny') - jobFit(a, 'nanny'))[0];
     if (v) {
       if (v.job) counts[v.job]--;
@@ -156,10 +156,12 @@ function assignJobs(announce = true) {
   // experience reshapes careers: overstaffed trades lose a hand to an understaffed one they're suited to
   for (const v of Game.villagers) {
     if (!v.job || v.playerJob || !v.isGrown() || !announce) continue;
+    // the Steward's numbers stand
+    if (Game.jobPlan && typeof Game.jobPlan[v.job] === 'number' && counts[v.job] <= Game.jobPlan[v.job]) continue;
     const essentialGap = ['farmer', 'baker', 'miller', 'woodwright', 'grower', 'brewer', 'fisher'].some((j) => need(j) > 0 && counts[j] === 0);
     if (need(v.job) >= 0 && !(essentialGap && need(v.job) <= 0) && R.chance(0.85)) continue;
     let best = null, bs = jobFit(v, v.job) + 20;
-    for (const j in JOBS) { if (j === v.job || need(j) <= 0 || j === 'storyteller') continue; const s = jobFit(v, j) + need(j) * 8; if (s > bs) { bs = s; best = j; } }
+    for (const j in JOBS) { if (j === v.job || need(j) <= 0 || j === 'storyteller' || (Game.jobPlan && typeof Game.jobPlan[j] === 'number' && counts[j] >= Game.jobPlan[j])) continue; const s = jobFit(v, j) + need(j) * 8; if (s > bs) { bs = s; best = j; } }
     if (best && R.chance(essentialGap ? 0.8 : 0.35)) {
       chronicle(`${v.first} has hung up the ${JOBS[v.job].label.toLowerCase()}'s apron to become a ${JOBS[best].label.toLowerCase()}.`, 'work');
       v.remember(`Changed trade: ${JOBS[v.job].label} to ${JOBS[best].label}.`, 0);
@@ -422,7 +424,7 @@ function dailySociety() {
     const kids = vs.filter((x) => x.parents.includes(a.id)).length + Object.values(Game.archive).filter((x) => x.parents.includes(a.id)).length;
     const want = 2 + Math.round(((a.genes.fertility + b.genes.fertility) / 2) * 3);
     if (kids >= want || vs.length + 1 >= MAX_POP) continue;
-    if (vs.some((x) => x.stage === 'baby' && x.parents.includes(a.id))) continue;
+    if (vs.some((x) => (x.stage === 'baby' || x.born > Game.day - 4) && x.parents.includes(a.id))) continue;
     // with every knoll dug and folk still waiting for room, families hold off
     const crowded = !World.lots.some((l) => l.kind === 'home' && l.state === 'planned') && housingNeed() > 1 ? 0.4 : 1;
     const mother = a.genes.sex === 'f' ? a : b, father = mother === a ? b : a;

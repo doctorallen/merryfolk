@@ -155,8 +155,8 @@ The **coin pill** (pennies and the village's rank) in the top bar opens the **Ch
 - **Charters.** Three goals are open at a time, chosen from what suits the season and the village: lay forty yards of new path, plant trees, put up benches, light twenty lamps on a single night, grow to so many folk, dig new hobbit-holes, welcome babies, see a wedding, keep contentment high through a whole day, put by jars for winter, stock timber or ale, deliver letters, make one of the rift-folk at home with three hill-folk friends, sell to the caravans. Each shows its progress and pays pennies and renown when it's met, and a fresh one takes its place. You can swap one you don't fancy, once a day.
 - **Eras.** Renown, folk, charters met, contentment and public buildings carry the village through its eras: **Hamlet**, **Village**, **Market Town**, **Shire Town**. When everything's in place the Chronicle says so, and it's your call to hold a **Moot** on the party field. The village votes itself up a rank, throws a party and is proud of it for days.
 - **Unlocks.** Each era opens new build tools:
-  - **Village:** raising and lowering the land, and digging and filling ponds.
-  - **Market Town:** siting public buildings, new wells, and stone statues of famous hobbits (30 pennies).
+  - **Village:** raising and lowering the land, digging and filling ponds, siting public buildings, and new wells.
+  - **Market Town:** stone statues of famous hobbits (30 pennies).
   - **Shire Town:** fountains (60 pennies), and a **Great Fair** at every season's festival, with contests, a caravan in the square and renown.
 
   Locked tools show greyed in the build bar, saying what unlocks them.
@@ -219,6 +219,8 @@ Press **Build** (or <kbd>B</kbd>) to shape Thistledown yourself. Pick a tool and
 - **Hedge:** drag a straight hawthorn hedgerow.
 - **Bench** (2 timber): a place to sit and gossip.
 - **Lamp** (1 timber): a lamp-post that joins the lamplighter's round.
+
+Drags are filled in tile by tile, however fast you move. A plan nobody can reach is marked *can't reach it*, and the Chronicle says so.
 - **Clear:** drag a box over trees, bushes, hedges and stones. Felled trees give timber to the Store.
 - **Raise** and **Lower:** lift or sink the ground a terrace at a time, three tiles across, and the banks reshape around it.
 - **Pond** and **Fill in:** dig water, or fill in what you dug. The river is left alone.

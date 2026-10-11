@@ -11,9 +11,9 @@
 
 // key: [label ({x} is filled in), lift (−/+), minutes it lasts, musings]
 const MOODLETS = {
-  fav_food: ['Had my favourite: {x}', 0.1, 240, ['Still thinking about that {x}.', 'Nothing beats {x}.']],
+  fav_food: ['Had my favourite: {x}', 0.1, 240, ['I could eat {x} every day.', 'Nothing beats {x}.']],
   bad_food: ['Had to eat {x}', -0.05, 120, ['I can still taste that {x}. Ugh.']],
-  well_slept: ['Slept soundly', 0.07, 360, ['What a night\'s sleep!', 'Fresh as a daisy this morning.']],
+  well_slept: ['Slept soundly', 0.07, 360, ['What a night\'s sleep!', 'Fresh as a daisy, I am.']],
   slept_rough: ['Slept rough', -0.14, 600, ['My back... a hedge is no bed.', 'One night under a roof, that\'s all I ask.']],
   soaked: ['Caught in the rain', -0.07, 120, ['Soaked to the skin!', 'My boots are full of water.']],
   sunshine: ['A lovely bright day', 0.05, 180, ['What a day to be out!', 'Feel that sun.']],

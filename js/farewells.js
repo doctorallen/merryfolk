@@ -175,7 +175,7 @@ function farewellGathering(f) {
   const keeps = goers.map(handDownKeepsake).filter(Boolean);
   const seers = Game.villagers.filter((o) => !goers.includes(o) && !o.leaving && o.stage !== 'baby' && !o.carried && goers.some((g) => missedBy(o, g)) && !needsMinder(o));
   for (const o of seers) { o.abort(); o.queue = [{ a: ACTIONS.see_off, extra: { who: v } }]; o.thinkDelay = 0; }
-  chronicle(`${goers.map((g) => g.name()).join(' and ')} ${goers.length > 1 ? 'are' : 'is'} setting off on a last great adventure this morning. ${seers.length ? `${seers.length} of their family and friends have gathered at the door of ${v.home().name} to see them off.` : ''}${keeps.length ? ` ${keeps.map((k) => `${k.to.first} has been given ${k.what} to keep`).join('; ')}.` : ''}`, 'adventure');
+  chronicle(`${goers.map((g) => g.name()).join(' and ')} ${goers.length > 1 ? 'are' : 'is'} setting off on a last great adventure this morning. ${seers.length ? `${seers.length === 1 ? 'A dear friend has' : `${seers.length} of ${goers.length > 1 ? 'their' : v.pron.their} family and friends have`} gathered at the door of ${v.home().name} to see ${goers.length > 1 ? 'them' : v.pron.them} off.` : ''}${keeps.length ? ` ${keeps.map((k) => `${k.to.first} has been given ${k.what} to keep`).join('; ')}.` : ''}`, 'adventure');
 }
 function farewellDeparture(f) {
   const v = personById(f.id);
