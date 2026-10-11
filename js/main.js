@@ -780,7 +780,7 @@ function renderOverlay() {
     const think = v.bubble.think, to = v.bubble.to;
     // when both of a pair are talking, one bubble sits above the other's
     if (to && to.bubble && !to.inside && v.id > to.id && Math.abs(to.x - v.x) < 120) sy -= 40;
-    octx.font = think ? 'italic 500 14px "Alegreya Sans", system-ui, sans-serif' : '600 14px "Pixelify Sans", ui-monospace, monospace';
+    octx.font = think ? 'italic 600 15px "Alegreya Sans", system-ui, sans-serif' : '600 14px "Pixelify Sans", ui-monospace, monospace';
     // whole sentences wrap onto a few lines
     if (!v.bubble.lines) v.bubble.lines = wrapText(octx, v.bubble.text, 210);
     const lines = v.bubble.lines;
@@ -788,12 +788,12 @@ function renderOverlay() {
     const bw = tw + 16, bh = 8 + lines.length * 17, bx = Math.round(sx - bw / 2), by = Math.round(sy - bh - (think ? 14 : 8));
     if (think) {
       // musing to themselves: a soft thought cloud, trailing little bubbles
-      const fill = 'rgba(236,240,246,0.93)', edge = 'rgba(90,100,120,0.55)';
+      const fill = '#f7f4ee', edge = '#5a5e70';
       const rr = (x, y, w, h, r) => { octx.beginPath(); octx.moveTo(x + r, y); octx.arcTo(x + w, y, x + w, y + h, r); octx.arcTo(x + w, y + h, x, y + h, r); octx.arcTo(x, y + h, x, y, r); octx.arcTo(x, y, x + w, y, r); octx.closePath(); };
       octx.fillStyle = edge; rr(bx - 2, by - 2, bw + 4, bh + 4, 10); octx.fill();
       octx.fillStyle = fill; rr(bx, by, bw, bh, 9); octx.fill();
       for (const [ox, oy, r] of [[-2, bh + 5, 3.5], [-5, bh + 11, 2.2]]) { octx.fillStyle = edge; octx.beginPath(); octx.arc(sx + ox, by + oy, r + 1, 0, Math.PI * 2); octx.fill(); octx.fillStyle = fill; octx.beginPath(); octx.arc(sx + ox, by + oy, r, 0, Math.PI * 2); octx.fill(); }
-      octx.fillStyle = '#4a5064'; lines.forEach((l, i) => octx.fillText(l, bx + 8, by + 13 + i * 17));
+      octx.fillStyle = '#1e2130'; lines.forEach((l, i) => octx.fillText(l, bx + 8, by + 13 + i * 17));
       continue;
     }
     octx.fillStyle = 'rgba(42,28,18,0.35)'; octx.fillRect(bx + 3, by + 3, bw, bh);
