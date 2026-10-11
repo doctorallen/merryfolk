@@ -300,10 +300,25 @@ const FX = {
 // ---------------------------------------------------------------------------
 // Lighting: a darkness overlay with pools of light cut out of it. The pools
 // are stepped, four flattened rings each, and drawn pixel for pixel, so the
-// glow stays as crisp as the art.
+// glow stays as crisp as the art. Each pool is drawn once into a stamp and
+// kept, since a village at night can have a hundred of them on screen.
 // ---------------------------------------------------------------------------
 const Light = {
-  c: null, x: null,
+  c: null, x: null, stamps: new Map(),
+  // `rings` stepped ellipses, ring k of them r*k/div across, stacked by `op`
+  stamp(r, rings, div, col, op) {
+    const key = `${r}|${rings}|${div}|${col}|${op}`;
+    let s = this.stamps.get(key);
+    if (s) return s;
+    if (this.stamps.size > 600) this.stamps.clear();
+    const ry = Math.max(1, Math.round((r * rings * 0.62) / div)), rx = Math.round((r * rings) / div);
+    const [c, x] = makeCanvas(rx * 2 + 1, ry * 2 + 1);
+    x.globalCompositeOperation = op;
+    for (let k = rings; k >= 1; k--) ellipseFill(x, rx, ry, Math.round((r * k) / div), Math.max(1, Math.round((r * k * 0.62) / div)), col);
+    s = { c, rx, ry };
+    this.stamps.set(key, s);
+    return s;
+  },
   render(ctx, cam, darkness, tint, lights) {
     if (darkness <= 0.01) return;
     if (!this.c || this.c.width !== cam.w || this.c.height !== cam.h) {
@@ -319,8 +334,11 @@ const Light = {
     for (const l of lights) {
       const sx = Math.round(l.x - cam.x), sy = Math.round(l.y - cam.y);
       if (!seen(l, sx, sy)) continue;
+      // four rings that together clear `a` of the dark; stamped `destination-out`,
+      // their stacked alpha clears just what four rings drawn one by one would
       const step = 1 - Math.pow(1 - Math.min(0.98, l.a), 0.25);
-      for (let k = 4; k >= 1; k--) ellipseFill(x, sx, sy, Math.round((l.r * k) / 4), Math.max(1, Math.round((l.r * k * 0.62) / 4)), `rgba(0,0,0,${step})`);
+      const st = this.stamp(Math.round(l.r), 4, 4, `rgba(0,0,0,${step.toFixed(3)})`, 'source-over');
+      x.drawImage(st.c, sx - st.rx, sy - st.ry);
     }
     ctx.imageSmoothingEnabled = false; ctx.drawImage(this.c, cam.x, cam.y);
     // a warm glow added round each lamp and window, in steps too
@@ -330,8 +348,13 @@ const Light = {
       const sx = Math.round(l.x), sy = Math.round(l.y);
       if (!seen(l, sx - cam.x, sy - cam.y)) continue;
       const [cr, cg, cb] = hexToRgb(l.col || '#ffaa50');
-      for (let k = 3; k >= 1; k--) ellipseFill(ctx, sx, sy, Math.round((l.r * k) / 5), Math.max(1, Math.round((l.r * k * 0.62) / 5)), `rgba(${cr},${cg},${cb},${0.09 * darkness * (l.a || 1)})`);
+      // drawn at a quarter strength and scaled down to the glow wanted; `glow`
+      // warms a bright light's pool more strongly
+      const st = this.stamp(Math.round(l.r), 3, 5, `rgba(${cr},${cg},${cb},0.25)`, 'lighter');
+      ctx.globalAlpha = Math.min(1, (0.09 * (l.glow || 1) * darkness * (l.a || 1)) / 0.25);
+      ctx.drawImage(st.c, sx - st.rx, sy - st.ry);
     }
+    ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
   },
 };

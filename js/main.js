@@ -341,6 +341,42 @@ function skyState(h) {
 
 const PROP_COL = { wood: '#5a3a22', ember: '#ff8a3a', mug: '#c9a46a', foam: '#f4f0e0', plate: '#f4f0e8' };
 
+// What a villager has in hand for what they're doing (an elder's stick aside).
+function propFor(v) {
+  const task = v.task;
+  let prop = null;
+  if (task && task.phase === 'do') prop = task.target.prop || (task.spot && task.spot.kind === 'partyseat' ? (task.spot.prop || 'mug') : task.a.prop);
+  if (task && task.phase === 'go' && (task.target.carry || task.a.id === 'deliver')) prop = 'sack';
+  if (task && task.phase === 'go' && task.a.id === 'gift') prop = 'flowers';
+  if (task && task.phase === 'go' && task.a.id === 'work_post') prop = 'letter';
+  return prop;
+}
+
+// After dark nobody goes out without a lantern. It swings in their hand while
+// they walk or stand about, and is set down beside them while they sit, work
+// or have their hands full. Dancers leave theirs on the tables.
+function lanternFor(v, prop = propFor(v)) {
+  if (Game.darkness < 0.35 || v.inside || v.carried || v.heldBy || v.stage === 'baby' || v.pose === 'inside' || v.pose === 'dance') return null;
+  const free = !prop || prop === 'stick';
+  if (v.pose === 'walk') return free ? 'hand' : null;
+  return v.pose === 'stand' && free ? 'hand' : 'ground';
+}
+// Where its light comes from, in world pixels.
+function lanternLight(v, where) {
+  const side = v.facing === 'left' ? -1 : 1;
+  return where === 'hand' ? { x: v.x + side * 3, y: v.y - 5 } : { x: v.x + side * 8, y: v.y - 2 };
+}
+// A little oil lantern, drawn in half-pixels from the ring at its top.
+function drawLantern(ctx, x, y, t, id) {
+  const P = (dx, dy, w, h, col) => { ctx.fillStyle = col; ctx.fillRect(x + dx / RS, y + dy / RS, w / RS, h / RS); };
+  const flick = Math.sin(t * 9 + id * 1.7) > 0.6;
+  P(0, 0, 1, 2, '#3a2a1a');
+  P(-2, 2, 5, 1, '#2a1c12'); P(-1, 1, 3, 1, '#2a1c12');
+  P(-2, 3, 5, 6, '#2a1c12');
+  P(-1, 3, 3, 5, flick ? '#ffc850' : '#ffd860'); P(0, 4, 1, 3, '#fff6c8');
+  P(-2, 9, 5, 1, '#2a1c12');
+}
+
 function drawVillager(ctx, v, ox = 0, oy = 0) {
   const t = tReal;
   let dir = v.facing === 'left' || v.facing === 'right' ? 'side' : v.facing === 'up' ? 'up' : 'down';
@@ -396,13 +432,11 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
     ctx.fillStyle = '#3a2414'; ctx.fillRect(Math.round(vx) - 3, Math.round(vy) - 4, 1, 4); ctx.fillRect(Math.round(vx) + 3, Math.round(vy) - 4, 1, 4);
   }
 
-  let prop = null;
-  if (task && task.phase === 'do') prop = task.target.prop || (task.spot && task.spot.kind === 'partyseat' ? (task.spot.prop || 'mug') : task.a.prop);
-  if (task && task.phase === 'go' && (task.target.carry || task.a.id === 'deliver')) prop = 'sack';
-  if (task && task.phase === 'go' && task.a.id === 'gift') prop = 'flowers';
-  if (task && task.phase === 'go' && task.a.id === 'work_post') prop = 'letter';
+  let prop = propFor(v);
+  const lantern = lanternFor(v, prop);
+  if (lantern === 'hand') prop = 'lantern';
   if (!prop && v.stage === 'elder' && dir !== 'up' && pose !== 'sit') prop = 'stick';
-  if (v.leaving) prop = 'stick';
+  if (v.leaving && lantern !== 'hand') prop = 'stick';
   if (v.stage === 'baby' || v.carried) prop = null;
   // Props are drawn in the sprite's own half-pixels, mirrored with it.
   const SW = spr.width, SH = spr.height;
@@ -506,9 +540,15 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
         if (dir !== 'up') { const [x, y] = HR; Q(x, y - 6, 1, 6, '#7a5030'); Q(x, y - 7, 1, 1, '#c84a3a'); }
         break;
       }
+      case 'lantern': {
+        const ph = Math.floor(v.walkDist / 3.2) % 4, sw = v.pose !== 'walk' ? 0 : ph === 0 ? -1 : ph === 2 ? 1 : 0;
+        drawLantern(ctx, sx + (flip ? SW - HR[0] - 1 - sw : HR[0] + sw) / RS, sy + HR[1] / RS, t, v.id);
+        break;
+      }
       case 'gadget': { const [x, y] = [HR[0] - 3, HR[1] - 4]; Q(x, y, 7, 5, '#2a2a32'); Q(x + 1, y + 1, 5, 2, Math.sin(t * 4 + v.id) > -0.3 ? expressed(v.genes).neon : '#1a4a50'); Q(x + 2, y + 4, 3, 1, '#4a4a52'); break; }
     }
   };
+  if (lantern === 'ground') drawLantern(ctx, Math.round(vx) + (v.facing === 'left' ? -8 : 8), Math.round(vy) - 4.5, t, v.id);
   if (dir === 'up') drawProp();
   blit(ctx, spr, sx, sy, flip);
   if (dir !== 'up') drawProp();
@@ -619,13 +659,15 @@ function collectLights() {
   }
   riftLights(L);
   // only the lamps the lamplighter has lit, brightening as the wick takes
-  World.lamps.forEach((l, i) => { if (l.lit) L.push({ x: l.x, y: l.y + 2, r: 46 * (0.96 + Math.sin(tReal * 7 + i) * 0.04) * Math.min(1, 0.4 + (Game.time - l.litAt) / 8), a: 0.95 * Math.min(1, 0.3 + (Game.time - l.litAt) / 6), warm: true }); });
+  World.lamps.forEach((l, i) => { if (l.lit) L.push({ x: l.x, y: l.y + 6, r: 80 * (0.96 + Math.sin(tReal * 7 + i) * 0.04) * Math.min(1, 0.4 + (Game.time - l.litAt) / 8), a: 0.97 * Math.min(1, 0.3 + (Game.time - l.litAt) / 6), warm: true, glow: 1.8 }); });
   if (Game.party.on) {
     for (const p of World.partyPoles) L.push({ x: p.x, y: p.y + 8, r: 42, a: 0.85, col: '#ffcf70' });
     L.push({ x: PARTY.danceX * 16 + 8, y: PARTY.danceY * 16, r: 90, a: 0.9, col: '#ffcf70' });
     if (World.season === 'winter') L.push({ x: World.bonfire.x, y: World.bonfire.y - 8, r: 110 * (0.95 + Math.sin(tReal * 9) * 0.05), a: 0.95, col: '#ff9a3a' });
   }
   for (const v of Game.villagers) {
+    const lan = lanternFor(v);
+    if (lan) { const p = lanternLight(v, lan); L.push({ x: p.x, y: p.y, r: 32 * (0.95 + Math.sin(tReal * 9 + v.id * 1.7) * 0.05), a: 0.85, warm: true }); }
     if (v.inside || !v.task || v.task.phase !== 'do') continue;
     if (v.task.a.prop === 'pipe') L.push({ x: v.x + (v.facing === 'left' ? -4 : 4), y: v.y - 13, r: 10, a: 0.55, col: '#ff8a3a' });
   }
