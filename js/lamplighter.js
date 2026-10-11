@@ -30,8 +30,14 @@ function lampSide(v) {
 function nearestLamp(v, round) {
   const mine = lampSide(v), todo = lampsToDo(round);
   const pool = mine && todo.some(mine) ? todo.filter(mine) : todo;
+  // the few nearest as the crow flies, then the shortest of those by the lanes
+  const near = pool.map((l) => [l, dist(v.x, v.y, l.footX, l.footY)]).sort((a, b) => a[1] - b[1]).slice(0, 4);
   let best = null, bd = 1e9;
-  for (const l of pool) { const d = dist(v.x, v.y, l.footX, l.footY); if (d < bd) { bd = d; best = l; } }
+  for (const [l, d0] of near) {
+    const p = findPath(Math.floor(v.x / 16), Math.floor((v.y - 2) / 16), Math.floor(l.footX / 16), Math.floor((l.footY - 2) / 16));
+    const d = p ? p.length * 16 : d0 * 3;
+    if (d < bd) { bd = d; best = l; }
+  }
   return best;
 }
 function setLamp(l, on) {
@@ -83,6 +89,23 @@ ACTION_NAMES.work_lamps = 'Lighting the lamps';
           this.queue.unshift({ a: ACTIONS.work_lamps });
           this.thinkDelay = 0;
           devLog('jobs', `${this.first} sets out to ${r === 'light' ? 'light' : 'put out'} the lamps`);
+        }
+      }
+    }
+    // passing a lamp that still wants seeing to (whoever's side it's on), they stop for it first
+    const t = this.task;
+    if (t && t.a.id === 'work_lamps' && t.phase === 'go' && t.target.lamp) {
+      t._passT = (t._passT ?? 0) - dt;
+      if (t._passT <= 0) {
+        t._passT = 0.5;
+        const round = t.target.round, cur = t.target.lamp;
+        const by = lampsToDo(round).filter((l) => l !== cur && dist(this.x, this.y, l.footX, l.footY) < 56)
+          .sort((a, b) => dist(this.x, this.y, a.footX, a.footY) - dist(this.x, this.y, b.footX, b.footY))[0];
+        if (by && this.repathTo(by.footX, by.footY)) {
+          if (cur.claimed === this.id) cur.claimed = null;
+          by.claimed = this.id;
+          Object.assign(t.target, { x: by.footX, y: by.footY, facing: by.footX > by.x ? 'left' : 'right', lamp: by });
+          devLog('jobs', `${this.first} stops at a lamp on the way`);
         }
       }
     }
