@@ -412,6 +412,8 @@ function panelKin(v) {
   if (k.gks.length) h += `<div>Grandchildren: ${k.gks.map(link).join(', ')}</div>`;
   if (!sp && !k.parents.length && !k.kids.length && !v.sweetheart) h += '<div>No family in the village (yet).</div>';
   h += '<div class="row-btns"><button data-tree>Family tree</button></div></div>';
+  const ms = v.homeId >= 0 ? mathomsAt(v.home()) : [];
+  if (ms.length) h += `<h3>Mathoms at home</h3><div class="likes">${ms.slice(0, 6).map((m) => `<div>${escapeHtml(aAn(m.name))}${m.passed ? ` <span class="sub">(given on ${m.passed} time${m.passed > 1 ? 's' : ''})</span>` : m.origin === 'trip' ? ' <span class="sub">(from an adventure)</span>' : ''}</div>`).join('')}${ms.length > 6 ? `<div class="sub">and ${ms.length - 6} more in the cupboard under the stairs</div>` : ''}</div>`;
   if (v.heirlooms && v.heirlooms.length) h += `<h3>Keepsakes</h3><div class="likes">${v.heirlooms.map((k) => `<div>${escapeHtml(k.name)} <span class="sub">(handed down on day ${k.day})</span></div>`).join('')}</div>`;
   const others = Object.entries(v.rel).map(([id, f]) => [Game.villagers.find((o) => o.id === +id), f]).filter(([o]) => o && o.id !== v.spouse && !v.parents.includes(o.id) && !o.parents.includes(v.id));
   const friends = others.filter(([, f]) => f > 0.3).sort((a, b) => b[1] - a[1]).slice(0, 6);

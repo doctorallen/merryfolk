@@ -92,7 +92,7 @@ function newVillage() {
 function save() {
   try {
     const data = {
-      v: 2, world: World.gen, farewells: Game.farewells || [], memorials: Game.memorials || [], lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
+      v: 2, world: World.gen, farewells: Game.farewells || [], memorials: Game.memorials || [], mathoms: Game.mathoms || [], mathomSeq: Game.mathomSeq || 0, lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
       villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
       archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
@@ -119,7 +119,7 @@ function load() {
   (data.lamps || []).forEach((on, i) => { const l = World.lamps[i]; if (l) { l.lit = !!on; l.litAt = Game.time - 60; l.st.useAlt = l.lit; } });
   Game.weather = data.weather || 'clear'; Game.raining = Game.weather === 'rain' || Game.weather === 'storm'; Game.rainUntil = data.rainUntil || 0;
   Game.party = Object.assign({ on: false, until: 0, planned: null, reason: '' }, data.party || {});
-  Game.farewells = data.farewells || []; Game.memorials = data.memorials || []; placeMemorialStones();
+  Game.farewells = data.farewells || []; Game.memorials = data.memorials || []; Game.mathoms = data.mathoms || []; Game.mathomSeq = data.mathomSeq || 0; placeMemorialStones();
   Game.archive = data.archive || {}; Game.away = data.away || []; Game.stats = data.stats || {}; Game.census = data.census || []; Game.lastTraveller = data.lastTraveller ?? -9;
   Village.reset();
   Object.assign(Village.stores, data.stores || {});
