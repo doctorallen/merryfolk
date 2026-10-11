@@ -572,11 +572,20 @@ function createHome(d, i, surname, name) {
     tint: (vr() - 0.5) * 0.14, flowers: vr() < 0.45, frameCol: ['#4a2e1a', '#2f4a3a', '#5a2a2a', '#3a3a5a'][Math.floor(vr() * 4)],
   };
   if (d.grand) Object.assign(V, { frame: 0, door: 0, porch: false, lantern: true, boxes: true });
+  // windows sit on the mound's front face, following the curve of its painted
+  // edge (the same ellipse paintMound draws), so the outer ones never slip
+  // off the hill onto the grass
   const wo = Math.round(d.rx * 16 * 0.42);
+  const mcx = (d.cx + 0.5) * 16, mcy = (d.cy + 0.5) * 16, mrx = d.rx * 16 - 4, mry = d.ry * 16 - 8;
+  const edgeY = (x) => { const u = (x - mcx) / mrx; return mcy + mry * Math.sqrt(Math.max(0, 1 - u * u)); };
+  const win = (dx, lift) => {
+    const x = Math.round(doorX + clamp(dx, -mrx * 0.62, mrx * 0.62));
+    return { x, y: Math.round(Math.min(doorY - 13, edgeY(x) - lift)) };
+  };
   const sides = V.nwin === 1 ? [vr() < 0.5 ? -1 : 1] : [-1, 1];
-  for (const sgn of sides) home.windows.push({ x: doorX + sgn * wo, y: doorY - 13 });
-  if (V.nwin >= 3) home.windows.push({ x: doorX + (vr() < 0.5 ? -1 : 1) * wo * 1.75, y: doorY - 18 });
-  if (d.grand) home.windows.push({ x: doorX - wo * 1.7, y: doorY - 22 }, { x: doorX + wo * 1.7, y: doorY - 22 });
+  for (const sgn of sides) home.windows.push(win(sgn * wo, 13));
+  if (V.nwin >= 3 && !d.grand) home.windows.push(win((vr() < 0.5 ? -1 : 1) * wo * 1.5, 24));
+  if (d.grand) home.windows.push(win(-wo * 1.7, 22), win(wo * 1.7, 22));
   if (V.chim2) home.chimney2 = { x: doorX - Math.round(d.rx * 16 * 0.45), y: Math.round((d.cy + 0.5) * 16 - d.ry * 16 * 0.35) };
   if (V.roofWin) home.roofWin = { x: doorX + Math.round(d.rx * 16 * (vr() - 0.5) * 0.5), y: Math.round((d.cy + 0.5) * 16 - d.ry * 16 * 0.45) };
   return home;
