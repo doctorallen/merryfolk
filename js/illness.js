@@ -82,7 +82,7 @@ ACTIONS.bring_soup = {
     if (!Game.villagers.includes(p)) return;
     feel(p, 'soup', v.first); addSentiment(p, v, 'grateful', 'soup when I had the flu', 8);
     p.drives.lonely = Math.max(0, p.drives.lonely - 0.4);
-    p.illness.until -= 240; // a good visit speeds the mend
+    if (p.illness) p.illness.until -= 240; // a good visit speeds the mend (if they're not up and about already)
     const home = v.homeId >= 0 ? v.home() : null;
     if (home && home.pantry.veg > 0) home.pantry.veg--; else if ((Village.stores.veg || 0) > 0) Village.use('veg', 1);
     v.remember(`Took soup round to ${p.first}, who has the flu.`, 1);
