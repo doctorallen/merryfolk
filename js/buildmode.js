@@ -59,6 +59,7 @@ function tileWhy(tool, tx, ty) {
   if (!inMap(tx, ty)) return 'Off the map';
   const t = World.tiles[tIdx(tx, ty)], blocked = World.block[tIdx(tx, ty)];
   if (planAt(tx, ty)) return 'Already planned';
+  if (cliffTile(tx, ty) === 1 && tool !== 'clear') return 'That\'s a cliff';
   switch (tool) {
     case 'path': return t === T.GRASS || t === T.LAWN ? (blocked ? 'Something\'s in the way' : '') : t === T.PATH || t === T.COBBLE ? 'Already a path' : t === T.WATER ? 'Water' : 'Not on grass';
     case 'flowers': return (t === T.GRASS || t === T.LAWN) && !blocked ? '' : 'Needs open grass';
@@ -74,7 +75,7 @@ function tileWhy(tool, tx, ty) {
       if (t === T.WATER || t === T.BRIDGE || t === T.HILL) return 'Not here';
       if (underBuilding(tx, ty)) return 'Under a building';
       if (t === T.FIELD || t === T.WEED || t === T.SOIL) return 'Not under crops';
-      return '';
+      return nearCliff(tx, ty) ? 'Too rocky to dig' : '';
     case 'pond':
       if (t === T.WATER) return 'Already water';
       if (t !== T.GRASS && t !== T.LAWN) return 'Only on grass';

@@ -169,6 +169,7 @@ function gatherPads() {
 // The height of the ground at a point (in tiles): the lie of the land, levelled where it's built on.
 function groundHeight(nh, x, y) {
   let h = landHeight(nh, x, y);
+  if (World.cliffMask) h = Math.min(0.999, h + cliffRise(x, y));
   const near = World.padNear && World.padNear[clamp(Math.floor(y), 0, MAP_H - 1) * MAP_W + clamp(Math.floor(x), 0, MAP_W - 1)];
   if (!near) return h;
   for (const k of near) {
@@ -183,6 +184,7 @@ function groundHeight(nh, x, y) {
 }
 // Does a terrace bank run through this tile, where a tree or bush would stand?
 function onBank(tx, ty) {
+  if (cliffTile(tx, ty)) return true;
   const nh = World._nh || (World._nh = makeNoise(World.seed + 9));
   let lv = -1;
   for (const [fx, fy] of [[0.15, 0.2], [0.85, 0.2], [0.5, 0.6], [0.15, 1.05], [0.85, 1.05], [0.5, 1.4]]) {

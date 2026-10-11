@@ -152,8 +152,9 @@ const GEN_OPTIONS = {
   hedges: { label: 'Hedgerows', opts: [['none', 'None', 0], ['some', 'Some', 0.55], ['many', 'Many', 0.95]] },
   flowers: { label: 'Wildflowers', opts: [['few', 'Few', 0.45], ['plenty', 'Plenty', 1], ['riot', 'A riot', 1.9]] },
   rocks: { label: 'Rocks', opts: [['few', 'Few', 0.45], ['some', 'Some', 1], ['many', 'Many', 1.9]] },
+  cliffs: { label: 'Cliffs', opts: [['none', 'None', 0], ['some', 'Some', 1], ['many', 'Many', 1.7]] },
 };
-function defaultGen(seed = 1337) { return { seed, hills: 'rolling', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some' }; }
+function defaultGen(seed = 1337) { return { seed, hills: 'rolling', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some', cliffs: 'some' }; }
 // The number behind a setting, e.g. gen('woods') → 1.6 for thick woodland.
 function gen(key) {
   const g = World.gen || defaultGen(), o = GEN_OPTIONS[key].opts.find((x) => x[0] === g[key]);
@@ -164,10 +165,11 @@ function buildWorld(cfg) { for (const _ of buildWorldSteps(cfg)); }
 // Builds the valley a stage at a time, yielding a line about each, so the
 // setup screen can show it taking shape.
 function* buildWorldSteps(cfg) {
-  World.gen = typeof cfg === 'object' ? { ...defaultGen(), ...cfg } : defaultGen(cfg);
+  // villages from before there were cliffs keep their valley as it was
+  World.gen = typeof cfg === 'object' ? { ...defaultGen(), cliffs: 'none', ...cfg } : defaultGen(cfg);
   const seed = World.gen.seed;
   World.seed = seed;
-  World.land = null; World.grass = []; World.statics = []; World.flowers = []; World.pads = null; World.padNear = null; World._nh = null;
+  World.land = null; World.grass = []; World.statics = []; World.flowers = []; World.pads = null; World.padNear = null; World._nh = null; World.cliffMask = null; World.cliff = null;
   const rng = mulberry32(seed);
   const tiles = World.tiles;
   tiles.fill(T.GRASS);
@@ -490,6 +492,8 @@ function* buildWorldSteps(cfg) {
   planMemorialGreen();
   // level the built-on ground, and work the land out again over it
   gatherPads();
+  // rocky escarpments out in the wilder land, before anything grows on them
+  computeCliffs(seed);
   computeLand(seed);
   yield 'Pens, orchards and allotments are laid out';
 
@@ -940,6 +944,7 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
   for (const k in pal) if (typeof pal[k] === 'string') C[k] = hexToRgb(pal[k]);
   const lerpC = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
   const winter = season === 'winter';
+  const CLG = { level1, W, H, season, lipCol, road: false }, CLP = { ...CLG, road: true };
   const at = (x, y) => type[clamp(y, 0, H - 1) * W + clamp(x, 0, W - 1)];
   const near = (px, py, t, r) => at(px + r, py) === t || at(px - r, py) === t || at(px, py + r) === t || at(px, py - r) === t;
   const notNear = (px, py, t, r) => at(px + r, py) !== t || at(px - r, py) !== t || at(px, py + r) !== t || at(px, py - r) !== t;
@@ -969,6 +974,7 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
       col = lit > 0 ? lerpC(col, [255, 255, 200], lit * 0.5) : lerpC(col, [10, 30, 20], -lit);
       const pj = py * W + px, lv = level1[pj];
       col = lerpC(col, winter ? [255, 255, 255] : [190, 220, 110], (lv - 1) * 0.05);
+      if (World.cliffMask) { const cl = cliffPixel(px, py, lv, col, CLG); if (cl) return cl; }
       const up = (k) => (py - k * 2 >= 0 ? level1[pj - k * 2 * W] : lv);
       const dn1 = py < H - 2 ? level1[pj + 2 * W] : lv;
       let face = 0;
@@ -984,6 +990,7 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
       return col;
     }
     if (t === T.PATH) {
+      if (World.cliffMask) { const cl = cliffPixel(px, py, level1[py * W + px], C.P1, CLP); if (cl) return cl; }
       // a dark ragged rim where the lane meets the grass, here and there grown over
       if (notNear(px, py, T.PATH, 1) && !near(px, py, T.BRIDGE, 1)) return h < 0.3 && !winter ? lerpC(C.G1, C.G2, 0.4) : C.PR;
       col = lerpC(C.P1, C.P2, clamp(nM(px * 0.1 + 50, py * 0.1) * 0.65 + h * 0.4 - 0.05, 0, 1));
@@ -1404,7 +1411,7 @@ function findPath(sx, sy, tx, ty) {
       if (PF.closed[ni] === gen) continue;
       let c = TILE_COST[World.tiles[ni]];
       const lv = World.tileLevel;
-      if (lv && lv[ni] !== lv[cur]) c += isRoadTile(World.tiles[ni]) || isRoadTile(World.tiles[cur]) ? RAMP_COST : BANK_COST * Math.abs(lv[ni] - lv[cur]);
+      if (lv && lv[ni] !== lv[cur]) c += isRoadTile(World.tiles[ni]) || isRoadTile(World.tiles[cur]) || cliffTile(nx, ny) === 2 || cliffTile(cx, cy) === 2 ? RAMP_COST : BANK_COST * Math.abs(lv[ni] - lv[cur]);
       c *= dx && dy ? 1.414 : 1;
       const g = PF.g[cur] + c;
       if (PF.stamp[ni] !== gen || g < PF.g[ni]) {
