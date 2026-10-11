@@ -25,7 +25,8 @@
         <span id="hud-weather" class="weather">Fair</span>
         <span id="hud-party" class="pill party" hidden>Party tonight!</span>
         <button id="hud-hazard" class="pill hazard" hidden>⚠</button>
-        <button id="hud-coin" class="pill coin" title="The village chest and the Charter">0p</button>
+        <button id="hud-coin" class="pill coin" title="The village chest">0p</button>
+        <button id="hud-era" class="pill era" title="The village's rank: open the Charter">Hamlet</button>
         <button id="hud-content" class="pill content" title="Contentment: open the Steward's Desk">☺ 50%</button>
       </div>
     </div>
@@ -44,13 +45,20 @@
       <button id="btn-build" title="Build mode: paths, gardens, benches, lamps, ponds, terrain and new buildings (B)">Build</button>
       <button id="btn-zoomout" title="Zoom out (-)" aria-label="Zoom out">−</button>
       <button id="btn-zoomin" title="Zoom in (+)" aria-label="Zoom in">+</button>
-      <button id="btn-sound">Music: off</button>
-      <button id="btn-help" title="How to play" aria-label="How to play">?</button>
-      <button id="btn-dev" title="Developer mode: see how villagers decide and what's happening (`)">Dev</button>
+      <div class="gear-wrap"><button id="btn-gear" title="Settings" aria-label="Settings" aria-haspopup="true">⚙</button>
+        <div id="gear-menu" class="card gear-menu" hidden>
+          <button id="btn-sound">Music: off</button>
+          <button id="btn-help" title="How to play" aria-label="How to play">How to play</button>
+          <button id="btn-guide" title="Show the guide again">Guide</button>
+          <button id="btn-dev" title="Developer mode: see how villagers decide and what's happening (`)">Dev mode</button>
+        </div></div>
     </div>
   </header>
 
   <div id="toast" role="status" aria-live="polite"></div>
+  <div id="toasts" aria-live="polite"></div>
+  <aside id="objectives" class="card" hidden></aside>
+  <div id="errand" class="card" hidden></div>
 
   <aside id="panel" class="card" hidden>
     <div class="panel-head">
@@ -135,15 +143,13 @@
   <div id="intro">
     <div class="intro-card card">
       <h1>Merryfolk</h1>
-      <p class="lede">Thistledown is a snug village of hobbit-holes, gardens and good ale, tucked between green hills and a slow river. Its folk are born, grow up, go to school, take up trades, fall in love, raise families and, one day, set off over the hills. Lately, though, the sky has begun to tear open, and strange neon-lit folk are stepping through. You can watch over them all and guide them a little.</p>
+      <p class="lede">You are the Steward of Thistledown, a snug village of hobbit-holes, gardens and good ale between green hills and a slow river. Its folk live their own lives: they work, fall in love, raise families and, one day, set off over the hills. Lately the sky has begun to tear open, and neon-lit strangers are stepping through.</p>
       <div class="how">
-        <div><b>Look around</b><span>Drag the map, or use WASD / arrow keys. Scroll or <kbd>+</kbd><kbd>−</kbd> to zoom.</span></div>
-        <div><b>Get to know folk</b><span>Click a villager to open their panel: needs and health, genes, habits and education, family and friends, trade and skills. <kbd>Tab</kbd> cycles through everyone.</span></div>
-        <div><b>Teach them</b><span>Click a selected villager again (or <kbd>P</kbd>) to pat them, and they'll do more of whatever they were doing. <kbd>T</kbd> tut-tuts. <kbd>E</kbd> gives a lesson: little ones learn fastest, and education shapes how folk talk, work and spend their days.</span></div>
-        <div><b>The giant hand</b><span>Drag a villager to pick them up and carry them somewhere. Little ones love it; grown-ups less so.</span></div>
-        <div><b>Gifts &amp; remedies</b><span>Drop cake, ale, leaf, storybooks, remedies, flowers or fireworks from the toolbar. Fireworks in the party field start a party.</span></div>
-        <div><b>The village</b><span>Open the <b>Village</b> ledger (<kbd>V</kbd>) for the Common Store, the trades, the census, the departed, and to welcome travellers.</span></div>
+        <div><b>Shape it</b><span><b>Build</b> paths, gardens, lamps, ponds and new homes. Your folk do the work.</span></div>
+        <div><b>Run it</b><span>Set rations and the working week, choose who works where, meet <b>charters</b> to grow from Hamlet to Shire Town, and trade with the caravans.</span></div>
+        <div><b>Know them</b><span>Tap a hobbit to see their feelings, wishes, friends and family. Pat, teach, or give them a treat.</span></div>
       </div>
+      <p class="sub">Drag (or WASD) to look around, scroll or pinch to zoom. A short guide will show you the ropes.</p>
       <div class="intro-actions">
         <button id="intro-go" class="primary">Enter Thistledown</button>
         <button id="intro-new" class="ghost">Start a fresh village</button>
@@ -229,6 +235,7 @@
 <script src="js/almanac.js"></script>
 <script src="js/balance.js"></script>
 <script src="js/hazards.js"></script>
+<script src="js/hud.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/worldgen_ui.js"></script>
 <script src="js/dev.js"></script>

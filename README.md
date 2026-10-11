@@ -88,6 +88,21 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 | Grendels and Ettins causing mischief | Rabbits sneak out of the woods to nibble gardens (children and gardeners chase them off), and crows raid the barley. Click them to shoo |
 | Observation Kit graphs | The Census ledger charts population, children and village mood day by day |
 
+### Finding your way around
+
+- **The top bar.** It shows the season, the day and time, then chips for the village chest (opens the Market), the village's rank and progress to the next era (opens the Charter), and contentment (opens the Steward's Desk). A ⚠ chip appears when a hazard is coming. The ⚙ menu holds music, how to play, the guide and developer mode.
+- **The Charter tracker.** Under the top bar, a small card tracks the three open charters with progress bars. Hide it with –, or click it to open the Charter.
+- **Notices.** They queue below the top bar, three at most, and never cover the buttons.
+- **The ledger.** Five sections, each with its own sub-tabs, and the game pauses while it's open:
+  - **Steward:** policies and workforce, plus trades.
+  - **Charter.**
+  - **Store & Market:** the market, plus the Common Store.
+  - **Folk:** census and Almanac, the Remembered, and travellers.
+  - **Rifts.**
+- **Build tools.** Locked tools show a 🔒 with the era that unlocks them. Tapping one shows exactly what's still needed.
+- **The Steward's Errands.** A short guide for new villages: meet a hobbit, pat them, lay a path, watch it built, check contentment, look at the charters, trade with a caravan. It can be skipped, or restarted from ⚙.
+- **On phones.** Bigger touch targets, pinch to zoom, the chronicle starts folded, the villager panel keeps its buttons in reach, and build mode becomes a full-width dock with a scrolling row of tools.
+
 ### Running the village (the Steward's Desk)
 
 The **☺ contentment** pill in the top bar opens the Steward's Desk, the first tab of the village ledger. It's where you make the choices that steer the village:
@@ -276,6 +291,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/illness.js` | Flu (laid up abed), sprained ankles, and friends bringing soup |
 | `js/almanac.js` | The seasonal Almanac report: population, contentment, food, coin, renown, stories and advice |
+| `js/hud.js` | HUD layout, toast queue, gear menu, chips, charter tracker, the five-section ledger, locked-tool explanations, the Steward's Errands guide, phone layout |
 | `js/hazards.js` | Seasonal hazards with warnings: floods (and levees), droughts, blight, hard frost |
 | `js/balance.js` | Costs for the gifts, policies felt in full, honest forecasts, idle-trade warnings, the Great Fair |
 | `js/hearts.js` | Sentiments between people, likes and dislikes, friendly rivals and contests, inspirations and sulks, masterpieces |
