@@ -99,14 +99,43 @@ function eduSkillMul(v) { return v.isChild() ? 0.7 + v.edu * 0.5 : 0.65 + v.edu 
 // ---------------------------------------------------------------------------
 // Speech
 // ---------------------------------------------------------------------------
-// Registers: 'child' (young or unlettered little ones), 'bright' (schooled
-// little ones), 'plain', 'common' and 'fine' for grown-ups.
+// Registers: 'toddler' (a word or two at a time), 'child' (young or
+// unlettered little ones), 'bright' (schooled little ones), and 'plain',
+// 'common' and 'fine' for grown-ups and for tweens of twenty and over.
 function register(v) {
   if (v.stage === 'baby') return 'baby';
-  if (v.isChild()) return v.edu >= 0.32 ? 'bright' : 'child';
+  if (v.isChild()) {
+    const y = v.years();
+    if (y < 5) return 'toddler';
+    if (y < 20) return v.edu >= 0.32 ? 'bright' : 'child';
+  }
   return v.edu < 0.28 ? 'plain' : v.edu < 0.55 ? 'common' : 'fine';
 }
-const FALLBACK = { bright: 'child', plain: 'common', fine: 'common', child: 'common' };
+const FALLBACK = { bright: 'child', plain: 'common', fine: 'common', child: 'common', toddler: 'child' };
+
+// Toddlers: a word or two at a time, about whatever's in front of them.
+const TODDLER = {
+  hungry: ['Hungy!', 'Num-num?', 'Bickit? Pease?', 'Want cake!', 'More!'],
+  thirsty: ['Drink!', 'Wa-wa!', 'Milk pease!'],
+  tired: ['*yawn*', 'Up! Carry!', 'No sleepy!', '*rubs eyes*'],
+  cold: ['Brrr!', 'Cold!', 'Hands cold!'],
+  lonely: ['Mama?', 'Dada?', 'Want {parent}!', 'Up! Up!'],
+  bored: ['Play?', 'Why?', 'What dat?', 'Again! Again!'],
+  sick: ['Tummy hurt...', 'Achoo!', '*sniffle*', 'Ow...'],
+  rain: ['Wet!', 'Puddle! Splash!', 'Rain! Rain!'],
+  snow: ['Snow! Snow!', 'Cold! Hee hee!', 'Snowman!'],
+  sunny: ['Birdie!', 'Bzzz! Bee!', 'Flower! Pretty!', 'Sun!'],
+  party: ['Dance! Dance!', 'Music!', 'Wheee!', 'Cake?'],
+  rabbit: ['Bunny!', 'Bunny! Come back!', 'Hop hop!'],
+  play: ['Chase me!', 'Peekaboo!', 'Mine!', 'Again!', 'Wheee!'],
+  happy: ['Hee hee!', 'Yay!', '*giggles*', 'Love you!'],
+  rifttalk: ['Sky broke!', 'Shiny!', 'Lights!'],
+  greet: ['Hiya!', 'Hi {name}!', '*waves*'],
+  reply: ['Yeah!', 'No!', 'Why?', 'Uh-huh.', 'Hee!'],
+  quarrel: ['Mine!', 'No! No!', 'Waaah!', 'Mine mine mine!'],
+  puzzled: ['Huh?', 'Why?', 'Wassat?'],
+  idle: ['Dat?', 'Look!', 'Hiya!', 'Why?', 'Uh-oh.', 'Doggy!', 'Big tree!', 'Me do it!'],
+};
 
 const FOOD_SAY = { cheese: 'a wedge of cheese', bread: 'fresh bread', pie: 'apple pie', cake: 'seed-cake', fish: 'fried fish', mush: 'mushrooms', apple: 'apples', egg: 'eggs', veg: 'vegetable soup', stew: 'stew' };
 
@@ -334,7 +363,7 @@ function lineFor(v, topic, ctx) {
   const table = LINES[topic] || CHAT[topic];
   if (!table) return null;
   if (reg === 'baby') return R.pick(LINES.baby.baby);
-  // the rift-minded slip into rift-talk, more often the further they've gone
+  if (reg === 'toddler') return fillLine(v, R.pick(TODDLER[topic] || TODDLER.idle), ctx).replace(/\bmum\b/, 'Mama').replace(/\bdad\b/, 'Dada');  // the rift-minded slip into rift-talk, more often the further they've gone
   const rl = riftLine(v, topic, ctx);
   if (rl) return rl;
   // little ones don't say grown-up things
@@ -345,7 +374,7 @@ function lineFor(v, topic, ctx) {
 
 // What someone feels like remarking on right now.
 function speechTopic(v) {
-  const d = v.drives, reg = register(v), kid = reg === 'child' || reg === 'bright';
+  const d = v.drives, reg = register(v), kid = reg === 'child' || reg === 'bright' || reg === 'toddler';
   const opts = [];
   if (d.hunger > 0.55) opts.push([d.hunger * 3, 'hungry']);
   if (d.thirst > 0.6) opts.push([d.thirst * 2, 'thirsty']);
