@@ -242,7 +242,8 @@ function arriveFromRift(r) {
   for (const s of SKILLS) v.skills[s] = R.f(0, 15) * v.genes.apt[s];
   v.skills.tinkering = R.f(12, 30);
   v.drives.bored = 0;
-  v.remember('Stepped through a rift into a green, quiet world with no signal at all.', 1);
+  v.lost = 1;
+  v.remember('Stepped through a rift into a green, quiet world with no signal at all. Where am I?', -1);
   Game.villagers.push(v);
   // the rift-born stick together; hill-folk are wary but kindly
   for (const o of Game.villagers) if (o !== v) { const k = o.isRiftborn() ? 0.45 : 0.05; o.rel[v.id] = k; v.rel[o.id] = k; }
@@ -271,6 +272,7 @@ function updateRifts(dtMin) {
       r.a -= dtMin / 15;
       if (r.a <= 0) {
         r.gone = true;
+        if (r.home) { chronicle('The golden rift has folded quietly shut. The way home is closed again, for now.', 'rift'); continue; }
         const stock = R.i(3, 6);
         World.riftScars.push({ x: r.x, y: r.y, stock, seed: r.seed });
         // old scars grass over in time
@@ -341,6 +343,7 @@ function riftShare() {
 // The nightly round: households rub off on their members, neon homes on
 // those who live in them, and the tinkers decide which hole to wire up next.
 function dailyRifts() {
+  settleLost();
   if (Game.stats.firstRiftDay == null && Game.villagers.some((v) => v.isRiftborn())) Game.stats.firstRiftDay = Game.day - 3;
   for (const h of World.homes) {
     if (!h.built) continue;
@@ -390,6 +393,133 @@ function canWorkProject(v, p) {
 }
 
 // ---------------------------------------------------------------------------
+// Lost, and looking for the way home. The rift-born arrive bewildered and
+// homesick. Together they study the rifts, the scars and (once it's up) the
+// Relay, pooling what they learn. When they crack it, a steady golden rift
+// opens and each of them must choose: home, or the friends and family they've
+// made here. Each later attempt is harder, as the old frequencies drift.
+// ---------------------------------------------------------------------------
+const RIFT_LOST_SAY = {
+  adult: [
+    'Which sector is this? Nobody here has heard of the sectors.', 'Where are the towers? Where is... anything?', 'I keep reaching for my feed. There is no feed.',
+    'If I find the frequency, I can get back. I have to get back.', 'Is this tree a hologram? It doesn\'t flicker.', 'Somebody back home is wondering where I went.',
+    'The sky\'s the wrong colour. Too blue. Too much of it.', 'Excuse me, which way to the city? ...What do you mean, what city?',
+  ],
+  kid: ['I want to go home.', 'Where\'s our flat? Where\'s the lift?', 'Are we lost? We\'re lost, aren\'t we.'],
+};
+const RIFT_SEEK_SAY = [
+  'Hold the sensor steady!', 'Same signature as the night we came through.', 'If we match the frequency, it should open.', 'Anyone remember the coordinates for home?',
+  'Write it down, before it drifts!', 'Almost had it. Again!', 'It hums in threes. Did you notice? Threes.', 'Together, on my count.',
+];
+function lostWord(v) {
+  const l = v.lost || 0;
+  return l > 0.7 ? 'Utterly lost, and desperate to go home' : l > 0.4 ? 'Homesick, and hunting for a way back' : l > 0.15 ? 'Settling in, mostly' : 'This is home now';
+}
+// Who's looking for the way back, and where they meet to work on it.
+function homeSeekers() { return Game.villagers.filter((v) => v.isRiftborn() && v.isGrown() && !v.leaving && (v.lost || 0) > 0.25); }
+function seekSite() {
+  const open = World.rifts.find((r) => r.a > 0.6 && !r.closing && !r.home);
+  if (open) return { x: open.x, y: open.y, name: 'the open rift', boost: 3 };
+  if (World.buildings.relay) return { x: World.buildings.relay.stepX, y: World.buildings.relay.stepY + 4, name: 'the Relay Mast', boost: 1.5 };
+  const s = World.riftScars[World.riftScars.length - 1];
+  if (s) return { x: s.x, y: s.y, name: 'the rift scar ' + placeName(s.x, s.y), boost: 1 };
+  return null;
+}
+
+// Each night the homesick settle in a little, faster with a spouse, children and friends.
+function settleLost() {
+  for (const v of Game.villagers) {
+    if (!v.isRiftborn() || !(v.lost > 0)) continue;
+    const friends = Game.villagers.filter((o) => !o.isRiftborn() && (v.rel[o.id] || 0) > 0.4).length;
+    const kids = Game.villagers.some((o) => o.parents.includes(v.id));
+    v.lost = Math.max(0, v.lost - 0.035 - (v.spouse ? 0.05 : 0) - (kids ? 0.04 : 0) - Math.min(3, friends) * 0.015);
+  }
+}
+
+function wayHomeProgress(amount) {
+  const before = Village.wayHome || 0;
+  Village.wayHome = Math.min(1, before + amount);
+  const site = seekSite();
+  const where = site ? site.name : 'the rift scars';
+  for (const [m, text] of [
+    [0.2, `The rift-folk have started meeting at ${where} with their blinking gadgets, night after night. They're trying to find a way home.`],
+    [0.5, 'The rift-folk think they\'re onto something: the rifts hum on a frequency, and they\'ve caught it twice now. There\'s a lot of excited muttering.'],
+    [0.8, `Sparks and shouting at ${where}! The rift-folk say they can almost hold a door open. Almost.`],
+  ]) if (before < m && Village.wayHome >= m) chronicle(text, 'rift');
+  if (Village.wayHome >= 1 && !World.rifts.some((r) => r.home)) openHomeRift();
+}
+
+// The way home opens. Everyone rift-born must decide.
+function openHomeRift() {
+  const site = seekSite() || { x: PLAZA.cx * 16 + 8, y: (PLAZA.cy + 3) * 16 };
+  const spot = World.rifts.some((r) => !r.home && dist(r.x, r.y, site.x, site.y) < 40) ? { x: site.x + 60, y: site.y } : site;
+  const t = nearestWalkable(Math.floor(spot.x / 16), Math.floor(spot.y / 16));
+  const r = { x: t ? t[0] * 16 + 8 : spot.x, y: t ? t[1] * 16 + 12 : spot.y, born: Game.time, life: 240, a: 0, crew: 0, sent: 0, nextOut: 1e9, seed: R.i(0, 9999), place: placeName(spot.x, spot.y), home: true };
+  World.rifts.push(r);
+  Village.wayHome = 0;
+  Village.wayHomeTries = (Village.wayHomeTries || 0) + 1;
+  chronicle(`The rift-folk have done it! A steady, golden-edged rift hangs ${r.place}, and through it, faint and far, the lights of their city. Now each of them has to choose.`, 'rift');
+  const rb = Game.villagers.filter((v) => v.isRiftborn() && !v.leaving);
+  const decided = new Map();
+  // ties to the village: a spouse, children, friends, and time spent settling in
+  const ties = (v) => {
+    const sp = Game.villagers.find((o) => o.id === v.spouse);
+    let t = (1 - (v.lost || 0)) * 1.6;
+    if (sp && !sp.isRiftborn()) t += 1.6;
+    if (Game.villagers.some((o) => o.parents.includes(v.id) && !o.isRiftborn())) t += 1.6;
+    t += Math.min(3, Game.villagers.filter((o) => !o.isRiftborn() && (v.rel[o.id] || 0) > 0.4).length) * 0.35;
+    return t;
+  };
+  for (const v of rb) {
+    if (decided.has(v.id) || !v.isGrown()) continue;
+    const sp = rb.find((o) => o.id === v.spouse);
+    const t = sp ? (ties(v) + ties(sp)) / 2 : ties(v);
+    const pGo = clamp(0.85 - t * 0.32, 0.03, 0.9), go = R.chance(pGo);
+    decided.set(v.id, go); if (sp) decided.set(sp.id, go);
+  }
+  // little ones go where their parents go
+  for (const v of rb) if (!v.isGrown()) decided.set(v.id, v.parents.some((p) => decided.get(p)));
+  const going = rb.filter((v) => decided.get(v.id)), staying = rb.filter((v) => !decided.get(v.id));
+  for (const v of going) goHome(v, r);
+  for (const v of staying) {
+    v.lost = 0;
+    v.remember('The way home opened. I looked through for a long while... and stayed.', 2);
+  }
+  // who they turned back for: a hill-folk spouse, or their dearest hill-folk friend
+  const anchor = (v) => {
+    const sp = Game.villagers.find((o) => o.id === v.spouse && !o.isRiftborn());
+    if (sp) return sp.first;
+    const f = Object.entries(v.rel).filter(([id]) => Game.villagers.some((o) => o.id === +id && !o.isRiftborn())).sort((a, b) => b[1] - a[1])[0];
+    return f && f[1] > 0.3 ? Game.villagers.find((o) => o.id === +f[0]).first : null;
+  };
+  const told = new Set(), st = [];
+  for (const v of staying.filter((x) => x.isGrown())) {
+    if (told.has(v.id) || st.length >= 2) continue;
+    told.add(v.id);
+    const sp = staying.find((o) => o.id === v.spouse);
+    const a = anchor(v);
+    if (sp) { told.add(sp.id); st.push(`${v.first} and ${sp.first} looked through together for a long moment, then turned away, hand in hand. "This is home now."`); }
+    else st.push(a ? `${v.first} looked through for a long moment, then turned back to ${a}. "This is home now."` : `${v.first} stayed, too.`);
+  }
+  if (going.length) chronicle(`${going.map((v) => v.first).join(', ').replace(/, ([^,]*)$/, ' and $1')} ${going.length > 1 ? 'have' : 'has'} gone home through the golden rift. ${st.join(' ')}`.trim(), 'rift');
+  else if (staying.length) chronicle(`Not one of the rift-folk stepped through. ${st.join(' ')}`.trim(), 'rift');
+}
+
+function goHome(v, r) {
+  v.abort();
+  if (v.inside) v.exitBuilding();
+  v.queue = [];
+  archivePerson(v, 'home');
+  v.leaving = 'home';
+  v.say(R.pick(['Goodbye, hill-folk. Thank you.', 'I\'ll never forget the bread.', 'Home. Finally.', 'Keep the kettle warm for me.']), 5);
+  v.repathTo(r.x, r.y + 2);
+  for (const o of Game.villagers) {
+    if (o === v || o.leaving) continue;
+    if ((o.rel[v.id] || 0) > 0.4) { o.remember(`Waved ${v.first} off through the golden rift, home to the city.`, -1); o.drives.lonely = Math.min(1, o.drives.lonely + 0.25); }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Drawing: the rift itself, the scars it leaves, and neon homes
 // ---------------------------------------------------------------------------
 function drawRift(ctx, r, t) {
@@ -412,9 +542,11 @@ function drawRift(ctx, r, t) {
     if (half < 0.5) half = 0.5;
     const off = Math.abs(j - gRow) < 3 ? glitch : 0;
     const y = base - 4 - H + j, hw = Math.round(half);
-    ctx.fillStyle = '#c050ff'; ctx.fillRect(x - hw - 2 + off, y, hw * 2 + 5, 1);
-    ctx.fillStyle = '#5af8ff'; ctx.fillRect(x - hw - 1 + off, y, hw * 2 + 3, 1);
-    ctx.fillStyle = '#0c0618'; ctx.fillRect(x - hw + off, y, hw * 2 + 1, 1);
+    ctx.fillStyle = r.home ? '#ffc840' : '#c050ff'; ctx.fillRect(x - hw - 2 + off, y, hw * 2 + 5, 1);
+    ctx.fillStyle = r.home ? '#fff4c0' : '#5af8ff'; ctx.fillRect(x - hw - 1 + off, y, hw * 2 + 3, 1);
+    ctx.fillStyle = r.home ? '#1a1030' : '#0c0618'; ctx.fillRect(x - hw + off, y, hw * 2 + 1, 1);
+    // the city on the far side of a homeward rift
+    if (r.home && j > H * 0.45 && hash2(Math.floor((x + off) / 2), j) > 0.6) { ctx.fillStyle = (j + Math.floor(t * 2)) % 7 ? '#ff3aa8' : '#3af0ff'; ctx.fillRect(x - Math.floor(hw * 0.7) + (j * 3) % Math.max(1, hw * 1.4 | 0) + off, y, 1, 1); }
     // stars on the far side
     for (let i = -hw; i <= hw; i++) {
       const h = hash2(i * 13 + r.seed, j * 7 + Math.floor(t * 3));
@@ -519,8 +651,8 @@ function emitRiftFx(dt) {
 function riftLights(L) {
   for (const r of World.rifts) {
     const H = 46 * r.a;
-    L.push({ x: r.x, y: r.y - H / 2, r: 90 * r.a * (0.95 + Math.sin(tReal * 6) * 0.05), a: 0.95, col: '#b050ff' });
-    L.push({ x: r.x, y: r.y - H / 2, r: 36 * r.a, a: 0.8, col: '#5af8ff' });
+    L.push({ x: r.x, y: r.y - H / 2, r: 90 * r.a * (0.95 + Math.sin(tReal * 6) * 0.05), a: 0.95, col: r.home ? '#ffb840' : '#b050ff' });
+    L.push({ x: r.x, y: r.y - H / 2, r: 36 * r.a, a: 0.8, col: r.home ? '#fff0c0' : '#5af8ff' });
   }
   for (const s of World.riftScars) L.push({ x: s.x, y: s.y - 2, r: 16, a: 0.4, col: '#c050ff' });
   for (const h of World.homes) {
@@ -597,7 +729,10 @@ const RIFT_HILL_LINES = {
 Object.assign(CHAT, RIFT_HILL_LINES);
 
 function riftLine(v, topic, ctx) {
-  if (v.stage === 'baby' || v.techTier === 0) return null;
+  if (v.stage === 'baby') return null;
+  // the newly arrived can hardly talk of anything but where they are and how to get home
+  if (v.isRiftborn() && (v.lost || 0) > 0.35 && R.chance(v.lost * 0.6) && !['court', 'quarrel', 'reply'].includes(topic)) return fillLine(v, R.pick(v.isChild() ? RIFT_LOST_SAY.kid : RIFT_LOST_SAY.adult), ctx);
+  if (v.techTier === 0) return null;
   if (!R.chance(v.techTier >= 2 ? 0.75 : 0.3)) return null;
   const t = RIFT_LINES[topic];
   const list = t && (v.isChild() ? t.kid : t.adult);
@@ -608,7 +743,7 @@ function riftLine(v, topic, ctx) {
 // Rift actions: tinkers' work, gadgets, jacking in at the Relay, and gawking
 // ---------------------------------------------------------------------------
 function salvageSite(v) {
-  const sites = World.rifts.filter((r) => r.a > 0.5 && !r.closing).map((r) => ({ x: r.x, y: r.y, rift: r }))
+  const sites = World.rifts.filter((r) => r.a > 0.5 && !r.closing && !r.home).map((r) => ({ x: r.x, y: r.y, rift: r }))
     .concat(World.riftScars.filter((s) => s.stock > 0).map((s) => ({ x: s.x, y: s.y, scar: s })));
   if (!sites.length) return null;
   sites.sort((a, b) => dist(a.x, a.y, v.x, v.y) - dist(b.x, b.y, v.x, v.y));
@@ -673,6 +808,36 @@ Object.assign(ACTIONS, {
     tick: (v, task, dt) => { if (Math.random() < dt * 0.015) v.say(R.pick(v.isChild() ? RIFT_GAWK_SAY.kid : RIFT_GAWK_SAY.adult), 3); },
     done: (v) => { v.remember('Went to gawp at the rift.', 1); shiftWays(v, 0.02 * v.genes.curiosity); },
   },
+  rift_lost: {
+    label: 'Wandering about, utterly lost', icon: 'rift', sat: { bored: -0.3 }, dur: 18, pose: 'stand', outdoor: true, stages: AWAKE,
+    avail: (v) => v.isRiftborn() && (v.lost || 0) > 0.5,
+    extra: (v) => v.lost * 0.12,
+    target: (v) => randomNearby(v, 9),
+    tick: (v, task, dt) => {
+      if (Math.random() < dt * 0.025) v.say(R.pick(v.isChild() ? RIFT_LOST_SAY.kid : RIFT_LOST_SAY.adult), 3.5);
+      if (Math.random() < dt * 0.04) v.facing = R.pick(['left', 'right', 'up', 'down']);
+    },
+    done: (v) => { v.lost = Math.max(0, v.lost - 0.01); },
+  },
+  seek_home: {
+    label: 'Searching for a way home', icon: 'rift', sat: { bored: -0.45, industry: -0.3, lonely: -0.2 }, dur: 50, pose: 'work', prop: 'gadget', outdoor: true, social: true, stages: ADULT,
+    label2: (v) => { const s = seekSite(); return s ? `Studying ${s.name} for a way home` : 'Searching for a way home'; },
+    avail: (v) => v.isRiftborn() && (v.lost || 0) > 0.25 && !World.rifts.some((r) => r.home) && !!seekSite(),
+    // they work together: it's much likelier when others are already at it
+    extra: (v) => v.lost * 0.22 + Math.min(3, Game.villagers.filter((o) => o !== v && o.task && o.task.a.id === 'seek_home').length) * 0.06,
+    time: (h) => (h >= 7 && h < 23.5 ? 1 : 0.3),
+    target: () => { const s = seekSite(); return s ? nearSpot(s.x, s.y, 14, 34) : null; },
+    skill: 'tinkering', skillRate: 0.4,
+    tick: (v, task, dt) => {
+      const s = seekSite();
+      if (!s) { task.t = 0; return; }
+      const crew = Game.villagers.filter((o) => o.task && o.task.a.id === 'seek_home' && o.task.phase === 'do').length;
+      // two heads are better than one, and five are better still
+      wayHomeProgress(dt * 0.00011 * s.boost * (0.6 + v.skills.tinkering / 100) * (1 + Math.min(4, crew - 1) * 0.35) / (1 + (Village.wayHomeTries || 0) * 0.6));
+      if (Math.random() < dt * 0.02) v.say(R.pick(RIFT_SEEK_SAY), 3);
+      if (Math.random() < dt * 0.08) FX.sparkle(v.x + (v.facing === 'left' ? -6 : 6), v.y - 8, R.pick(['#5af8ff', '#c050ff']));
+    },
+  },
   rift_watch: {
     label: 'Keeping a wary eye on the newcomers', icon: 'rift', sat: { bored: -0.45 }, dur: 22, pose: 'stand', outdoor: true, stages: AWAKE,
     label2: (v) => (v.task && v.task.target.watch ? `Keeping a wary eye on ${v.task.target.watch.first}` : 'Keeping a wary eye on the newcomers'),
@@ -707,6 +872,6 @@ Object.assign(ACTIONS, {
     },
   },
 });
-for (const k of ['work_salvage', 'work_relay', 'gadget', 'jack_in', 'rift_gawk', 'rift_watch']) ACTIONS[k].id = k;
-Object.assign(ACTION_NAMES, { work_salvage: 'Salvaging', work_relay: 'Tuning the Relay', gadget: 'Gadgets', jack_in: 'Jacking in', rift_gawk: 'Rift-gawking', rift_watch: 'Watching the rift-folk' });
+for (const k of ['work_salvage', 'work_relay', 'gadget', 'jack_in', 'rift_gawk', 'rift_watch', 'rift_lost', 'seek_home']) ACTIONS[k].id = k;
+Object.assign(ACTION_NAMES, { work_salvage: 'Salvaging', work_relay: 'Tuning the Relay', gadget: 'Gadgets', jack_in: 'Jacking in', rift_gawk: 'Rift-gawking', rift_watch: 'Watching the rift-folk', rift_lost: 'Wandering lost', seek_home: 'Seeking the way home' });
 HABIT_KEYS.push('gadget', 'jack_in');

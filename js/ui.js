@@ -325,6 +325,7 @@ function panelMind(v) {
   h += `</div><ul class="edu-fx">${eduEffects(v).map((t) => `<li>${t}</li>`).join('')}</ul>`;
   if (v.stage !== 'baby' && (v.tech > 0.02 || v.genes.rift > 0 || Game.villagers.some((o) => o.isRiftborn()))) {
     h += `<h3>Rift ways</h3><div class="drive"><span class="dl">${techWord(v)}</span>${bar(v.tech, 'mid')}</div>`;
+    if (v.isRiftborn()) h += `<div class="drive"><span class="dl">${lostWord(v)}</span>${bar(v.lost || 0, 'low')}</div>`;
     const fx = [];
     if (v.techTier >= 1) fx.push('Wears neon trim' + (v.techTier >= 2 ? ', synth-weave' + (v.visor ? ' and a visor' : '') : ''));
     if (v.tech >= 0.3) fx.push(World.buildings.relay ? 'Likes to jack in at the Relay Mast' : 'Would jack in at a Relay, if the village had one');
@@ -559,7 +560,7 @@ function villageRemembered() {
   if (Game.away.length) h += `<h3>Away adventuring (coming back)</h3><div class="likes">${Game.away.map((a) => `<div>${escapeHtml(a.data.first)} ${escapeHtml(a.data.surname)}: due home about day ${a.back}</div>`).join('')}</div>`;
   h += '<h3>Departed</h3><div class="arch">';
   if (!arch.length) h += '<div class="sub">Nobody yet. The old folk are still hale.</div>';
-  for (const a of arch) h += `<div class="arch-row"><canvas data-arch="${a.id}" width="24" height="32"></canvas><div><b>${escapeHtml(a.first)} ${escapeHtml(a.surname)}</b><small>${a.years} years${a.job ? ' · ' + JOBS[a.job].label : ''} · left on day ${a.left}</small></div></div>`;
+  for (const a of arch) h += `<div class="arch-row"><canvas data-arch="${a.id}" width="24" height="32"></canvas><div><b>${escapeHtml(a.first)} ${escapeHtml(a.surname)}</b><small>${a.years} years${a.job ? ' · ' + JOBS[a.job].label : ''} · ${a.reason === 'home' ? 'went home through a rift' : 'left'} on day ${a.left}</small></div></div>`;
   return h + '</div>';
 }
 
@@ -587,6 +588,9 @@ function riftLedger() {
   h += `<div>${born.length ? `<b>${born.length}</b> rift-born live here${mixed.length ? `, and <b>${mixed.length}</b> folk of mixed blood` : ''}.` : 'No rift-born live here yet.'} ${share}% of hill-folk have taken up rift ways. ${neon} neon home${neon === 1 ? '' : 's'}. ${Math.floor(Village.stores.scrap || 0)} salvage in the Store.</div>`;
   if (born.length) h += `<div>${born.slice(0, 12).map(link).join(', ')}</div>`;
   if (built.length) h += `<div>Rift-built: ${built.map((d) => d.name).join(', ')}.</div>`;
+  const seekers = homeSeekers();
+  if (World.rifts.some((r) => r.home)) h += '<div><b>The way home is open!</b> A golden rift hangs in the air. Each of the rift-folk is making their choice.</div>';
+  else if (seekers.length || Village.wayHome > 0) h += `<div class="build-row"><span>The way home: ${seekers.length} rift-folk searching together · ${Math.round((Village.wayHome || 0) * 100)}%</span>${bar(Village.wayHome || 0, 'good')}</div>`;
   if (next) h += `<div class="sub">Next: ${next.name}, ${next.when}.</div>`;
   h += `<div class="sub">${open ? 'A rift is open right now!' : Village.riftsOn ? `The air feels thin. Another rift may open ${days <= 1 ? 'soon' : `in about ${days} days`}.` : 'Rifts are switched off: the sky stays stitched.'}</div></div>`;
   h += `<div class="row-btns"><button id="tr-rift" ${open || Game.villagers.length >= MAX_POP - 1 ? 'disabled' : ''}>Open a rift now</button><button id="tr-rifts-on" class="ghost">${Village.riftsOn ? 'Stop rifts opening' : 'Let rifts open again'}</button></div>`;
@@ -680,6 +684,7 @@ function placeAt(wx, wy) {
     }
   }
   for (const r of World.rifts) if (Math.abs(wx - r.x) < 22 && wy < r.y + 8 && wy > r.y - 56) {
+    if (r.home) return ['The way home', 'A steady golden rift, with the lights of a city far beyond', 'The rift-folk are deciding whether to go'];
     return ['A rift', r.closing ? 'Flickering, closing up...' : r.sent < r.crew ? 'A tear between worlds. Someone is about to step through!' : 'A tear between worlds, humming like a hive', 'Tinkers salvage scrap here; curious folk come to gawk'];
   }
   for (const s of World.riftScars) if (dist(wx, wy, s.x, s.y) < 22) return ['A rift scar', 'Where a rift snapped shut. The grass glitters.', `${s.stock} loads of salvage left for the tinkers`];

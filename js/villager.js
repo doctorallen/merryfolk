@@ -51,6 +51,7 @@ class Villager {
     // rift ways: 0 = hill-folk through and through, 1 = rift-born manners and gear
     this.tech = typeof o.tech === 'number' ? o.tech : (this.genes.rift || 0);
     this.visor = o.visor ?? false;
+    this.lost = o.lost ?? 0;
     this.techTier = techTier(this.tech);
     this.memories = o.memories ?? [];
     this.job = o.job ?? null;
@@ -114,7 +115,7 @@ class Villager {
       (this.task.a.job && this.task.a.pose === 'inside') || this.task.chatLock;
   }
   activity() {
-    if (this.leaving) return this.leaving === 'trip' ? 'Off on an adventure. Back soon!' : 'Off on a last great adventure!';
+    if (this.leaving) return this.leaving === 'trip' ? 'Off on an adventure. Back soon!' : this.leaving === 'home' ? 'Going home, through the golden rift' : 'Off on a last great adventure!';
     if (this.carried) return 'Being carried about by a giant hand!';
     if (!this.task) return 'Wondering what to do';
     const a = this.task.a;
@@ -430,7 +431,10 @@ class Villager {
 
     if (this.leaving) {
       this.walk(dt);
-      if (!this.path) this.gone = true;
+      if (!this.path) {
+        this.gone = true;
+        if (this.leaving === 'home') for (const col of ['#ffc840', '#5af8ff']) FX.sparkle(this.x, this.y - 10, col);
+      }
       return;
     }
 
@@ -640,7 +644,7 @@ class Villager {
       id: this.id, first: this.first, surname: this.surname, genes: this.genes, age: this.age, homeId: this.homeId, parents: this.parents,
       spouse: this.spouse, sweetheart: this.sweetheart, x: this.x, y: this.y, drives: this.drives, chem: this.chem, weights: this.weights,
       foodLike: this.foodLike, rel: this.rel, love: this.love, skills: this.skills, edu: Math.round(this.edu * 1000) / 1000, eduFrom: this.eduFrom,
-      tech: Math.round(this.tech * 1000) / 1000, visor: this.visor, memories: this.memories, job: this.job,
+      tech: Math.round(this.tech * 1000) / 1000, visor: this.visor, lost: Math.round(this.lost * 1000) / 1000, memories: this.memories, job: this.job,
       playerJob: this.playerJob, wary: this.wary, pouch: this.pouch, stats: this.stats, born: this.born, expecting: this.expecting, lastFood: this.lastFood,
     };
   }

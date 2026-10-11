@@ -26,7 +26,7 @@ const Village = {
 
   reset() {
     this.stores = { grain: 24, flour: 8, bread: 24, pie: 6, cake: 4, veg: 24, fish: 8, mush: 4, apple: 8, egg: 6, honey: 3, stew: 0, ale: 30, leaf: 16, wood: 36, herbs: 4, remedy: 3, cheese: 6, wool: 10, scrap: 0 };
-    this.riftsOn = true;
+    this.riftsOn = true; this.wayHome = 0; this.wayHomeTries = 0;
     this.today = { made: {}, used: {} }; this.yesterday = { made: {}, used: {} };
     this.projects = []; this.wantHomes = 0;
   },
