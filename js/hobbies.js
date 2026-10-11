@@ -116,7 +116,8 @@ function hobbyAction(k, def) {
       if (def.label2) { const l = def.label2(v, tg); if (l) return l; }
       return hobbyName(v, k);
     },
-    avail: (v, h) => hasHobby(v, k) && (!def.avail || def.avail(v, h)),
+    // without a home of their own, only what can be done out of doors right now
+    avail: (v, h) => hasHobby(v, k) && (!def.avail || def.avail(v, h)) && (!!World.homes[v.homeId] || !def.homeless || def.homeless(v, h)),
     extra: (v) => 0.13 + ((v.hobbySkill && v.hobbySkill[k]) || 0) / 400,
     trait: (v) => 0.55 + Math.min(1.2, H.w(v, v.genes)) * 0.5,
     time: def.time || ((h) => (h >= 7 && h < 22 ? 1 : 0.1)),
@@ -132,11 +133,12 @@ function hobbyAction(k, def) {
   };
 }
 // At home, in the workshop; or, on a fine day, on the bench outside.
-const homeOrBench = (prop) => (v) => (fair() && Game.hour > 9 && Game.hour < 19 && R.chance(0.4) ? { poseOverride: 'sit', ...benchTarget(v, true), prop } : { building: v.home() });
+const benchWeather = () => fair() && Game.hour > 9 && Game.hour < 19;
+const homeOrBench = (prop) => (v) => (benchWeather() && (!World.homes[v.homeId] || R.chance(0.4)) ? { poseOverride: 'sit', ...benchTarget(v, true), prop } : { building: v.home() });
 
 Object.assign(ACTIONS, {
   hobby_carving: hobbyAction('carving', {
-    target: homeOrBench('whittle'),
+    target: homeOrBench('whittle'), homeless: benchWeather,
     label2: (v, tg) => (tg && tg.building ? 'Carving at the workbench' : v.isChild() ? 'Whittling a stick' : 'Whittling on the bench'),
     done: (v, task, q) => {
       task.data.p = (v.carvePart || 0) + 0.65 * q;
@@ -145,6 +147,7 @@ Object.assign(ACTIONS, {
     },
   }),
   hobby_basketry: hobbyAction('basketry', {
+    homeless: (v) => ((v.hobbyMat && v.hobbyMat.reeds) >= 3 ? benchWeather() : fair()),
     target: (v) => ((v.hobbyMat && v.hobbyMat.reeds) >= 3 ? homeOrBench('basket')(v) : fair() ? { ...riverSpot(v), gather: 'reeds', prop: 'basket', poseOverride: 'work', facing: 'up' } : null),
     label2: (v, tg) => (tg && tg.gather ? 'Cutting reeds by the river' : 'Weaving a basket'),
     done: (v, task, q) => {
@@ -155,6 +158,7 @@ Object.assign(ACTIONS, {
     },
   }),
   hobby_pottery: hobbyAction('pottery', {
+    homeless: (v) => !((v.hobbyMat && v.hobbyMat.clay) >= 2) && fair(),
     target: (v) => ((v.hobbyMat && v.hobbyMat.clay) >= 2 ? { building: v.home() } : fair() ? { ...riverSpot(v), gather: 'clay', prop: 'basket', poseOverride: 'work', facing: 'up' } : null),
     label2: (v, tg) => (tg && tg.gather ? 'Digging clay from the riverbank' : 'At the potter\'s wheel'),
     done: (v, task, q) => {
@@ -166,7 +170,7 @@ Object.assign(ACTIONS, {
   }),
   hobby_knitting: hobbyAction('knitting', {
     sat: { lonely: -0.05 },
-    target: homeOrBench('knit'),
+    target: homeOrBench('knit'), homeless: benchWeather,
     label2: (v) => (World.season === 'autumn' || World.season === 'winter' ? 'Knitting something warm' : 'Knitting'),
     done: (v, task, q) => {
       // wool from the Store if there is any; otherwise, an old jumper unpicked
@@ -181,6 +185,7 @@ Object.assign(ACTIONS, {
   }),
   hobby_painting: hobbyAction('painting', {
     pose: 'stand',
+    homeless: (v, h) => fair() && h > 7 && h < 19.5,
     target: (v, h) => (fair() && h > 7 && h < 19.5 ? { ...(R.chance(0.5) ? riverSpot(v) : meadowSpot(v)), prop: 'easel', poseOverride: 'stand', facing: R.pick(['left', 'right']) } : { building: v.home() }),
     label2: (v, tg) => (tg && !tg.building ? (v.isChild() ? 'Drawing the view' : 'Painting the view') : v.isChild() ? 'Drawing at home' : 'Painting at the easel'),
     done: (v, task, q) => {
@@ -189,6 +194,7 @@ Object.assign(ACTIONS, {
     },
   }),
   hobby_collecting: hobbyAction('collecting', {
+    homeless: () => fair() || World.season === 'winter',
     target: (v) => {
       if (!fair() && World.season !== 'winter') return collectionTotal(v.home()) > 3 ? { building: v.home(), sorting: true } : null;
       const scar = World.riftScars.length && (v.tech > 0.2 || R.chance(0.15)) ? R.pick(World.riftScars) : null;
