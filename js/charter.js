@@ -36,7 +36,7 @@ const CHARTER_KINDS = {
   trees: { text: (n) => `Plant ${n} trees`, size: [4, 8, 14], val: () => builtCount('tree'), delta: true },
   lamps: { text: (n) => `Light ${n} lamps on a single night`, size: [18, 22, 28], val: () => World.lamps.filter((l) => l.lit).length },
   folk: { text: (n) => `Grow to ${n} folk`, size: [8, 14, 22], val: () => Game.villagers.length, base: () => Game.villagers.length, add: true },
-  homes: { text: (n) => `Dig ${n} new hobbit-holes`, size: [1, 2, 3], val: () => World.homes.filter((h) => h.built).length, delta: true },
+  homes: { text: (n) => (n === 1 ? 'Dig a new hobbit-hole' : `Dig ${n} new hobbit-holes`), size: [1, 2, 3], val: () => World.homes.filter((h) => h.built).length, delta: true },
   babies: { text: (n) => `Welcome ${n} babies`, size: [2, 3, 5], val: () => Game.stats.births || 0, delta: true },
   weddings: { text: (n) => `See ${n === 1 ? 'a wedding' : n + ' weddings'}`, size: [1, 2, 3], val: () => Game.stats.weddings || 0, delta: true },
   content: { text: (n) => `Keep contentment at ${n}% or more through a whole day`, size: [60, 66, 72], val: (c) => (Game.contentStreak || 0) >= 24 && contentment() >= c.n ? c.n : 0, target: true },

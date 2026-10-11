@@ -281,6 +281,17 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 
   Someone miserable for a while may sulk: shut indoors with the curtains drawn, comfort-eating through the larder, or off on a long huffy walk. A good natter, a letter, a present or a pat brings them round.
 - **Masterpieces.** Once in a lifetime, an inspired and skilled maker is seized by a fey mood and comes out with a named masterpiece (*Bramblecup, a great jug that shows the day they married Rose*). It becomes a family heirloom, earns renown, and is listed among the Treasures of Thistledown on the Charter tab.
+- **Heart scenes.** Short moments between two folk, played out on the map in a few exchanged lines when the time, the place and their feelings are right:
+  - friends confiding a dream at dusk
+  - sweethearts holding hands under the lanterns
+  - two who squabbled making it up
+  - an elder telling a grandchild about the folk on the Remembrance Green
+  - two friends counting stars on a clear night
+  - a homesick rift-born comforted (and dragged round for supper) by a hill-folk friend
+  - new parents at their door
+  - rivals trading barbs in the square
+
+  Each pair sees each scene once, and it leaves its mark: a sentiment, a stronger bond, a memory. Its Chronicle line can be clicked to fly to where it happened.
 - **Wishes and dreams.** Folk carry a wish or two at a time, chosen by their nature and how things stand: a plate of their favourite, a pint at the Tipsy Badger, a dance at the next party, a good natter with an old friend, making it up after a squabble, finishing a carving, catching a fish, a bright day after the rain, a sweetheart, a little one of their own, a roof of their own. A wish leans them a little towards what would grant it, they muse about it aloud, and when it comes true they're delighted for a day. Some are yours to grant, and the Mind tab says how: drop a seed-cake or a storybook nearby, set off fireworks, roll out a keg, give them a pat, a lesson or a remedy. Wishes that don't come true in a day or two fade. Every grown-up also has a dream for their life (become an expert at their trade, raise a big family, have ten good friends, marry their true love, fill the house with their carvings or finds, become the most learned hobbit in the valley, or for the rift-born, make a real home among the hill-folk), with its progress on the Mind tab. When one is lived, the Chronicle tells of it and they glow with it for days.
 - **Pets.** Now and then a household takes one in (a stray tabby from the inn yard, a puppy from a farm litter, one of the herder's collie pups) and the little ones usually get to name it. Dogs go everywhere with their favourite person, trotting at their heels down the lanes and out to the pens. Cats keep near home, sit in the sun on the doorstep and wander off on business of their own. Both come in at night and out of the rain. Folk passing stop to make a fuss of them (a purr, a wag, hearts), which does everyone good, and a pet curled up by the fire makes home cosier. A few founding households start with one; each household's pet is on the Kin tab.
 - **Gossip (the harmless sort).** Whatever the Chronicle hears of (a wedding, a new baby, a birthday, an elder setting off, a rift-folk friendship, a new trade) a few folk hear of first: whoever's named in it, a couple of others, and the innkeeper, who hears everything. Then it goes round: in natters in the lane ("Did you hear? A baby boy, Podwick, has arrived!" "Well I never!"), among anyone sharing a room or standing within earshot, round the dinner table, and fastest of all in the taproom of an evening. Each bit of news is only news once, so you can watch it spread: the Census tab lists the talk of the village and how many have heard. It's always news, never spite.
@@ -329,6 +340,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/illness.js` | Flu (laid up abed), sprained ankles, and friends bringing soup |
 | `js/almanac.js` | The seasonal Almanac report: population, contentment, food, coin, renown, stories and advice |
+| `js/scenes.js` | Heart scenes: short vignettes between pairs of folk, played on the map |
 | `js/surface.js` | Chronicle filters, clue hints, weddings on the map, and keeping stock lines from repeating |
 | `js/lore.js` | Lore points from reading and lessons, and the three-tier tree of discoveries the player chooses |
 | `js/petitions.js` | Petitions from the village's interests (choices with trade-offs) and their standing with the Steward |
