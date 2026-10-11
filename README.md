@@ -97,6 +97,18 @@ The **☺ contentment** pill in the top bar opens the Steward's Desk, the first 
 - **The working week.** *Easy* adds Sunday off (less done, happier folk); *Busy* cancels Highday (more done, wearier folk).
 - **Workforce** (as in Age of Empires). Every trade shows hands now against hands wanted. Use − and + to set how many each trade should have: folk are moved over from trades that can spare them (the best-suited first) or let go to find other work. *auto* hands a trade back to the village.
 
+### Charters, renown and the eras of Thistledown
+
+The **coin pill** (pennies and the village's rank) in the top bar opens the **Charter** tab.
+- **Charters.** Three goals are open at a time, chosen from what suits the season and the village: lay forty yards of new path, plant trees, put up benches, light twenty lamps on a single night, grow to so many folk, dig new hobbit-holes, welcome babies, see a wedding, keep contentment high through a whole day, put by jars for winter, stock timber or ale, deliver letters, make one of the rift-folk at home with three hill-folk friends, sell to the caravans. Each shows its progress and pays pennies and renown when it's met, and a fresh one takes its place. You can swap one you don't fancy, once a day.
+- **Eras.** Renown, folk, charters met, contentment and public buildings carry the village through its eras: **Hamlet**, **Village**, **Market Town**, **Shire Town**. When everything's in place the Chronicle says so, and it's your call to hold a **Moot** on the party field. The village votes itself up a rank, throws a party and is proud of it for days.
+- **Unlocks.** Each era opens new build tools:
+  - **Village:** raising and lowering the land, and digging and filling ponds.
+  - **Market Town:** siting public buildings, new wells, and stone statues of famous hobbits (30 pennies).
+  - **Shire Town:** fountains (60 pennies).
+
+  Locked tools show greyed in the build bar, saying what unlocks them.
+
 ### Shaping the village (build mode)
 
 Press **Build** (or <kbd>B</kbd>) to shape Thistledown yourself. Pick a tool and click or drag on the map:
@@ -163,6 +175,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/world.js` | Map layout, seasonal ground painting, places, crops, critters, A* pathfinding |
 | `js/worldgen_ui.js` | The *Shape your valley* setup screen and the stage-by-stage generation map |
 | `js/steward.js` | The Steward's Desk: rations, ale and working-week policies, contentment and migration, workforce allocation |
+| `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/buildmode.js` | Build mode: the tool palette, ghost previews, plans the villagers build, terraforming, ponds, new lots |
 | `js/pets.js` | Cats and dogs: adoption, following their person, pottering near home, being stroked |
 | `js/gossip.js` | News spreading through conversations, shared rooms, dinner tables and the taproom |

@@ -594,3 +594,15 @@ body.dev-on #chronicle { visibility: hidden; }
 .st-job button { padding: 0 4px; min-width: 24px; }
 .st-job .st-auto { font-size: 11px; }
 @media (max-width: 560px) { .st-why { grid-template-columns: 1fr; } }
+
+/* ---------- the charter ---------- */
+.pill.coin { cursor: pointer; border: 0; font: inherit; font-family: var(--font-ui); background: #f2d98a; color: #5a3a12; }
+.ch-list { display: grid; gap: 8px; margin-bottom: 8px; }
+.ch { display: grid; gap: 3px; padding: 6px 8px; border: 1px solid var(--parch-3); border-radius: 4px; background: var(--parch); }
+.ch-t { font-weight: 700; font-size: 15px; }
+.ch .bar { display: block; width: 100%; }
+.ch-r { display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.ch-r button { font-size: 12px; padding: 1px 8px; }
+.ch-era { display: grid; gap: 2px; font-size: 15px; margin-bottom: 4px; }
+.ch-era .met { color: var(--moss); font-weight: 600; }
+#buildbar .tool.locked { opacity: 0.45; filter: grayscale(1); }

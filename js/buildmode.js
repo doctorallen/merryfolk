@@ -24,6 +24,8 @@ const BUILD_TOOLS = [
   { id: 'hedge', label: 'Hedge', icon: 'herb', kind: 'line', unit: 7, hint: 'Drag a straight line to plant a hawthorn hedge' },
   { id: 'bench', label: 'Bench', icon: 'chat', kind: 'point', unit: 35, cost: { wood: 2 }, hint: 'Click to put a bench (2 timber)' },
   { id: 'lamp', label: 'Lamp', icon: 'sun', kind: 'point', unit: 30, cost: { wood: 1 }, hint: 'Click to put up a lamp-post the lamplighter will light (1 timber)' },
+  { id: 'statue', label: 'Statue', icon: 'ring', kind: 'point', unit: 90, cost: { coin: 30 }, hint: 'Click to raise a stone statue of a famous hobbit (30 pennies)' },
+  { id: 'fountain', label: 'Fountain', icon: 'cup', kind: 'point', unit: 120, cost: { coin: 60 }, hint: 'Click to build a fountain for the green (60 pennies)' },
   { id: 'clear', label: 'Clear', icon: 'axe', kind: 'box', unit: 14, hint: 'Drag a box to clear trees, bushes, hedges and stones (felled trees give timber)' },
   { id: 'raise', label: 'Raise', icon: 'snow', kind: 'brush', unit: 70, hint: 'Click to raise the ground a terrace (3×3)' },
   { id: 'lower', label: 'Lower', icon: 'hoe', kind: 'brush', unit: 70, hint: 'Click to lower the ground a terrace (3×3)' },
@@ -60,7 +62,7 @@ function tileWhy(tool, tx, ty) {
   switch (tool) {
     case 'path': return t === T.GRASS || t === T.LAWN ? (blocked ? 'Something\'s in the way' : '') : t === T.PATH || t === T.COBBLE ? 'Already a path' : t === T.WATER ? 'Water' : 'Not on grass';
     case 'flowers': return (t === T.GRASS || t === T.LAWN) && !blocked ? '' : 'Needs open grass';
-    case 'tree': case 'bench': case 'lamp': case 'hedge':
+    case 'tree': case 'bench': case 'lamp': case 'hedge': case 'statue': case 'fountain':
       if (t !== T.GRASS && t !== T.LAWN && !(tool !== 'tree' && tool !== 'hedge' && (t === T.PATH || t === T.COBBLE))) return 'Needs grass';
       if (blocked) return 'Something\'s in the way';
       if (World.reserved[tIdx(tx, ty)] && tool === 'tree') return 'Kept clear for building';
@@ -172,7 +174,9 @@ function makePlan(tool, tiles) {
   return p;
 }
 function planUnit(p) { return p.tool === 'clear' || BTOOL[p.tool].kind === 'brush' || BTOOL[p.tool].kind === 'point' ? p.work : BTOOL[p.tool].unit; }
-function openPlans() { return plansList().filter((p) => p.paid || !p.cost || Object.entries(p.cost).every(([k, n]) => (k === 'wood' ? buildWood() : Village.stores[k] || 0) >= n)); }
+const haveRes = (k) => (k === 'wood' ? buildWood() : k === 'coin' ? Game.coin || 0 : Village.stores[k] || 0);
+function payRes(k, n) { if (k === 'coin') Game.coin = Math.max(0, (Game.coin || 0) - n); else Village.use(k, n); }
+function openPlans() { return plansList().filter((p) => p.paid || !p.cost || Object.entries(p.cost).every(([k, n]) => haveRes(k) >= n)); }
 
 // Doing it: tile by tile for paths and paint, all at once for the rest.
 function applyPlanTile(p, i, quiet) {
@@ -219,6 +223,12 @@ function applyPlanWhole(p, quiet) {
       World.lamps.push({ x: x * 16 + 8, y: y * 16 + 14 - 22, footX: x * 16 + 8 + (walkable(x + 1, y) ? 9 : -9), footY: y * 16 + 16, st, lit: false, litAt: 0 });
       blk(x, y);
       return 'lamp-post';
+    }
+    case 'statue': case 'fountain': {
+      const st = add(p.tool === 'statue' ? makeStatue(p.seed) : makeFountain(), x * 16 + 8, y * 16 + 14, { snow: true });
+      st.decor = p.tool; blk(x, y);
+      if (p.tool === 'statue' && !quiet) { const who = R.pick(['Bandobras "Bullroarer" Took', 'Old Gerontius Took', 'Mungo Fernsby the tinker', 'Marmadas Brockhouse, first of the brewers', 'Lily Cotton, who planted the party tree']); st.honours = who; (Game.statues || (Game.statues = {}))[x + ',' + y] = who; }
+      return p.tool === 'statue' ? 'statue' : 'fountain';
     }
     case 'hedge': {
       const xs = p.tiles.map((t) => t[0]), ys = p.tiles.map((t) => t[1]);
@@ -280,7 +290,7 @@ ACTIONS.work_plan = {
   },
   start: (v, task) => {
     const p = task.target.plan;
-    if (!p.paid && p.cost) { for (const [k, n] of Object.entries(p.cost)) Village.use(k, n); p.paid = true; }
+    if (!p.paid && p.cost) { for (const [k, n] of Object.entries(p.cost)) payRes(k, n); p.paid = true; }
     p.workers++; task.data.counted = true;
     return true;
   },
@@ -327,7 +337,7 @@ function renderBuildBar() {
   bar.innerHTML = `<div class="bb-tools">${BUILD_TOOLS.map((t) => `<button class="tool${Build.tool === t.id ? ' active' : ''}" data-btool="${t.id}" title="${escapeHtml(t.hint)}">${iconHTML(t.icon)}<span>${t.label}</span></button>`).join('')}</div>
   <div class="bb-side"><div id="bb-hint" class="bb-hint">${escapeHtml(BTOOL[Build.tool].hint)}</div>
   ${Build.tool === 'civic' ? `<div class="bb-civic">${open.length ? open.map((l) => `<button data-civic="${l.key}" class="${Build.civicKey === l.key ? 'on' : ''}">${escapeHtml(l.def.name.replace(/^the /, 'The '))}</button>`).join('') : '<span class="sub">Every public building is built or under way.</span>'}</div>` : ''}
-  <div class="bb-row"><span class="sub">${plansList().length} plan${plansList().length === 1 ? '' : 's'} waiting · timber to spare: ${Math.floor(buildWood())}</span><button id="bb-undo" title="Undo the last plan (Ctrl+Z)">Undo</button><button id="bb-done" class="primary">Done</button></div></div>`;
+  <div class="bb-row"><span class="sub">${plansList().length} plan${plansList().length === 1 ? '' : 's'} waiting · timber to spare: ${Math.floor(buildWood())} · ${Game.coin || 0} pennies</span><button id="bb-undo" title="Undo the last plan (Ctrl+Z)">Undo</button><button id="bb-done" class="primary">Done</button></div></div>`;
   hydrateIcons(bar);
   bar.querySelectorAll('[data-btool]').forEach((b) => b.addEventListener('click', () => { Build.tool = b.dataset.btool; renderBuildBar(); }));
   bar.querySelectorAll('[data-civic]').forEach((b) => b.addEventListener('click', () => { Build.civicKey = b.dataset.civic; renderBuildBar(); }));
@@ -400,11 +410,11 @@ function drawBuildOverlay() {
       }
       if (bad < tiles.length) why = '';
       // a ghost of the thing itself
-      const g = { bench: SPR_GHOST('bench'), lamp: SPR_GHOST('lamp'), tree: SPR_GHOST('tree') }[tool];
+      const g = ['bench', 'lamp', 'tree', 'statue', 'fountain'].includes(tool) ? SPR_GHOST(tool) : null;
       if (g && !why) { const [sx, sy] = S(hx * 16 + 8 - g.width / 2, hy * 16 + 14 - g.height); octx.globalAlpha = 0.6; octx.drawImage(g, sx, sy, g.width * z, g.height * z); octx.globalAlpha = 1; }
       if (!why && tiles.length) {
         const ok = tiles.filter(([x, y]) => !tileWhy(tool, x, y)).length;
-        why = `${ok} tile${ok === 1 ? '' : 's'}${T0.cost ? ' · ' + Object.entries(T0.cost).map(([k, n]) => `${n} ${k === 'wood' ? 'timber' : k}`).join(', ') : ''}`;
+        why = `${ok} tile${ok === 1 ? '' : 's'}${T0.cost ? ' · ' + Object.entries(T0.cost).map(([k, n]) => `${n} ${k === 'wood' ? 'timber' : k === 'coin' ? 'pennies' : k}`).join(', ') : ''}`;
         why = '✓ ' + why;
       }
     }
@@ -419,7 +429,16 @@ function drawBuildOverlay() {
   octx.restore();
 }
 const GHOSTS = {};
-function SPR_GHOST(k) { return GHOSTS[k] || (GHOSTS[k] = k === 'bench' ? makeBench() : k === 'lamp' ? makeLampPost(true) : makeTree(321, 'sapling')); }
+function SPR_GHOST(k) { return GHOSTS[k] || (GHOSTS[k] = k === 'bench' ? makeBench() : k === 'lamp' ? makeLampPost(true) : k === 'statue' ? makeStatue(7) : k === 'fountain' ? makeFountain() : makeTree(321, 'sapling')); }
+// A stone hobbit on a plinth, and a fountain for the green.
+function makeStatue(seed) {
+  const rows = ['....kkk....', '...kSSSk...', '...kSsSk...', '....kSk....', '..kSSSSSk..', '.kSSsSSsSk.', '.kS.SSS.Sk.', '...kSSSk...', '...kS.Sk...', '..kSSkSSk..', 'kkkkkkkkkkk', 'kPPPPPPPPPk', 'kPpPPPPPpPk', 'kPPPPPPPPPk', 'kkkkkkkkkkk'];
+  return finishSprite(rows, { k: '#5a5650', S: '#b8b4aa', s: '#8e8a82', P: '#a8a196', p: '#c8c2b6' });
+}
+function makeFountain() {
+  const rows = ['.......w.......', '......wWw......', '.....w.k.w.....', '....w..k..w....', '.......k.......', '...kkkkkkkkk...', '..kSSSSSSSSSk..', '.kSwwWwwwWwwSk.', 'kSwWwwwWwwwWwSk', 'kSSSSSSSSSSSSSk', '.kkkkkkkkkkkkk.'];
+  return finishSprite(rows, { k: '#5a5650', S: '#b8b4aa', w: '#6aa8e0', W: '#b8e0ff' });
+}
 
 // --- Input --------------------------------------------------------------------
 function buildPointer(e, phase) {

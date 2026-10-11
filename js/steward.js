@@ -122,7 +122,7 @@ function migrationDaily() {
   const c = contentment();
   Game.contentLog = (Game.contentLog || []).concat([c]).slice(-30);
   const empty = World.homes.filter((h) => h.built && residentsOf(h).length === 0).length;
-  if (c >= 66 && Game.villagers.length < MAX_POP - 2 && Game.day - (Game.lastTraveller ?? -9) >= 2 && R.chance((c - 60) / 60 + (empty ? 0.15 : 0))) {
+  if (c >= 66 && (empty || c >= 78) && Game.villagers.length < MAX_POP - 2 && Game.day - (Game.lastTraveller ?? -9) >= 2 && R.chance((c - 60) / 90 + (empty ? 0.1 : 0))) {
     const r = welcomeTraveller(null, true);
     if (r && r.ok !== false) { Game.lastTraveller = Game.day; chronicle(`Word of Thistledown's good cheer has got about: ${r.v ? r.v.name() : 'a traveller'} has come up the West Road hoping to settle.`, 'birth'); }
   }
