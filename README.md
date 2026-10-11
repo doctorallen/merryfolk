@@ -184,6 +184,10 @@ Each is a real choice with a cost and a benefit, and each pleases some and disap
 The **coin pill** (pennies and the village's rank) in the top bar opens the **Charter** tab.
 - **Charters.** Three goals are open at a time, chosen from what suits the season and the village: lay forty yards of new path, plant trees, put up benches, light twenty lamps on a single night, grow to so many folk, dig new hobbit-holes, welcome babies, see a wedding, keep contentment high through a whole day, put by jars for winter, stock timber or ale, deliver letters, make one of the rift-folk at home with three hill-folk friends, sell to the caravans. Each shows its progress and pays pennies and renown when it's met, and a fresh one takes its place. You can swap one you don't fancy, once a day.
 - **Eras.** Renown, folk, charters met, contentment and public buildings carry the village through its eras: **Hamlet**, **Village**, **Market Town**, **Shire Town**. When everything's in place the Chronicle says so, and it's your call to hold a **Moot** on the party field. The village votes itself up a rank, throws a party and is proud of it for days.
+- **Traditions.** At each Moot the village also chooses what it will be known for, and keeps it:
+  - **Village:** farming (crops grow faster), building (works go faster) or merrymaking (parties lift spirits longer).
+  - **Market Town:** commerce (better prices), learning (more lore) or hospitality (travellers settle more readily).
+  - **Shire Town:** renown (charters pay more), tidiness (everywhere is lovelier) or the great outdoors (gentler hazards).
 - **Unlocks.** Each era opens new build tools:
   - **Village:** raising and lowering the land, digging and filling ponds, siting public buildings, and new wells.
   - **Market Town:** stone statues of famous hobbits (30 pennies).
@@ -364,6 +368,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/illness.js` | Flu (laid up abed), sprained ankles, and friends bringing soup |
 | `js/almanac.js` | The seasonal Almanac report: population, contentment, food, coin, renown, stories and advice |
+| `js/traditions.js` | Traditions chosen at each era's Moot, and their lasting effects |
 | `js/expeditions.js` | Expeditions to four regions beyond the valley and the discoveries they bring back |
 | `js/cider.js` | Cider: apples pressed by the brewers, poured at the taproom, sold to the caravans |
 | `js/dynamics.js` | Parent-and-child family dynamics on the Kin tab, at dinner and at bedtime |
