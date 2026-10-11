@@ -392,7 +392,7 @@ const uniq = (arr) => { const s = new Set(); return arr.filter((x) => (s.has(x.i
 
 function panelKin(v) {
   const k = kinOf(v);
-  let h = '<h3>Family</h3><div class="rel">';
+  let h = `<h3>Family</h3><div class="rel"><div>Birthday on the ${bdayWords(v)}${birthdayToday(v) ? ' (that\'s today!)' : ''}</div>`;
   const sp = k.byId(v.spouse);
   if (sp) h += `<div>Married to ${link(sp)}</div>`;
   else if (v.sweetheart) h += `<div>Sweetheart: ${link(k.byId(v.sweetheart))} ${meter(v.love[v.sweetheart] || 0)}</div>`;
@@ -778,7 +778,9 @@ function placeAt(wx, wy) {
 // ---------------------------------------------------------------------------
 const WEATHER_WORD = { clear: 'Fair', cloudy: 'Overcast', rain: 'Rain', storm: 'Thunderstorm', snow: 'Snowing', fog: 'Misty' };
 function updateHUD() {
-  $('hud-day').textContent = `Day ${Game.day} · Year ${yearOf(Game.day)}`;
+  $('hud-day').textContent = `${weekday(Game.day)} · Day ${Game.day} · Year ${yearOf(Game.day)}`;
+  const bdays = Game.villagers.filter(birthdayToday).map((v) => v.first);
+  $('hud-day').title = dayWords(Game.day) + (bdays.length ? `\nBirthdays today: ${bdays.join(', ')}` : '');
   $('hud-season').textContent = SEASONS[seasonIdx(Game.day)];
   $('hud-season').dataset.season = World.season;
   $('hud-time').textContent = fmtTime(Game.time);

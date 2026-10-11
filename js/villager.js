@@ -640,6 +640,13 @@ class Villager {
         task.phase = 'do'; this.pose = 'stand'; this.facing = other.x < this.x ? 'left' : 'right'; task.before = { ...this.drives };
         return;
       }
+      // a visit with something to hand over (a birthday present, a letter...)
+      if (a.meet) {
+        task.phase = 'do'; this.pose = 'stand'; task.before = { ...this.drives };
+        this.facing = other.x < this.x ? 'left' : 'right';
+        a.meet(this, other, task);
+        return;
+      }
       if (a.id === 'gift') {
         task.phase = 'do'; this.pose = 'stand'; task.before = { ...this.drives };
         this.facing = other.x < this.x ? 'left' : 'right';
