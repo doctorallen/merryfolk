@@ -299,7 +299,7 @@ function buildWorld(seed) {
     let top = 99; for (let y = 30; y < MAP_H; y++) if (tileAt(mx, y) === T.WATER) { top = y; break; }
     const millImg = makeMill();
     const b = addBuilding('mill', { x0: mx - 2, x1: mx + 2, y0: top - 5, y1: top - 2, img: millImg, imgNight: millImg, doorOff: 34, name: 'The Old Mill', rows: 4 });
-    World.millWheel = { x: (mx + 3.2) * 16, y: (top - 0.4) * 16, r: 15, a: 0 };
+    World.millWheel = { x: (mx + 3.2) * 16, y: (top - 0.4) * 16, r: 15, a: 0, wallX: b.left + millImg.width - 6, wallY: b.bottom - 14 };
     World.millWheels = [World.millWheel];
     for (let y = top - 3; y <= top - 1; y++) blk(mx + 3, y);
     b.stepX = b.left + 34; b.stepY = b.bottom + 10;
@@ -312,7 +312,7 @@ function buildWorld(seed) {
     const b = addBuilding('mill2', { x0: mx - 2, x1: mx + 2, y0: top - 5, y1: top - 2, img: millImg, imgNight: millImg, doorOff: 34, name: 'The West Mill', rows: 4 });
     // the river bends here, so the wheel sits at its own water line
     let wtop = top; for (let y = top - 3; y < MAP_H; y++) if (tileAt(mx + 3, y) === T.WATER) { wtop = y; break; }
-    const w = { x: (mx + 3.2) * 16, y: (wtop - 0.4) * 16, r: 15, a: 1.3 };
+    const w = { x: (mx + 3.2) * 16, y: (wtop - 0.4) * 16, r: 15, a: 1.3, wallX: b.left + millImg.width - 6, wallY: b.bottom - 14 };
     World.millWheels.push(w);
     for (let y = top - 3; y <= wtop - 1; y++) blk(mx + 3, y);
     b.stepX = b.left + 34; b.stepY = b.bottom + 10;
@@ -1442,6 +1442,25 @@ function drawMillWheel(ctx, w = World.millWheel) {
   ctx.save(); ctx.scale(1 / RS, 1 / RS);
   const K = RS, r = w.r * K, cx = Math.round(w.x * K), cy = Math.round(w.y * K);
   const R = (x, y, ww, hh, col) => { ctx.fillStyle = col; ctx.fillRect(x, y, ww, hh); };
+  // the wheel is hung from the mill: a stone pier built out from the wall to
+  // carry its axle, and a wooden flume that pours water over the top
+  if (w.wallX != null) {
+    const px0 = Math.round(w.wallX * K), px1 = cx - 6, py0 = Math.round(w.wallY * K), py1 = cy + 10;
+    if (px1 > px0) {
+      R(px0, py0, px1 - px0, py1 - py0, '#6a6458');
+      for (let y = py0; y < py1; y += 6) for (let x = px0 + ((y - py0) / 6 % 2) * 5; x < px1; x += 10) { R(x, y, 9, 5, '#8a8478'); R(x, y, 9, 1, '#a8a294'); }
+      R(px0, py0, px1 - px0, 2, '#4a463e'); R(px1 - 2, py0, 2, py1 - py0, '#4a463e');
+      R(px0, py1 - 3, px1 - px0, 3, '#3e5a6a');
+    }
+    // the axle runs from the pier into the hub
+    R(px1 - 4, cy - 3, cx - px1 + 4, 6, '#3a2414'); R(px1 - 4, cy - 3, cx - px1 + 4, 1, '#6a4a2a');
+    R(px1 - 8, cy - 6, 6, 12, '#4a4a52'); R(px1 - 8, cy - 6, 6, 2, '#6a6a74');
+    // the flume, on trestles, with water spilling onto the paddles
+    const fx0 = px0 + 4, fx1 = cx + 4, fy = cy - r - 8;
+    R(fx0, fy, fx1 - fx0, 5, '#6a4426'); R(fx0, fy, fx1 - fx0, 1, '#8a6440'); R(fx0, fy + 4, fx1 - fx0, 1, '#4a2e1a');
+    R(fx0 + 2, fy + 5, 2, py0 - fy - 5 > 0 ? py0 - fy - 5 : 0, '#4a2e1a');
+    for (let k = 0; k < 4; k++) R(fx1 - 2 + ((k + Math.floor(tReal * 8)) % 3), fy + 5 + k * 3, 2, 3, k % 2 ? '#a8d8f0' : '#d8f0ff');
+  }
   // the rim
   for (let k = 0; k < 64; k++) { const a = w.a + (k / 64) * Math.PI * 2; R(Math.round(cx + Math.cos(a) * (r - 4)) - 1, Math.round(cy + Math.sin(a) * (r - 4)) - 1, 3, 3, '#5a3a22'); }
   for (let k = 0; k < 8; k++) {
