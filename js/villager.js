@@ -67,6 +67,7 @@ class Villager {
     this.battery = o.battery ?? null;
     this.newcomer = o.newcomer ?? null; this.lodgeDay = o.lodgeDay ?? null; this.refusedDay = o.refusedDay ?? null;
     this.hobbies = o.hobbies ?? null; this.hobbySkill = o.hobbySkill ?? {}; this.hobbyMat = o.hobbyMat ?? {}; this.birds = o.birds ?? 0;
+    this.heard = o.heard ?? []; this.raves = o.raves ?? []; this.curious = o.curious ?? null; this.master = o.master ?? null; this.trained = o.trained ?? []; this.tipDay = o.tipDay ?? {};
     this.inside = null; this.task = null; this.path = null; this.pathI = 0; this.queue = [];
     this.facing = 'down'; this.pose = 'stand'; this.walkDist = 0; this.animT = Math.random() * 10;
     this.bubble = null; this.iconT = 0; this.lastAction = null; this.cool = {};
@@ -725,6 +726,7 @@ class Villager {
       playerJob: this.playerJob, wary: this.wary, pouch: this.pouch, stats: this.stats, born: this.born, expecting: this.expecting, lastFood: this.lastFood,
       battery: this.battery, newcomer: this.newcomer, lodgeDay: this.lodgeDay, refusedDay: this.refusedDay,
       hobbies: this.hobbies, hobbySkill: this.hobbySkill, hobbyMat: this.hobbyMat, birds: this.birds,
+      heard: (this.heard || []).filter((n) => n.until > Game.time), raves: this.raves, curious: this.curious, master: this.master, trained: this.trained, tipDay: this.tipDay,
       moodlets: (this.moodlets || []).filter((m) => m.until > Game.time), wishes: this.wishes, dream: this.dream, dreamsDone: this.dreamsDone, heirlooms: this.heirlooms, owesThanks: this.owesThanks, arc: this.arc, sent: this.sent, likes: this.likes, dislikes: this.dislikes, rival: this.rival, rivalSkill: this.rivalSkill, rivalScore: this.rivalScore, masterpiece: this.masterpiece, sulk: this.sulk, illness: this.illness, glum: this.glum,
     };
   }
