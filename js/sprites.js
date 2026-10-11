@@ -534,6 +534,10 @@ const TREE_PAL = {
     birch: ['#3a5f26', '#4f7d32', '#66983e', '#82b24e', '#a4cc66'],
     pine: ['#1b3524', '#24452c', '#2f5a36', '#3f7244', '#56905a'],
     big: ['#22441d', '#305e26', '#427a31', '#5c9a40', '#80bb53'],
+    willow: ['#2e4a22', '#3e6a2c', '#5a8a3a', '#7aaa4c', '#9cc868'],
+    poplar: ['#22401c', '#2f5a26', '#447a32', '#5e9a40', '#7cb852'],
+    fir: ['#152c1e', '#1e3a26', '#284c30', '#36603c', '#4a7a4c'],
+    sapling: ['#2c5a22', '#3f7a2c', '#5a9a3a', '#7cba4c', '#a2d468'],
   },
   spring: {
     oak: ['#2c5a22', '#3f7a2c', '#5a9a3a', '#7cba4c', '#a2d468'],
@@ -541,6 +545,10 @@ const TREE_PAL = {
     birch: ['#46702c', '#5c8e36', '#76aa44', '#96c45a', '#bce07a'],
     pine: ['#1b3524', '#24452c', '#2f5a36', '#3f7244', '#56905a'],
     big: ['#2a5422', '#3c722c', '#56923a', '#76b24a', '#9ccc62'],
+    willow: ['#3a5a22', '#4e7a2c', '#6c9a3a', '#8eba4e', '#b4d870'],
+    poplar: ['#2a5022', '#3a6c2c', '#56903a', '#76b04c', '#9ad06a'],
+    fir: ['#152c1e', '#1e3a26', '#284c30', '#36603c', '#4a7a4c'],
+    sapling: ['#36662a', '#4a8634', '#68a842', '#8ac85a', '#b2e07a'],
   },
   autumn: {
     oak: ['#4a2410', '#7a3812', '#a8561a', '#d0802a', '#eab04a'],
@@ -548,59 +556,91 @@ const TREE_PAL = {
     birch: ['#5e4a12', '#8e7018', '#be9a22', '#dcbc36', '#f2dc6a'],
     pine: ['#1d3424', '#26432c', '#305634', '#3e6c40', '#527e50'],
     big: ['#4e2010', '#7e3210', '#ae4c18', '#d47424', '#ee9e3e'],
+    willow: ['#4a4a14', '#6e6a1e', '#948e2a', '#b8b03a', '#d8d058'],
+    poplar: ['#5a4612', '#8a6c18', '#b8921e', '#dab634', '#f2d460'],
+    fir: ['#172e20', '#203c28', '#2a4e32', '#38623e', '#4c7a4e'],
+    sapling: ['#6a2a10', '#9a4a18', '#c8702a', '#e89a3a', '#f8c45a'],
   },
 };
 
-function makeBareTree(seed, kind, big) {
+// Each tree's size and shape come from its seed, so a wood is full of
+// different trees: broad old oaks and spindly young ones, tall slim poplars,
+// weeping willows by the water, firs and pines of every height.
+const EVERGREEN = ['pine', 'fir'];
+const TREE_SEEDS = { oak: [100, 36], birch: [200, 16], pine: [400, 12], fir: [800, 10], poplar: [700, 8], sapling: [900, 8] };
+function treeShape(seed, kind) {
+  const r = mulberry32(seed * 31 + 9);
+  const f = (a, b) => a + r() * (b - a);
+  switch (kind) {
+    case 'big': return { s: 1, wide: 1 };
+    case 'oak': return { s: f(0.72, 1.32), wide: f(0.85, 1.4) };
+    case 'birch': return { s: f(0.78, 1.25), wide: f(0.62, 0.95) };
+    case 'apple': return { s: f(0.85, 1.05), wide: f(1, 1.2) };
+    case 'willow': return { s: f(0.95, 1.25), wide: f(1.2, 1.45) };
+    case 'poplar': return { s: f(1.0, 1.35), wide: f(0.36, 0.48) };
+    case 'sapling': return { s: f(0.45, 0.62), wide: f(0.8, 1.1) };
+    case 'fir': return { s: f(0.85, 1.45), wide: f(0.62, 0.8) };
+    default: return { s: f(0.8, 1.35), wide: f(0.85, 1.1) }; // pine
+  }
+}
+
+function makeBareTree(seed, kind, big, sh = treeShape(seed, kind)) {
   const rng = mulberry32(seed + 77);
-  const W = big ? 84 : 38, H = big ? 96 : 46;
+  const s = big ? 1 : sh.s;
+  const W = big ? 84 : Math.max(22, Math.round(38 * s * Math.max(0.7, sh.wide))), H = big ? 96 : Math.round(46 * s * (kind === 'poplar' ? 1.5 : 1)) + 4;
   const [c, x] = makeCanvas(W, H);
   const cx = W / 2, base = H - 3;
-  ellipseFill(x, cx, base, big ? 30 : 13, big ? 7 : 4, 'rgba(20,40,10,0.22)');
-  const bark = kind === 'birch' ? '#d8d2c2' : '#5a3d24', dark = kind === 'birch' ? '#9a9484' : '#3e2816';
-  const tw = big ? 10 : 4, th = big ? 38 : 18;
+  ellipseFill(x, cx, base, big ? 30 : Math.round(13 * s), big ? 7 : 4, 'rgba(20,40,10,0.22)');
+  const bark = kind === 'birch' ? '#d8d2c2' : kind === 'willow' ? '#6a5a32' : '#5a3d24', dark = kind === 'birch' ? '#9a9484' : '#3e2816';
+  const tw = big ? 10 : Math.max(2, Math.round(4 * s)), th = big ? 38 : Math.round(18 * s * (kind === 'poplar' ? 1.4 : 1));
   x.fillStyle = bark; x.fillRect(Math.round(cx - tw / 2), base - th, tw, th);
   x.fillStyle = dark; x.fillRect(Math.round(cx + tw / 2 - 1), base - th, 1, th);
   const branch = (bx, by, ang, len, thick, depth) => {
-    for (let s = 0; s < len; s++) {
-      const px = Math.round(bx + Math.cos(ang) * s), py = Math.round(by + Math.sin(ang) * s);
-      x.fillStyle = s < len * 0.5 ? bark : dark;
+    for (let k = 0; k < len; k++) {
+      const px = Math.round(bx + Math.cos(ang) * k), py = Math.round(by + Math.sin(ang) * k);
+      x.fillStyle = k < len * 0.5 ? bark : dark;
       x.fillRect(px, py, thick, 1);
     }
     if (depth <= 0) return;
     const ex = bx + Math.cos(ang) * len, ey = by + Math.sin(ang) * len;
     const n = depth > 1 ? 2 : 3;
-    for (let k = 0; k < n; k++) branch(ex, ey, ang + (rng() - 0.5) * 1.3, len * (0.55 + rng() * 0.2), Math.max(1, thick - 1), depth - 1);
+    const spread = kind === 'poplar' ? 0.5 : 1.3;
+    for (let k = 0; k < n; k++) branch(ex, ey, ang + (rng() - 0.5) * spread, len * (0.55 + rng() * 0.2), Math.max(1, thick - 1), depth - 1);
   };
   const top = base - th;
-  const arms = big ? 7 : 4;
+  const arms = big ? 7 : kind === 'sapling' ? 3 : 4;
+  const fan = kind === 'poplar' ? 0.7 : 2.1;
   for (let k = 0; k < arms; k++) {
-    const a = -Math.PI / 2 + (k / (arms - 1) - 0.5) * 2.1 + (rng() - 0.5) * 0.3;
-    branch(cx + (rng() - 0.5) * tw * 0.6, top + rng() * 4, a, big ? 16 + rng() * 8 : 7 + rng() * 4, big ? 3 : 2, big ? 3 : 2);
+    const a = -Math.PI / 2 + (k / (arms - 1) - 0.5) * fan + (rng() - 0.5) * 0.3;
+    branch(cx + (rng() - 0.5) * tw * 0.6, top + rng() * 4, a, big ? 16 + rng() * 8 : (7 + rng() * 4) * s * (kind === 'poplar' ? 1.6 : 1), big ? 3 : 2, big ? 3 : 2);
   }
+  // a willow's bare whips hang down
+  if (kind === 'willow') for (let k = 0; k < 16; k++) { const wx = Math.round(cx + (rng() - 0.5) * W * 0.7), wy = top - Math.round(rng() * 6); x.fillStyle = k % 2 ? '#a89a4a' : '#8a7a3a'; x.fillRect(wx, wy, 1, Math.round((base - wy) * (0.5 + rng() * 0.35))); }
   return addSnow(outlineCanvas(c, kind === 'birch' ? '#4a463c' : '#22160c', 160), 0, base - 4, 1, seed);
 }
 
 function makeTree(seed, kind, season = 'summer') {
   const big = kind === 'big';
-  if (season === 'winter' && kind !== 'pine') return makeBareTree(seed, kind, big);
+  const sh = treeShape(seed, kind);
+  if (season === 'winter' && !EVERGREEN.includes(kind)) return makeBareTree(seed, kind, big, sh);
   const rng = mulberry32(seed);
-  const W = big ? 84 : 38, H = big ? 96 : 46;
-  const [c, x] = makeCanvas(W, H);
-  const pal = TREE_PAL[season === 'winter' ? 'summer' : season][kind];
-  const cx = W / 2, base = H - 3;
-  // ground shadow
-  ellipseFill(x, cx, base, big ? 30 : 13, big ? 7 : 4, 'rgba(20,40,10,0.22)');
+  const pal = TREE_PAL[season === 'winter' ? 'summer' : season][kind] || TREE_PAL[season === 'winter' ? 'summer' : season].oak;
 
-  if (kind === 'pine') {
-    const trunkH = 8;
+  if (EVERGREEN.includes(kind)) {
+    // conifers: tiers of boughs, slimmer and taller for firs
+    const s = sh.s, fir = kind === 'fir';
+    const layers = fir ? 6 : 4, step = Math.round((fir ? 7 : 8) * s), hh = Math.round((fir ? 11 : 14) * s);
+    const trunkH = Math.round(8 * s), spread = (fir ? 1.8 : 2.5) * sh.wide;
+    const W = Math.round(2 * (3 + (hh / hh) * (8 * sh.wide + layers * spread)) + 6), H = trunkH + step * (layers - 1) + hh + 8;
+    const [c, x] = makeCanvas(W, H);
+    const cx = Math.floor(W / 2), base = H - 3;
+    ellipseFill(x, cx, base, Math.round(W * 0.36), 4, 'rgba(20,40,10,0.22)');
     x.fillStyle = '#5a3a22'; x.fillRect(cx - 2, base - trunkH, 4, trunkH);
     x.fillStyle = '#3e2816'; x.fillRect(cx + 1, base - trunkH, 1, trunkH);
-    for (let layer = 0; layer < 4; layer++) {
-      const top = base - trunkH - 34 + layer * 8;
-      const hh = 14;
+    for (let layer = 0; layer < layers; layer++) {
+      const top = base - trunkH - hh - step * (layers - 1) + layer * step;
       for (let j = 0; j < hh; j++) {
-        const half = Math.round(3 + (j / hh) * (8 + layer * 2.5));
+        const half = Math.round(2 + (j / hh) * (6 * sh.wide + layer * spread));
         for (let i = -half; i <= half; i++) {
           const t = (i + half) / (half * 2);
           let col = pal[2];
@@ -616,43 +656,66 @@ function makeTree(seed, kind, season = 'summer') {
     return season === 'winter' ? addSnow(o, 0, base - 8, 2, seed) : o;
   }
 
-  // trunk
-  const tw = big ? 12 : 5, th = big ? 30 : 14;
-  const trunkCol = kind === 'birch' ? '#e8e4d8' : '#6b4a2b';
-  x.fillStyle = trunkCol; x.fillRect(Math.round(cx - tw / 2), base - th, tw, th);
-  x.fillStyle = kind === 'birch' ? '#b8b2a2' : '#4a3220'; x.fillRect(Math.round(cx + tw / 2 - 2), base - th, 2, th);
-  x.fillStyle = kind === 'birch' ? '#ffffff' : '#8a6440'; x.fillRect(Math.round(cx - tw / 2), base - th, 1, th);
-  if (kind === 'birch') { x.fillStyle = '#3a3630'; for (let k = 0; k < 4; k++) x.fillRect(cx - 2 + (k % 2) * 2, base - 3 - k * 3, 2, 1); }
+  const s = big ? 1 : sh.s, hx = big ? 1 : sh.wide;
+  const vy = kind === 'poplar' ? 2.6 : kind === 'birch' ? 1.15 : kind === 'willow' ? 0.85 : 1;
+  const R0 = big ? 34 : Math.round((kind === 'poplar' ? 11 : kind === 'willow' ? 16 : 15) * s);
+  const th = big ? 30 : Math.round((kind === 'poplar' ? 9 : kind === 'willow' ? 12 : 14) * s);
+  const tw = big ? 12 : Math.max(3, Math.round(5 * s * (kind === 'sapling' ? 0.6 : kind === 'poplar' ? 0.8 : 1)));
+  const W = big ? 84 : Math.max(16, Math.round(R0 * 2 * hx * 1.18) + 8);
+  const H = big ? 96 : Math.round(th + R0 * vy * 1.75) + 8;
+  const [c, x] = makeCanvas(W, H);
+  const cx = W / 2, base = H - 3;
+  // ground shadow
+  ellipseFill(x, cx, base, big ? 30 : Math.max(5, Math.round(R0 * hx * 0.85)), big ? 7 : 4, 'rgba(20,40,10,0.22)');
+
+  // trunk: it runs right up into the canopy, so there's never a gap between
+  // the two (and none opens when the tree leans in the wind)
+  const ccy = big ? 34 : Math.round(base - th - R0 * vy * 0.72);
+  const tTop = Math.min(base - th, ccy), tH = base - tTop;
+  const trunkCol = kind === 'birch' ? '#e8e4d8' : kind === 'willow' ? '#7a6a3e' : '#6b4a2b';
+  x.fillStyle = trunkCol; x.fillRect(Math.round(cx - tw / 2), tTop, tw, tH);
+  x.fillStyle = kind === 'birch' ? '#b8b2a2' : '#4a3220'; x.fillRect(Math.round(cx + tw / 2 - 2), tTop, 2, tH);
+  x.fillStyle = kind === 'birch' ? '#ffffff' : '#8a6440'; x.fillRect(Math.round(cx - tw / 2), tTop, 1, tH);
+  if (kind === 'birch') { x.fillStyle = '#3a3630'; for (let k = 0; k < Math.round(4 * s); k++) x.fillRect(cx - 2 + (k % 2) * 2, base - 3 - k * 3, 2, 1); }
   x.fillStyle = kind === 'birch' ? '#cfc9b8' : '#5a3d24';
   x.fillRect(Math.round(cx - tw / 2) - 1, base - 2, 1, 2); x.fillRect(Math.round(cx + tw / 2), base - 2, 1, 2);
-  if (big) { x.fillRect(cx - tw / 2 - 3, base - 1, 3, 1); x.fillRect(cx + tw / 2, base - 1, 4, 1); }
+  if (big || s > 1.15) { x.fillRect(Math.round(cx - tw / 2) - 3, base - 1, 3, 1); x.fillRect(Math.round(cx + tw / 2), base - 1, 4, 1); }
 
   // canopy blobs
-  const R0 = big ? 34 : 15;
-  const ccy = big ? 34 : 17;
   const blobs = [];
-  const n = big ? 16 : 7;
+  const n = big ? 16 : Math.round(7 * Math.max(0.8, s) * (kind === 'poplar' ? 1.6 : 1));
   for (let i = 0; i < n; i++) {
     const a = rng() * Math.PI * 2;
     const d = rng() * R0 * 0.55;
-    blobs.push({ x: cx + Math.cos(a) * d, y: ccy + Math.sin(a) * d * 0.75, r: Math.round(R0 * (0.38 + rng() * 0.22)) });
+    blobs.push({ x: cx + Math.cos(a) * d * hx, y: ccy + Math.sin(a) * d * 0.75 * vy, r: Math.round(R0 * (0.38 + rng() * 0.22) * Math.min(1, hx + 0.25)) });
   }
-  blobs.push({ x: cx, y: ccy, r: Math.round(R0 * 0.6) });
+  blobs.push({ x: cx, y: ccy, r: Math.round(R0 * 0.6 * Math.min(1, hx + 0.25)) });
   blobs.sort((a, b) => a.y - b.y);
   for (const b of blobs) disc(x, b.x, b.y + 1, b.r, pal[0]);
   for (const b of blobs) disc(x, b.x - 1, b.y - 1, b.r - 1, pal[1]);
   for (const b of blobs) disc(x, b.x - 2, b.y - 2, Math.max(1, Math.round(b.r * 0.62)), pal[2]);
   for (const b of blobs) disc(x, b.x - 3, b.y - 4, Math.max(1, Math.round(b.r * 0.3)), pal[3]);
-  const solidAt = (px, py) => px >= 0 && py >= 0 && px < W && py < H && x.getImageData(px, py, 1, 1).data[3] > 200;
-  for (let k = 0; k < (big ? 260 : 50); k++) {
-    const px = Math.round(cx + (rng() - 0.5) * R0 * 1.8), py = Math.round(ccy + (rng() - 0.6) * R0 * 1.3);
+  const id = x.getImageData(0, 0, W, H).data;
+  const solidAt = (px, py) => px >= 0 && py >= 0 && px < W && py < H && id[(py * W + px) * 4 + 3] > 200;
+  for (let k = 0; k < (big ? 260 : Math.round(50 * s * s)); k++) {
+    const px = Math.round(cx + (rng() - 0.5) * R0 * 1.8 * hx), py = Math.round(ccy + (rng() - 0.6) * R0 * 1.3 * vy);
     if (solidAt(px, py)) { x.fillStyle = rng() < 0.5 ? pal[4] : pal[1]; x.fillRect(px, py, 1, 1); }
+  }
+  // a willow's long hanging fronds
+  if (kind === 'willow') {
+    for (let k = 0; k < Math.round(W * 0.9); k++) {
+      const fx = Math.round(cx + (rng() - 0.5) * R0 * 2 * hx * 0.95);
+      let fy = ccy + Math.round((rng() - 0.3) * R0 * 0.6);
+      if (!solidAt(fx, fy)) continue;
+      const len = Math.round((base - 5 - fy) * (0.45 + rng() * 0.45));
+      for (let j = 0; j < len; j++) { x.fillStyle = j > len - 3 ? pal[3] : (j + k) % 4 ? pal[2] : pal[1]; x.fillRect(fx + (j > len * 0.6 && k % 3 === 0 ? 1 : 0), fy + j, 1, 1); }
+    }
   }
   // spring blossom on fruit trees and some oaks
   if (season === 'spring' && (kind === 'apple' || (kind === 'oak' && rng() < 0.35) || big)) {
     const bcol = kind === 'apple' ? ['#ffd0e0', '#ffffff', '#ff9ec0'] : ['#fff6f0', '#ffe0ea'];
     for (let k = 0; k < (big ? 120 : 26); k++) {
-      const px = Math.round(cx + (rng() - 0.5) * R0 * 1.7), py = Math.round(ccy + (rng() - 0.55) * R0 * 1.3);
+      const px = Math.round(cx + (rng() - 0.5) * R0 * 1.7 * hx), py = Math.round(ccy + (rng() - 0.55) * R0 * 1.3);
       if (solidAt(px, py)) { x.fillStyle = bcol[k % bcol.length]; x.fillRect(px, py, 1, 1); if (rng() < 0.4) x.fillRect(px + 1, py, 1, 1); }
     }
   }
@@ -666,21 +729,72 @@ function makeTree(seed, kind, season = 'summer') {
   return outlineCanvas(c, season === 'autumn' ? '#3a1e0c' : '#18301a');
 }
 
+// Bushes of seven kinds (the kind comes from the seed), each through the year:
+// leafy round bushes, brambles with blackberries, hawthorn and wild rose,
+// gorse in yellow bloom, fern clumps, holly with red winter berries, heather.
+const BUSH_KINDS = ['round', 'bramble', 'thorn', 'gorse', 'fern', 'holly', 'heather'];
 function makeBush(seed, season = 'summer') {
   const rng = mulberry32(seed);
-  const [c, x] = makeCanvas(20, 16);
-  ellipseFill(x, 10, 13, 8, 2, 'rgba(20,40,10,0.22)');
-  const pal = season === 'autumn' ? ['#4a2a10', '#7a4a1a', '#a0682a', '#c08a3a'] : season === 'winter' ? ['#1e3a24', '#2e4a2e', '#3e5a3a', '#4e6a46'] : TREE_PAL[season === 'spring' ? 'spring' : 'summer'].oak;
-  for (let i = 0; i < 4; i++) disc(x, 5 + i * 3.3, 9 - (i % 2) * 2, 4, pal[1]);
-  for (let i = 0; i < 4; i++) disc(x, 4 + i * 3.3, 8 - (i % 2) * 2, 2, pal[2]);
-  for (let k = 0; k < 10; k++) { x.fillStyle = pal[3]; x.fillRect(3 + rng() * 13 | 0, 4 + rng() * 6 | 0, 1, 1); }
-  const r = rng();
-  if (r < 0.5 && season !== 'winter') {
-    const col = season === 'autumn' ? '#d83a2a' : r < 0.2 ? '#7a2a6a' : r < 0.35 ? '#f0e8f0' : '#e85a6a';
-    for (let k = 0; k < 6; k++) { x.fillStyle = col; x.fillRect(3 + rng() * 14 | 0, 4 + rng() * 7 | 0, 1, 1); }
+  const kind = BUSH_KINDS[seed % BUSH_KINDS.length];
+  const sz = 0.75 + mulberry32(seed * 7 + 1)() * 0.6;
+  const W = Math.round((kind === 'heather' ? 26 : kind === 'fern' ? 22 : 20) * sz) + 4, H = Math.round((kind === 'heather' ? 11 : kind === 'gorse' ? 18 : 16) * sz) + 3;
+  const [c, x] = makeCanvas(W, H);
+  const base = H - 3, cx = W / 2;
+  ellipseFill(x, cx, base, Math.round(W * 0.4), 2, 'rgba(20,40,10,0.22)');
+  const winter = season === 'winter', autumn = season === 'autumn', spring = season === 'spring';
+  const dots = (n, cols, y0 = 2, y1 = base - 2) => {
+    const id = x.getImageData(0, 0, W, H).data;
+    for (let k = 0; k < n; k++) { const px = 2 + Math.floor(rng() * (W - 4)), py = y0 + Math.floor(rng() * Math.max(1, y1 - y0)); if (id[(py * W + px) * 4 + 3] > 200) { x.fillStyle = cols[k % cols.length]; x.fillRect(px, py, 1, 1); } }
+  };
+  // a domed mound of leafy lumps: biggest in the middle, smaller to the sides
+  const mound = (pal, lumps, rx, ry) => {
+    const L = [];
+    for (let i = 0; i < lumps; i++) {
+      const t = i / (lumps - 1) - 0.5, r = Math.max(2, Math.round(ry * (1 - t * t * 1.3) * (0.9 + rng() * 0.2)));
+      L.push({ x: cx + t * W * 0.55, y: base - r - Math.round((0.5 - Math.abs(t)) * ry * 0.5), r });
+    }
+    for (const l of L) disc(x, l.x, l.y + 1, l.r, pal[0]);
+    for (const l of L) disc(x, l.x - 1, l.y, l.r - 1, pal[1]);
+    for (const l of L) disc(x, l.x - 1, l.y - 1, Math.max(1, Math.round(l.r * 0.5)), pal[2]);
+  };
+  const ry = Math.max(3, Math.round((H - 5) / 2));
+  if (winter && (kind === 'round' || kind === 'bramble' || kind === 'thorn')) {
+    // bare twigs in winter
+    x.fillStyle = '#5a4030';
+    for (let k = 0; k < 14; k++) { let px = cx + (rng() - 0.5) * W * 0.5, py = base; const a = -Math.PI / 2 + (rng() - 0.5) * 1.8; for (let j = 0; j < ry * 1.6; j++) { px += Math.cos(a) * 0.9; py += Math.sin(a) * 0.9; x.fillRect(Math.round(px), Math.round(py), 1, 1); } }
+    if (kind === 'thorn') dots(6, ['#b82a2a']);
+  } else if (kind === 'fern') {
+    const col = winter ? ['#6a4a2a', '#8a6a3a'] : autumn ? ['#8a4a1a', '#c0782a'] : ['#3a7a2a', '#5aa83a'];
+    const fronds = winter ? 5 : 8;
+    for (let k = 0; k < fronds; k++) {
+      const a = -Math.PI / 2 + (k / (fronds - 1) - 0.5) * 2.6, len = (winter ? 0.5 : 1) * ry * 2.2 * (0.8 + rng() * 0.3);
+      for (let j = 0; j < len; j++) {
+        const px = cx + Math.cos(a) * j, py = base - 1 + Math.sin(a) * j + (j * j) / (len * 3);
+        x.fillStyle = col[0]; x.fillRect(Math.round(px), Math.round(py), 1, 1);
+        if (j % 2 && j < len - 1) { x.fillStyle = col[1]; x.fillRect(Math.round(px) - 1, Math.round(py) + 1, 1, 1); x.fillRect(Math.round(px) + 1, Math.round(py) + 1, 1, 1); }
+      }
+    }
+  } else {
+    const pals = {
+      round: autumn ? ['#4a2a10', '#7a4a1a', '#a0682a'] : TREE_PAL[spring ? 'spring' : 'summer'].oak.slice(0, 3),
+      bramble: autumn ? ['#3a2a1a', '#5a3a22', '#7a5a2a'] : ['#1e3a1e', '#2e522a', '#466e36'],
+      thorn: autumn ? ['#4a2410', '#7a3a18', '#9a5a28'] : ['#2a4a20', '#3a6a2a', '#5a8a3a'],
+      gorse: ['#1e3a20', '#2a4e28', '#3a6432'],
+      holly: ['#0e2a1a', '#1a3e26', '#2a5a36'],
+      heather: autumn || season === 'summer' ? ['#4a2a4a', '#7a3a7a', '#a05aa8'] : ['#2e4024', '#46582e', '#5e7040'],
+    };
+    mound(pals[kind], kind === 'heather' ? 5 : kind === 'gorse' ? 3 : 4, W * 0.2, ry);
+    dots(Math.round(W * 0.6), [pals[kind][2], shade(pals[kind][2], 0.25)]);
+    if (kind === 'bramble' && !winter) dots(autumn ? 16 : 6, autumn ? ['#2a1030', '#4a1a4a', '#7a2a3a'] : ['#c84a3a', '#e8e0d0']);
+    if (kind === 'thorn') dots(spring ? 22 : 10, spring ? ['#ffffff', '#f8eef0'] : season === 'summer' ? ['#f0a0c0', '#ffffff', '#e86a90'] : ['#c82a2a', '#a81a1a']);
+    if (kind === 'gorse' && !autumn) dots(winter ? 4 : 22, ['#f2d24a', '#ffe878', '#e8b830']);
+    if (kind === 'gorse') { x.fillStyle = pals.gorse[0]; for (let k = 0; k < 10; k++) x.fillRect(2 + Math.floor(rng() * (W - 4)), 2 + Math.floor(rng() * (base - 4)), 1, 2); }
+    if (kind === 'holly') dots(autumn || winter ? 12 : 3, ['#d82a2a', '#ff5a4a']);
+    if (kind === 'heather' && (autumn || season === 'summer')) dots(20, ['#c87ad8', '#e0a0e8']);
+    if (kind === 'round' && !autumn && rng() < 0.5) dots(6, [rng() < 0.3 ? '#7a2a6a' : rng() < 0.5 ? '#f0e8f0' : '#e85a6a']);
   }
   const o = outlineCanvas(c, '#18301a');
-  return season === 'winter' ? addSnow(o, 0, 12, 2, seed) : o;
+  return winter ? addSnow(o, 0, base, 2, seed) : o;
 }
 
 function makeFlowerPatch(seed) {

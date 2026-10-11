@@ -665,6 +665,7 @@ function render(dtReal, dtWall = dtReal) {
   const list = [];
   const inView = (x, y, mx = 100, my = 140) => x > cx - mx && x < cx + cam.w + mx && y > cy - 20 && y < cy + cam.h + my;
   for (const s of World.statics) if (!s.hidden && inView(s.x, s.y)) list.push({ y: s.sortY, s });
+  for (const g of World.grass || []) if (inView(g.x, g.y, 20, 30)) list.push({ y: g.y, g });
   for (const h of World.homes) if (h.built) for (const p of h.plots) if (inView(p.x, p.y)) list.push({ y: p.y, img: SPR.crops[h.cropType][p.stage], x: p.x - 7, iy: p.y - 12 });
   const winter = World.season === 'winter';
   if (!winter) {
@@ -696,7 +697,12 @@ function render(dtReal, dtWall = dtReal) {
   list.sort((a, b) => a.y - b.y);
   for (const d of list) {
     if (d.v) drawVillager(ctx, d.v);
-    else if (d.s) blit(ctx, d.s.useAlt && d.s.alt ? d.s.alt : d.s.img, d.s.x - d.s.ox, d.s.y - d.s.oy);
+    else if (d.s) {
+      const im = d.s.useAlt && d.s.alt ? d.s.alt : d.s.img;
+      if (d.s.sway) blitSway(ctx, im, d.s.x - d.s.ox, d.s.y - d.s.oy, swayAmp(d.s));
+      else blit(ctx, im, d.s.x - d.s.ox, d.s.y - d.s.oy);
+    }
+    else if (d.g) drawTuft(ctx, d.g);
     else if (d.wheel) drawMillWheel(ctx, d.wheel);
     else if (d.sails) drawWindmillSails(ctx);
     else if (d.rift) drawRift(ctx, d.rift, tReal);
@@ -1118,6 +1124,7 @@ function frame(now) {
     emitRiftFx(dtReal);
     FX.update(fxDt, Game);
     updateCamera(dtReal);
+    updateWind(dtReal);
     render(fxDt, dtReal);
     renderOverlay();
     devFrame(dtReal);

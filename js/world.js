@@ -197,6 +197,8 @@ function buildWorld(seed) {
     const s = {
       img, base: img, x: Math.round(x), y: Math.round(y), ox: opts.ox ?? Math.floor(img.width / 2), oy: opts.oy ?? img.height, w: img.width,
       sortY: y + (opts.sortBias || 0), snow: opts.snow !== false, gen: opts.gen, seasons: opts.seasons,
+      // trees and bushes sway in the wind
+      sway: opts.sway ?? (opts.gen ? (opts.gen.type === 'tree' ? (opts.gen.kind === 'big' ? 0.6 : 1) : 0.35) : 0),
     };
     World.statics.push(s); return s;
   };
@@ -485,18 +487,31 @@ function buildWorld(seed) {
     if (rng() < p) {
       let kind;
       const r2 = rng();
-      if (y <= 4 || x >= 116 || y >= MAP_H - 4) kind = r2 < 0.45 ? 'pine' : r2 < 0.85 ? 'oak' : 'birch';
-      else kind = r2 < 0.62 ? 'oak' : r2 < 0.88 ? 'birch' : 'pine';
-      const tseed = (kind === 'oak' ? 100 : kind === 'birch' ? 200 : 400) + Math.floor(rng() * (kind === 'oak' ? 6 : kind === 'birch' ? 3 : 4));
+      // conifers thicken towards the edges; young trees, birches and poplars in the copses
+      if (y <= 4 || x >= 116 || y >= MAP_H - 4) kind = r2 < 0.28 ? 'pine' : r2 < 0.45 ? 'fir' : r2 < 0.8 ? 'oak' : r2 < 0.92 ? 'birch' : 'sapling';
+      else kind = r2 < 0.46 ? 'oak' : r2 < 0.64 ? 'birch' : r2 < 0.72 ? 'poplar' : r2 < 0.84 ? 'sapling' : r2 < 0.92 ? 'pine' : 'fir';
+      const [s0, sn] = TREE_SEEDS[kind];
+      const tseed = s0 + Math.floor(rng() * sn);
       addStatic(makeTree(tseed, kind), x * 16 + 8 + Math.round((rng() - 0.5) * 4), (y + 1) * 16 - 2, { gen: { type: 'tree', seed: tseed, kind } });
       blk(x, y); treeAt.push([x, y]);
       if (!border && !forest && walkable(x, y + 1) && tiles[tIdx(x, y + 1)] === T.GRASS && World.shade.length < 22 && rng() < 0.6)
         World.shade.push(makeSpot(x * 16 + 8, (y + 1) * 16 + 10, 'down', 'sit', 'shade'));
-    } else if (rng() < (border || forest ? 0.05 : 0.016) && !nearNonGrass(x, y, 0)) {
-      const bs = 500 + Math.floor(rng() * 6);
+    } else if (rng() < (border || forest ? 0.08 : 0.03) && !nearNonGrass(x, y, 0)) {
+      const bs = 500 + Math.floor(rng() * 70);
       addStatic(makeBush(bs), x * 16 + 8, y * 16 + 14, { gen: { type: 'bush', seed: bs } });
       blk(x, y);
     }
+  }
+
+  // --- Weeping willows along the river and round the pond ---
+  for (let y = 2; y < MAP_H - 2; y++) for (let x = 2; x < MAP_W - 2; x++) {
+    if (tiles[tIdx(x, y)] !== T.GRASS || World.reserved[tIdx(x, y)] || World.block[tIdx(x, y)] || nearRoad(x, y, 1)) continue;
+    let wet = false;
+    for (let j = y - 1; j <= y + 1; j++) for (let i = x - 1; i <= x + 1; i++) if (tiles[tIdx(i, j)] === T.WATER) wet = true;
+    if (!wet || treeAt.some(([tx, ty]) => Math.abs(tx - x) < 4 && Math.abs(ty - y) < 3) || rng() > 0.09) continue;
+    const ws = 600 + Math.floor(rng() * 10);
+    addStatic(makeTree(ws, 'willow'), x * 16 + 8, (y + 1) * 16 - 2, { gen: { type: 'tree', seed: ws, kind: 'willow' } });
+    blk(x, y); treeAt.push([x, y]);
   }
 
   // --- Woodland spots: mushrooms, wild herbs, timber ---
@@ -527,6 +542,9 @@ function buildWorld(seed) {
     if (!tree) continue;
     World.woodSpots.push({ tx: x, ty: y, x: x * 16 + 8, y: y * 16 + 12, stock: 4, claimed: null, facing: tree[0] < x ? 'left' : tree[0] > x ? 'right' : 'up' });
   }
+
+  // --- Long grass, reeds and rocks ---
+  plantNature(rng, addStatic, blk);
 
   // --- Decorative wildflowers ---
   for (let k = 0; k < 300; k++) {
