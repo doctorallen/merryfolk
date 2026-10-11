@@ -406,12 +406,13 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
   // eyes shut for a blink every few seconds, or while dozing
   const dozing = v.task && v.task.phase === 'do' && v.task.a.zzz;
   const shut = dir !== 'up' && (dozing || (tReal + v.id * 0.37) % 4.1 < 0.13);
-  const spr = (shut ? shutSprites(v) : v.sprites)[dir][pose];
-  // sprites are double resolution: their world size is half their canvas size
-  const w = spr.width / RS, h = spr.height / RS;
   const task = v.task;
   const spotKind = task && task.spot ? task.spot.kind : null;
   const groundSit = pose === 'sit' && (!spotKind || spotKind === 'fish' || spotKind === 'shade' || spotKind === 'storyseat' || spotKind === 'story');
+  // on the ground they sit cross-legged, or with their legs out, rather than as if on a chair
+  const spr = (shut ? shutSprites(v) : v.sprites)[dir][groundSit ? 'sitg' : pose];
+  // sprites are double resolution: their world size is half their canvas size
+  const w = spr.width / RS, h = spr.height / RS;
   const vx = v.x + ox + xoff, vy = v.y + oy;
   const bottom = pose === 'sit' && !groundSit ? vy - 2 : vy;
   const half = (n) => Math.round(n * RS) / RS;

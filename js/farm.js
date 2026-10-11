@@ -75,7 +75,7 @@ function planFarmland() {
       const seed = 900 + ((gx + gy) % 3);
       add(makeTree(seed, 'apple'), gx * 16 + 8, (gy + 1) * 16 - 2, { gen: { type: 'tree', seed, kind: 'apple' } }); blk(gx, gy);
       World.orchard.push({ tx: gx, ty: gy, x: gx * 16 + 8, y: (gy + 1) * 16 + 12, apples: 2, claimed: null });
-      if (World.shade.length < 30 && gy + 1 <= orch.y1) World.shade.push(makeSpot(gx * 16 + 8, (gy + 1) * 16 + 10, 'down', 'sit', 'shade'));
+      if (World.shade.length < 30 && gy + 1 <= orch.y1) World.shade.push(treeBackSpot(gx * 16 + 8, (gy + 1) * 16 - 2));
     }
     World.orchard2 = orch;
   }

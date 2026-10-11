@@ -119,6 +119,14 @@ function benchTarget(v, preferHome) {
   return { x: v.home().stepX + R.i(-20, 20), y: v.home().stepY + R.i(4, 14), facing: 'down', poseOverride: 'stand' };
 }
 
+// A tree to sit against, back to the trunk, on a fair day out of winter: not
+// too far off, and nobody else's.
+function treeSeat(v, h) {
+  if (Game.raining || World.season === 'winter' || !isDay(h)) return null;
+  const near = World.shade.filter((s) => !s.occ && dist(s.x, s.y, v.x, v.y) < 30 * 16);
+  return near.length ? freeSpot(v, near) : null;
+}
+
 function nearestInn(v) {
   const list = inns();
   return list.length > 1 ? list.sort((a, b) => dist(a.stepX, a.stepY, v.x, v.y) - dist(b.stepX, b.stepY, v.x, v.y))[0] : World.inn;
@@ -352,22 +360,26 @@ const ACTIONS = {
     avail: (v) => v.pouch > 0,
     time: (h) => (h >= 18 && h < 23 ? 1.3 : isNight(h) ? 0.3 : 1),
     trait: (v) => 0.5 + v.genes.pipeLove * 0.7,
-    target: (v) => benchTarget(v, true),
+    // by day, now and then, under a tree instead
+    target: (v, h) => (R.chance(0.35) && treeSeat(v, h)) || benchTarget(v, true),
     start: (v) => { if (v.pouch <= 0) return false; v.pouch--; return true; },
   },
   read: {
-    label: 'Reading on a bench', icon: 'book', sat: { bored: -0.35, tired: -0.05 }, dur: 45, pose: 'sit', prop: 'book', outdoor: true,
+    label: 'Reading on a bench', icon: 'book',
+    label2: (v) => (v.task && v.task.spot && v.task.spot.kind === 'shade' ? 'Reading under a tree' : 'Reading on a bench'), sat: { bored: -0.35, tired: -0.05 }, dur: 45, pose: 'sit', prop: 'book', outdoor: true,
     // only those who can read sit down with a book, and the well-read do it most
     avail: (v) => v.edu >= 0.15,
     extra: (v) => 0.02 + v.edu * 0.04,
     time: (h) => (isDay(h) ? 1 : 0.2),
     trait: (v) => (0.5 + v.genes.curiosity * 0.6 + v.genes.laziness * 0.2) * (0.3 + v.edu * 1.5),
-    target: (v) => benchTarget(v, false),
+    target: (v, h) => (R.chance(0.4) && treeSeat(v, h)) || benchTarget(v, false),
     skill: 'lore', skillRate: 0.4,
     tick: (v, task, dt) => learn(v, dt * 0.0003, 'books'),
   },
   nap: {
     label: 'Napping in the shade', icon: 'zzz', sat: { tired: -0.35 }, dur: 60, pose: 'sit', outdoor: true, zzz: true,
+    // dozing off against a tree is for warm, dry days
+    avail: () => !Game.raining && World.season !== 'winter',
     time: (h) => (h >= 11 && h < 18 ? 1 : 0.05),
     trait: (v) => 0.4 + v.genes.laziness * 0.9,
     target: (v) => freeSpot(v, World.shade),

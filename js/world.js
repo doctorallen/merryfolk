@@ -100,6 +100,9 @@ function walkable(x, y) {
   return t !== T.WATER && t !== T.HILL && !World.block[tIdx(x, y)];
 }
 function makeSpot(x, y, facing, pose, kind) { return { x, y, facing, pose, kind, occ: null }; }
+// A seat on the ground at the foot of a tree, back against the trunk (whose
+// foot is at x, y), so it's drawn just in front of it.
+function treeBackSpot(x, y) { return makeSpot(x, y + 5, 'down', 'sit', 'shade'); }
 
 // ---------------------------------------------------------------------------
 // Statics: anything drawn y-sorted with the villagers. Seasonal statics carry
@@ -460,7 +463,7 @@ function* buildWorldSteps(cfg) {
     const seed = appleImgs[(ax + ay) % 3];
     addStatic(makeTree(seed, 'apple'), ax * 16 + 8, (ay + 1) * 16 - 2, { gen: { type: 'tree', seed, kind: 'apple' } }); blk(ax, ay); res(ax, ay, 1);
     World.orchard.push({ tx: ax, ty: ay, x: ax * 16 + 8, y: (ay + 1) * 16 + 12, apples: 2 + Math.floor(rng() * 3), claimed: null });
-    if (walkable(ax, ay + 1) && World.shade.length < 6) World.shade.push(makeSpot(ax * 16 + 8, (ay + 1) * 16 + 10, 'down', 'sit', 'shade'));
+    if (walkable(ax, ay + 1) && World.shade.length < 6) World.shade.push(treeBackSpot(ax * 16 + 8, (ay + 1) * 16 - 2));
   }
   for (const [hx, hy] of [[31, 8], [32, 10.5], [31, 13]]) {
     addStatic(makeBeehive(), hx * 16 + 8, hy * 16 + 12); blk(hx, Math.floor(hy));

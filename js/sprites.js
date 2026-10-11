@@ -114,8 +114,8 @@ function folkGrid(H) {
 
 // ----- facing the viewer -----
 function folkFront(B, pose) {
-  const sit = pose === 'sit';
-  const H = sit ? B.bot + 6 : B.H;
+  const sit = pose === 'sit', gsit = pose === 'sitg';
+  const H = sit ? B.bot + 6 : gsit ? B.bot + 5 : B.H;
   const { g, put, rect, get } = folkGrid(H);
   const hx = 9.5, hy = 7.6, rx = 6.6, ry = 6.6;
   const inHead = (x, y) => ((x - hx) / rx) ** 2 + ((y - hy) / ry) ** 2 < 1;
@@ -182,6 +182,11 @@ function folkFront(B, pose) {
     rect(4, lt, 15, lt + 1, 't'); rect(13, lt, 15, lt + 1, 'T');
     if (B.skirt) { rect(3, lt, 16, lt + 1, 'v'); rect(14, lt, 16, lt + 1, 'V'); rect(3, lt + 2, 16, lt + 2, 'u'); }
     for (const fx of [4, 11]) { put(fx + 1, lt + 2 + (B.skirt ? 1 : 0), 's'); rect(fx, lt + 3, fx + 4, lt + 3, 'F'); rect(fx, lt + 4, fx + 4, lt + 4, 'f'); }
+  } else if (gsit) {
+    // cross-legged on the ground: knees out wide, big feet tucked in front
+    rect(3, lt, 16, lt, 't'); rect(2, lt + 1, 17, lt + 2, 't'); rect(14, lt, 16, lt, 'T'); rect(14, lt + 1, 17, lt + 2, 'T');
+    if (B.skirt) { rect(2, lt, 17, lt + 1, 'v'); rect(14, lt, 17, lt + 1, 'V'); rect(1, lt + 2, 18, lt + 2, 'u'); }
+    for (const fx of [4, 11]) { rect(fx, lt + 2, fx + 4, lt + 2, 'F'); rect(fx, lt + 3, fx + 4, lt + 3, 'f'); put(fx + (fx > 9 ? 4 : 0), lt + 2, 'f'); }
   } else {
     const lb = H - 4, ank = H - 3;
     rect(5, lt, 14, lb, 't'); rect(12, lt, 14, lb, 'T');
@@ -250,8 +255,8 @@ function frontTorso(B, rect, put, top, bot, x0, x1, pose) {
 
 // ----- seen from behind -----
 function folkBack(B, pose) {
-  const sit = pose === 'sit';
-  const H = sit ? B.bot + 6 : B.H;
+  const sit = pose === 'sit', gsit = pose === 'sitg';
+  const H = sit ? B.bot + 6 : gsit ? B.bot + 3 : B.H;
   const { g, put, rect, get } = folkGrid(H);
   const hx = 9.5, hy = 7.6, rx = 6.6, ry = 6.6;
   const inHead = (x, y) => ((x - hx) / rx) ** 2 + ((y - hy) / ry) ** 2 < 1;
@@ -277,6 +282,10 @@ function folkBack(B, pose) {
     rect(4, lt, 15, lt + 1, 't'); rect(13, lt, 15, lt + 1, 'T');
     if (B.skirt) rect(3, lt, 16, lt + 2, 'v');
     rect(5, lt + 2, 7, lt + 3, 'S'); rect(12, lt + 2, 14, lt + 3, 'S');
+  } else if (gsit) {
+    // sat on the ground, knees showing out either side
+    rect(2, lt, 17, lt + 1, 't'); rect(5, lt, 14, lt, 'T'); rect(15, lt, 17, lt + 1, 'T');
+    if (B.skirt) { rect(1, lt, 18, lt + 1, 'v'); rect(15, lt, 18, lt + 1, 'V'); }
   } else {
     const lb = H - 4, ank = H - 3;
     rect(5, lt, 14, lb, 't'); rect(12, lt, 14, lb, 'T'); rect(9, lt + 2, 10, lb, '.');
@@ -289,8 +298,8 @@ function folkBack(B, pose) {
 
 // ----- side on, facing right (flipped for left) -----
 function folkSide(B, pose) {
-  const sit = pose === 'sit';
-  const H = sit ? B.bot + 6 : B.H;
+  const sit = pose === 'sit', gsit = pose === 'sitg';
+  const H = sit ? B.bot + 6 : gsit ? B.bot + 3 : B.H;
   const { g, put, rect, get } = folkGrid(H);
   const hx = 10.5, hy = 7.6, rx = 6.2, ry = 6.6;
   const inHead = (x, y) => ((x - hx) / rx) ** 2 + ((y - hy) / ry) ** 2 < 1;
@@ -332,7 +341,7 @@ function folkSide(B, pose) {
   rect(7, bot, 13, bot, B.tier >= 1 ? 'n' : 'l'); put(12, bot, B.tier >= 1 ? 'n' : 'o');
   if (B.tier >= 2) { rect(7, top, 13, bot - 1, 'v'); rect(7, top, 8, bot - 1, 'V'); rect(11, top, 13, top, 'n'); for (let y = top + 1; y < bot; y++) put(13, y, 'n'); }
   if (B.style === 1 && !B.child) rect(5, top, 7, top + 2, 'H');
-  const swing = sit ? 0 : { stand: 0, walk1: 2, walk2: -2 }[pose] || 0;
+  const swing = sit || gsit ? 0 : { stand: 0, walk1: 2, walk2: -2 }[pose] || 0;
   const ax = 9 + swing;
   let hand = [ax + 1, bot];
   if (pose === 'work') {
@@ -355,6 +364,13 @@ function folkSide(B, pose) {
     if (B.skirt) rect(7, lt, 17, lt + 1, 'v');
     rect(15, lt + 2, 16, lt + 3, 's');
     rect(14, lt + 4, 18, lt + 4, 'F'); rect(14, lt + 5, 18, lt + 5, 'f');
+    return { g, anchors: { mouth: [16, 11], handR: hand, handL: hand, chest: [11, top + 3] } };
+  }
+  if (gsit) {
+    // sat on the ground, legs out in front and toes up
+    rect(7, lt, 16, lt + 1, 't'); rect(7, lt + 1, 16, lt + 1, 'T');
+    if (B.skirt) { rect(7, lt, 15, lt + 1, 'v'); put(15, lt + 1, 'u'); }
+    rect(16, lt - 3, 18, lt + 1, 'f'); rect(16, lt - 3, 16, lt + 1, 'F'); put(18, lt - 3, '.');
     return { g, anchors: { mouth: [16, 11], handR: hand, handL: hand, chest: [11, top + 3] } };
   }
   const lb = H - 4, ank = H - 3;
@@ -440,11 +456,11 @@ function buildVillagerSprites(genes, stage, look = {}, shut = false) {
     const ex = expressed(genes);
     pal.c = mix(ex.vest, '#fff8e8', 0.65); pal.C = mix(ex.vest, '#fff8e8', 0.3);
     const f = make(folkBaby(B, 'down')), b = make(folkBaby(B, 'up'));
-    for (const pose of ['stand', 'walk1', 'walk2', 'sit', 'work', 'reach']) { out.down[pose] = f; out.up[pose] = b; out.side[pose] = f; }
+    for (const pose of ['stand', 'walk1', 'walk2', 'sit', 'sitg', 'work', 'reach']) { out.down[pose] = f; out.up[pose] = b; out.side[pose] = f; }
     out.held = folkCanvas(folkBundle(), pal);
     return out;
   }
-  for (const pose of ['stand', 'walk1', 'walk2', 'sit', 'work', 'reach']) {
+  for (const pose of ['stand', 'walk1', 'walk2', 'sit', 'sitg', 'work', 'reach']) {
     out.down[pose] = make(folkFront(B, pose));
     out.up[pose] = make(folkBack(B, pose));
     out.side[pose] = make(folkSide(B, pose));

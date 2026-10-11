@@ -602,10 +602,11 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
     const kind = kindFor(x, y), [s0, sn] = TREE_SEEDS[kind], tseed = s0 + Math.floor(rng() * sn);
     const r = RADIUS[kind] * (0.55 + 0.45 * treeShape(tseed, kind).s);
     if (near(x, y, r) || onBank(x, y)) continue;
-    addStatic(makeTree(tseed, kind), x * 16 + 8 + Math.round((rng() - 0.5) * 4), (y + 1) * 16 - 2, { gen: { type: 'tree', seed: tseed, kind } });
+    const trunkX = x * 16 + 8 + Math.round((rng() - 0.5) * 4);
+    addStatic(makeTree(tseed, kind), trunkX, (y + 1) * 16 - 2, { gen: { type: 'tree', seed: tseed, kind } });
     blk(x, y); treeAt.push([x, y]); grid.set(x + ',' + y, [x, y, r]);
     const border = y <= 3 || y >= H - 3 || x <= 1 || x >= W - 2 || x >= 112;
-    if (!border && walkable(x, y + 1) && tiles[tIdx(x, y + 1)] === T.GRASS && World.shade.length < 22 && rng() < 0.6) World.shade.push(makeSpot(x * 16 + 8, (y + 1) * 16 + 10, 'down', 'sit', 'shade'));
+    if (!border && walkable(x, y + 1) && tiles[tIdx(x, y + 1)] === T.GRASS && World.shade.length < 22 && rng() < 0.6) World.shade.push(treeBackSpot(trunkX, (y + 1) * 16 - 2));
   }
   // bushes: thick along the edges of the woods, scattered elsewhere, by kind
   const treeSet = new Set(treeAt.map(([x, y]) => x + ',' + y));
