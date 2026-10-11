@@ -927,6 +927,64 @@ function makeCrop(type, stage) {
 // ---------------------------------------------------------------------------
 // Buildings and props
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Doors, windows and chimneys, the same on every building. A window is set
+// into the wall: a timber lintel over it, a frame, a shadow down the inside
+// of the lintel and the left jamb where the glass is recessed, a stone sill
+// (or a flower box) under it. A door is arched, hung in a dark frame with a
+// lit jamb on the left and shadow under the arch, over a stone threshold.
+// ---------------------------------------------------------------------------
+function drawWindow(x, wx, wy, w, h, lit, o = {}) {
+  const frame = o.frame || '#4a2e1a', glass = lit ? '#ffd77a' : '#41556a', glass2 = lit ? '#ffeeb0' : '#5a7088';
+  const lintel = o.lintel || '#6a4a2a';
+  x.fillStyle = lintel; x.fillRect(wx - 2, wy - 3, w + 4, 2);
+  x.fillStyle = shade(lintel, 0.22); x.fillRect(wx - 2, wy - 3, w + 4, 1);
+  x.fillStyle = frame; x.fillRect(wx - 1, wy - 1, w + 2, h + 2);
+  x.fillStyle = glass; x.fillRect(wx, wy, w, h);
+  x.fillStyle = lit ? '#d8a848' : '#2c3a4c'; x.fillRect(wx, wy, w, 1); x.fillRect(wx, wy, 1, h);
+  x.fillStyle = glass2; x.fillRect(wx + 1, wy + 1, 2, 2);
+  const mw = w % 2 ? 1 : 2;
+  x.fillStyle = frame; x.fillRect(wx + (w >> 1) - (mw - 1), wy, mw, h); x.fillRect(wx, wy + (h >> 1), w, 1);
+  if (o.box) {
+    x.fillStyle = '#6a4426'; x.fillRect(wx - 2, wy + h + 1, w + 4, 3);
+    x.fillStyle = '#8a6440'; x.fillRect(wx - 2, wy + h + 1, w + 4, 1);
+    x.fillStyle = '#3a2414'; x.fillRect(wx - 2, wy + h + 3, w + 4, 1);
+    for (let k = 0; k < w + 2; k += 3) { x.fillStyle = ['#d8584a', '#f2d24a', '#ffffff', '#c070e0'][(k / 3 + wx) % 4]; x.fillRect(wx - 1 + k, wy + h - 1 + (k % 2), 2, 2); }
+    x.fillStyle = '#3a7a2a'; x.fillRect(wx - 1, wy + h, w + 2, 1);
+  } else {
+    x.fillStyle = '#9a9488'; x.fillRect(wx - 2, wy + h + 1, w + 4, 2);
+    x.fillStyle = '#c8c2b4'; x.fillRect(wx - 2, wy + h + 1, w + 4, 1);
+    x.fillStyle = '#5e5950'; x.fillRect(wx - 2, wy + h + 3, w + 4, 1);
+  }
+}
+function drawArchDoor(x, dx, bot, w, h, lit, col = '#6a4426', o = {}) {
+  const r = w >> 1, dc = lit ? '#e8a84a' : col;
+  x.fillStyle = '#3a2414'; x.fillRect(dx - r - 1, bot - h, w + 2, h); disc(x, dx, bot - h, r + 1, '#3a2414');
+  x.fillStyle = dc; x.fillRect(dx - r + 1, bot - h + 1, w - 2, h - 2); disc(x, dx, bot - h + 1, r - 1, dc);
+  if (!lit) {
+    x.fillStyle = shade(col, -0.25); for (let k = dx - r + 3; k < dx + r - 1; k += 3) x.fillRect(k, bot - h + 2, 1, h - 4);
+    x.fillStyle = shade(col, -0.4); x.fillRect(dx - r + 2, bot - h - r + 3, w - 4, 1);
+    x.fillStyle = shade(col, 0.22); x.fillRect(dx - r + 1, bot - h + 2, 1, h - 4);
+    x.fillStyle = '#5a3a1a'; x.fillRect(dx - r + 2, bot - h + 4, w - 4, 1); x.fillRect(dx - r + 2, bot - 6, w - 4, 1);
+    x.fillStyle = '#e8c860'; x.fillRect(dx + r - 4, bot - (h >> 1) - 1, 2, 2);
+  } else { x.fillStyle = '#f8d890'; x.fillRect(dx - 2, bot - h + 2, 4, h - 3); }
+  // the threshold stone
+  x.fillStyle = '#aaa496'; x.fillRect(dx - r - 3, bot - 2, w + 6, 3);
+  x.fillStyle = '#d0cabc'; x.fillRect(dx - r - 3, bot - 2, w + 6, 1);
+  x.fillStyle = '#5e5950'; x.fillRect(dx - r - 3, bot + 1, w + 6, 1);
+}
+// A brick chimney, lit down its left side, with a capstone and a pot on top.
+function drawChimney(x, cx, top, w, h) {
+  x.fillStyle = '#9a5a3a'; x.fillRect(cx, top + 2, w, h - 2);
+  x.fillStyle = '#7a4028'; for (let k = 0; k * 3 + 5 < h; k++) x.fillRect(cx + (k % 2) * 3, top + 4 + k * 3, w - 3, 1);
+  x.fillStyle = '#b87052'; x.fillRect(cx, top + 2, 1, h - 2);
+  x.fillStyle = '#5a3020'; x.fillRect(cx + w - 1, top + 2, 1, h - 2);
+  x.fillStyle = '#5a3a28'; x.fillRect(cx - 1, top, w + 2, 3);
+  x.fillStyle = '#8a6a58'; x.fillRect(cx - 1, top, w + 2, 1);
+  x.fillStyle = '#4a3028'; x.fillRect(cx + 1, top - 2, w - 2, 2);
+  x.fillStyle = '#2a1c14'; x.fillRect(cx + 2, top - 2, w - 4, 1);
+}
+
 function makeInn(lit) {
   const W = 140, H = 116;
   const [c, x] = makeCanvas(W, H);
@@ -934,7 +992,8 @@ function makeInn(lit) {
   ellipseFill(x, 70, 113, 66, 4, 'rgba(20,40,10,0.25)');
   // walls
   x.fillStyle = '#ebe0c4'; x.fillRect(L, wallTop, Rr - L, wallBot - wallTop);
-  x.fillStyle = '#d8ccae'; x.fillRect(L, wallTop, Rr - L, 3);
+  // the shadow of the eaves
+  x.fillStyle = '#b8ac90'; x.fillRect(L, wallTop, Rr - L, 2); x.fillStyle = '#d8ccae'; x.fillRect(L, wallTop + 2, Rr - L, 2);
   x.fillStyle = '#8a8478'; x.fillRect(L, wallBot - 6, Rr - L, 6);
   for (let i = L; i < Rr; i += 6) { x.fillStyle = '#6e695f'; x.fillRect(i + ((i / 6) % 2) * 3, wallBot - 3, 1, 3); x.fillRect(i, wallBot - 6, 6, 1); }
   // timber frame
@@ -944,22 +1003,10 @@ function makeInn(lit) {
   for (const [a, b] of [[13, 34], [85, 106]]) for (let k = 0; k < 21; k++) { x.fillRect(a + Math.round(k * (b - a) / 21), wallTop + 22 - k, 2, 1); }
   for (const [a, b] of [[37, 58], [109, 130]]) for (let k = 0; k < 21; k++) { x.fillRect(b - Math.round(k * (b - a) / 21) - 2, wallTop + 22 - k, 2, 1); }
   // windows
-  const glass = lit ? '#ffd77a' : '#41556a', glass2 = lit ? '#ffeeb0' : '#5a7088';
-  for (const wx of [16, 40, 88, 112]) {
-    x.fillStyle = '#4a2e1a'; x.fillRect(wx - 1, wallTop + 29, 14, 12);
-    x.fillStyle = glass; x.fillRect(wx, wallTop + 30, 12, 10);
-    x.fillStyle = glass2; x.fillRect(wx + 1, wallTop + 31, 3, 3);
-    x.fillStyle = '#4a2e1a'; x.fillRect(wx + 5, wallTop + 30, 2, 10); x.fillRect(wx, wallTop + 34, 12, 1);
-    x.fillStyle = '#7a5a3a'; x.fillRect(wx - 2, wallTop + 41, 16, 2);
-    x.fillStyle = '#d8584a'; x.fillRect(wx, wallTop + 40, 2, 1); x.fillRect(wx + 6, wallTop + 40, 2, 1);
-    x.fillStyle = '#f2d24a'; x.fillRect(wx + 3, wallTop + 40, 2, 1); x.fillRect(wx + 10, wallTop + 40, 2, 1);
-  }
+  const glass = lit ? '#ffd77a' : '#41556a';
+  for (const wx of [16, 40, 88, 112]) drawWindow(x, wx, wallTop + 30, 12, 10, lit, { box: true });
   // door
-  x.fillStyle = '#3a2414'; x.fillRect(62, wallBot - 30, 16, 30);
-  disc(x, 70, wallBot - 30, 8, '#3a2414');
-  x.fillStyle = lit ? '#e8a84a' : '#6a4426'; x.fillRect(64, wallBot - 28, 12, 28);
-  disc(x, 70, wallBot - 28, 6, lit ? '#e8a84a' : '#6a4426');
-  if (!lit) { x.fillStyle = '#4e301a'; for (let k = 0; k < 4; k++) x.fillRect(65 + k * 3, wallBot - 30, 1, 30); x.fillStyle = '#e8c860'; x.fillRect(73, wallBot - 15, 2, 2); }
+  drawArchDoor(x, 70, wallBot, 16, 30, lit);
   // thatched roof
   const roofTop = 12, roofBot = 70;
   for (let y = roofTop; y < roofBot; y++) {
@@ -985,11 +1032,7 @@ function makeInn(lit) {
   disc(x, 70, 38, 8, '#a8822e'); disc(x, 70, 39, 5, '#4a2e1a'); disc(x, 70, 39, 4, glass);
   x.fillStyle = '#4a2e1a'; x.fillRect(70, 35, 1, 8); x.fillRect(66, 39, 9, 1);
   // chimneys
-  for (const cxh of [30, 108]) {
-    x.fillStyle = '#9a5a3a'; x.fillRect(cxh, 2, 9, 18);
-    x.fillStyle = '#7a4028'; for (let k = 0; k < 6; k++) x.fillRect(cxh + (k % 2) * 4, 4 + k * 3, 5, 1);
-    x.fillStyle = '#5a3a28'; x.fillRect(cxh - 1, 0, 11, 3);
-  }
+  for (const cxh of [30, 108]) drawChimney(x, cxh, 2, 9, 18);
   // lanterns either side of the door
   for (const lx of [54, 82]) {
     x.fillStyle = '#2a1c12'; x.fillRect(lx, wallBot - 26, 4, 6);
@@ -1029,9 +1072,8 @@ function makeMill() {
       x.fillRect(i, y, 1, 1);
     }
   }
-  x.fillStyle = '#3a2414'; x.fillRect(28, 62, 12, 18); x.fillStyle = '#6a4426'; x.fillRect(29, 63, 10, 17);
-  x.fillStyle = '#41556a'; x.fillRect(14, 36, 8, 8); x.fillRect(48, 36, 8, 8);
-  x.fillStyle = '#4a2e1a'; x.fillRect(17, 36, 2, 8); x.fillRect(51, 36, 2, 8);
+  drawArchDoor(x, 34, 80, 12, 18, false);
+  drawWindow(x, 14, 36, 8, 8, false); drawWindow(x, 48, 36, 8, 8, false);
   return outlineCanvas(c, OUTLINE);
 }
 
@@ -1055,10 +1097,10 @@ function makeWindmill() {
     const half = 4 + (y - 10) * 0.75;
     for (let i = Math.round(28 - half); i <= Math.round(28 + half); i++) { x.fillStyle = y % 3 === 0 ? '#5a3a2a' : '#7a4a34'; x.fillRect(i, y, 1, 1); }
   }
-  x.fillStyle = '#3a2414'; x.fillRect(22, 74, 12, 18); disc(x, 28, 74, 6, '#3a2414');
-  x.fillStyle = '#6a4426'; x.fillRect(23, 75, 10, 17); disc(x, 28, 75, 5, '#6a4426');
-  x.fillStyle = '#41556a'; disc(x, 28, 50, 4, '#41556a'); x.fillStyle = '#4a2e1a'; x.fillRect(27, 46, 2, 9);
-  x.fillStyle = '#41556a'; x.fillRect(20, 34, 5, 6); x.fillRect(31, 34, 5, 6);
+  drawArchDoor(x, 28, 92, 12, 18, false);
+  disc(x, 28, 50, 5, '#4a2e1a'); disc(x, 28, 50, 4, '#41556a'); x.fillStyle = '#4a2e1a'; x.fillRect(27, 46, 2, 9); x.fillRect(24, 50, 9, 1);
+  x.fillStyle = '#2c3a4c'; x.fillRect(25, 47, 2, 1);
+  drawWindow(x, 20, 34, 5, 6, false); drawWindow(x, 31, 34, 5, 6, false);
   return outlineCanvas(c, OUTLINE);
 }
 
@@ -1217,7 +1259,9 @@ function makeCottage(opts) {
     x.fillStyle = '#efe6cf'; x.fillRect(L, wallTop, Rr - L, 2); x.fillRect(L, wallBot - 2, Rr - L, 2);
   } else {
     x.fillStyle = opts.wall || '#ebe0c4'; x.fillRect(L, wallTop, Rr - L, wallBot - wallTop);
-    x.fillStyle = shade(opts.wall || '#ebe0c4', -0.08); x.fillRect(L, wallTop, Rr - L, 3);
+    // the shadow of the eaves
+    x.fillStyle = shade(opts.wall || '#ebe0c4', -0.22); x.fillRect(L, wallTop, Rr - L, 2);
+    x.fillStyle = shade(opts.wall || '#ebe0c4', -0.1); x.fillRect(L, wallTop + 2, Rr - L, 2);
     x.fillStyle = '#8a8478'; x.fillRect(L, wallBot - 5, Rr - L, 5);
     for (let i = L; i < Rr; i += 6) { x.fillStyle = '#6e695f'; x.fillRect(i + ((i / 6) % 2) * 3, wallBot - 3, 1, 3); x.fillRect(i, wallBot - 5, 6, 1); }
     x.fillStyle = '#5a3a22';
@@ -1226,15 +1270,7 @@ function makeCottage(opts) {
     x.fillRect(L, wallTop + 14, Rr - L, 2);
   }
   // windows
-  const glass = lit ? '#ffd77a' : '#41556a', glass2 = lit ? '#ffeeb0' : '#5a7088';
-  for (const wx of opts.windows || []) {
-    const wy = wallTop + (barn ? 6 : 18);
-    x.fillStyle = '#4a2e1a'; x.fillRect(wx - 1, wy - 1, 12, 11);
-    x.fillStyle = glass; x.fillRect(wx, wy, 10, 9);
-    x.fillStyle = glass2; x.fillRect(wx + 1, wy + 1, 2, 2);
-    x.fillStyle = '#4a2e1a'; x.fillRect(wx + 4, wy, 2, 9); x.fillRect(wx, wy + 4, 10, 1);
-    if (!barn) { x.fillStyle = '#7a5a3a'; x.fillRect(wx - 2, wy + 9, 14, 2); x.fillStyle = '#d8584a'; x.fillRect(wx, wy + 8, 2, 1); x.fillStyle = '#f2d24a'; x.fillRect(wx + 5, wy + 8, 2, 1); }
-  }
+  for (const wx of opts.windows || []) drawWindow(x, wx, wallTop + (barn ? 6 : 18), 10, 9, lit, { box: !barn });
   // door
   const dx = opts.door;
   if (barn) {
@@ -1242,11 +1278,7 @@ function makeCottage(opts) {
     x.fillStyle = lit ? '#e8a84a' : '#7a3424'; x.fillRect(dx - 12, wallBot - 25, 11, 25); x.fillRect(dx + 1, wallBot - 25, 11, 25);
     x.fillStyle = '#efe6cf';
     for (const sx of [dx - 12, dx + 1]) { for (let k = 0; k < 11; k++) { x.fillRect(sx + k, wallBot - 25 + Math.round(k * 25 / 11), 1, 1); x.fillRect(sx + 10 - k, wallBot - 25 + Math.round(k * 25 / 11), 1, 1); } }
-  } else {
-    x.fillStyle = '#3a2414'; x.fillRect(dx - 7, wallBot - 22, 14, 22); disc(x, dx, wallBot - 22, 7, '#3a2414');
-    x.fillStyle = lit ? '#e8a84a' : (opts.doorCol || '#6a4426'); x.fillRect(dx - 5, wallBot - 20, 10, 20); disc(x, dx, wallBot - 20, 5, lit ? '#e8a84a' : (opts.doorCol || '#6a4426'));
-    if (!lit) { x.fillStyle = '#e8c860'; x.fillRect(dx + 2, wallBot - 10, 2, 2); }
-  }
+  } else drawArchDoor(x, dx, wallBot, 14, 22, lit, opts.doorCol || '#6a4426');
   // roof
   const roofTop = 10, roofBot = wallTop + 4, mid = W / 2;
   for (let y = roofTop; y < roofBot; y++) {
@@ -1274,11 +1306,7 @@ function makeCottage(opts) {
   }
   if (barn) { x.fillStyle = '#efe6cf'; disc(x, mid, roofTop + 14, 5, '#efe6cf'); disc(x, mid, roofTop + 14, 4, lit ? '#ffd77a' : '#3a2414'); }
   // chimneys
-  for (const cxh of opts.chimneys || []) {
-    x.fillStyle = '#9a5a3a'; x.fillRect(cxh, 2, 7, 16);
-    x.fillStyle = '#7a4028'; for (let k = 0; k < 5; k++) x.fillRect(cxh + (k % 2) * 3, 4 + k * 3, 4, 1);
-    x.fillStyle = '#5a3a28'; x.fillRect(cxh - 1, 0, 9, 3);
-  }
+  for (const cxh of opts.chimneys || []) drawChimney(x, cxh, 2, 7, 16);
   // hanging trade sign
   if (opts.sign) {
     const sx = dx - (barn ? 26 : 22), sy = wallBot - 30;

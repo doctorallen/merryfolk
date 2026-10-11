@@ -728,10 +728,10 @@ function createHome(d, i, surname, name) {
   const wo = Math.round(d.rx * 16 * 0.42) + 4;
   const towards = sh.hcx * 16 > doorX ? 1 : -1; // the bigger side of the hill
   const spots = [];
-  if (V.nwin === 1) spots.push([towards * wo, 10]);
-  else spots.push([-wo, 10], [wo, 10]);
-  if (V.nwin >= 3 && !d.grand) spots.push([towards * wo * 1.7, 9]);
-  if (d.grand) spots.push([-wo * 1.75, 9], [wo * 1.75, 9]);
+  if (V.nwin === 1) spots.push([towards * wo, 12]);
+  else spots.push([-wo, 12], [wo, 12]);
+  if (V.nwin >= 3 && !d.grand) spots.push([towards * wo * 1.7, 11]);
+  if (d.grand) spots.push([-wo * 1.75, 11], [wo * 1.75, 11]);
   for (const [dx, lift] of spots) { const w = win(dx, lift); if (w) home.windows.push(w); }
   // the chimney rises from the top of the hill
   home.chimney = { x: Math.round(sh.hcx * 16 + (towards > 0 ? 0.25 : -0.25) * sh.hrx * 16), y: Math.round((sh.hcy - sh.hry * 0.55) * 16) };
@@ -1283,8 +1283,9 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
     const px = (x0 + i) / G, b = sh.bottom(px / 16);
     footY[i] = b == null ? -1 : b * 16;
     const nxc = (px - cx) / rx;
-    const front = clamp(1 - Math.abs(nxc) / 0.82, 0, 1);
-    faceH[i] = b == null ? 0 : (h.built || h.buildProg > 0.3 ? 15 : 0) * Math.pow(front, 0.5) * (1 + Math.sin(px * 0.21 + h.id) * 0.06);
+    // tall enough in front to hold the door and its surround, and the windows beside it
+    const front = clamp(1 - Math.abs(nxc) / 0.95, 0, 1);
+    faceH[i] = b == null ? 0 : (h.built || h.buildProg > 0.3 ? (h.grand ? 27 : 23) : 0) * Math.pow(front, 0.3) * (1 + Math.sin(px * 0.21 + h.id) * 0.05);
   }
   const stones = winter ? [[176, 180, 186], [196, 198, 204], [150, 154, 162]] : [[132, 124, 110], [154, 146, 130], [112, 106, 96], [140, 128, 104]];
   for (let j = 0; j < hh; j++) for (let i = 0; i < w; i++) {
@@ -1366,6 +1367,8 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
     const sx = dx + side * (r - 4) - 2, sy = dy + 2 + k * 6;
     ctx.fillStyle = k % 2 ? FR[1] : FR[2]; ctx.fillRect(sx, sy, 5, 5); ctx.fillStyle = shade(FR[2], 0.18); ctx.fillRect(sx, sy, 4, 1);
   }
+  // the keystone at the top of the arch
+  ctx.fillStyle = shade(FR[2], 0.1); ctx.fillRect(dx - 4, dy - r - 2, 9, 7); ctx.fillStyle = shade(FR[2], 0.3); ctx.fillRect(dx - 4, dy - r - 2, 9, 1); ctx.fillStyle = FR[0]; ctx.fillRect(dx - 4, dy - r + 4, 9, 1);
   if (winter) for (let a = 0; a < 20; a++) { const ang = Math.PI + (a / 19) * Math.PI; ctx.fillStyle = '#f4f8ff'; ctx.fillRect(Math.round(dx + Math.cos(ang) * (r + 1)) - 2, Math.round(dy + Math.sin(ang) * (r + 1)) - 2, 4, 3); }
   // a raised flagstone terrace along the foot of the face, and stone steps
   // down from the door to the lane
@@ -1386,7 +1389,11 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
   // window surrounds
   for (const wdw of h.windows) {
     const wx = wdw.x * G, wy = wdw.y * G;
-    if (h.v && h.v.square) {
+    const sq = h.v && h.v.square, half = sq ? 13 : 12;
+    // a flat lintel stone over the window and a sill under it, set into the face
+    ctx.fillStyle = '#8a8070'; ctx.fillRect(wx - half - 2, wy - half - 4, half * 2 + 5, 4); ctx.fillStyle = '#b0a690'; ctx.fillRect(wx - half - 2, wy - half - 4, half * 2 + 5, 1);
+    ctx.fillStyle = '#b0a690'; ctx.fillRect(wx - half - 3, wy + half, half * 2 + 7, 4); ctx.fillStyle = '#d0c8b4'; ctx.fillRect(wx - half - 3, wy + half, half * 2 + 7, 1); ctx.fillStyle = '#5a4a34'; ctx.fillRect(wx - half - 3, wy + half + 4, half * 2 + 7, 1);
+    if (sq) {
       ctx.fillStyle = '#5a4a34'; ctx.fillRect(wx - 13, wy - 13, 27, 27); ctx.fillStyle = FR[1]; ctx.fillRect(wx - 11, wy - 11, 23, 23);
       ctx.fillStyle = shade(FR[1], 0.15); ctx.fillRect(wx - 11, wy - 11, 23, 1);
     } else {
