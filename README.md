@@ -158,6 +158,16 @@ The **coin pill** (pennies and the village's rank) in the top bar opens the **Ch
   Folk whose holes look out on lovely or delightful surroundings are happier, and a drab outlook wears on them. The Kin tab shows each home's outlook, and in build mode the **Appeal** button paints it over the map, as SimCity paints land value. Hovering says how lovely a spot is.
 - **Requests.** Every day or two someone pins a note to the board in the square: "A bench by the river would be lovely", "It's awfully dark near Crumblebank Delving of a night", "Some flowers near the Bakehouse would cheer everyone up". In build mode each request shows as a red pin with a circle around it, and is listed in the build bar. Click one to fly there with the right tool picked up. Build the thing inside the circle and the one who asked is delighted, and the village earns 8 renown and 5 pennies. Unanswered notes come down after five days.
 
+### The weather's moods: seasonal hazards
+
+Most seasons bring one trial. It always comes with a day's warning in the Chronicle and a pulsing ⚠ pill in the top bar; click the pill to see where. Nobody is ever hurt, but you'll want to plan:
+- **Spring flood.** The river bursts onto its low meadows, shown as water over the land. Crops growing there are lost, and holes by the water get damp. Raised ground holds it back: banks you raise along the river with the Raise tool act as levees, and in build mode the meadows at risk are tinted while a flood is coming.
+- **Summer drought.** A dry spell: crops grow at a third of the pace, except within reach of water (the river, a pond, a well), shown in build mode. Ponds and wells by the fields are the answer.
+- **Autumn blight.** A barley field sickens and stops growing. The herbalist (or a farmer) treats it with herbs from the Store, or you can buy dwarf sulphur (15 pennies) on the Steward's Desk to clear it at once.
+- **Winter hard frost.** Bitter nights: every hearth burns twice the timber, so stock the woodpile before it comes.
+
+Weathering a trial without loss leaves folk proud of it.
+
 ### The Almanac
 
 At the turn of every season the Almanac opens with a report on the season just gone, like SimCity's yearly report:
@@ -266,6 +276,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/illness.js` | Flu (laid up abed), sprained ankles, and friends bringing soup |
 | `js/almanac.js` | The seasonal Almanac report: population, contentment, food, coin, renown, stories and advice |
+| `js/hazards.js` | Seasonal hazards with warnings: floods (and levees), droughts, blight, hard frost |
 | `js/balance.js` | Costs for the gifts, policies felt in full, honest forecasts, idle-trade warnings, the Great Fair |
 | `js/hearts.js` | Sentiments between people, likes and dislikes, friendly rivals and contests, inspirations and sulks, masterpieces |
 | `js/riftstory.js` | The rift-folk storyline: stages, clues, Moot decisions, personal arcs and reunions, suppers, shared customs |

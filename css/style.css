@@ -642,3 +642,6 @@ body.dev-on #chronicle { visibility: hidden; }
 #moot h3 { font-family: var(--font-ui); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-2); margin: 10px 0 4px; }
 
 .st-idle { grid-column: 1 / -1; font-size: 11px; color: var(--berry); margin-top: -2px; }
+
+.pill.hazard { cursor: pointer; border: 0; font: inherit; font-family: var(--font-ui); background: #f0c4b4; color: #6a2418; animation: hz-pulse 1.6s ease-in-out infinite; }
+@keyframes hz-pulse { 50% { background: #f8dccf; } }
