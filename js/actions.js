@@ -477,6 +477,7 @@ const ACTIONS = {
         const f = v.rel[o.id] ?? 0.1;
         let s = f - d * 0.015 + Math.random() * 0.2 + (o.id === v.sweetheart ? 0.4 : 0) + (v.love[o.id] || 0) * 0.3;
         if (f < -0.2) s -= 1; // avoid rivals
+        s += riftChatBias(v, o);
         if (s > bs) { bs = s; best = o; }
       }
       return best ? { other: best } : null;

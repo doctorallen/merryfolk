@@ -539,7 +539,7 @@ class Villager {
     const reply = task.data.reply;
     if (reply && Game.villagers.includes(reply.who)) {
       task.data.reply = null;
-      reply.who.say(lineFor(reply.who, reply.kind, { name: reply.to.first }));
+      reply.who.say(reply.text || lineFor(reply.who, reply.kind, { name: reply.to.first }));
       return;
     }
     const speaker = R.chance(0.5) ? this : p, other = speaker === this ? p : this;
@@ -580,6 +580,7 @@ class Villager {
         return;
       }
       if (other.isBusyForChat()) { this.abort(); this.cool.chat = Game.time + 20; return; }
+      if (riftShy(this, other)) { this.abort(); return; }
       // Start a conversation: both stop and face each other
       if (other.task) other.abort();
       const dur = R.f(18, 32);
@@ -599,7 +600,7 @@ class Villager {
       if (Math.abs(this.x - other.x) > Math.abs(this.y - other.y)) {
         this.facing = other.x > this.x ? 'right' : 'left'; other.facing = this.x > other.x ? 'right' : 'left';
       } else { this.facing = other.y > this.y ? 'down' : 'up'; other.facing = this.y > other.y ? 'down' : 'up'; }
-      if (!quarrel) this.bond(other, 0.06);
+      if (!quarrel) { this.bond(other, 0.06); riftMeeting(this, other); }
       FX.chatPuff(this.x, this.y - 22);
       return;
     }

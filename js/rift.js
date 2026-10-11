@@ -101,6 +101,104 @@ function riftSpot() {
 
 function riftOpen() { return World.rifts.some((r) => !r.closing && r.a > 0.3); }
 
+// ---------------------------------------------------------------------------
+// Curious but cautious. While the Riftfolk are new, hill-folk watch them from
+// a safe distance, whisper about them and make their excuses when one comes
+// over to say hello. The bold and sociable go and introduce themselves, and
+// make the first friendships. The novelty wears off over a fortnight or so,
+// and anyone with a rift-born friend stops being wary.
+// ---------------------------------------------------------------------------
+function riftNovelty() {
+  const first = Game.stats.firstRiftDay;
+  if (first == null) return 1;
+  return clamp(1 - (Game.day - first) / 14, 0.12, 1);
+}
+// A new tear in the sky is thrilling; the tenth, less so.
+function riftSpectacle() { return clamp(1.15 - ((Game.stats.rifts || 1) - 1) * 0.15, 0.3, 1.15); }
+function boldness(v) { return v.genes.bravery * 0.6 + v.genes.sociability * 0.25 + v.genes.curiosity * 0.15; }
+function hasRiftFriend(v) { return Game.villagers.some((o) => o.isRiftborn() && (v.rel[o.id] || 0) > 0.4); }
+function riftWary(v) {
+  if (v.isRiftborn() || v.tech >= RIFT_TIERS[0] || v.stage === 'baby') return 0;
+  if (hasRiftFriend(v)) return 0;
+  return riftNovelty() * clamp(1.2 - boldness(v) * 1.35, 0, 1);
+}
+
+const RIFT_WATCH_SAY = {
+  adult: ['Don\'t stare. But do look at that hair!', 'Is that eye... glowing?', 'They seem harmless enough. Probably.', 'What do you suppose they eat?', 'Keep your voice down, they\'ll hear.', 'I\'ll say hello tomorrow. Maybe.'],
+  kid: ['Mum says not to stare.', 'Is it a robot? Is it?', 'I bet she can see in the dark!', 'Psst! Look at his eye!'],
+};
+const RIFT_NOTICE_SAY = ['Hey! I don\'t bite.', 'Hello there! You can come closer.', 'Ping! I mean... hello!', 'Morning! Nice village you have.'];
+const RIFT_STARTLED_SAY = {
+  adult: ['Eep! Er, good morning!', 'Oh! I was just... admiring the weather.', 'Must dash, the kettle\'s on!', 'Bless me! Hello! Goodbye!'],
+  kid: ['Eek!', '*runs off giggling*', 'It talked to me!'],
+};
+const RIFT_BRAVE_HELLO = ['Hello! I\'m {me}. Welcome to Thistledown!', 'Well met! Is that eye real? Sorry, rude of me.', 'Hello! Fancy a cup of tea? We do a lovely cup of tea.', 'You must be from the rift! Tell me everything.'];
+const RIFT_HELLO_BACK = ['Real enough. You\'re the first to say hello properly.', 'Tea? I\'ve read about tea! Yes please.', 'Everything? That\'ll take a while. Got a bench?', 'Nice to meet you, {name}. Ping. That means hello.'];
+const RIFT_SHY_SAY = ['Oh! Er, must dash, the kettle\'s on!', 'Can\'t stop, sorry! Lovely... visor.', 'Ah! Er, another time perhaps!'];
+const RIFT_SHUNNED_SAY = ['...Was it something I said?', 'Huh. Maybe next time.', 'Note to self: smile more, glow less.'];
+
+// The nearest rift-born a wary villager might keep an eye on.
+function watchTarget(v) {
+  let best = null, bd = 22 * 16;
+  for (const o of Game.villagers) {
+    if (!o.isRiftborn() || o.inside || o.leaving || o.carried || o.stage === 'baby' || (v.rel[o.id] || 0) > 0.35) continue;
+    const d = dist(o.x, o.y, v.x, v.y);
+    if (d < bd) { bd = d; best = o; }
+  }
+  return best;
+}
+
+// Bold folk seek the newcomers out; the wary steer clear, for now.
+function riftChatBias(v, o) {
+  if (v.isRiftborn() === o.isRiftborn() || o.stage === 'baby' || v.stage === 'baby') return 0;
+  const hill = v.isRiftborn() ? o : v;
+  const nov = riftNovelty();
+  if (hasRiftFriend(hill) && (hill.rel[(hill === v ? o : v).id] || 0) > 0.4) return 0;
+  return nov * (boldness(hill) - 0.5) * 1.6;
+}
+
+// When a rift-born comes over to talk, a wary villager may make an excuse.
+function riftShy(a, b) {
+  const [rift, hill] = a.isRiftborn() && !b.isRiftborn() ? [a, b] : b.isRiftborn() && !a.isRiftborn() ? [b, a] : [null, null];
+  if (!rift || hill !== b) return false;
+  if ((hill.rel[rift.id] || 0) > 0.3 || !R.chance(riftWary(hill) * 0.75)) return false;
+  hill.say(R.pick(hill.isChild() ? RIFT_STARTLED_SAY.kid : RIFT_SHY_SAY), 3);
+  rift.say(R.pick(RIFT_SHUNNED_SAY), 3);
+  rift.cool.chat = Game.time + 25;
+  hill.remember(`One of the rift-folk, ${rift.first}, tried to talk to me. I made my excuses.`, 0);
+  return true;
+}
+
+// A conversation between hill and rift: the first one is a proper introduction.
+function riftMeeting(a, b) {
+  if (a.isRiftborn() === b.isRiftborn() || a.stage === 'baby' || b.stage === 'baby') return;
+  const [rift, hill] = a.isRiftborn() ? [a, b] : [b, a];
+  const met = hill.stats.riftMet || (hill.stats.riftMet = []);
+  const nov = riftNovelty(), bold = boldness(hill);
+  if (!met.includes(rift.id)) {
+    met.push(rift.id);
+    hill.say(fillLine(hill, R.pick(RIFT_BRAVE_HELLO).replace('{me}', hill.first), { name: rift.first }), 4);
+    // the reply comes as the conversation's next line
+    const lead = a.task && a.task.data && a.task.data.leader ? a.task.data : null;
+    if (lead) { lead.reply = { who: rift, to: hill, text: fillLine(rift, R.pick(RIFT_HELLO_BACK), { name: hill.first }) }; lead.talkT = 5; }
+    hill.remember(`Met ${rift.first}, one of the rift-folk. ${bold > 0.55 ? 'Fascinating!' : 'Nicer than I expected.'}`, 1);
+    rift.remember(`${hill.first} came and said hello. Friendly lot, the hill-folk.`, 1);
+    // the bold hit it off; the wary are polite but stiff
+    hill.bond(rift, nov * (bold > 0.55 ? 0.16 : 0.05));
+    const n = Game.stats.riftHellos = (Game.stats.riftHellos || 0) + 1;
+    if (n === 1) chronicle(`${hill.first} marched straight up to ${rift.first} and said hello, the first of the hill-folk to do it. Half the village watched from behind their curtains.`, 'rift');
+  }
+  const f = hill.rel[rift.id] || 0;
+  const friends = hill.stats.riftFriends || (hill.stats.riftFriends = []);
+  if (f > 0.4 && !friends.includes(rift.id)) {
+    friends.push(rift.id);
+    const n = Game.stats.riftFriendships = (Game.stats.riftFriendships || 0) + 1;
+    hill.remember(`${rift.first} from the rift is a real friend now.`, 2);
+    rift.remember(`${hill.first} is my first real friend here.`, 2);
+    if (n <= 3) chronicle(n === 1 ? `${hill.first} and ${rift.first} have become fast friends: a hill-hobbit and one of the rift-folk, swapping stories on a bench. The village is talking.` : `${hill.first} has struck up a friendship with ${rift.first} from the rift.`, 'rift');
+  }
+}
+
 function openRift(byPlayer = false) {
   if (World.rifts.length) return { ok: false, msg: 'A rift is already open. One tear in the sky at a time!' };
   const spot = riftSpot();
@@ -131,6 +229,7 @@ function openRift(byPlayer = false) {
 function arriveFromRift(r) {
   if (Game.villagers.length >= MAX_POP) return null;
   r.sent++;
+  if (Game.stats.firstRiftDay == null) Game.stats.firstRiftDay = Game.day;
   // a crew often includes a pair, so they have someone to court
   const sex = r.lastSex && R.chance(0.6) ? (r.lastSex === 'f' ? 'm' : 'f') : (R.chance(0.5) ? 'f' : 'm');
   r.lastSex = sex;
@@ -242,6 +341,7 @@ function riftShare() {
 // The nightly round: households rub off on their members, neon homes on
 // those who live in them, and the tinkers decide which hole to wire up next.
 function dailyRifts() {
+  if (Game.stats.firstRiftDay == null && Game.villagers.some((v) => v.isRiftborn())) Game.stats.firstRiftDay = Game.day - 3;
   for (const h of World.homes) {
     if (!h.built) continue;
     const res = residentsOf(h).filter((v) => v.stage !== 'baby');
@@ -567,12 +667,46 @@ Object.assign(ACTIONS, {
   rift_gawk: {
     label: 'Gawking at the rift', icon: 'rift', sat: { bored: -0.7 }, dur: 25, pose: 'stand', outdoor: true, stages: AWAKE,
     avail: (v) => !v.isRiftborn() && World.rifts.some((r) => r.a > 0.6 && !r.closing && dist(r.x, r.y, v.x, v.y) < 900),
-    extra: (v) => (0.12 + v.genes.curiosity * 0.25) * (v.isChild() ? 1.6 : 1),
-    target: (v) => { const r = World.rifts.find((x) => x.a > 0.6 && !x.closing); return r ? nearSpot(r.x, r.y, 30, 52) : null; },
+    extra: (v) => (0.12 + v.genes.curiosity * 0.3) * (v.isChild() ? 1.6 : 1) * riftSpectacle(),
+    // the wary hang back; the bold go right up close
+    target: (v) => { const r = World.rifts.find((x) => x.a > 0.6 && !x.closing); if (!r) return null; const w = 1 - boldness(v); return nearSpot(r.x, r.y, 22 + w * 36, 34 + w * 44); },
     tick: (v, task, dt) => { if (Math.random() < dt * 0.015) v.say(R.pick(v.isChild() ? RIFT_GAWK_SAY.kid : RIFT_GAWK_SAY.adult), 3); },
     done: (v) => { v.remember('Went to gawp at the rift.', 1); shiftWays(v, 0.02 * v.genes.curiosity); },
   },
+  rift_watch: {
+    label: 'Keeping a wary eye on the newcomers', icon: 'rift', sat: { bored: -0.45 }, dur: 22, pose: 'stand', outdoor: true, stages: AWAKE,
+    label2: (v) => (v.task && v.task.target.watch ? `Keeping a wary eye on ${v.task.target.watch.first}` : 'Keeping a wary eye on the newcomers'),
+    avail: (v) => !v.isRiftborn() && v.tech < RIFT_TIERS[0] && riftNovelty() > 0.2 && !!watchTarget(v),
+    extra: (v) => riftNovelty() * (0.05 + v.genes.curiosity * 0.2) * (v.isChild() ? 1.5 : 1) * (0.6 + riftWary(v)),
+    time: (h) => (isDay(h) ? 1 : 0.2),
+    target: (v) => {
+      const o = watchTarget(v);
+      if (!o) return null;
+      const t = nearSpot(o.x, o.y - 8, 40 + riftWary(v) * 24, 60 + riftWary(v) * 30);
+      if (t) { t.watch = o; t.faceTo = o; }
+      return t;
+    },
+    tick: (v, task, dt) => {
+      const o = task.target.watch;
+      if (!o || !Game.villagers.includes(o) || o.inside || o.leaving) { task.t = 0; return; }
+      v.facing = o.x < v.x ? 'left' : 'right';
+      if (Math.random() < dt * 0.02) v.say(R.pick(v.isChild() ? RIFT_WATCH_SAY.kid : RIFT_WATCH_SAY.adult), 3);
+      // now and then they're spotted
+      if (!task.data.seen && Math.random() < dt * 0.012 && !o.isBusyForChat()) {
+        task.data.seen = true;
+        o.say(R.pick(RIFT_NOTICE_SAY), 3);
+        if (R.chance(1 - riftWary(v))) { v.say('Oh! Er, hello!', 2.5); task.data.greet = o; }
+        else { v.say(R.pick(v.isChild() ? RIFT_STARTLED_SAY.kid : RIFT_STARTLED_SAY.adult), 3); v.remember(`${o.first} from the rift waved at me. I scarpered.`, 0); }
+        task.t = 0;
+      }
+    },
+    done: (v, task) => {
+      const o = task.target.watch;
+      if (o) v.bond(o, 0.006);
+      if (task.data.greet) v.queue.push({ a: { ...ACTIONS.chat, target: () => ({ other: task.data.greet }) } });
+    },
+  },
 });
-for (const k of ['work_salvage', 'work_relay', 'gadget', 'jack_in', 'rift_gawk']) ACTIONS[k].id = k;
-Object.assign(ACTION_NAMES, { work_salvage: 'Salvaging', work_relay: 'Tuning the Relay', gadget: 'Gadgets', jack_in: 'Jacking in', rift_gawk: 'Rift-gawking' });
+for (const k of ['work_salvage', 'work_relay', 'gadget', 'jack_in', 'rift_gawk', 'rift_watch']) ACTIONS[k].id = k;
+Object.assign(ACTION_NAMES, { work_salvage: 'Salvaging', work_relay: 'Tuning the Relay', gadget: 'Gadgets', jack_in: 'Jacking in', rift_gawk: 'Rift-gawking', rift_watch: 'Watching the rift-folk' });
 HABIT_KEYS.push('gadget', 'jack_in');
