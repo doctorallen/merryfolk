@@ -674,7 +674,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const oh = onHour;
   onHour = function (h) {
     const r = oh(h);
-    if (h === 10 || !innSpecial()) pickSpecial();
+    if (h >= 10 && !innSpecial()) pickSpecial(); // the day's dish goes up mid-morning, and stays up
     if (h === 7) { checkApprenticeships(); seekMasters(); }
     if (h >= 7 && h <= 23) roomTalk(h);
     return r;
