@@ -61,7 +61,8 @@ function sell(k, n) {
   let coin = 0;
   for (let i = 0; i < n; i++) { coin += sellPrice(k); c.sold[k] = (c.sold[k] || 0) + 1; }
   coin = Math.round(coin);
-  Village.use(k, n);
+  // straight out of the Store: trade isn't eating, nor is buying making (or a lore bonus)
+  Village.stores[k] = Math.max(0, (Village.stores[k] || 0) - n);
   Game.coin = (Game.coin || 0) + coin; c.earned = (c.earned || 0) + coin;
   Game.stats.sold = (Game.stats.sold || 0) + coin;
   toast(`Sold ${n} ${RES_WORD[k]} for ${coin} pennies.`, 'info');
@@ -76,7 +77,7 @@ function buy(k, n) {
   cost = Math.round(cost);
   if (!got) { toast('Not enough pennies in the chest.', 'info'); return; }
   Game.coin -= cost; c.spent = (c.spent || 0) + cost;
-  Village.produce(k, got);
+  Village.stores[k] = Math.min(storeCap(k), (Village.stores[k] || 0) + got);
   toast(`Bought ${got} ${RES_WORD[k]} for ${cost} pennies.`, 'info');
 }
 function hireMasons() {
