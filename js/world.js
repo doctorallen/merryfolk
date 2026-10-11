@@ -679,9 +679,33 @@ function computePixelTypes(seed, rect) {
   const base = (t) => (t === T.HILL ? T.GRASS : t === T.BRIDGE ? T.WATER : t);
   // every half-pixel gets a kind of ground; each world pixel takes its top-left half-pixel's
   const W2 = W * GS;
+  // Paths, water, grass and lawn are blended across tile edges so that
+  // corners round off and stepped diagonals become flowing curves (the tiles
+  // folk walk on are unchanged). Fields, soil and cobbles keep their edges.
+  const smooth = new Uint8Array(32);
+  for (const t of [T.GRASS, T.LAWN, T.PATH, T.WATER]) smooth[t] = 1;
+  const SIG = 0.62, gauss = new Float32Array(257);
+  for (let i = 0; i <= 256; i++) { const d = i / 64 - 2; gauss[i] = Math.exp(-(d * d) / (2 * SIG * SIG)); }
+  // how each tile counts towards its neighbours: bridges carry the path on
+  const soft = (tx, ty) => {
+    const raw = World.tiles[clamp(ty, 0, MAP_H - 1) * MAP_W + clamp(tx, 0, MAP_W - 1)];
+    if (raw === T.BRIDGE) return T.PATH;
+    const b = base(raw);
+    return smooth[b] ? b : T.GRASS;
+  };
+  const acc = new Float32Array(32);
   const fill = (px0, py0, px1, py1) => {
     const { type, type2, jx, jy, JW } = World.px;
     const JH = (H >> 1) - 1;
+    // each tile's kind for blending, and which tiles' neighbourhoods are all
+    // one kind (those need no blending)
+    const SW = MAP_W + 2, sg = new Uint8Array(SW * (MAP_H + 2));
+    for (let ty = -1; ty <= MAP_H; ty++) for (let tx = -1; tx <= MAP_W; tx++) sg[(ty + 1) * SW + tx + 1] = soft(tx, ty);
+    const mixed = new Uint8Array(MAP_W * MAP_H);
+    for (let ty = 0; ty < MAP_H; ty++) for (let tx = 0; tx < MAP_W; tx++) {
+      const c = sg[(ty + 1) * SW + tx + 1];
+      for (let j = 0; j <= 2 && !mixed[ty * MAP_W + tx]; j++) for (let i = 0; i <= 2; i++) if (sg[(ty + j) * SW + tx + i] !== c) { mixed[ty * MAP_W + tx] = 1; break; }
+    }
     for (let qy = py0 * GS; qy < py1 * GS; qy++) {
       // the wobble is stored every 2 world pixels; blend between them so edges stay smooth
       const gy = qy / 4, iy = Math.min(JH - 1, Math.floor(gy)), wy = gy - iy, fy = qy / GS;
@@ -691,8 +715,23 @@ function computePixelTypes(seed, rect) {
         const a0 = r0 + ix, a1 = r1 + ix;
         const jxv = (jx[a0] * (1 - wx) + jx[a0 + 1] * wx) * (1 - wy) + (jx[a1] * (1 - wx) + jx[a1 + 1] * wx) * wy;
         const jyv = (jy[a0] * (1 - wx) + jy[a0 + 1] * wx) * (1 - wy) + (jy[a1] * (1 - wx) + jy[a1 + 1] * wx) * wy;
-        const tx = Math.floor((qx / GS + jxv) / 16), ty = Math.floor((fy + jyv) / 16);
-        const t = base(World.tiles[clamp(ty, 0, MAP_H - 1) * MAP_W + clamp(tx, 0, MAP_W - 1)]);
+        const wxp = (qx / GS + jxv) / 16, wyp = (fy + jyv) / 16;
+        const tx = Math.floor(wxp), ty = Math.floor(wyp);
+        const raw = World.tiles[clamp(ty, 0, MAP_H - 1) * MAP_W + clamp(tx, 0, MAP_W - 1)];
+        let t = base(raw);
+        if (smooth[t] && raw !== T.BRIDGE && tx >= 0 && ty >= 0 && tx < MAP_W && ty < MAP_H && mixed[ty * MAP_W + tx]) {
+          acc[0] = acc[1] = acc[2] = acc[6] = 0;
+          let best = t, bw = -1;
+          const fx = wxp - tx, fyy = wyp - ty;
+          const gx0 = gauss[Math.round((fx + 2.5) * 64)], gx1 = gauss[Math.round((fx + 1.5) * 64)], gx2 = gauss[Math.round((fx + 0.5) * 64)];
+          for (let j = 0; j <= 2; j++) {
+            const gyv = gauss[Math.round((fyy + 2.5 - j) * 64)], row = (ty + j) * SW + tx;
+            let u = sg[row], w = (acc[u] += gyv * gx0); if (w > bw) { bw = w; best = u; }
+            u = sg[row + 1]; w = (acc[u] += gyv * gx1); if (w > bw) { bw = w; best = u; }
+            u = sg[row + 2]; w = (acc[u] += gyv * gx2); if (w > bw) { bw = w; best = u; }
+          }
+          t = best;
+        }
         type2[qy * W2 + qx] = t;
         if (!(qx & 1) && !(qy & 1)) type[(qy >> 1) * W + (qx >> 1)] = t;
       }
