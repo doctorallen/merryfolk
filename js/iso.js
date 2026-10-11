@@ -26,6 +26,7 @@ const Iso = {
   Iso.zoom = window.innerWidth < 700 ? 0.8 : window.innerWidth < 1100 ? 1.1 : 1.4;
 
   const ZMS = [0.7, 1, 1.4, 2, 2.8];
+  Iso.props = {};
   const TPX = 24;                 // ground texture pixels per tile
   const BK = 1.5;                 // sprite pixels per iso unit
   const KB = 1.7;                 // old sprites drawn upright: iso units per world pixel
@@ -42,6 +43,7 @@ const Iso = {
     for (let i = 0; i < n; i++) mark(paths[Math.floor(Math.random() * cols.length)], i);
     cols.forEach((c, k) => { if (fill) { g.fillStyle = c; g.fill(paths[k]); } else { g.strokeStyle = c; g.stroke(paths[k]); } });
   }
+  Object.assign(Iso, { BK, rng, pick, tint, pathPoly });
   function noiseLayer(g, w, h, octaves, palette, R, mode = 'source-over') {
     g.save(); g.globalCompositeOperation = mode; g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
     const rgb = palette.map(hexRgb);
@@ -575,6 +577,7 @@ const Iso = {
 
   // --- the frame ------------------------------------------------------------------------
   const hits = [];
+  function drawBaked(g, spr, x, y) { const zm = Iso.zoom, [sx, sy] = w2s(x, y); g.drawImage(spr.c, sx - (spr.ax / BK) * zm, sy - (spr.ay / BK) * zm, (spr.c.width / BK) * zm, (spr.c.height / BK) * zm); }
   function drawSprite(g, spr, kind, ref) {
     const zm = Iso.zoom, [sx, sy] = [(spr.ox - (Iso.cx - Iso.cy) * 2) * zm + W() / 2, (spr.oy - (Iso.cx + Iso.cy)) * zm + H() / 2];
     const w = (spr.c.width / BK) * zm, h = (spr.c.height / BK) * zm;
@@ -606,10 +609,10 @@ const Iso = {
     // the ground, then what lies flat on it
     groundTransform(g); g.drawImage(TEX, 0, 0, MAP_W * 16, MAP_H * 16);
     const cr = { x: Game.cam.x, y: Game.cam.y, w: Game.cam.w, h: Game.cam.h };
-    drawWater(g, cr);
     for (const p of Village.projects) if (p.kind === 'field') drawFieldSite(g, World.lots[p.lot], p.prog);
     for (const s of World.riftScars) drawRiftScar(g, s);
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (Iso.water) Iso.water(g, w2s, zm);
 
     const list = [];
     const seen = (x, y, m = 160) => { const [sx, sy] = w2s(x, y); return sx > -m * zm && sx < W() + m * zm && sy > -m * 0.6 * zm && sy < H() + m * 1.6 * zm; };
@@ -640,26 +643,31 @@ const Iso = {
         const spr = cached(`u${season}:${(s.gen.seed || 0) % 5}`, () => bushSprite((s.gen.seed || 0) % 5, season));
         list.push([depth, () => { const [sx, sy] = w2s(s.x, s.y); g.drawImage(spr.c, sx - (spr.ax / BK) * zm, sy - (spr.ay / BK) * zm, (spr.c.width / BK) * zm, (spr.c.height / BK) * zm); }]);
       } else {
-        list.push([depth, () => upright(g, s.useAlt && s.alt ? s.alt : s.img, s.x, s.y, s.ox, s.oy, k, false)]);
+        const im = s.useAlt && s.alt ? s.alt : s.img, kind = s.rock ? 'rock' : s.gen && s.gen.type === 'hedge' ? 'hedge' : im && im.isoKind, PR = kind && Iso.props[kind];
+        if (PR) { const lit = !!s.useAlt, spr = cached(`p${kind}:${PR.key ? PR.key(s, lit, season) : ''}:${season}`, () => PR.bake(s, lit, season)); list.push([depth + (PR.bias || 0), () => drawBaked(g, spr, s.x, s.y)]); }
+        else list.push([depth, () => upright(g, im, s.x, s.y, s.ox, s.oy, k, false)]);
       }
     }
     const winter = season === 'winter';
     const sprite = (img, x, iy, flip) => { if (!img) return; const lw = img.hd ? img.width / RS : img.width, lh = img.hd ? img.height / RS : img.height, fx = x + lw / 2, fy = iy + lh - 2; if (!seen(fx, fy, 60)) return; list.push([fx + fy, () => upright(g, img, fx, fy, lw / 2, lh - 2, k, flip)]); };
-    for (const h of World.homes) if (h.built) for (const p of h.plots) sprite(SPR.crops[h.cropType][p.stage], p.x - 7, p.y - 12);
+    const crop = (t, st, x, y) => { if (!Iso.cropBake || !seen(x, y, 40)) return; const spr = cached(`c${t}:${st}:${season}`, () => Iso.cropBake(t, st, season)); list.push([x + y, () => drawBaked(g, spr, x, y)]); };
+    for (const h of World.homes) if (h.built) for (const p of h.plots) crop(h.cropType, p.stage, p.x, p.y);
     if (!winter) {
-      for (const w of World.weed) sprite(SPR.crops.leaf[w.stage], w.x - 7, w.y - 12);
-      for (const f of World.fields) for (const p of f.plots) sprite(SPR.crops.barley[p.stage], p.x - 7, p.y - 12);
-      for (const p of World.herbBeds) sprite(SPR.crops.herb[p.stage], p.x - 7, p.y - 12);
+      for (const w of World.weed) crop('leaf', w.stage, w.x, w.y);
+      for (const f of World.fields) for (const p of f.plots) crop('barley', p.stage, p.x, p.y);
+      for (const p of World.herbBeds) crop('herb', p.stage, p.x, p.y);
       for (const m of World.mushrooms) if (m.amount > 0) sprite(SPR.mush, m.x - 6, m.y - 7);
       for (const m of World.wildHerbs) if (m.amount > 0) sprite(SPR.herbWild, m.x - 7, m.y - 12);
     }
-    for (const al of World.allotments) for (const p of al.plots) sprite(SPR.crops[p.crop][p.stage], p.x - 7, p.y - 12);
+    for (const al of World.allotments) for (const p of al.plots) crop(p.crop, p.stage, p.x, p.y);
     for (const it of World.items) { const im = SPR.items[it.kind]; if (im) sprite(im, it.x - Math.floor(im.width / 2), it.y - im.height + 2); }
-    for (const pt of Game.pets || []) if (!pt.inside) { const im = petFrame(pt); sprite(im, Math.round(pt.x) - (im.width >> 1), Math.round(pt.y) - im.height + 2, pt.face < 0); }
-    for (const r of World.rabbits) sprite(SPR.rabbit[r.moving && Math.floor(r.hop * 2) % 2 ? 1 : 0], Math.round(r.x) - 5, Math.round(r.y) - 9, r.face < 0);
-    for (const an of World.animals) { const spr = SPR[an.kind][an.coat][an.graze > 0 ? (Math.floor(tReal * 1.5 + an.x) % 3 === 0 ? 1 : 0) : Math.floor(tReal * 4 + an.x) % 2]; sprite(spr, Math.round(an.x) - (spr.width >> 1), Math.round(an.y) - spr.height + 2, Math.cos(an.a) < 0); }
-    for (const hn of World.hens) sprite(SPR.hen[hn.peck > 0 ? Math.floor(tReal * 4) % 2 : 0], Math.round(hn.x) - 4, Math.round(hn.y) - 8, Math.cos(hn.a) < 0);
-    for (const c of World.crows) if (c.state === 'peck') sprite(SPR.crow[1], Math.round(c.x) - 3, Math.round(c.y) - 5);
+    const beast = (kind, a, x, y) => { if (!seen(x, y, 40)) return; list.push([x + y, () => { const [sx, sy] = w2s(x, y); Iso.drawAnimal(g, kind, a, sx, sy, zm); }]); };
+    for (const pt of Game.pets || []) if (!pt.inside) beast('pet', pt, pt.x, pt.y);
+    for (const r of World.rabbits) beast('rabbit', r, r.x, r.y);
+    for (const an of World.animals) beast(an.kind, an, an.x, an.y);
+    for (const hn of World.hens) beast('hen', hn, hn.x, hn.y);
+    for (const c of World.crows) if (c.state === 'peck') beast('crow', c, c.x, c.y);
+    for (const d of World.ducks || []) beast('duck', d, d.x, d.y);
     for (const mw of World.millWheels) if (seen(mw.x, mw.y)) list.push([mw.x + mw.y + 12, () => billboard(g, mw.x, mw.y, () => drawMillWheel(g, mw), k)]);
     for (const r of World.rifts) if (seen(r.x, r.y)) list.push([r.x + r.y, () => billboard(g, r.x, r.y, () => drawRift(g, r, tReal), k)]);
     for (const p of Village.projects) {
@@ -676,7 +684,7 @@ const Iso = {
     hits.length = 0;
     for (const [, fn] of list) fn();
     if (winter && World.bonfire) billboard(g, World.bonfire.x, World.bonfire.y, () => drawBonfire(g, tReal, Game.party.on), k);
-    for (const c of World.crows) if (c.state === 'fly') upright(g, SPR.crow[Math.floor(c.flap * 2) % 2], c.x, c.y, 3, 3, k, false);
+    for (const c of World.crows) if (c.state === 'fly') { const [sx, sy] = w2s(c.x, c.y, 30); Iso.drawAnimal(g, 'crow', { fly: true, flap: c.flap }, sx, sy, zm); }
     groundTransform(g);
     drawPartyLanterns(g, tReal, Game.party.on);
     FX.drawAmbientDay(g, Game, cr);

@@ -99,7 +99,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 
 ### Finding your way around
 
-- **The isometric view.** The valley is drawn from a fixed angle at full resolution. The ground is painted with grass, worn paths, cobbles, fields and water. The home mounds are rounded hills, with each door set into a dry-stone cutting and turf rolling over the top. Inns, the bakehouses, the brewhouse, the barn and the rest are lit timber and stone with thatch, slate or tiled roofs, and the windmill turns on its hill. Trees change with the seasons, folk are drawn afresh, chimneys smoke, and at night lamps and windows cast warm pools of light. Drag, the arrow keys, the wheel or a pinch move and zoom it. *Classic view* in the ⚙ menu switches to the original pixel map, and build mode uses the pixel map for now. Animals, crops and smaller props still use their pixel sprites, drawn upright.
+- **The isometric view.** The valley is drawn from a fixed angle at full resolution. The ground is painted with grass, worn paths, cobbles, fields and water. The home mounds are rounded hills, with each door set into a dry-stone cutting and turf rolling over the top. Inns, the bakehouses, the brewhouse, the barn and the rest are lit timber and stone with thatch, slate or tiled roofs, and the windmill turns on its hill. Trees change with the seasons, folk are drawn afresh, chimneys smoke, and at night lamps and windows cast warm pools of light. Drag, the arrow keys, the wheel or a pinch move and zoom it. *Classic view* in the ⚙ menu switches to the original pixel map, and build mode uses the pixel map for now. Benches, lamp-posts, the well, stalls, signposts, fences, hay, hives, rocks, hedges and the other props, every crop at every stage, and the farm animals, pets, rabbits, hens, crows and ducks are drawn the same way.
 - **The top bar.** It shows the season, the day and time, then chips for the village chest (opens the Market), the village's rank and progress to the next era (opens the Charter), and contentment (opens the Steward's Desk). A ⚠ chip appears when a hazard is coming. The ⚙ menu holds music, how to play, the guide, the choice of view and developer mode.
 - **The Charter tracker.** Under the top bar, a small card tracks the three open charters with progress bars. Hide it with –, or click it to open the Charter.
 - **The Chronicle** has filters: ♥ Hearts (love, births, letters, parties), ⌂ Village (building, trades, seasons, learning), ✦ Rifts, and ⚠ Trouble (illness, quarrels, hazards). Unfound clues on the Rifts page each carry a riddling hint about where to look.
@@ -429,6 +429,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/interior_buildings.js` | Cutaways of every other building: the shell, the furniture of each trade, stock on the shelves, where folk stand |
 | `js/dev.js` | Developer mode: decision explanations, the event log, world stats, tools and map overlays |
 | `js/main.js` | Game loop, seasons and weather, rendering, input, saving |
+| `js/iso_props.js` | Props, crops and animals for the isometric view: recognises each pixel prop by the maker that drew it and draws it again in the new style |
 | `js/iso.js` | The isometric view: painted ground, hills with doors set in, buildings, trees and folk, its camera and zoom, and turning clicks into places |
 
 ## Deployment
