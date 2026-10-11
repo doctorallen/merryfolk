@@ -130,7 +130,7 @@ function buildUI() {
     const ta = $('post-code'); ta.select();
     try { navigator.clipboard.writeText(ta.value).then(() => { $('post-copy').textContent = 'Copied!'; }, () => document.execCommand('copy')); } catch (e) { document.execCommand('copy'); }
   });
-  Game.panelTab = 'life'; Game.villageTab = 'stores';
+  Game.panelTab = 'life'; Game.villageTab = 'steward';
 }
 
 function setTool(id) {

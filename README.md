@@ -88,6 +88,15 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 | Grendels and Ettins causing mischief | Rabbits sneak out of the woods to nibble gardens (children and gardeners chase them off), and crows raid the barley. Click them to shoo |
 | Observation Kit graphs | The Census ledger charts population, children and village mood day by day |
 
+### Running the village (the Steward's Desk)
+
+The **☺ contentment** pill in the top bar opens the Steward's Desk, the first tab of the village ledger. It's where you make the choices that steer the village:
+- **Contentment.** The whole village's mood as one number, with what's lifting spirits and what's weighing on folk. A contented village (66% and up) gets talked about on the road, and travellers come up the West Road hoping to settle, more so if a hole stands empty. A discontented one draws nobody.
+- **Rations** (as in Stronghold). *Lean* half-portions stretch the food a long way, but folk feel the short rations. *Generous* and *Feasts* mean bigger helpings and a merrier village, and the Store empties fast. The desk shows how many days the food would last at the current rations.
+- **Ale.** *Dry* (the barrels last, the taproom sulks), *a pint or two*, or *flowing* (merrier evenings, twice the ale used).
+- **The working week.** *Easy* adds Sunday off (less done, happier folk); *Busy* cancels Highday (more done, wearier folk).
+- **Workforce** (as in Age of Empires). Every trade shows hands now against hands wanted. Use − and + to set how many each trade should have: folk are moved over from trades that can spare them (the best-suited first) or let go to find other work. *auto* hands a trade back to the village.
+
 ### Shaping the village (build mode)
 
 Press **Build** (or <kbd>B</kbd>) to shape Thistledown yourself. Pick a tool and click or drag on the map:
@@ -153,6 +162,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/genetics.js` | Genome, inheritance, dominance, mutation, posting villagers as codes |
 | `js/world.js` | Map layout, seasonal ground painting, places, crops, critters, A* pathfinding |
 | `js/worldgen_ui.js` | The *Shape your valley* setup screen and the stage-by-stage generation map |
+| `js/steward.js` | The Steward's Desk: rations, ale and working-week policies, contentment and migration, workforce allocation |
 | `js/buildmode.js` | Build mode: the tool palette, ghost previews, plans the villagers build, terraforming, ponds, new lots |
 | `js/pets.js` | Cats and dogs: adoption, following their person, pottering near home, being stroked |
 | `js/gossip.js` | News spreading through conversations, shared rooms, dinner tables and the taproom |
