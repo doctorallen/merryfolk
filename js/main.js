@@ -92,7 +92,7 @@ function newVillage() {
 function save() {
   try {
     const data = {
-      v: 2, world: World.gen, farewells: Game.farewells || [], memorials: Game.memorials || [], mathoms: Game.mathoms || [], mathomSeq: Game.mathomSeq || 0, mailbag: Game.mailbag || [], news: Game.news || [], newsSeq: Game.newsSeq || 0, lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
+      v: 2, world: World.gen, farewells: Game.farewells || [], memorials: Game.memorials || [], mathoms: Game.mathoms || [], mathomSeq: Game.mathomSeq || 0, mailbag: Game.mailbag || [], pets: (Game.pets || []).map((pt) => ({ ...pt, say: null, tx: null })), petSeq: Game.petSeq || 0, news: Game.news || [], newsSeq: Game.newsSeq || 0, lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
       villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
       archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
@@ -119,7 +119,7 @@ function load() {
   (data.lamps || []).forEach((on, i) => { const l = World.lamps[i]; if (l) { l.lit = !!on; l.litAt = Game.time - 60; l.st.useAlt = l.lit; } });
   Game.weather = data.weather || 'clear'; Game.raining = Game.weather === 'rain' || Game.weather === 'storm'; Game.rainUntil = data.rainUntil || 0;
   Game.party = Object.assign({ on: false, until: 0, planned: null, reason: '' }, data.party || {});
-  Game.farewells = data.farewells || []; Game.memorials = data.memorials || []; Game.mathoms = data.mathoms || []; Game.mathomSeq = data.mathomSeq || 0; Game.mailbag = data.mailbag || []; Game.news = data.news || []; Game.newsSeq = data.newsSeq || 0; placeMemorialStones();
+  Game.farewells = data.farewells || []; Game.memorials = data.memorials || []; Game.mathoms = data.mathoms || []; Game.mathomSeq = data.mathomSeq || 0; Game.mailbag = data.mailbag || []; Game.pets = data.pets || []; Game.petSeq = data.petSeq || 0; Game.news = data.news || []; Game.newsSeq = data.newsSeq || 0; placeMemorialStones();
   Game.archive = data.archive || {}; Game.away = data.away || []; Game.stats = data.stats || {}; Game.census = data.census || []; Game.lastTraveller = data.lastTraveller ?? -9;
   Village.reset();
   Object.assign(Village.stores, data.stores || {});
@@ -682,6 +682,7 @@ function render(dtReal, dtWall = dtReal) {
   }
   for (const it of World.items) if (inView(it.x, it.y)) list.push({ y: it.y, img: SPR.items[it.kind], x: it.x - Math.floor(SPR.items[it.kind].width / 2), iy: it.y - SPR.items[it.kind].height + 2 });
   for (const v of Game.villagers) if (!v.inside && !v.carried && !v.heldBy && inView(v.x, v.y)) list.push({ y: v.y, v });
+  for (const pt of Game.pets || []) if (!pt.inside && inView(pt.x, pt.y)) { const im = petFrame(pt); list.push({ y: pt.y, img: im, x: Math.round(pt.x) - (im.width >> 1), iy: Math.round(pt.y) - im.height + 2, flip: pt.face < 0 }); }
   for (const r of World.rabbits) if (inView(r.x, r.y)) list.push({ y: r.y, img: SPR.rabbit[r.moving && Math.floor(r.hop * 2) % 2 ? 1 : 0], x: Math.round(r.x) - 5, iy: Math.round(r.y) - 9, flip: r.face < 0 });
   for (const an of World.animals) if (inView(an.x, an.y)) {
     const spr = SPR[an.kind][an.coat][an.graze > 0 ? (Math.floor(tReal * 1.5 + an.x) % 3 === 0 ? 1 : 0) : Math.floor(tReal * 4 + an.x) % 2];
@@ -817,7 +818,7 @@ function renderOverlay() {
   }
   // the odd baa and moo
   octx.font = '600 12px "Pixelify Sans", ui-monospace, monospace';
-  for (const an of World.animals) {
+  for (const an of World.animals.concat((Game.pets || []).filter((pt) => !pt.inside))) {
     if (!an.say) continue;
     const sx = (an.x - cx) * z, sy = (an.y - cy - 16) * z;
     if (sx < -60 || sx > W + 60 || sy < -30 || sy > H + 30) continue;

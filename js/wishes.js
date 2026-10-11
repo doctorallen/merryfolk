@@ -202,7 +202,7 @@ function grantWish(v, w) {
   v.stats.wishes = (v.stats.wishes || 0) + 1;
   if (!v.inside) { FX.sparkle(v.x, v.y - 20, '#ffe680'); v.say(R.pick(['My wish came true!', 'Oh, how wonderful!', 'Just what I wanted!']), 2.6); }
   // the ones you granted get a word in the corner
-  if (WISHES[w.k].hint && typeof toast === 'function') toast(`${v.first}'s wish came true: ${text.toLowerCase()}.`, 'love');
+  if (WISHES[w.k].hint && !WISHES[w.k].on.includes('poll') && typeof toast === 'function') toast(`${v.first}'s wish came true: ${text.toLowerCase()}.`, 'love');
   devLog('mood', `${v.first}'s wish came true: ${text}`);
 }
 // Something happened to them: does it grant a wish?
