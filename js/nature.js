@@ -580,7 +580,8 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
     const i = y * W + x;
     const border = y <= 3 || y >= H - 3 || x <= 1 || x >= W - 2;
     if (border) return y <= 3 ? 0.65 : 0.45;
-    if (x >= 112) return 0.35 + (x - 112) * 0.02;
+    const fd = forestDepth(x, y);
+    if (fd >= 0) return 0.35 + fd * 0.02;
     const soil = World.land.soil[i], slope = slopeN(x, y), moist = World.land.moist[i];
     let p = soil === SOIL.THIN ? 0.28 + slope * 0.12 : soil === SOIL.CLAY ? 0.26 : soil === SOIL.ALLUVIUM ? 0.05 : 0.04;
     if (moist > 0.85) p *= 0.4;
@@ -593,7 +594,7 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
   // which kind of tree suits a tile
   const kindFor = (x, y) => {
     const i = y * W + x, soil = World.land.soil[i], h = World.land.h[i], moist = World.land.moist[i], d = settled[i];
-    const edge = y <= 4 || x >= 116 || y >= H - 4;
+    const edge = y <= 4 || forestDepth(x, y) >= 4 || y >= H - 4;
     const w = {
       oak: soil === SOIL.LOAM ? 1 : soil === SOIL.CLAY ? 0.9 : soil === SOIL.ALLUVIUM ? 0.5 : 0.15,
       beech: soil === SOIL.LOAM || soil === SOIL.CLAY ? 0.45 : 0.06,
@@ -627,7 +628,7 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
     const trunkX = x * 16 + 8 + Math.round((rng() - 0.5) * 4);
     addStatic(makeTree(tseed, kind), trunkX, (y + 1) * 16 - 2, { gen: { type: 'tree', seed: tseed, kind } });
     blk(x, y); treeAt.push([x, y]); grid.set(x + ',' + y, [x, y, r]);
-    const border = y <= 3 || y >= H - 3 || x <= 1 || x >= W - 2 || x >= 112;
+    const border = y <= 3 || y >= H - 3 || x <= 1 || x >= W - 2 || forestDepth(x, y) >= 0;
     if (!border && walkable(x, y + 1) && tiles[tIdx(x, y + 1)] === T.GRASS && World.shade.length < 22 && rng() < 0.6) World.shade.push(treeBackSpot(trunkX, (y + 1) * 16 - 2));
   }
   // bushes: thick along the edges of the woods, scattered elsewhere, by kind

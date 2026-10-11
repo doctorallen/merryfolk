@@ -38,7 +38,7 @@ function planFarmland() {
   const add = World._addStatic, blk = World._blk;
   // --- pens with fences and a gate on the side nearest the road ---
   for (const def of PEN_DEFS) {
-    const r = surveyRect(def.w, def.h, def.anchor[0], def.anchor[1], 18);
+    const r = surveyRect(def.w, def.h, ...anchorOf(def.kind, def.anchor), 18);
     if (!r) continue;
     reserveRect(r.x0 - 1, r.y0 - 1, r.x1 + 1, r.y1 + 1); reserveTiles(r.spur);
     for (const [x, y] of r.spur) if (World.tiles[tIdx(x, y)] === T.GRASS) World.tiles[tIdx(x, y)] = T.PATH;
@@ -67,7 +67,7 @@ function planFarmland() {
     }
   }
   // --- a second orchard on the south bank ---
-  const orch = surveyRect(13, 8, 22, 64, 20);
+  const orch = surveyRect(13, 8, ...anchorOf('orchard2', [22, 64]), 20);
   if (orch) {
     reserveRect(orch.x0 - 1, orch.y0 - 1, orch.x1 + 1, orch.y1 + 1); reserveTiles(orch.spur);
     for (const [x, y] of orch.spur) if (World.tiles[tIdx(x, y)] === T.GRASS) World.tiles[tIdx(x, y)] = T.PATH;
@@ -80,7 +80,7 @@ function planFarmland() {
     World.orchard2 = orch;
   }
   // --- vegetable allotments: rows of cabbages, carrots, taters and pumpkins ---
-  for (const [ax, ay] of [[70, 76], [30, 44]]) {
+  for (const [ax, ay] of anchorOf('allot', [[70, 76], [30, 44]])) {
     const r = surveyRect(10, 5, ax, ay, 16, 'any');
     if (!r) continue;
     reserveRect(r.x0 - 1, r.y0 - 1, r.x1 + 1, r.y1 + 1); reserveTiles(r.spur);

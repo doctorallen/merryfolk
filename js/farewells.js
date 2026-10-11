@@ -39,7 +39,7 @@ function makeYew() { return makeTree(4242, 'fir'); }
 // a path to it, and room for stones in rows.
 function planMemorialGreen() {
   World.memorial = null;
-  const r = surveyRect(8, 5, 34, 22, 22);
+  const r = surveyRect(8, 5, ...anchorOf('memorial', [34, 22]), 22);
   if (!r) return;
   reserveRect(r.x0 - 1, r.y0 - 1, r.x1 + 1, r.y1 + 1); reserveTiles(r.spur);
   for (const [x, y] of r.spur) if (World.tiles[tIdx(x, y)] === T.GRASS) World.tiles[tIdx(x, y)] = T.PATH;

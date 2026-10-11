@@ -58,7 +58,7 @@ function makeTurbine(lit) {
 RIFT_CIVIC.push(
   {
     // on the north bank, right by the water
-    key: 'dynamo', kind: 'building', rift: true, name: 'The River Dynamo', get anchor() { return [74, Math.round(RIVER_Y(74)) - 2]; }, w: 3, pw: 46, doorOff: 24,
+    key: 'dynamo', kind: 'building', rift: true, name: 'The River Dynamo', get anchor() { const x = anchorOf('dynamoX', 74); return [x, Math.round(RIVER_Y(x)) - 2]; }, w: 3, pw: 46, doorOff: 24,
     due: () => riftPower().water >= 1, when: 'once the rift-folk have learned power from the river',
     desc: 'A little turbine in a stone housing on the bank: the rift-folk charge their gadgets here',
     make: (lit) => makeDynamo(lit),

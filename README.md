@@ -414,6 +414,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/moodlets.js` | Feelings: passing moods with reasons, what brings them on, and how they lift or sink mood |
 | `js/terrain.js` | The lie of the land: height, slope, sun, drainage and flow, wetness, soil |
 | `js/cliffs.js` | Rocky escarpments in the wilder land, their painted faces and the steps cut through them |
+| `js/layout.js` | The lie of the village: the original valley's layout, and the planning of new ones from their seed |
 | `js/nature.js` | Wind, swaying trees, long grass and reeds, rocks |
 | `js/fx.js` | Particles, fireworks, weather (rain, storms, snow, fog, leaves, petals), lighting |
 | `js/audio.js` | Generative folk music and sound effects |

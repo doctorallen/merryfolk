@@ -175,7 +175,7 @@ const STROLL_POINTS = [[64, 28], [64, 40], [48, 24], [80, 27], [96, 40], [30, 31
   [40, 50], [72, 50], [20, 16], [56, 80], [94, 60], [26, 60], [110, 50], [74, 88]];
 function strollTarget(v) {
   if (R.chance(0.3)) return randomNearby(v, 12);
-  const [px, py] = R.pick(STROLL_POINTS);
+  const [px, py] = R.pick((World.L && World.L.stroll) || STROLL_POINTS);
   for (let k = 0; k < 10; k++) {
     const tx = px + R.i(-3, 3), ty = py + R.i(-2, 2);
     if (walkable(tx, ty)) return { x: tx * 16 + 8, y: ty * 16 + 12, facing: R.pick(['down', 'left', 'right']) };

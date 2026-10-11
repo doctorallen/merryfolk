@@ -787,10 +787,11 @@ function placeAt(wx, wy) {
   }
   for (const a of World.allotments) if (tx >= a.x0 && tx <= a.x1 && ty >= a.y0 && ty <= a.y1) return ['The allotments', 'Cabbages, carrots, taters, tomatoes and pumpkins for the Store', `${a.plots.filter((p) => p.stage === 4).length} rows ready to lift`];
   if (World.orchard2 && tx >= World.orchard2.x0 && tx <= World.orchard2.x1 && ty >= World.orchard2.y0 && ty <= World.orchard2.y1) return ['The south orchard', 'Young apple trees, planted for the growing village'];
-  if (tx >= 5 && tx <= 33 && ty >= 5 && ty <= 15) return ['The orchard', `${World.orchard.reduce((s, o) => s + o.apples, 0)} apples on the trees · ${World.hives.reduce((s, o) => s + o.honey, 0)} combs of honey`];
+  const OR = World.L.orchard;
+  if (tx >= OR.x0 - 1 && tx <= OR.x1 + 7 && ty >= OR.y0 - 1 && ty <= OR.y1 + 1) return ['The orchard', `${World.orchard.reduce((s, o) => s + o.apples, 0)} apples on the trees · ${World.hives.reduce((s, o) => s + o.honey, 0)} combs of honey`];
   if (dist(wx, wy, World.henhouse.x, World.henhouse.y) < 40) return ['The henhouse', `${World.eggs} eggs waiting to be collected`];
   if (Math.hypot(tx - POND.cx, (ty - POND.cy) * 1.4) < 8) return ['The duck pond', 'Good fishing, and very good ducks'];
-  if (tx >= 112) return ['The Eastwood', 'Timber, mushrooms and wild herbs'];
+  if (forestDepth(tx, ty) >= 0) return [{ east: 'The Eastwood', west: 'The Westwood', north: 'The Northwood', south: 'The Southwood' }[World.L.forest.side], 'Timber, mushrooms and wild herbs'];
   return null;
 }
 

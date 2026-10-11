@@ -8,7 +8,7 @@
 // ---------------------------------------------------------------------------
 
 const HOME_LOTS_MAX = 34;
-const TOWN_CENTRE = { x: 62, y: 46 };
+let TOWN_CENTRE = { x: 62, y: 46 };
 
 // Public buildings, opened in order once the village is big enough.
 const CIVIC_DEFS = [
@@ -85,7 +85,7 @@ const PROJECT_KIND = {
 // walkable ground (a road, or another lot's edge will do).
 function lotFree(core, margin) {
   const [mx0, my0, mx1, my1] = margin || core;
-  if (mx0 < 3 || mx1 > 118 || my0 < 4 || my1 > 91) return false;
+  if (mx0 < 3 || mx1 > MAP_W - 10 || my0 < 4 || my1 > MAP_H - 5) return false;
   for (let y = my0; y <= my1; y++) for (let x = mx0; x <= mx1; x++) {
     const i = tIdx(x, y), t = World.tiles[i];
     if (World.block[i]) return false;
@@ -165,7 +165,7 @@ function planLots(seed) {
   for (const def of CIVIC_DEFS) surveyCivic(def, 16);
   // spare knolls for hobbit-holes, nearest the heart of the village first
   const cands = [];
-  for (let cy = 8; cy <= 87; cy++) for (let cx = 7; cx <= 114; cx++) {
+  for (let cy = 8; cy <= MAP_H - 9; cy++) for (let cx = 7; cx <= MAP_W - 14; cx++) {
     const sh = lotShape('home', null, cx, cy);
     if (!lotFree(sh.core, sh.area)) continue;
     cands.push([cx, cy, Math.hypot(cx - TOWN_CENTRE.x, (cy - TOWN_CENTRE.y) * 1.2)]);
@@ -185,7 +185,8 @@ function planLots(seed) {
   for (const def of RIFT_CIVIC) surveyCivic(def, 26);
 }
 function surveyCivic(def, maxR) {
-  const found = surveyLot(def.kind, def, def.anchor[0], def.anchor[1], maxR);
+  const [ax, ay] = anchorOf(def.key, def.anchor);
+  const found = surveyLot(def.kind, def, ax, ay, maxR);
   if (!found) return;
   const { x, y, sh, spur } = found;
   const lot = { i: World.lots.length, kind: def.kind, key: def.key, def, spur, state: 'planned' };

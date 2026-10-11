@@ -13,72 +13,11 @@ const TILE_COST = [2.4, 1, 0, 1, 3.5, 0, 1.8, 1, 3, 3];
 const BANK_COST = 14, RAMP_COST = 0.4;
 const isRoadTile = (t) => t === T.PATH || t === T.COBBLE || t === T.BRIDGE;
 
-// Hobbit-holes. `site` marks a grassy knoll where a new home can be dug.
-const HOME_DEFS = [
-  { cx: 64, cy: 9, rx: 9, ry: 5.5, grand: true },
-  { cx: 46, cy: 16, rx: 5, ry: 3.5 },
-  { cx: 33, cy: 21, rx: 4.5, ry: 3 },
-  { cx: 20, cy: 25, rx: 4.5, ry: 3 },
-  { cx: 80, cy: 18, rx: 5, ry: 3.5 },
-  { cx: 50, cy: 40, rx: 4.5, ry: 3 },
-  { cx: 33, cy: 36, rx: 4.5, ry: 3 },
-  { cx: 92, cy: 32, rx: 4.5, ry: 3 },
-  { cx: 46, cy: 66, rx: 4.5, ry: 3 },
-  { cx: 82, cy: 66, rx: 4.5, ry: 3 },
-  { cx: 36, cy: 47, rx: 4.5, ry: 3, site: true },
-  { cx: 98, cy: 44, rx: 4.5, ry: 3, site: true },
-  { cx: 36, cy: 62, rx: 4.5, ry: 3, site: true },
-  { cx: 12, cy: 62, rx: 4.5, ry: 3, site: true },
-  { cx: 72, cy: 80, rx: 4.5, ry: 3, site: true },
-  { cx: 88, cy: 86, rx: 4.5, ry: 3, site: true },
-];
+// The lie of the village (the knolls, lanes, river, square, fields and the
+// rest) comes from the layout in use: see layout.js. These are set by
+// applyLayout when the valley is built.
+let HOME_DEFS, ROADS, RIVER_Y, POND, PARTY, PLAZA, INN_RECT, WEED_FIELD, FIELDS, STORY, WEST_EXIT;
 const HOME_SUFFIX = ['End', 'Burrow', 'Hole', 'Hollow', 'Nook', 'Delving', 'Bank', 'Under-hill', 'Smial', 'Cosy', 'Rise', 'Dell'];
-
-const ROADS = [
-  [1.1, [64, 15], [64, 25]],
-  [1.1, [64, 31], [64, 46], [64, 58], [64, 72], [64, 92]],
-  [1.0, [0, 30], [14, 30], [26, 29], [40, 29], [52, 28.5], [61, 28]],
-  [1.0, [67, 27], [80, 26], [91, 22]],
-  [0.85, [80, 22], [80, 26]],
-  [0.85, [46, 20], [50, 24], [56, 26], [61, 27]],
-  [0.85, [33, 25], [36, 29]],
-  [0.85, [50, 44], [56, 42], [62, 40]],
-  [0.85, [33, 40], [40, 42], [46, 44], [50, 44]],
-  [0.85, [92, 36], [86, 39], [82, 42]],
-  [0.85, [80, 26], [86, 30], [92, 36], [100, 38], [106, 38]],
-  [0.85, [106, 38], [104, 46], [102, 50], [102, 58], [106, 64]],
-  [0.8, [98, 48], [102, 50]],
-  [0.9, [24, 30], [25, 40], [26, 50], [26, 60], [26, 73]],
-  [0.85, [36, 51], [30, 50], [26, 50]],
-  [0.85, [14, 30], [14, 20], [17, 13]],
-  [0.9, [64, 73], [46, 73], [26, 73], [12, 73]],
-  [0.85, [46, 70], [46, 73]],
-  [0.85, [36, 66], [36, 73]],
-  [0.85, [12, 66], [12, 73]],
-  [0.9, [64, 72], [82, 72], [92, 72], [100, 68], [106, 64]],
-  [0.85, [82, 70], [82, 72]],
-  [0.85, [64, 86], [72, 84]],
-  [0.85, [64, 90], [80, 90], [88, 90]],
-  [0.8, [64, 43], [68, 43]],
-  [0.8, [82, 42], [78, 43]],
-  [0.8, [59, 70], [64, 70]],
-  [0.85, [86, 8], [87, 15], [89, 20], [91, 22]],
-];
-
-// A wilder river swings further, but calms where it passes the knoll at x 36
-// so it never runs through anybody's garden.
-const RIVER_Y = (x) => {
-  const g = gen('river'), calm = Math.exp(-(((x - 36) / 8) ** 2)), k = g > 1 ? g - (g - 1) * calm : g;
-  return 54 + (2.5 * Math.sin(x * 0.06 + 0.8) + 1.2 * Math.sin(x * 0.17)) * k + (g > 1.2 ? 1.3 * Math.sin(x * 0.11 + 2) * (1 - calm) : 0);
-};
-const POND = { cx: 100, cy: 78, rx: 6, ry: 4 };
-const PARTY = { cx: 100, cy: 16, rx: 11, ry: 7, treeX: 100, treeY: 12, danceX: 100, danceY: 17.4 };
-const PLAZA = { cx: 64, cy: 28, r: 4 };
-const INN_RECT = { x0: 69, x1: 76, y0: 36, y1: 40 };
-const WEED_FIELD = { x0: 6, x1: 18, y0: 33, y1: 41 };
-const FIELDS = [{ x0: 14, x1: 30, y0: 75, y1: 86, name: 'the west barley field' }, { x0: 38, x1: 56, y0: 76, y1: 88, name: 'the east barley field' }];
-const STORY = { x: 44, y: 32 };
-const WEST_EXIT = { x: 0 * 16 + 4, y: 30 * 16 + 12 };
 
 const World = {
   tiles: new Uint8Array(MAP_W * MAP_H),
@@ -170,6 +109,7 @@ function* buildWorldSteps(cfg) {
   World.gen = typeof cfg === 'object' ? { ...defaultGen(), cliffs: 'none', relief: 'smooth', ...cfg } : defaultGen(cfg);
   const seed = World.gen.seed;
   World.seed = seed;
+  applyLayout(World.gen.plan || CLASSIC_LAYOUT);
   World.land = null; World.grass = []; World.statics = []; World.flowers = []; World.pads = null; World.padNear = null; World._nh = null; World.cliffMask = null; World.cliff = null;
   const rng = mulberry32(seed);
   const tiles = World.tiles;
@@ -297,34 +237,34 @@ function* buildWorldSteps(cfg) {
   const cot = (opts) => [makeCottage({ ...opts, lit: false }), makeCottage({ ...opts, lit: true })];
   {
     const [d, n] = cot({ w: 92, wall: '#efe2c0', roof: 'thatch', sign: 'bread', windows: [14, 66], door: 46, chimneys: [64] });
-    addBuilding('bakery', { x0: 52, x1: 56, y0: 32, y1: 34, img: d, imgNight: n, doorOff: 46, name: 'The Bakehouse', chimneys: [64] });
+    addBuilding('bakery', { ...World.L.buildings.bakery, img: d, imgNight: n, doorOff: 46, name: 'The Bakehouse', chimneys: [64] });
   }
   {
     const [d, n] = cot({ w: 84, wall: '#e2d4b0', roof: 'slate', sign: 'mug', windows: [12, 60], door: 42, chimneys: [16], extra: (x, o) => { for (let k = 0; k < 3; k++) { x.fillStyle = '#7a4e2a'; x.fillRect(o.Rr - 14 - k * 9, o.wallBot - 10, 8, 10); x.fillStyle = '#3a3a3a'; x.fillRect(o.Rr - 14 - k * 9, o.wallBot - 8, 8, 1); } } });
-    addBuilding('brewhouse', { x0: 80, x1: 84, y0: 37, y1: 39, img: d, imgNight: n, doorOff: 42, name: 'The Brewhouse', chimneys: [16] });
+    addBuilding('brewhouse', { ...World.L.buildings.brewhouse, img: d, imgNight: n, doorOff: 42, name: 'The Brewhouse', chimneys: [16] });
   }
   {
     const [d, n] = cot({ w: 92, wall: '#d8c8a0', roof: 'thatch', sign: 'saw', windows: [12], door: 40, chimneys: [70],
       extra: (x, o) => { x.fillStyle = '#3a2414'; x.fillRect(58, o.wallTop + 12, 26, o.wallBot - o.wallTop - 12); for (let k = 0; k < 4; k++) { disc(x, 64 + (k % 2) * 8, o.wallBot - 4 - Math.floor(k / 2) * 6, 3, '#7a5030'); x.fillStyle = '#d8b07a'; x.fillRect(63 + (k % 2) * 8, o.wallBot - 5 - Math.floor(k / 2) * 6, 2, 2); } } });
-    addBuilding('workshop', { x0: 104, x1: 108, y0: 35, y1: 37, img: d, imgNight: n, doorOff: 40, name: 'The Woodwright\'s Workshop', chimneys: [70] });
+    addBuilding('workshop', { ...World.L.buildings.workshop, img: d, imgNight: n, doorOff: 40, name: 'The Woodwright\'s Workshop', chimneys: [70] });
   }
   {
     const [d, n] = cot({ w: 76, wall: '#e8e0c8', roof: 'thatch', sign: 'herb', windows: [10, 54], door: 38, chimneys: [52], doorCol: '#3a6a4a',
       extra: (x, o) => { for (let k = 0; k < 40; k++) { x.fillStyle = k % 3 ? '#3a7a3a' : '#5aa04a'; x.fillRect(o.L + (k * 7) % (o.Rr - o.L), o.wallTop + ((k * 13) % 30), 2, 2); } } });
-    addBuilding('herbalist', { x0: 104, x1: 108, y0: 61, y1: 63, img: d, imgNight: n, doorOff: 38, name: 'The Herbalist\'s Cottage', chimneys: [52] });
+    addBuilding('herbalist', { ...World.L.buildings.herbalist, img: d, imgNight: n, doorOff: 38, name: 'The Herbalist\'s Cottage', chimneys: [52] });
   }
   {
     const [d, n] = cot({ w: 84, h: 84, roof: 'barn', sign: 'sack', windows: [], door: 42 });
-    addBuilding('store', { x0: 54, x1: 58, y0: 22, y1: 24, img: d, imgNight: n, doorOff: 42, name: 'The Common Store' });
+    addBuilding('store', { ...World.L.buildings.store, img: d, imgNight: n, doorOff: 42, name: 'The Common Store' });
   }
   {
     const [d, n] = cot({ w: 92, h: 84, roof: 'barn', sign: 'grain', windows: [], door: 46 });
-    addBuilding('barn', { x0: 57, x1: 62, y0: 66, y1: 68, img: d, imgNight: n, doorOff: 46, name: 'The Granary Barn' });
+    addBuilding('barn', { ...World.L.buildings.barn, img: d, imgNight: n, doorOff: 46, name: 'The Granary Barn' });
   }
   // Mill on the north bank, wheel in the river
   {
-    const mx = 87;
-    let top = 99; for (let y = 30; y < MAP_H; y++) if (tileAt(mx, y) === T.WATER) { top = y; break; }
+    const mx = World.L.mills[0];
+    let top = 99; for (let y = World.L.millScanFrom ?? 30; y < MAP_H; y++) if (tileAt(mx, y) === T.WATER) { top = y; break; }
     const millImg = makeMill();
     const b = addBuilding('mill', { x0: mx - 2, x1: mx + 2, y0: top - 5, y1: top - 2, img: millImg, imgNight: millImg, doorOff: 34, name: 'The Old Mill', rows: 4 });
     World.millWheel = { x: (mx + 3.2) * 16, y: (top - 0.4) * 16, r: 15, a: 0, wallX: b.left + millImg.width - 6, wallY: b.bottom - 14 };
@@ -334,8 +274,8 @@ function* buildWorldSteps(cfg) {
   }
   // a second watermill upstream, on the west reach of the river
   {
-    const mx = 44;
-    let top = 99; for (let y = 30; y < MAP_H; y++) if (tileAt(mx, y) === T.WATER) { top = y; break; }
+    const mx = World.L.mills[1];
+    let top = 99; for (let y = World.L.millScanFrom ?? 30; y < MAP_H; y++) if (tileAt(mx, y) === T.WATER) { top = y; break; }
     const millImg = makeMill();
     const b = addBuilding('mill2', { x0: mx - 2, x1: mx + 2, y0: top - 5, y1: top - 2, img: millImg, imgNight: millImg, doorOff: 34, name: 'The West Mill', rows: 4 });
     // the river bends here, so the wheel sits at its own water line
@@ -347,7 +287,7 @@ function* buildWorldSteps(cfg) {
   }
   // a windmill on the high ground above the village, sails turning in the breeze
   {
-    const wx = 86, wy = 6;
+    const [wx, wy] = World.L.windmill;
     const img = makeWindmill();
     const b = addBuilding('windmill', { x0: wx - 1, x1: wx + 1, y0: wy - 2, y1: wy, img, imgNight: img, doorOff: 28, name: 'The Windmill', rows: 3 });
     World.windmill = { x: b.left + 28, y: b.bottom - 80, a: 0, r: 42, sortY: b.bottom };
@@ -356,24 +296,24 @@ function* buildWorldSteps(cfg) {
 
   yield 'The mills, the inn and the workshops go up';
   // --- Plaza: well, market, notice board, signpost, benches, lamps ---
-  addStatic(makeWell(), 67.5 * 16, 25 * 16 + 2); blk(67, 24);
-  World.wellSpot = makeSpot(67.5 * 16, 25 * 16 + 12, 'up', 'stand', 'well');
+  const SQ = World.L.plaza;
+  addStatic(makeWell(), SQ.well[0] * 16, SQ.well[1] * 16 + 2); blk(...SQ.wellBlk);
+  World.wellSpot = makeSpot(SQ.well[0] * 16, SQ.well[1] * 16 + 12, 'up', 'stand', 'well');
   World.wells = [World.wellSpot];
-  addStatic(makeStall(), 60.5 * 16, 25.4 * 16); blk(59, 24); blk(60, 24); blk(61, 24);
-  World.marketSpot = makeSpot(60.5 * 16, 26.3 * 16, 'up', 'stand', 'market');
-  addStatic(makeNoticeBoard(), 68.5 * 16, 31.3 * 16); blk(68, 30);
-  World.postSpot = makeSpot(68.5 * 16, 32 * 16, 'up', 'stand', 'post');
-  addStatic(makeSignpost(), 60 * 16, 31.5 * 16); blk(59, 30);
+  addStatic(makeStall(), SQ.stall[0] * 16, SQ.stall[1] * 16); for (const b of SQ.stallBlk) blk(...b);
+  World.marketSpot = makeSpot(SQ.market[0] * 16, SQ.market[1] * 16, 'up', 'stand', 'market');
+  addStatic(makeNoticeBoard(), SQ.board[0] * 16, SQ.board[1] * 16); blk(...SQ.boardBlk);
+  World.postSpot = makeSpot(SQ.post[0] * 16, SQ.post[1] * 16, 'up', 'stand', 'post');
+  addStatic(makeSignpost(), SQ.sign[0] * 16, SQ.sign[1] * 16); blk(...SQ.signBlk);
   const benchImg = makeBench();
-  for (const [bx, by] of [[61, 30], [66.5, 30.5], [58, 36], [69, 33], [52, 46], [40, 50], [62, 50], [70, 58], [92, 56], [96, 66], [30, 31], [80, 29], [56, 63]]) {
+  for (const [bx, by] of World.L.benches) {
     const tx = Math.floor(bx), ty = Math.floor(by);
     if (!(tileAt(tx, ty) === T.GRASS || tileAt(tx, ty) === T.PATH || tileAt(tx, ty) === T.COBBLE) || World.block[tIdx(tx, ty)]) continue;
     addStatic(benchImg, bx * 16 + 8, ty * 16 + 12, { sortBias: -1 });
     World.benches.push(makeSpot(bx * 16 + 8, ty * 16 + 12, 'down', 'sit', 'bench')); res(tx, ty);
   }
   const lampImg = makeLampPost(false), lampLit = makeLampPost(true);
-  for (const [lx, ly] of [[61.5, 25], [66.5, 27.5], [62.4, 33.5], [66.3, 39.5], [66.4, 45.4], [78.6, 45], [64.6, 17.6], [62.6, 51], [65.6, 59.5],
-    [62.6, 69.5], [56.5, 29], [80.6, 28.6], [24.5, 31.5], [47, 21], [91, 24.6], [101, 37.6], [27.6, 51.6], [100.5, 59.6], [83.6, 43.5]]) {
+  for (const [lx, ly] of World.L.lamps) {
     const tx = Math.floor(lx), ty = Math.floor(ly - 0.5);
     if (World.block[tIdx(tx, ty)] || tileAt(tx, ty) === T.WATER || tileAt(tx, ty) === T.HILL) continue;
     const st = addStatic(lampImg, lx * 16, ly * 16, { snow: true });
@@ -404,7 +344,7 @@ function* buildWorldSteps(cfg) {
   }
   for (let y = PARTY.danceY - 3; y <= PARTY.danceY + 3; y++) for (let x = PARTY.cx - 4; x <= PARTY.cx + 4; x++) res(Math.floor(x), Math.floor(y));
   const tableImg = makeTable();
-  for (const [tx, ty] of [[91, 14], [109, 14], [92, 20], [108, 20], [100, 22]]) {
+  for (const [tx, ty] of PARTY.tables) {
     const x = tx * 16 + 8, y = ty * 16 + 10;
     addStatic(tableImg, x, y + 2); blk(tx, ty); res(tx, ty, 1);
     World.partySeats.push(makeSpot(x, y - 7, 'down', 'sit', 'partyseat'), makeSpot(x - 16, y + 1, 'right', 'sit', 'partyseat'), makeSpot(x + 16, y + 1, 'left', 'sit', 'partyseat'));
@@ -418,11 +358,10 @@ function* buildWorldSteps(cfg) {
     World.partyPoles.push({ x: px, y: py - 17 });
     blk(Math.floor(px / 16), Math.floor((py - 2) / 16));
   }
-  addStatic(makeMaypole(), 94.5 * 16, 18.6 * 16, { seasons: ['spring'], snow: false }); blk(94, 18);
-  World.bonfire = { x: 106 * 16 + 8, y: 18 * 16 + 8 };
-  blk(106, 18);
-  addStatic(makeHay(), 88 * 16, 10 * 16); blk(87, 9);
-  addStatic(makeHay(), 113 * 16, 19 * 16); blk(112, 18);
+  addStatic(makeMaypole(), PARTY.maypole[0] * 16, PARTY.maypole[1] * 16, { seasons: ['spring'], snow: false }); blk(Math.floor(PARTY.maypole[0]), Math.floor(PARTY.maypole[1]));
+  World.bonfire = { x: PARTY.bonfire[0] * 16 + 8, y: PARTY.bonfire[1] * 16 + 8 };
+  blk(PARTY.bonfire[0], PARTY.bonfire[1]);
+  for (const [hx, hy] of PARTY.hay) { addStatic(makeHay(), hx * 16, hy * 16); blk(hx - 1, hy - 1); }
 
   // --- Pipe-weed field ---
   const fenceH = makeFence(true);
@@ -447,12 +386,14 @@ function* buildWorldSteps(cfg) {
     field.scarecrow = { x: sx * 16 + 8, y: sy * 16 };
   }
   // henhouse beside the barn
-  addStatic(makeHenhouse(), 53 * 16 + 8, 70 * 16 + 4); blk(52, 69); blk(53, 69); blk(54, 69);
-  World.henhouse = { x: 53 * 16 + 8, y: 70 * 16 + 12 };
-  for (let i = 0; i < 5; i++) World.hens.push({ x: (50 + i * 1.5) * 16, y: 71.5 * 16, a: rng() * 6, t: 0, hx: 53 * 16, hy: 71.5 * 16 });
+  const [hhx, hhy] = World.L.henhouse;
+  addStatic(makeHenhouse(), hhx * 16 + 8, hhy * 16 + 4); blk(hhx - 1, hhy - 1); blk(hhx, hhy - 1); blk(hhx + 1, hhy - 1);
+  World.henhouse = { x: hhx * 16 + 8, y: hhy * 16 + 12 };
+  for (let i = 0; i < 5; i++) World.hens.push({ x: (hhx - 3 + i * 1.5) * 16, y: (hhy + 1.5) * 16, a: rng() * 6, t: 0, hx: hhx * 16, hy: (hhy + 1.5) * 16 });
 
   // --- Herb beds by the herbalist ---
-  for (let y = 66; y <= 68; y += 2) for (let x = 99; x <= 103; x++) {
+  const HB = World.L.herbs;
+  for (let y = HB.y0; y <= HB.y1; y += 2) for (let x = HB.x0; x <= HB.x1; x++) {
     if (tileAt(x, y) !== T.GRASS) continue;
     tiles[tIdx(x, y)] = T.SOIL; res(x, y);
     World.herbBeds.push({ tx: x, ty: y, x: x * 16 + 8, y: y * 16 + 12, stage: 1 + Math.floor(rng() * 4), prog: rng(), claimed: null });
@@ -460,15 +401,16 @@ function* buildWorldSteps(cfg) {
 
   // --- Orchard with beehives ---
   const appleImgs = [0, 1, 2].map((k) => 900 + k);
-  for (let gy = 6; gy <= 14; gy += 4) for (let gx = 6; gx <= 26; gx += 5) {
-    const ax = gx + (gy % 8 === 2 ? 2 : 0), ay = gy;
+  const OR = World.L.orchard;
+  for (let gy = OR.y0; gy <= OR.y1; gy += 4) for (let gx = OR.x0; gx <= OR.x1; gx += 5) {
+    const ax = gx + ((gy - OR.y0) % 8 === 4 ? 2 : 0), ay = gy;
     if (tileAt(ax, ay) !== T.GRASS || World.reserved[tIdx(ax, ay)]) continue;
     const seed = appleImgs[(ax + ay) % 3];
     addStatic(makeTree(seed, 'apple'), ax * 16 + 8, (ay + 1) * 16 - 2, { gen: { type: 'tree', seed, kind: 'apple' } }); blk(ax, ay); res(ax, ay, 1);
     World.orchard.push({ tx: ax, ty: ay, x: ax * 16 + 8, y: (ay + 1) * 16 + 12, apples: 2 + Math.floor(rng() * 3), claimed: null });
     if (walkable(ax, ay + 1) && World.shade.length < 6) World.shade.push(treeBackSpot(ax * 16 + 8, (ay + 1) * 16 - 2));
   }
-  for (const [hx, hy] of [[31, 8], [32, 10.5], [31, 13]]) {
+  for (const [hx, hy] of World.L.hives) {
     addStatic(makeBeehive(), hx * 16 + 8, hy * 16 + 12); blk(hx, Math.floor(hy));
     World.hives.push({ x: hx * 16 + 8, y: (Math.floor(hy) + 1) * 16 + 12, honey: 2, claimed: null });
   }
@@ -553,7 +495,7 @@ function* buildWorldSteps(cfg) {
     }
   }
   // timber: spots beside trees on the edge of the eastern woods and the northern woods
-  const timberCands = woodsCands.filter(([x, y, n]) => (x >= 108 || y <= 6) && n >= 2);
+  const timberCands = woodsCands.filter(([x, y, n]) => (forestDepth(x, y) >= -4 || y <= 6) && n >= 2);
   for (const [x, y] of timberCands) {
     if (World.woodSpots.length >= 14) break;
     if (!farFrom(World.woodSpots, x, y, 4)) continue;
