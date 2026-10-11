@@ -76,16 +76,41 @@ function petsDaily() {
 
 // --- Behaviour ---------------------------------------------------------------
 function petWalkable(x, y) { const tx = Math.floor(x / 16), ty = Math.floor((y - 2) / 16); return inMap(tx, ty) && walkable(tx, ty); }
+function petClear(x0, y0, x1, y1) {
+  const n = Math.ceil(dist(x0, y0, x1, y1) / 6);
+  for (let i = 1; i <= n; i++) if (!petWalkable(x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n)) return false;
+  return true;
+}
+// Straight there when nothing's in the way; otherwise round walls, lamp-posts
+// and fences along a proper path, as folk do.
 function stepPet(p, tx, ty, speed, dt) {
   const dx = tx - p.x, dy = ty - p.y, d = Math.hypot(dx, dy);
-  if (d < 2) return true;
-  const s = Math.min(d, speed * dt), nx = p.x + (dx / d) * s, ny = p.y + (dy / d) * s;
+  if (d < 2) { p.route = null; p.stuck = 0; return true; }
+  let gx = tx, gy = ty;
+  if (petClear(p.x, p.y, tx, ty)) p.route = null;
+  else {
+    const key = Math.floor(tx / 16) + ',' + Math.floor((ty - 2) / 16);
+    if (!p.route || p.routeKey !== key) {
+      const r = findPath(Math.floor(p.x / 16), Math.floor((p.y - 2) / 16), Math.floor(tx / 16), Math.floor((ty - 2) / 16));
+      if (!r) { p.route = null; p.tx = null; return true; }
+      p.route = r.map(([x, y]) => [x * 16 + 8, y * 16 + 10]); p.routeKey = key;
+    }
+    while (p.route.length && (dist(p.x, p.y, p.route[0][0], p.route[0][1]) < 3 || (p.route[1] && petClear(p.x, p.y, p.route[1][0], p.route[1][1])))) p.route.shift();
+    if (p.route.length) [gx, gy] = p.route[0];
+  }
+  const ex = gx - p.x, ey = gy - p.y, e = Math.hypot(ex, ey) || 1;
+  const s = Math.min(e, speed * dt), nx = p.x + (ex / e) * s, ny = p.y + (ey / e) * s;
+  const ox = p.x, oy = p.y;
   if (petWalkable(nx, ny)) { p.x = nx; p.y = ny; }
   else if (petWalkable(nx, p.y)) p.x = nx;
   else if (petWalkable(p.x, ny)) p.y = ny;
-  else { p.tx = null; return true; }
-  if (Math.abs(dx) > 0.5) p.face = dx > 0 ? 1 : -1;
-  p.walk = (p.walk || 0) + s;
+  else { p.tx = null; p.route = null; return true; }
+  // sliding along something and getting nowhere: give up on it
+  const moved = Math.hypot(p.x - ox, p.y - oy);
+  p.stuck = moved < s * 0.3 ? (p.stuck || 0) + dt : 0;
+  if (p.stuck > 4) { p.stuck = 0; p.route = null; p.tx = null; return true; }
+  if (Math.abs(ex) > 0.5) p.face = ex > 0 ? 1 : -1;
+  p.walk = (p.walk || 0) + moved;
   return false;
 }
 function updatePets(dtMin, hour) {
@@ -110,12 +135,18 @@ function updatePets(dtMin, hour) {
     if (owner && !owner.inside && !owner.leaving && dist(owner.x, owner.y, home.stepX, home.stepY) < 900) {
       const d = dist(p.x, p.y, owner.x, owner.y);
       if (d > 360) { p.x = owner.x - 14 * (owner.facing === 'left' ? -1 : 1); p.y = owner.y + 2; }
-      if (d > 22) { p.state = 'walk'; stepPet(p, owner.x - 12 * (owner.facing === 'left' ? -1 : 1), owner.y + 3, owner.path ? 20 : 16, dtMin); }
+      if (d > 22) {
+        // at heel, or the other side if that's walled off
+        const side = owner.facing === 'left' ? -1 : 1, hx = petWalkable(owner.x - 12 * side, owner.y + 3) ? owner.x - 12 * side : petWalkable(owner.x + 12 * side, owner.y + 3) ? owner.x + 12 * side : owner.x;
+        p.state = 'walk';
+        if (stepPet(p, hx, owner.y + 3, owner.path ? 20 : 16, dtMin)) p.state = 'sit';
+      }
       else { p.state = owner.task && owner.task.phase === 'do' && owner.pose === 'sit' ? 'sleep' : 'sit'; if (Math.random() < dtMin * 0.004) p.say = { text: R.pick(['Woof!', 'Wuff.', '*pant pant*']), t: 2 }; }
       continue;
     }
     // otherwise pottering about near home: sit a while, wander a bit
     p.t -= dtMin;
+    if (p.state === 'walk' && p.tx == null) p.state = 'sit'; // left behind by its person
     if (p.state === 'walk' && p.tx != null) { if (stepPet(p, p.tx, p.ty, p.kind === 'cat' ? 9 : 14, dtMin)) { p.state = Math.random() < (p.kind === 'cat' ? 0.4 : 0.15) ? 'sleep' : 'sit'; p.t = R.f(8, p.kind === 'cat' ? 60 : 25); p.tx = null; } continue; }
     if (p.t <= 0) {
       const r = p.kind === 'cat' ? 90 : 60;
