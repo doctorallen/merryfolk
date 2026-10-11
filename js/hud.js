@@ -145,6 +145,8 @@ window.addEventListener('DOMContentLoaded', () => {
     } else { menu.style.top = ''; menu.style.left = ''; }
   });
   document.addEventListener('click', (e) => { if (!e.target.closest('.gear-wrap')) $('gear-menu').hidden = true; });
+  // picking something from it closes it too (the music toggle stays open, to show it's changed)
+  $('gear-menu').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.id !== 'btn-sound') $('gear-menu').hidden = true; });
   $('btn-guide').addEventListener('click', () => { Game.tut = { step: 0, saw: {}, off: false }; Game.objHidden = false; $('gear-menu').hidden = true; renderErrand(); });
   // chips
   $('hud-era').addEventListener('click', () => openLedger('charter'));
