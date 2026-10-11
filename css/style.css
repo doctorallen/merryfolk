@@ -615,3 +615,7 @@ body.dev-on #chronicle { visibility: hidden; }
 .mk-row .mk-p { font-variant-numeric: tabular-nums; font-family: var(--font-ui); text-align: right; }
 .mk-row button { font-size: 12px; padding: 1px 6px; }
 @media (max-width: 640px) { .mk-grid { grid-template-columns: 1fr; } }
+
+.bb-reqs { display: flex; flex-wrap: wrap; gap: 4px; }
+.bb-reqs button { font-size: 12px; padding: 1px 6px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bb-reqs #bb-appeal.on { background: var(--moss); color: var(--parch); }

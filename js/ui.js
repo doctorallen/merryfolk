@@ -412,6 +412,7 @@ function panelKin(v) {
   if (k.gks.length) h += `<div>Grandchildren: ${k.gks.map(link).join(', ')}</div>`;
   if (!sp && !k.parents.length && !k.kids.length && !v.sweetheart) h += '<div>No family in the village (yet).</div>';
   h += '<div class="row-btns"><button data-tree>Family tree</button></div></div>';
+  if (v.homeId >= 0) { const a = homeAppeal(v.home()); h += `<div class="sub">The outlook from ${escapeHtml(v.home().name)}: ${appealWord(a).toLowerCase()} (appeal ${a.toFixed(1)}). Flowers, trees, benches, lamps and grander things nearby make it lovelier.</div>`; }
   const pet = v.homeId >= 0 ? petOf(v.home()) : null;
   if (pet) h += `<h3>Pet</h3><div class="likes"><div><b>${escapeHtml(pet.name)}</b>, the household's ${petWord(pet)}${pet.owner === v.id ? `, who follows ${v.first} everywhere` : ''}</div></div>`;
   const ms = v.homeId >= 0 ? mathomsAt(v.home()) : [];

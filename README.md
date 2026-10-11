@@ -109,6 +109,18 @@ The **coin pill** (pennies and the village's rank) in the top bar opens the **Ch
 
   Locked tools show greyed in the build bar, saying what unlocks them.
 
+### Appeal and the notice board
+
+- **Appeal.** Every spot in the village has an appeal from what's around it:
+  - flowers, trees, hedges and bushes
+  - benches and lamp-posts
+  - statues and fountains, which count most
+  - water nearby
+  - bare dug earth counts against it
+
+  Folk whose holes look out on lovely or delightful surroundings are happier, and a drab outlook wears on them. The Kin tab shows each home's outlook, and in build mode the **Appeal** button paints it over the map, as SimCity paints land value. Hovering says how lovely a spot is.
+- **Requests.** Every day or two someone pins a note to the board in the square: "A bench by the river would be lovely", "It's awfully dark near Crumblebank Delving of a night", "Some flowers near the Bakehouse would cheer everyone up". In build mode each request shows as a red pin with a circle around it, and is listed in the build bar. Click one to fly there with the right tool picked up. Build the thing inside the circle and the one who asked is delighted, and the village earns 8 renown and 5 pennies. Unanswered notes come down after five days.
+
 ### The market and the caravans
 
 On Trewsday (market day) a trader's wagon rolls up the West Road and stands in the square from eight till five. Once Thistledown is a Market Town, traders come on Mersday too. Each trader is different:
@@ -191,6 +203,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/worldgen_ui.js` | The *Shape your valley* setup screen and the stage-by-stage generation map |
 | `js/steward.js` | The Steward's Desk: rations, ale and working-week policies, contentment and migration, workforce allocation |
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
+| `js/appeal.js` | Appeal (how lovely each spot is, and how it affects folk at home) and requests pinned to the notice board |
 | `js/market.js` | Market-day caravans: traders, prices, selling and buying, dwarf masons, the wagon in the square |
 | `js/buildmode.js` | Build mode: the tool palette, ghost previews, plans the villagers build, terraforming, ponds, new lots |
 | `js/pets.js` | Cats and dogs: adoption, following their person, pottering near home, being stroked |
