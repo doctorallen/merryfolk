@@ -315,7 +315,7 @@ function panelNature(v) {
   if (ps.length) h += `<div><b>Parents</b> ${ps.map(link).join(' & ')}</div>`;
   if (g.mutations.length) h += `<div class="note">Born with ${g.mutations.join(', and ')}: a mutation, not inherited from either parent.</div>`;
   h += '</div><h3>Instincts</h3>';
-  const inst = Object.keys(g.taste).filter((a) => HABIT_KEYS.includes(a)).sort((a, b) => g.taste[b] - g.taste[a]);
+  const inst = Object.keys(g.taste).filter((a) => HABIT_KEYS.includes(a) && habitShown(v, a)).sort((a, b) => g.taste[b] - g.taste[a]);
   const foods = PANTRY_KINDS.slice().sort((a, b) => g.food[b] - g.food[a]);
   h += `<div class="likes"><div><b>Born loving</b> ${inst.slice(0, 2).map((a) => ACTION_NAMES[a].toLowerCase()).join(', ')} and ${FOODS[foods[0]].label}</div><div><b>Born wary of</b> ${ACTION_NAMES[inst[inst.length - 1]].toLowerCase()} and ${FOODS[foods[foods.length - 1]].label}</div></div>`;
   if (v.isGrown()) h += '<div class="row-btns"><button data-post title="Pack this villager\'s genome into a code a friend can paste into their own game of Merryfolk">Post a copy to a friend</button></div>';
@@ -336,9 +336,18 @@ function wishesHtml(v) {
   return h;
 }
 
+// Only habits that mean something for this villager: rift pastimes once they've
+// taken up rift ways, hobbies they actually have.
+const RIFT_HABITS = new Set(['gadget', 'jack_in']);
+function habitShown(v, a) {
+  if (RIFT_HABITS.has(a)) return v.tech >= 0.3;
+  const A = ACTIONS[a];
+  return !A || !A.hobby || hasHobby(v, A.hobby);
+}
+
 function panelMind(v) {
   let h = wishesHtml(v) + '<h3>Habits (learned)</h3>';
-  const keys = HABIT_KEYS.filter((a) => v.canDo(ACTIONS[a]) && (!ACTIONS[a].hobby || hasHobby(v, ACTIONS[a].hobby)));
+  const keys = HABIT_KEYS.filter((a) => v.canDo(ACTIONS[a]) && habitShown(v, a));
   const ranked = keys.map((a) => [a, v.weights[a] * (v.genes.taste[a] || 1)]).sort((a, b) => b[1] - a[1]);
   h += '<div class="habits">';
   for (const [a, w] of ranked.slice(0, 4)) h += `<div class="habit"><span>${ACTION_NAMES[a]}</span>${bar(w / 2.4, 'good')}</div>`;
@@ -403,6 +412,7 @@ function panelKin(v) {
   if (k.gks.length) h += `<div>Grandchildren: ${k.gks.map(link).join(', ')}</div>`;
   if (!sp && !k.parents.length && !k.kids.length && !v.sweetheart) h += '<div>No family in the village (yet).</div>';
   h += '<div class="row-btns"><button data-tree>Family tree</button></div></div>';
+  if (v.heirlooms && v.heirlooms.length) h += `<h3>Keepsakes</h3><div class="likes">${v.heirlooms.map((k) => `<div>${escapeHtml(k.name)} <span class="sub">(handed down on day ${k.day})</span></div>`).join('')}</div>`;
   const others = Object.entries(v.rel).map(([id, f]) => [Game.villagers.find((o) => o.id === +id), f]).filter(([o]) => o && o.id !== v.spouse && !v.parents.includes(o.id) && !o.parents.includes(v.id));
   const friends = others.filter(([, f]) => f > 0.3).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const rivals = others.filter(([, f]) => f < -0.15).sort((a, b) => a[1] - b[1]).slice(0, 3);
@@ -615,7 +625,7 @@ function villageRemembered() {
   if (Game.away.length) h += `<h3>Away adventuring (coming back)</h3><div class="likes">${Game.away.map((a) => `<div>${escapeHtml(a.data.first)} ${escapeHtml(a.data.surname)}: due home about day ${a.back}</div>`).join('')}</div>`;
   h += '<h3>Departed</h3><div class="arch">';
   if (!arch.length) h += '<div class="sub">Nobody yet. The old folk are still hale.</div>';
-  for (const a of arch) h += `<div class="arch-row"><canvas data-arch="${a.id}" width="24" height="32"></canvas><div><b>${escapeHtml(a.first)} ${escapeHtml(a.surname)}</b><small>${a.years} years${a.job ? ' · ' + JOBS[a.job].label : ''} · ${a.reason === 'home' ? 'went home through a rift' : 'left'} on day ${a.left}</small></div></div>`;
+  for (const a of arch) h += `<div class="arch-row"><canvas data-arch="${a.id}" width="24" height="32"></canvas><div><b>${escapeHtml(a.first)} ${escapeHtml(a.surname)}</b><small>${a.years} years${a.job ? ' · ' + JOBS[a.job].label : ''} · ${a.reason === 'home' ? 'went home through a rift' : 'left'} on day ${a.left}${memorialFor(a.id) ? ' · a stone on the Remembrance Green' : ''}</small></div></div>`;
   return h + '</div>';
 }
 

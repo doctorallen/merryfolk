@@ -484,6 +484,7 @@ function* buildWorldSteps(cfg) {
   // --- Pens, a second orchard and allotments, then spare land for the village to grow into ---
   planFarmland();
   planLots(seed);
+  planMemorialGreen();
   // level the built-on ground, and work the land out again over it
   gatherPads();
   computeLand(seed);

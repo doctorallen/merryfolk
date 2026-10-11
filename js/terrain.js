@@ -148,6 +148,7 @@ function gatherPads() {
     if (l.x0 != null) rect(l.x0, l.y0, l.x1, l.y1 + (l.kind === 'building' ? 1 : 0));
     else if (l.tx != null) rect(l.tx - 1, l.ty - 1, l.tx + 1, l.ty + 1);
   }
+  if (World.memorial) { const m = World.memorial; rect(m.x0, m.y0, m.x1, m.y1); }
   // each hobbit-hole's garden strip in front of the door
   for (const h of World.homes) { const [sx, sy] = h.stepTile; rect(sx - 4, sy, sx + 4, sy + 1); }
   // each pad's height: the average of the ground it covers, set in the middle of a terrace
