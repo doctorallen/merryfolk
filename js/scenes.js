@@ -97,14 +97,15 @@ function playScene(S, a, b) {
   const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
   a.facing = b.x >= a.x ? 'right' : 'left'; b.facing = a.x > b.x ? 'right' : 'left';
   for (const v of [a, b]) { v.task = { a: ACTIONS.scene, phase: 'do', target: { x: v.x, y: v.y }, t: 40, data: {}, before: { ...v.drives } }; v.pose = 'stand'; }
-  const lines = S.lines(a, b);
+  // what's said, and what the Chronicle will say, as things stand now: it plays out over a few real seconds
+  const lines = S.lines(a, b), told = S.chron(a, b);
   FX.hearts(mx, my - 26);
   lines.forEach(([who, text], i) => setTimeout(() => { if (Game.villagers.includes(who) && !who.inside) { const to = who === a ? b : a; who.say(text, 3.2, { to }); } }, 400 + i * 2600));
   setTimeout(() => {
     Game.sceneOn = false;
     try { S.after(a, b); } catch (e) { /* the moment passed */ }
     for (const v of [a, b]) if (v.task && v.task.a.id === 'scene') v.task.t = 1;
-    chronicle(S.chron(a, b), S.id === 'rivals' ? 'quarrel' : S.id === 'homesick' ? 'rift' : 'love');
+    chronicle(told, S.id === 'rivals' ? 'quarrel' : S.id === 'homesick' ? 'rift' : 'love');
     const e = Game.log[0]; if (e) { e.at = [Math.round(mx), Math.round(my)]; renderLog(); }
   }, 400 + lines.length * 2600 + 300);
 }
