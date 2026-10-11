@@ -619,3 +619,15 @@ body.dev-on #chronicle { visibility: hidden; }
 .bb-reqs { display: flex; flex-wrap: wrap; gap: 4px; }
 .bb-reqs button { font-size: 12px; padding: 1px 6px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bb-reqs #bb-appeal.on { background: var(--moss); color: var(--parch); }
+
+/* ---------- the moot ---------- */
+#moot { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(20, 28, 14, 0.6); padding: 16px; z-index: 12; overflow-y: auto; }
+#moot[hidden] { display: none; }
+.moot-card { width: min(620px, 100%); }
+.moot-card h2 { font-family: var(--font-ui); color: var(--moss); margin: 0 0 8px; font-size: 26px; text-wrap: balance; }
+.moot-text { font-size: 16px; line-height: 1.5; margin: 0 0 12px; }
+.moot-opts { display: grid; gap: 8px; }
+.moot-opt { display: grid; gap: 2px; text-align: left; padding: 8px 12px; background: var(--parch-2); border: 2px solid var(--ink); border-radius: 4px; cursor: pointer; font: inherit; color: var(--ink); }
+.moot-opt b { font-family: var(--font-ui); font-size: 17px; color: var(--moss); }
+.moot-opt span { font-size: 14px; line-height: 1.35; }
+.moot-opt:hover { background: #fff6dc; }

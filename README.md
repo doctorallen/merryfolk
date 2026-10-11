@@ -97,6 +97,34 @@ The **☺ contentment** pill in the top bar opens the Steward's Desk, the first 
 - **The working week.** *Easy* adds Sunday off (less done, happier folk); *Busy* cancels Highday (more done, wearier folk).
 - **Workforce** (as in Age of Empires). Every trade shows hands now against hands wanted. Use − and + to set how many each trade should have: folk are moved over from trades that can spare them (the best-suited first) or let go to find other work. *auto* hands a trade back to the village.
 
+### The Lamplighter's Children: the story of the rifts
+
+Why do the rifts open? The rift-folk aren't invaders. Centuries ago a Thistledown tinker, Mungo Fernsby, walked into green lightning carrying a copper kettle. In a cold, dark world he built a kettle-dynamo and a tending-engine called the Lamplighter, and the city of Neverdark grew around it. Now Neverdark's power is failing, and the fading Lamplighter is sending its children back to "the place where the dark is soft".
+
+The village pieces this together from **clues**: the kettle sigil on every rift-born's sleeve, a city lullaby the old folk know the words to, a coin stamped with a round door, whispers on the Relay, golden edges on the rifts when the dynamos run strong, a name in an old ledger, and at last the Lamplighter's own voice. Each turns up in the Chronicle and is collected on the **Rifts** tab of the ledger.
+
+The story moves through stages as the village changes:
+1. Strange weather
+2. Folk out of the sky
+3. The first kettle
+4. Lights in the hollow
+5. The Relay sings
+6. Mungo's name
+7. Two hearths
+8. The Long Dim
+
+Each stage has its Chronicle beat and changes something: wariness of the rift-folk eases a great deal once Mungo's name is found, and at Two Hearths there's a feast. Twice the Steward must decide, at a **Moot**:
+- **When the third rift-born arrives homeless.** *Open doors* means empty holes go straight to them, while some old folk grumble. *Sponsor a stranger* means a willing household takes each one in, with supper invitations. *Wait and see* leaves it to folk.
+- **At the Long Dim.** *Hearthlink* lends the village's river and wind power through the Relay: the rifts become steady golden doors, letters come from Neverdark, and the rift-folk can come and go. It needs the Dynamo and Turbine. *Soft close* sings the rifts shut for good, and the rift-folk stay as Thistledowners. Or you can *let it drift*.
+
+Every rift-born has their own story:
+- a memory of home (rain on neon, the night market)
+- a hidden skill the village comes to value (courier, grid-tech, street medic, noodle cook, teacher, rooftop grower), which steers them to the matching trade
+- someone they lost, who sometimes steps out of a later rift for a tearful reunion
+- a turning point, when a wary neighbour becomes a true friend in a scene of its own (a letter carried through the rain, a mill-wheel fixed after forty years)
+
+Hill-folk invite rift-folk round to **supper** ("Is tea a stimulant or a ritual?" "Yes."). The two peoples swap **customs**: mushroom ramen, the Low Battery Blues, neon bunting, saying "full signal" for happy, second breakfast, the Willow Lamp song, the maypole. Customs spread between friends, and once eight folk know one it becomes a Thistledown tradition.
+
 ### Charters, renown and the eras of Thistledown
 
 The **coin pill** (pennies and the village's rank) in the top bar opens the **Charter** tab.
@@ -203,6 +231,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/worldgen_ui.js` | The *Shape your valley* setup screen and the stage-by-stage generation map |
 | `js/steward.js` | The Steward's Desk: rations, ale and working-week policies, contentment and migration, workforce allocation |
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
+| `js/riftstory.js` | The rift-folk storyline: stages, clues, Moot decisions, personal arcs and reunions, suppers, shared customs |
 | `js/appeal.js` | Appeal (how lovely each spot is, and how it affects folk at home) and requests pinned to the notice board |
 | `js/market.js` | Market-day caravans: traders, prices, selling and buying, dwarf masons, the wagon in the square |
 | `js/buildmode.js` | Build mode: the tool palette, ghost previews, plans the villagers build, terraforming, ponds, new lots |
