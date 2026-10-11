@@ -48,9 +48,9 @@ function swayAmp(s) {
 }
 
 // ----- long grass and reeds -----
-// A tuft is drawn at double resolution in five leaning poses, per season.
+// A tuft is drawn pixel for pixel at world size, in five leaning poses, per season.
 const TUFT_CACHE = new Map();
-const TUFT_W = 18, TUFT_H = 26;
+const TUFT_W = 9, TUFT_H = 13;
 function tuftSprite(v, season, lean) {
   const key = v + ':' + season + ':' + lean;
   let c = TUFT_CACHE.get(key);
@@ -61,14 +61,14 @@ function tuftSprite(v, season, lean) {
   const reed = v >= 6;
   const winter = season === 'winter';
   const greens = {
-    spring: ['#3f7a2c', '#5c9a3a', '#86c24e'], summer: ['#2e5a20', '#467a2c', '#7aa83e'],
-    autumn: ['#7a6a2a', '#a8903a', '#d0b85a'], winter: ['#6a5a3a', '#8a7a52', '#b0a078'],
+    spring: ['#2e6424', '#4a8a30', '#7cbc48'], summer: ['#1f4a1c', '#346e26', '#68a03a'],
+    autumn: ['#6a5a22', '#988232', '#ccb056'], winter: ['#5a4a32', '#7a6a48', '#a89870'],
   }[season];
-  const blades = reed ? 5 : 6 + (v % 3);
+  const blades = reed ? 4 : 4 + (v % 2);
   for (let i = 0; i < blades; i++) {
-    const bx = 3 + Math.round(rng() * (TUFT_W - 7));
-    const h = Math.round((reed ? 16 : 7) + rng() * (reed ? 8 : 6 + (v % 2) * 4)) * (winter && !reed ? 0.6 : 1);
-    const bend = (rng() - 0.5) * 2 + lean * 1.6;
+    const bx = 1 + Math.round(rng() * (TUFT_W - 3));
+    const h = Math.round(((reed ? 8 : 4) + rng() * (reed ? 4 : 3 + (v % 2) * 2)) * (winter && !reed ? 0.6 : 1));
+    const bend = ((rng() - 0.5) * 2 + lean * 1.6) * 0.5;
     for (let j = 0; j < h; j++) {
       const f = j / h;
       const px = Math.round(bx + bend * f * f * (reed ? 1.4 : 1)), py = TUFT_H - 1 - j;
@@ -77,11 +77,10 @@ function tuftSprite(v, season, lean) {
     }
     const tipX = Math.round(bx + bend * (reed ? 1.4 : 1)), tipY = TUFT_H - h;
     // seed heads in summer, bulrush heads on the reeds, snow in winter
-    if (reed && i % 2 === 0) { ctx.fillStyle = winter ? '#6a4a2a' : '#7a4a22'; ctx.fillRect(tipX - 1, tipY + 1, 2, 4); ctx.fillStyle = '#a06a3a'; ctx.fillRect(tipX - 1, tipY + 1, 1, 1); }
-    else if (!reed && season === 'summer' && i % 3 === 0) { ctx.fillStyle = '#d8c890'; ctx.fillRect(tipX, tipY - 1, 1, 2); }
+    if (reed && i % 2 === 0) { ctx.fillStyle = winter ? '#6a4a2a' : '#7a4a22'; ctx.fillRect(tipX, tipY, 1, 2); ctx.fillStyle = '#a06a3a'; ctx.fillRect(tipX, tipY, 1, 1); }
+    else if (!reed && season === 'summer' && i % 3 === 0) { ctx.fillStyle = '#d8c890'; ctx.fillRect(tipX, tipY - 1, 1, 1); }
     else if (winter && i % 2 === 0) { ctx.fillStyle = '#f4f8ff'; ctx.fillRect(tipX, tipY, 1, 1); }
   }
-  c.hd = true;
   TUFT_CACHE.set(key, c);
   return c;
 }
@@ -89,7 +88,7 @@ function drawTuft(ctx, g) {
   const w = windAt(g.x, g.y) + Math.sin(tReal * 2.6 + g.ph) * 0.25 * Wind.s;
   const lean = clamp(Math.round(w * 1.6), -1, 2);
   const spr = tuftSprite(g.v, World.season, lean);
-  ctx.drawImage(spr, g.x - TUFT_W / RS / 2, g.y - TUFT_H / RS + 1, TUFT_W / RS, TUFT_H / RS);
+  ctx.drawImage(spr, Math.round(g.x - TUFT_W / 2), Math.round(g.y - TUFT_H + 1));
 }
 
 // ----- rocks -----
@@ -286,6 +285,8 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
     const edge = y <= 4 || x >= 116 || y >= H - 4;
     const w = {
       oak: soil === SOIL.LOAM ? 1 : soil === SOIL.CLAY ? 0.9 : soil === SOIL.ALLUVIUM ? 0.5 : 0.15,
+      beech: soil === SOIL.LOAM || soil === SOIL.CLAY ? 0.45 : 0.06,
+      copper: soil === SOIL.LOAM ? 0.04 : 0,
       birch: soil === SOIL.THIN ? 0.9 : 0.25 + (d < 5 ? 0.3 : 0),
       pine: (soil === SOIL.THIN && h > 0.5 ? 0.8 : 0.05) + (edge ? 0.5 : 0),
       fir: (h > 0.6 ? 0.5 : 0.04) + (edge ? 0.35 : 0),
@@ -297,7 +298,7 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
     for (const k in w) { r -= w[k]; if (r <= 0) return k; }
     return 'oak';
   };
-  const RADIUS = { oak: 2.1, birch: 1.4, pine: 1.6, fir: 1.4, poplar: 1.3, sapling: 1.0 };
+  const RADIUS = { oak: 2.1, beech: 2.2, copper: 2.2, birch: 1.4, pine: 1.6, fir: 1.4, poplar: 1.3, sapling: 1.0 };
   const placed = []; // [x, y, radius]
   const order = [];
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) order.push([x, y]);
@@ -308,10 +309,10 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
     if (tiles[tIdx(x, y)] !== T.GRASS || World.reserved[tIdx(x, y)] || World.block[tIdx(x, y)] || nearRoad(x, y, 1)) continue;
     const p = potential(x, y);
     if (p <= 0 || rng() > p * 2.2 * gen('woods')) continue;
-    const kind = kindFor(x, y), r = RADIUS[kind];
+    // a big tree keeps more ground round it to itself than a small one
+    const kind = kindFor(x, y), [s0, sn] = TREE_SEEDS[kind], tseed = s0 + Math.floor(rng() * sn);
+    const r = RADIUS[kind] * (0.55 + 0.45 * treeShape(tseed, kind).s);
     if (near(x, y, r) || onBank(x, y)) continue;
-    const [s0, sn] = TREE_SEEDS[kind];
-    const tseed = s0 + Math.floor(rng() * sn);
     addStatic(makeTree(tseed, kind), x * 16 + 8 + Math.round((rng() - 0.5) * 4), (y + 1) * 16 - 2, { gen: { type: 'tree', seed: tseed, kind } });
     blk(x, y); treeAt.push([x, y]); grid.set(x + ',' + y, [x, y, r]);
     const border = y <= 3 || y >= H - 3 || x <= 1 || x >= W - 2 || x >= 112;
@@ -396,7 +397,7 @@ function plantHedges(rng, { addStatic, blk }) {
       if (!free(x, y) || nextToPath(x, y) || i % 8 === 4 || i % 8 === 5) { flush(); n = 0; return; }
       if (n % 9 === 0 && rng() < 0.7) {
         flush();
-        const kind = rng() < 0.6 ? 'oak' : 'birch', [s0, sn] = TREE_SEEDS[kind], seed = s0 + Math.floor(rng() * sn);
+        const kind = rng() < 0.5 ? 'oak' : rng() < 0.6 ? 'birch' : 'beech', [s0, sn] = TREE_SEEDS[kind], seed = s0 + Math.floor(rng() * sn);
         addStatic(makeTree(seed, kind), x * 16 + 8, (y + 1) * 16 - 2, { gen: { type: 'tree', seed, kind } });
         (World.treeAt || []).push([x, y]); blk(x, y);
         return;

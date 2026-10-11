@@ -243,7 +243,7 @@ function applyPlanTile(p, i, quiet) {
     case 'clear': {
       for (const s of staticsOnTile(x, y).filter(clearable)) {
         World.statics.splice(World.statics.indexOf(s), 1);
-        if (!quiet && s.gen && s.gen.type === 'tree') Village.produce('wood', s.gen.kind === 'big' || s.gen.kind === 'oak' ? 3 : 2);
+        if (!quiet && s.gen && s.gen.type === 'tree') Village.produce('wood', ['big', 'oak', 'beech', 'copper'].includes(s.gen.kind) ? 3 : 2);
         if (s.gen && s.gen.type === 'hedge') { const n = s.gen.len || 1; for (let k = 0; k < n; k++) { const hx = s.gen.dir === 'v' ? x : x - Math.floor(n / 2) + k, hy = s.gen.dir === 'v' ? y - n + 1 + k : y; if (inMap(hx, hy)) World.block[tIdx(hx, hy)] = 0; } }
       }
       World.block[idx] = 0;

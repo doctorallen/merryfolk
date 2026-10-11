@@ -94,7 +94,8 @@ const FX = {
   draw(ctx, emissive = false) {
     const hp = (v) => Math.round(v * RS) / RS, H = 1 / RS;
     const R = (x, y, w, h) => ctx.fillRect(x, y, w * H, h * H); // a box measured in half-pixels
-    const round = (x, y, r, col) => { ctx.save(); ctx.scale(H, H); disc(ctx, Math.round(x * RS), Math.round(y * RS), Math.max(1, Math.round(r * RS)), col); ctx.restore(); };
+    // smoke and puffs are round blobs of whole world pixels, as chunky as the art
+    const round = (x, y, r, col) => disc(ctx, Math.round(x), Math.round(y), Math.max(1, Math.round(r)), col);
     for (const p of this.parts) {
       if (p.t < 0) continue;
       if ((p.k === 'spark' || p.k === 'rocket' || p.k === 'flash') !== emissive) continue;
@@ -219,9 +220,8 @@ const FX = {
   drawClouds(ctx, game) {
     const a = game.raining ? 0.1 : game.weather === 'cloudy' ? 0.08 : 0.04;
     for (const c of this.clouds) {
-      const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.r);
-      g.addColorStop(0, `rgba(20,30,40,${a})`); g.addColorStop(1, 'rgba(20,30,40,0)');
-      ctx.fillStyle = g; ctx.fillRect(c.x - c.r, c.y - c.r, c.r * 2, c.r * 2);
+      // a cloud's shadow, in three flattened steps
+      for (let k = 3; k >= 1; k--) ellipseFill(ctx, Math.round(c.x), Math.round(c.y), Math.round((c.r * k) / 3), Math.round((c.r * k * 0.7) / 3), `rgba(20,30,40,${a * 0.45})`);
     }
   },
 
@@ -231,7 +231,7 @@ const FX = {
       const on = Math.sin(f.t * 3) > 0.2;
       if (!on) continue;
       if (f.x < cam.x || f.x > cam.x + cam.w || f.y < cam.y || f.y > cam.y + cam.h) continue;
-      ctx.fillStyle = '#e8ff8a'; ctx.fillRect(Math.round(f.x * RS) / RS, Math.round(f.y * RS) / RS, 1 / RS, 1 / RS);
+      ctx.fillStyle = '#e8ff8a'; ctx.fillRect(Math.round(f.x), Math.round(f.y), 1, 1);
       lights.push({ x: f.x, y: f.y, r: 9, a: 0.5 });
     }
   },
@@ -298,7 +298,9 @@ const FX = {
 };
 
 // ---------------------------------------------------------------------------
-// Lighting: darkness overlay with soft holes punched by light sources.
+// Lighting: a darkness overlay with pools of light cut out of it. The pools
+// are stepped, four flattened rings each, and drawn pixel for pixel, so the
+// glow stays as crisp as the art.
 // ---------------------------------------------------------------------------
 const Light = {
   c: null, x: null,
@@ -313,33 +315,22 @@ const Light = {
     x.fillStyle = `rgba(${tint},${darkness})`;
     x.fillRect(0, 0, cam.w, cam.h);
     x.globalCompositeOperation = 'destination-out';
+    const seen = (l, sx, sy) => Number.isFinite(sx) && Number.isFinite(sy) && l.r > 0 && sx > -l.r && sy > -l.r && sx < cam.w + l.r && sy < cam.h + l.r;
     for (const l of lights) {
-      const sx = l.x - cam.x, sy = l.y - cam.y;
-      if (!Number.isFinite(sx) || !Number.isFinite(sy) || !(l.r > 0)) continue;
-      if (sx < -l.r || sy < -l.r || sx > cam.w + l.r || sy > cam.h + l.r) continue;
-      const g = x.createRadialGradient(sx, sy, 0, sx, sy, l.r);
-      g.addColorStop(0, `rgba(0,0,0,${l.a})`);
-      g.addColorStop(0.45, `rgba(0,0,0,${l.a * 0.6})`);
-      g.addColorStop(1, 'rgba(0,0,0,0)');
-      x.fillStyle = g;
-      x.fillRect(sx - l.r, sy - l.r, l.r * 2, l.r * 2);
+      const sx = Math.round(l.x - cam.x), sy = Math.round(l.y - cam.y);
+      if (!seen(l, sx, sy)) continue;
+      const step = 1 - Math.pow(1 - Math.min(0.98, l.a), 0.25);
+      for (let k = 4; k >= 1; k--) ellipseFill(x, sx, sy, Math.round((l.r * k) / 4), Math.max(1, Math.round((l.r * k * 0.62) / 4)), `rgba(0,0,0,${step})`);
     }
-    // the shade is soft anyway, so let it scale up smoothly
-    ctx.imageSmoothingEnabled = true; ctx.drawImage(this.c, cam.x, cam.y); ctx.imageSmoothingEnabled = false;
-    // warm additive glow
+    ctx.imageSmoothingEnabled = false; ctx.drawImage(this.c, cam.x, cam.y);
+    // a warm glow added round each lamp and window, in steps too
     ctx.globalCompositeOperation = 'lighter';
     for (const l of lights) {
       if (!l.warm && !l.col) continue;
-      const sx = l.x, sy = l.y;
-      if (!Number.isFinite(sx) || !Number.isFinite(sy) || !(l.r > 0)) continue;
-      if (sx < cam.x - l.r || sy < cam.y - l.r || sx > cam.x + cam.w + l.r || sy > cam.y + cam.h + l.r) continue;
-      const r = l.r * 0.7;
-      const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, r);
-      const [cr, cg, cb] = hexToRgb(l.col || '#ffb050');
-      g.addColorStop(0, `rgba(${cr},${cg},${cb},${0.22 * darkness * (l.a || 1)})`);
-      g.addColorStop(1, `rgba(${cr},${cg},${cb},0)`);
-      ctx.fillStyle = g;
-      ctx.fillRect(sx - r, sy - r, r * 2, r * 2);
+      const sx = Math.round(l.x), sy = Math.round(l.y);
+      if (!seen(l, sx - cam.x, sy - cam.y)) continue;
+      const [cr, cg, cb] = hexToRgb(l.col || '#ffaa50');
+      for (let k = 3; k >= 1; k--) ellipseFill(ctx, sx, sy, Math.round((l.r * k) / 5), Math.max(1, Math.round((l.r * k * 0.62) / 5)), `rgba(${cr},${cg},${cb},${0.09 * darkness * (l.a || 1)})`);
     }
     ctx.globalCompositeOperation = 'source-over';
   },

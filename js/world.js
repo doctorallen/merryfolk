@@ -789,11 +789,13 @@ function completeHome(h) {
 // painting a season is then a quick colour pass, done a slice at a time so a
 // season change never stalls the game.
 // ---------------------------------------------------------------------------
+// Deep, saturated greens; earthy lanes with a dark rim; water that runs from
+// near-navy in the middle through to pale foam at the banks.
 const GROUND_PAL = {
-  spring: { G1: '#5fa040', G2: '#86c056', L2: '#9ad466', P1: '#b38e58', P2: '#d0ae78', S1: '#6a4630', S2: '#7a5638', W1: '#36719f', W2: '#4382b6', WS: '#5d9fcf', bank: '#8a8250', fleck: 0.012 },
-  summer: { G1: '#5c973a', G2: '#7bb04c', L2: '#8cc25a', P1: '#b38e58', P2: '#d0ae78', S1: '#6a4630', S2: '#7a5638', W1: '#36719f', W2: '#4382b6', WS: '#5d9fcf', bank: '#8a8250', fleck: 0.004 },
-  autumn: { G1: '#6e8a36', G2: '#94a048', L2: '#a8b058', P1: '#a8845a', P2: '#c8a678', S1: '#64422c', S2: '#744f34', W1: '#30658e', W2: '#3c74a2', WS: '#5690bc', bank: '#8a7848', fleck: 0.02 },
-  winter: { G1: '#d6e2ea', G2: '#f4f8fc', L2: '#ffffff', P1: '#a89a86', P2: '#c8bcaa', S1: '#c4ced8', S2: '#dce4ec', W1: '#2b587e', W2: '#36678f', WS: '#8ab4d4', bank: '#b0b8bc', fleck: 0 },
+  spring: { G1: '#3e7a2e', G2: '#78b84a', L2: '#8cc85a', P1: '#9a7246', P2: '#c89e66', PR: '#5e3f25', S1: '#5a3a20', S2: '#7a5430', W1: '#1c4870', W2: '#3a80b4', WS: '#5aa2d0', foam: '#bfe4f4', bank: '#56602c', fleck: 0.005 },
+  summer: { G1: '#346e2a', G2: '#68ad45', L2: '#7cbc52', P1: '#9a7246', P2: '#c89e66', PR: '#5e3f25', S1: '#5a3a20', S2: '#7a5430', W1: '#1c4870', W2: '#3a80b4', WS: '#5aa2d0', foam: '#bfe4f4', bank: '#52582a', fleck: 0.002 },
+  autumn: { G1: '#5a6a26', G2: '#90a040', L2: '#a2ae4e', P1: '#946e48', P2: '#c09a68', PR: '#5a3c24', S1: '#56381e', S2: '#74502e', W1: '#1e4466', W2: '#386e9c', WS: '#5690bc', foam: '#c4dcea', bank: '#6a5a2c', fleck: 0.008 },
+  winter: { G1: '#c8d6e2', G2: '#f0f6fc', L2: '#ffffff', P1: '#a0907c', P2: '#c4b8a6', PR: '#7a6e60', S1: '#bcc8d4', S2: '#dce4ec', W1: '#1e4466', W2: '#2e5e88', WS: '#7aa6c8', foam: '#e8f4fc', bank: '#a8b2ba', fleck: 0 },
 };
 
 function computePixelTypes(seed, rect) {
@@ -938,129 +940,145 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
   const near = (px, py, t, r) => at(px + r, py) === t || at(px - r, py) === t || at(px, py + r) === t || at(px, py - r) === t;
   const notNear = (px, py, t, r) => at(px + r, py) !== t || at(px - r, py) !== t || at(px, py + r) !== t || at(px, py - r) !== t;
 
-  // the broad colour of one world pixel of a kind of ground
+  // a middling noise for the speckle of the grass and the lanes
+  const nM = makeNoise(World.seed * 7 + 3);
+  // how deep the water is at a pixel: 0 at the bank to 1 well out in the stream
+  const DEPTH_R = [2, 4, 7, 11, 16];
+  const depthAt = (px, py) => { let k = 0; for (const r of DEPTH_R) { if (notNear(px, py, T.WATER, r)) break; k++; } return k / DEPTH_R.length; };
+
+  // the colour of one world pixel of a kind of ground
   const colorAt = (t, px, py) => {
     const n = noise[(py >> 1) * JW + (px >> 1)];
+    const h = hash2(px, py);
     let col;
     if (t === T.GRASS || t === T.LAWN) {
-      col = lerpC(C.G1, C.G2, n);
+      // broad patches, a middling mottle and a fine speckle, dithered down later
+      col = lerpC(C.G1, C.G2, clamp(n * 0.6 + nM(px * 0.14, py * 0.14) * 0.32 + h * 0.2 - 0.12, 0, 1));
       if (t === T.LAWN && Math.floor((px + py * 0.5) / 10) % 2) col = lerpC(col, C.L2, 0.25);
-      if (near(px, py, T.WATER, 2)) return lerpC(col, C.bank, 0.65);
-      // relief: soft hill-shading lit from the north-west, then terrace banks
-      const cx = px >> 1, cy = py >> 1, j = cy * JW + cx;
+      if (near(px, py, T.WATER, 1)) return lerpC(col, C.bank, 0.85);
+      if (near(px, py, T.WATER, 3)) return lerpC(col, C.bank, 0.45);
+      // relief: hill-shading lit from the north-west, then terrace banks
+      const cx = px >> 1, cy = py >> 1;
       const hx0 = height[cy * JW + Math.max(0, cx - 3)], hx1 = height[cy * JW + Math.min(JW - 1, cx + 3)];
       const hy0 = height[Math.max(0, cy - 3) * JW + cx], hy1 = height[Math.min(JH - 1, cy + 3) * JW + cx];
       const lit = clamp(((hx0 - hx1) * 0.7 + (hy0 - hy1)) * 9, -0.22, 0.22);
-      col = lit > 0 ? lerpC(col, [255, 255, 235], lit * 0.6) : lerpC(col, [20, 40, 30], -lit);
+      col = lit > 0 ? lerpC(col, [255, 255, 200], lit * 0.5) : lerpC(col, [10, 30, 20], -lit);
       const pj = py * W + px, lv = level1[pj];
-      col = lerpC(col, winter ? [255, 255, 255] : [214, 230, 140], (lv - 1) * 0.05);
+      col = lerpC(col, winter ? [255, 255, 255] : [190, 220, 110], (lv - 1) * 0.05);
       const up = (k) => (py - k * 2 >= 0 ? level1[pj - k * 2 * W] : lv);
       const dn1 = py < H - 2 ? level1[pj + 2 * W] : lv;
       let face = 0;
       for (let k = 1; k <= 8; k++) if (up(k) > lv) { face = k; break; }
       if (face && face <= 5) {
         const tt = face / 5;
-        col = lerpC(col, bankCol, 0.75 - tt * 0.25);
-        if (!winter && hash2(px >> 1, py >> 2) < 0.22) col = lerpC(col, [104, 80, 50], 0.55);
-        if (face === 1 && hash2(px >> 1, 9) < 0.6) col = lerpC(col, lipCol, 0.45);
-      } else if (face) col = lerpC(col, [20, 40, 24], 0.24 - (face - 6) * 0.08);
-      else if (dn1 < lv) col = lerpC(col, lipCol, 0.4);
+        col = lerpC(col, bankCol, 0.8 - tt * 0.25);
+        if (!winter && hash2(px, py >> 1) < 0.22) col = lerpC(col, [90, 66, 40], 0.6);
+        if (face === 1 && hash2(px, 9) < 0.6) col = lerpC(col, lipCol, 0.5);
+      } else if (face) col = lerpC(col, [16, 34, 20], 0.28 - (face - 6) * 0.08);
+      else if (dn1 < lv) col = lerpC(col, lipCol, 0.45);
       col.bank = face && face <= 5;
       return col;
     }
     if (t === T.PATH) {
-      col = lerpC(C.P1, C.P2, n);
-      if (notNear(px, py, T.PATH, 2)) col = lerpC(col, winter ? [220, 228, 236] : [138, 138, 72], 0.45);
+      // a dark ragged rim where the lane meets the grass, here and there grown over
+      if (notNear(px, py, T.PATH, 1) && !near(px, py, T.BRIDGE, 1)) return h < 0.3 && !winter ? lerpC(C.G1, C.G2, 0.4) : C.PR;
+      col = lerpC(C.P1, C.P2, clamp(nM(px * 0.1 + 50, py * 0.1) * 0.65 + h * 0.4 - 0.05, 0, 1));
+      if (notNear(px, py, T.PATH, 3)) col = lerpC(col, C.P1, 0.5);
       return col;
     }
     if (t === T.SOIL || t === T.WEED || t === T.FIELD) {
       col = lerpC(C.S1, C.S2, n);
-      if (t === T.WEED) col = lerpC(col, [130, 90, 60], winter ? 0.05 : 0.2);
-      if (t === T.FIELD && !winter) col = lerpC(col, [150, 120, 70], 0.15);
+      if (t === T.WEED) col = lerpC(col, [110, 80, 50], winter ? 0.05 : 0.25);
+      if (t === T.FIELD && !winter) col = lerpC(col, [140, 110, 64], 0.15);
       return col;
     }
     if (t === T.WATER) {
-      col = lerpC(C.W1, C.W2, n);
-      if (notNear(px, py, T.WATER, 3)) col = lerpC(col, C.WS, 0.7);
-      return col;
+      // a pale line of foam at the bank, then shallows, then the deep middle
+      if (notNear(px, py, T.WATER, 1)) return C.foam;
+      const dp = depthAt(px, py);
+      return lerpC(C.WS, C.W1, clamp(dp * 0.95 + (n - 0.5) * 0.3, 0, 1));
     }
-    if (t === T.COBBLE) return [149, 143, 132];
+    if (t === T.COBBLE) return [142, 132, 118];
     return [255, 0, 255];
   };
 
-  // the fine detail of one half-pixel
-  const detail = (t, col, qx, qy) => {
-    const h = hash2(qx, qy);
+  // the fine detail of one world pixel
+  const STONE_TINT = [[1, 1, 1], [1.06, 1.0, 0.92], [0.94, 0.97, 1.02], [1.08, 0.98, 0.9], [0.98, 1.02, 0.96]];
+  const detail = (t, col, px, py) => {
+    const h = hash2(px * 3 + 1, py * 5 + 2);
     if (t === T.GRASS || t === T.LAWN) {
       if (col.bank) {
-        if (!winter && hash2(qx, qy >> 1) > 0.93) return lerpC(col, [150, 140, 120], 0.6);
-        return h < 0.08 ? lerpC(col, [60, 48, 30], 0.25) : col;
+        if (!winter && hash2(px, py >> 1) > 0.93) return lerpC(col, [150, 140, 120], 0.6);
+        return h < 0.08 ? lerpC(col, [60, 48, 30], 0.3) : col;
       }
       if (winter) {
         if (h < 0.04) return lerpC(col, [170, 190, 210], 0.4);
-        if (h > 0.998 && hash2(qx >> 3, qy >> 3) < 0.4) return [120, 150, 110];
+        if (h > 0.996 && hash2(px >> 3, py >> 3) < 0.4) return [120, 150, 110];
         return col;
       }
-      // blades: a darker stroke with a lighter tip above it
-      if (hash2(qx, qy >> 1) > 0.975) return lerpC(col, [44, 90, 34], (qy & 1) ? 0.42 : 0.22);
-      if (h < 0.045) return lerpC(col, [40, 80, 30], 0.35);
-      if (h > 0.97) return lerpC(col, [196, 232, 140], 0.38);
-      if (((qx * 7 + qy * 3) % 13 === 0) && hash2(qx >> 2, qy >> 2) < 0.4) return lerpC(col, [50, 100, 40], 0.3);
       if (h > 1 - pal.fleck * 0.6) return season === 'autumn' ? (h > 1 - pal.fleck * 0.3 ? [200, 90, 40] : [220, 170, 60]) : (h > 1 - pal.fleck * 0.3 ? [255, 255, 255] : [250, 220, 90]);
       return col;
     }
     if (t === T.PATH) {
-      // snow lies in drifts along the paths, soft-edged
-      if (winter) { const sn = noise[(qy >> 2) * JW + (qx >> 2)] + hash2(qx >> 1, qy >> 1) * 0.12 - Math.sin(qx * 0.07 + qy * 0.05) * 0.06; if (sn > 0.52) return lerpC(col, [235, 240, 246], sn > 0.56 ? 0.75 : 0.45); }
-      if (h < 0.03) return winter ? [150, 140, 125] : [151, 118, 74];
-      if (h > 0.985) return winter ? [240, 244, 250] : [232, 210, 160];
-      if (h > 0.96 && hash2(qx + 1, qy) > 0.5) return lerpC(col, [120, 96, 64], 0.3);
+      // snow lies in drifts along the paths
+      if (winter) { const sn = noise[(py >> 1) * JW + (px >> 1)] + hash2(px, py) * 0.12 - Math.sin(px * 0.14 + py * 0.1) * 0.06; if (sn > 0.52) return lerpC(col, [235, 240, 246], sn > 0.56 ? 0.8 : 0.5); }
+      if (h < 0.04) return lerpC(col, C.PR, 0.6);
+      if (h > 0.985) return winter ? [240, 244, 250] : [222, 196, 146];
       return col;
     }
     if (t === T.SOIL || t === T.WEED || t === T.FIELD) {
-      if (qy % 10 === 0) return lerpC(col, winter ? [150, 165, 180] : [60, 38, 24], 0.5);
-      if (qy % 10 === 1) return lerpC(col, winter ? [235, 240, 246] : [140, 100, 70], 0.2);
-      if (h < 0.05) return lerpC(col, winter ? [255, 255, 255] : [150, 110, 80], 0.4);
-      return col;
-    }
-    if (t === T.WATER) {
-      if (((qx + qy * 3) % 47 === 0) && h < 0.35) return lerpC(col, [200, 230, 250], 0.45);
-      return col;
-    }
-    if (t === T.COBBLE) {
-      const row = Math.floor(qy / 10), off = (row % 2) * 6, u = (qx + off) % 12, v = qy % 10;
-      if (v === 0 || u === 0) return winter ? [200, 205, 212] : [106, 101, 91];
-      const cxx = Math.floor((qx + off) / 12);
-      if (winter && hash2(cxx, row * 3) < 0.3) return v === 1 ? [255, 255, 255] : [236, 240, 246];
-      let c = lerpC([149, 143, 132], [180, 174, 159], hash2(cxx, row));
-      if (v === 1 || u === 1) c = lerpC(c, [230, 226, 214], 0.25);
-      else if (v === 9 || u === 11) c = lerpC(c, [80, 76, 68], 0.22);
+      // furrows: a lit ridge, its slope, and the dark trough
+      const r = py % 8;
+      const k = r < 2 ? 0.28 : r < 5 ? 0.08 : r < 6 ? -0.25 : -0.45;
+      let c = k > 0 ? lerpC(col, winter ? [255, 255, 255] : [200, 160, 110], k) : lerpC(col, winter ? [150, 165, 180] : [30, 18, 10], -k);
+      if (h < 0.06) c = lerpC(c, [30, 18, 10], 0.3);
       return c;
+    }
+    if (t === T.WATER) return col;
+    if (t === T.COBBLE) {
+      // laid stones of varied colour, mortar dark, lit on their top-left edges, moss in the gaps
+      if (notNear(px, py, T.COBBLE, 1)) return winter ? [170, 176, 184] : [62, 56, 50];
+      const row = Math.floor(py / 6), off = (row % 2) * 4, lx = (px + off) % 8, ly = py % 6, cid = Math.floor((px + off) / 8);
+      if (lx === 0 || ly === 0) return !winter && hash2(px, py) > 0.8 && nM(px * 0.07, py * 0.07) > 0.6 ? [70, 110, 52] : winter ? [200, 205, 212] : [62, 56, 50];
+      if (winter && hash2(cid, row * 3) < 0.35) return ly === 1 ? [255, 255, 255] : [236, 240, 246];
+      let c = lx === 1 || ly === 1 ? [202, 192, 170] : lx === 7 || ly === 5 ? [110, 102, 92] : [172, 162, 144];
+      if (hash2(cid, row * 7 + 3) > 0.55 && lx > 1 && ly > 1 && lx < 7 && ly < 5) c = [142, 132, 118];
+      const tint = STONE_TINT[Math.floor(hash2(cid, row) * 5)], m = 0.9 + hash2(cid * 3, row) * 0.16;
+      return [c[0] * tint[0] * m, c[1] * tint[1] * m, c[2] * tint[2] * m];
     }
     return col;
   };
 
+  // every world pixel is one colour, painted as a block of GS × GS
   const SLICE = 32, RW = R0.x1 - R0.x0, QW = RW * GS;
   for (let y0 = R0.y0; y0 < R0.y1; y0 += SLICE) {
     const rows = Math.min(SLICE, R0.y1 - y0);
     const img = ctx.createImageData(QW, rows * GS);
     const d = img.data;
+    const put = (px, py, col) => {
+      if (px < R0.x0 || px >= R0.x1 || py < y0 || py >= y0 + rows) return;
+      for (let sy = 0; sy < GS; sy++) for (let sx = 0; sx < GS; sx++) {
+        const i = (((py - y0) * GS + sy) * QW + (px - R0.x0) * GS + sx) * 4;
+        d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2]; d[i + 3] = 255;
+      }
+    };
+    const plain = new Uint8Array(RW * rows); // flat open grass, where tufts can grow
     for (let r = 0; r < rows; r++) {
       const py = y0 + r;
       for (let px = R0.x0; px < R0.x1; px++) {
         const t = type[py * W + px];
         const base = colorAt(t, px, py);
-        let altT = -1, altCol = null;
-        for (let sy = 0; sy < GS; sy++) for (let sx = 0; sx < GS; sx++) {
-          const qx = px * GS + sx, qy = py * GS + sy;
-          const t2 = type2[qy * W2 + qx];
-          let col = base;
-          if (t2 !== t) { if (t2 !== altT) { altT = t2; altCol = colorAt(t2, px, py); } col = altCol; }
-          col = detail(t2, col, qx, qy);
-          const i = ((r * GS + sy) * QW + (px - R0.x0) * GS + sx) * 4;
-          d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2]; d[i + 3] = 255;
-        }
+        if ((t === T.GRASS || t === T.LAWN) && !base.bank && !near(px, py, T.WATER, 3)) plain[r * RW + px - R0.x0] = 1;
+        put(px, py, detail(t, base, px, py));
       }
+    }
+    // tufts of grass: a little dark chevron, or a pair of light tips
+    if (!winter) for (let cy = Math.floor(y0 / 5) * 5; cy < y0 + rows; cy += 5) for (let cx = Math.floor(R0.x0 / 5) * 5; cx < R0.x1; cx += 5) {
+      const hh = hash2(cx * 7 + 11, cy * 13 + 5), x = cx + Math.floor(hash2(cx, cy * 3) * 4), y = cy + 1 + Math.floor(hash2(cx * 5, cy) * 3);
+      if (x < R0.x0 + 1 || x >= R0.x1 - 3 || y < y0 || y >= y0 + rows - 1 || !plain[(y - y0) * RW + x - R0.x0]) continue;
+      const i = ((y - y0) * GS * QW + (x - R0.x0) * GS) * 4, base = [d[i], d[i + 1], d[i + 2]];
+      if (hh < 0.26) { const dk = lerpC(base, [16, 40, 14], 0.42); put(x, y + 1, dk); put(x + 1, y, dk); put(x + 2, y + 1, dk); }
+      else if (hh < 0.44) { const lt = lerpC(base, season === 'autumn' ? [230, 210, 120] : [200, 240, 140], 0.45); put(x, y, lt); put(x + 1, y - 1, lt); }
     }
     ctx.putImageData(img, (R0.x0 - org.x) * GS, (y0 - org.y) * GS);
     yield;
@@ -1098,7 +1116,25 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
       ctx.drawImage(hd(img), (f.x - 9 - org.x) * GS, (f.y - img.height + 2 - org.y) * GS);
     }
   }
+  yield;
+  // Last, the whole patch is made into pixel art: each world pixel becomes
+  // one colour (so the hills, bridges and flowers are as chunky as the rest),
+  // and smooth blends are dithered down to a few tones with a 4x4 Bayer pattern.
+  for (let y0 = R0.y0; y0 < R0.y1; y0 += 64) {
+    const rows = Math.min(64, R0.y1 - y0), RW = R0.x1 - R0.x0, QW = RW * GS;
+    const img = ctx.getImageData((R0.x0 - org.x) * GS, (y0 - org.y) * GS, QW, rows * GS), d = img.data;
+    for (let r = 0; r < rows; r++) for (let c = 0; c < RW; c++) {
+      let R = 0, G = 0, B = 0;
+      for (let sy = 0; sy < GS; sy++) for (let sx = 0; sx < GS; sx++) { const i = ((r * GS + sy) * QW + c * GS + sx) * 4; R += d[i]; G += d[i + 1]; B += d[i + 2]; }
+      const k = GS * GS, b = BAYER4[((y0 + r) & 3) * 4 + ((R0.x0 + c) & 3)];
+      R = Math.min(255, Math.floor(R / k / DITHER_STEP + b) * DITHER_STEP); G = Math.min(255, Math.floor(G / k / DITHER_STEP + b) * DITHER_STEP); B = Math.min(255, Math.floor(B / k / DITHER_STEP + b) * DITHER_STEP);
+      for (let sy = 0; sy < GS; sy++) for (let sx = 0; sx < GS; sx++) { const i = ((r * GS + sy) * QW + c * GS + sx) * 4; d[i] = R; d[i + 1] = G; d[i + 2] = B; }
+    }
+    ctx.putImageData(img, (R0.x0 - org.x) * GS, (y0 - org.y) * GS);
+    yield;
+  }
 }
+const DITHER_STEP = 14;
 
 // A quick flat sketch of the ground, tile by tile, shown for the moment it
 // takes to paint the real thing in the background (which then fades in).
@@ -1159,9 +1195,9 @@ function repaintRect(x, y, w, h) {
 }
 
 const MOUND_PAL = {
-  spring: ['#62a03e', '#2f5a26', '#a4d26c'],
-  summer: ['#5f9a3c', '#2f5a26', '#9ccc68'],
-  autumn: ['#7f8a3a', '#4a4a1e', '#b8b25a'],
+  spring: ['#4a8e36', '#1a3e1e', '#9ad464'],
+  summer: ['#3f8234', '#183a1c', '#8ccc58'],
+  autumn: ['#6e7c2e', '#36361a', '#aeac50'],
   winter: ['#e2eaf0', '#94a6b8', '#ffffff'],
 };
 // A hobbit-hole's grassy mound and the stonework round its door, painted

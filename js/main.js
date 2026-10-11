@@ -562,10 +562,9 @@ function drawWater(ctx, cam) {
       const a = Math.sin(ph * 1.7);
       if (a < 0.3) continue;
       const px = tx * 16 + ((hsh * 160 + tReal * 5) % 16), py = ty * 16 + ((hsh * 977) % 14);
-      ctx.fillStyle = `rgba(220,240,255,${(a - 0.3) * 0.7})`;
-      ctx.fillRect(Math.floor(px * RS) / RS, Math.floor(py * RS) / RS, 3, 0.5);
-      ctx.fillStyle = `rgba(255,255,255,${(a - 0.3) * 0.5})`;
-      ctx.fillRect(Math.floor(px * RS) / RS + 1, Math.floor(py * RS) / RS, 1, 0.5);
+      // glints on the water: a short pale dash, white in the middle
+      ctx.fillStyle = a > 0.85 ? '#e8f6ff' : '#9cd2ec';
+      ctx.fillRect(Math.floor(px), Math.floor(py), a > 0.85 ? 3 : 2, 1);
     }
   }
   for (const d of World.ducks) {
@@ -727,7 +726,8 @@ function render(dtReal, dtWall = dtReal) {
   // sky
   const sky = skyState(Game.hour);
   Game.darkness = sky.dark;
-  if (sky.dusk > 0.01) { ctx.fillStyle = `rgba(255,136,60,${sky.dusk * 0.13})`; ctx.fillRect(cx, cy, cam.w, cam.h); }
+  // dusk warms the whole valley
+  if (sky.dusk > 0.01) { ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = `rgb(255,${Math.round(255 - 50 * sky.dusk)},${Math.round(255 - 95 * sky.dusk)})`; ctx.fillRect(cx, cy, cam.w, cam.h); ctx.globalCompositeOperation = 'source-over'; }
   if (Game.raining) { ctx.fillStyle = 'rgba(70,90,110,0.12)'; ctx.fillRect(cx, cy, cam.w, cam.h); }
   if (winter) { ctx.fillStyle = 'rgba(160,190,230,0.06)'; ctx.fillRect(cx, cy, cam.w, cam.h); }
   Light.render(ctx, cr, sky.dark, winter ? '14,22,54' : '12,18,46', collectLights());

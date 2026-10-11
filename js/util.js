@@ -102,10 +102,14 @@ function ellipseFill(ctx, cx, cy, rx, ry, col) {
   }
 }
 
-// Adds a 1px outline around every opaque pixel of a canvas.
+// Adds a 1px outline around every opaque pixel of a canvas, in a darkened
+// shade of whatever it borders rather than one ink colour, so a sheep is ringed
+// in grey and a pine in deep green. (`col` is kept for callers; the outline
+// takes the art's own colours.)
 // If anything is drawn right up to the canvas edge, the canvas grows by a
 // pixel all round first so the outline isn't cut off there (callers use the
 // canvas returned).
+const OUTLINE_DARK = 0.42;
 function outlineCanvas(c, col = '#2a1c12', alpha = 255) {
   {
     const w = c.width, h = c.height, d = c.getContext('2d').getImageData(0, 0, w, h).data;
@@ -117,15 +121,16 @@ function outlineCanvas(c, col = '#2a1c12', alpha = 255) {
   const ctx = c.getContext('2d');
   const img = ctx.getImageData(0, 0, c.width, c.height);
   const d = img.data, w = c.width, h = c.height;
-  const [r, g, b] = hexToRgb(col);
   const solid = (x, y) => x >= 0 && y >= 0 && x < w && y < h && d[(y * w + x) * 4 + 3] > 100;
   const mark = [];
   for (let y = 0; y < h; y++)
     for (let x = 0; x < w; x++) {
       if (d[(y * w + x) * 4 + 3] > 100) continue;
-      if (solid(x - 1, y) || solid(x + 1, y) || solid(x, y - 1) || solid(x, y + 1)) mark.push(y * w + x);
+      let r = 0, g = 0, b = 0, n = 0;
+      for (const [i, j] of [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]) if (solid(i, j)) { const k = (j * w + i) * 4; r += d[k]; g += d[k + 1]; b += d[k + 2]; n++; }
+      if (n) mark.push(y * w + x, r / n, g / n, b / n);
     }
-  for (const i of mark) { d[i * 4] = r; d[i * 4 + 1] = g; d[i * 4 + 2] = b; d[i * 4 + 3] = alpha; }
+  for (let m = 0; m < mark.length; m += 4) { const i = mark[m] * 4; d[i] = mark[m + 1] * OUTLINE_DARK; d[i + 1] = mark[m + 2] * OUTLINE_DARK; d[i + 2] = mark[m + 3] * OUTLINE_DARK; d[i + 3] = alpha; }
   ctx.putImageData(img, 0, 0);
   return c;
 }

@@ -1118,10 +1118,10 @@ function drawLight(L, folk, t) {
   lx.fillStyle = L.neon ? `rgba(10,6,30,${amb})` : `rgba(14,8,24,${amb})`;
   lx.fill(L.hillPath);
   lx.globalCompositeOperation = 'destination-out';
+  // pools of light in four crisp steps, as outdoors
   const glow = (x, y, r, s) => {
-    const g = lx.createRadialGradient(x, y, 0, x, y, r);
-    g.addColorStop(0, `rgba(0,0,0,${clamp(s, 0, 1)})`); g.addColorStop(1, 'rgba(0,0,0,0)');
-    lx.fillStyle = g; lx.fillRect(x - r, y - r, r * 2, r * 2);
+    const step = 1 - Math.pow(1 - clamp(s, 0, 0.98), 0.25);
+    for (let k = 4; k >= 1; k--) disc(lx, Math.round(x), Math.round(y), Math.round((r * k) / 4), `rgba(0,0,0,${step})`);
   };
   const day = clamp(1 - dk / 0.6, 0, 1);
   for (const w of L.wins) glow(w.x, w.y + 18, 46, 0.8 * day);
@@ -1136,7 +1136,7 @@ function drawLight(L, folk, t) {
   X.drawImage(lc, 0, 0);
   // warm colour from the fire and lamps
   X.save(); X.globalCompositeOperation = 'lighter';
-  const warm = (x, y, r, a, col) => { const g = X.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, col.replace('A', a)); g.addColorStop(1, col.replace('A', 0)); X.fillStyle = g; X.fillRect(x - r, y - r, r * 2, r * 2); };
+  const warm = (x, y, r, a, col) => { for (let k = 3; k >= 1; k--) disc(X, Math.round(x), Math.round(y), Math.round((r * k) / 3), col.replace('A', a * 0.4)); };
   if (L.hearth && Interior.fire > 0.5) warm(L.hearth.x, WALL_B - 12, 60, 0.18 * fl * (0.4 + dk), 'rgba(255,130,40,A)');
   if (Interior.lamps) for (const r of L.rooms) warm(r.lampX, L.top(r, r.lampX) + 22, 40, 0.1, L.neon ? 'rgba(60,220,255,A)' : 'rgba(255,190,90,A)');
   X.restore();

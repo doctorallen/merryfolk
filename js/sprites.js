@@ -18,10 +18,10 @@ const RIFT_HAIR = ['#ff3aa8', '#3af0ff', '#b45aff', '#7aff5a', '#ff8a2a', '#e8e8
 const RIFT_JACKETS = ['#2a2a3a', '#1e2a3a', '#3a1e3a', '#22343a', '#3a2a24', '#2a2a2a'];
 
 // ---------------------------------------------------------------------------
-// Double resolution. Art drawn at world resolution is upscaled with Scale2x,
-// which rounds off its staircases, and its outline is thinned back to a single
-// half-pixel so it matches the art drawn at double resolution (the villagers).
-// hd(img) is cached per image; native double-resolution canvases carry .hd.
+// Double resolution. Art drawn at world resolution is doubled pixel for pixel,
+// so every world pixel stays a crisp square block on screen: chunky pixel art,
+// the same size throughout. hd(img) is cached per image; native
+// double-resolution canvases carry .hd.
 // ---------------------------------------------------------------------------
 const HD_CACHE = new WeakMap();
 function hd(img) {
@@ -30,39 +30,10 @@ function hd(img) {
   if (!out) { out = scale2x(img); out.hd = true; HD_CACHE.set(img, out); }
   return out;
 }
-const OUTLINE_U32 = (() => { const [r, g, b] = hexToRgb(OUTLINE); return ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0; })();
 function scale2x(src) {
-  const w = src.width, h = src.height;
-  let sctx = src.getContext ? src.getContext('2d') : null;
-  if (!sctx) { const [c, x] = makeCanvas(w, h); x.drawImage(src, 0, 0); sctx = x; }
-  const s = new Uint32Array(sctx.getImageData(0, 0, w, h).data.buffer);
-  const W = w * 2, H = h * 2;
-  const [c, x] = makeCanvas(W, H);
-  const out = x.createImageData(W, H), o = new Uint32Array(out.data.buffer);
-  for (let y = 0; y < h; y++) for (let i = 0; i < w; i++) {
-    const k = y * w + i, P = s[k];
-    const A = y > 0 ? s[k - w] : P, D = y < h - 1 ? s[k + w] : P, Cc = i > 0 ? s[k - 1] : P, B = i < w - 1 ? s[k + 1] : P;
-    const q = (y * 2) * W + i * 2;
-    o[q] = Cc === A && Cc !== D && A !== B ? A : P;
-    o[q + 1] = A === B && A !== Cc && B !== D ? B : P;
-    o[q + W] = D === Cc && D !== B && Cc !== A ? Cc : P;
-    o[q + W + 1] = B === D && B !== A && D !== Cc ? D : P;
-  }
-  // thin the outline: the inner half of a two-pixel border takes the fill colour beside it
-  const src2 = o.slice();
-  const clear = (v) => (v >>> 24) === 0;
-  const at = (i, y) => (i < 0 || y < 0 || i >= W || y >= H ? 0 : src2[y * W + i]);
-  const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-  for (let y = 0; y < H; y++) for (let i = 0; i < W; i++) {
-    const v = src2[y * W + i];
-    if ((v >>> 0) !== OUTLINE_U32) continue;
-    if (N4.some(([a, b]) => clear(at(i + a, y + b)))) continue;
-    const edgeOutline = N4.some(([a, b]) => (at(i + a, y + b) >>> 0) === OUTLINE_U32 && N4.some(([c2, d2]) => clear(at(i + a + c2, y + b + d2))));
-    if (!edgeOutline) continue;
-    const fillN = N4.map(([a, b]) => at(i + a, y + b)).find((u) => !clear(u) && (u >>> 0) !== OUTLINE_U32);
-    if (fillN !== undefined) o[y * W + i] = fillN;
-  }
-  x.putImageData(out, 0, 0);
+  const [c, x] = makeCanvas(src.width * 2, src.height * 2);
+  x.imageSmoothingEnabled = false;
+  x.drawImage(src, 0, 0, src.width * 2, src.height * 2);
   return c;
 }
 // Draws any sprite at its world size: native double-resolution art as it is,
@@ -448,7 +419,12 @@ function folkCanvas(grid, pal) {
   const solid = (i, j) => j >= 0 && j < H && i >= 0 && i < W && grid[j][i] !== '.' && pal[grid[j][i]];
   for (let j = -1; j <= H; j++) for (let i = -1; i <= W; i++) {
     if (solid(i, j)) { x.fillStyle = pal[grid[j][i]]; x.fillRect(i + 1, j + 1, 1, 1); }
-    else if (solid(i - 1, j) || solid(i + 1, j) || solid(i, j - 1) || solid(i, j + 1)) { x.fillStyle = OUTLINE; x.fillRect(i + 1, j + 1, 1, 1); }
+    else {
+      // the outline takes a darkened shade of what it borders, as everything else's does
+      let r = 0, gg = 0, b = 0, n = 0;
+      for (const [a, e] of [[i - 1, j], [i + 1, j], [i, j - 1], [i, j + 1]]) if (solid(a, e)) { const [cr, cg, cb] = hexToRgb(pal[grid[e][a]]); r += cr; gg += cg; b += cb; n++; }
+      if (n) { x.fillStyle = rgbToHex((r / n) * OUTLINE_DARK, (gg / n) * OUTLINE_DARK, (b / n) * OUTLINE_DARK); x.fillRect(i + 1, j + 1, 1, 1); }
+    }
   }
   c.hd = true;
   return c;
@@ -538,6 +514,8 @@ const TREE_PAL = {
     poplar: ['#22401c', '#2f5a26', '#447a32', '#5e9a40', '#7cb852'],
     fir: ['#152c1e', '#1e3a26', '#284c30', '#36603c', '#4a7a4c'],
     sapling: ['#2c5a22', '#3f7a2c', '#5a9a3a', '#7cba4c', '#a2d468'],
+    beech: ['#1c4020', '#2a5c28', '#3a7a30', '#4f9638', '#6cb04a'],
+    copper: ['#3a1e22', '#5a2a2e', '#7a3a38', '#9a5246', '#b8705a'],
   },
   spring: {
     oak: ['#2c5a22', '#3f7a2c', '#5a9a3a', '#7cba4c', '#a2d468'],
@@ -549,6 +527,8 @@ const TREE_PAL = {
     poplar: ['#2a5022', '#3a6c2c', '#56903a', '#76b04c', '#9ad06a'],
     fir: ['#152c1e', '#1e3a26', '#284c30', '#36603c', '#4a7a4c'],
     sapling: ['#36662a', '#4a8634', '#68a842', '#8ac85a', '#b2e07a'],
+    beech: ['#2a5a1e', '#3e7a26', '#5a9e30', '#7cc044', '#a8e070'],
+    copper: ['#44222a', '#682e34', '#8a4040', '#ac5a4c', '#c87a62'],
   },
   autumn: {
     oak: ['#4a2410', '#7a3812', '#a8561a', '#d0802a', '#eab04a'],
@@ -560,25 +540,33 @@ const TREE_PAL = {
     poplar: ['#5a4612', '#8a6c18', '#b8921e', '#dab634', '#f2d460'],
     fir: ['#172e20', '#203c28', '#2a4e32', '#38623e', '#4c7a4e'],
     sapling: ['#6a2a10', '#9a4a18', '#c8702a', '#e89a3a', '#f8c45a'],
+    beech: ['#4a2a10', '#7a4214', '#a8601e', '#cc842e', '#e8aa4a'],
+    copper: ['#3a1810', '#5e2614', '#86361a', '#a84e26', '#c46a36'],
   },
 };
 
+// some saplings come up a fresher lime green, and some pines a bluer one
+const LIME_SAPLING = { spring: ['#3a6a1e', '#548c26', '#76ae30', '#9ccc44', '#c4e870'], summer: ['#2a5a1e', '#3e7a26', '#5a9a30', '#7cba44', '#a6d660'] };
+const BLUE_PINE = ['#14302a', '#1e4636', '#2a5e44', '#3c7a52', '#5a9a66'];
+
 // Each tree's size and shape come from its seed, so a wood is full of
-// different trees: broad old oaks and spindly young ones, tall slim poplars,
-// weeping willows by the water, firs and pines of every height.
+// different trees: broad old oaks and spindly young ones, domed beeches and
+// the odd copper one, tall slim poplars, weeping willows by the water, firs
+// and pines of every height.
 const EVERGREEN = ['pine', 'fir'];
-const TREE_SEEDS = { oak: [100, 36], birch: [200, 16], pine: [400, 12], fir: [800, 10], poplar: [700, 8], sapling: [900, 8] };
+const TREE_SEEDS = { oak: [100, 36], birch: [200, 16], pine: [400, 12], fir: [800, 10], poplar: [700, 8], sapling: [900, 8], beech: [1000, 12], copper: [1100, 4] };
 function treeShape(seed, kind) {
   const r = mulberry32(seed * 31 + 9);
   const f = (a, b) => a + r() * (b - a);
   switch (kind) {
     case 'big': return { s: 1, wide: 1 };
-    case 'oak': return { s: f(0.72, 1.32), wide: f(0.85, 1.4) };
+    case 'oak': return { s: f(0.7, 1.5), wide: f(0.85, 1.45) };
+    case 'beech': case 'copper': return { s: f(0.9, 1.4), wide: f(1.05, 1.35) };
     case 'birch': return { s: f(0.78, 1.25), wide: f(0.62, 0.95) };
     case 'apple': return { s: f(0.85, 1.05), wide: f(1, 1.2) };
     case 'willow': return { s: f(0.95, 1.25), wide: f(1.2, 1.45) };
     case 'poplar': return { s: f(1.0, 1.35), wide: f(0.36, 0.48) };
-    case 'sapling': return { s: f(0.45, 0.62), wide: f(0.8, 1.1) };
+    case 'sapling': return { s: f(0.4, 0.68), wide: f(0.75, 1.15) };
     case 'fir': return { s: f(0.85, 1.45), wide: f(0.62, 0.8) };
     default: return { s: f(0.8, 1.35), wide: f(0.85, 1.1) }; // pine
   }
@@ -624,12 +612,15 @@ function makeTree(seed, kind, season = 'summer') {
   const sh = treeShape(seed, kind);
   if (season === 'winter' && !EVERGREEN.includes(kind)) return makeBareTree(seed, kind, big, sh);
   const rng = mulberry32(seed);
-  const pal = TREE_PAL[season === 'winter' ? 'summer' : season][kind] || TREE_PAL[season === 'winter' ? 'summer' : season].oak;
+  let pal = TREE_PAL[season === 'winter' ? 'summer' : season][kind] || TREE_PAL[season === 'winter' ? 'summer' : season].oak;
+  const variant = mulberry32(seed * 3 + 5)();
+  if (kind === 'pine' && variant < 0.35) pal = BLUE_PINE;
+  if (kind === 'sapling' && variant < 0.4 && LIME_SAPLING[season]) pal = LIME_SAPLING[season];
 
   if (EVERGREEN.includes(kind)) {
     // conifers: tiers of boughs, slimmer and taller for firs
     const s = sh.s, fir = kind === 'fir';
-    const layers = fir ? 6 : 4, step = Math.round((fir ? 7 : 8) * s), hh = Math.round((fir ? 11 : 14) * s);
+    const layers = (fir ? 5 : 3) + Math.floor(mulberry32(seed * 5 + 3)() * 3), step = Math.round((fir ? 7 : 8) * s), hh = Math.round((fir ? 11 : 14) * s);
     const trunkH = Math.round(8 * s), spread = (fir ? 1.8 : 2.5) * sh.wide;
     const W = Math.round(2 * (3 + (hh / hh) * (8 * sh.wide + layers * spread)) + 6), H = trunkH + step * (layers - 1) + hh + 8;
     const [c, x] = makeCanvas(W, H);
@@ -657,11 +648,12 @@ function makeTree(seed, kind, season = 'summer') {
   }
 
   const s = big ? 1 : sh.s, hx = big ? 1 : sh.wide;
-  const vy = kind === 'poplar' ? 2.6 : kind === 'birch' ? 1.15 : kind === 'willow' ? 0.85 : 1;
-  const R0 = big ? 34 : Math.round((kind === 'poplar' ? 11 : kind === 'willow' ? 16 : 15) * s);
-  const th = big ? 30 : Math.round((kind === 'poplar' ? 9 : kind === 'willow' ? 12 : 14) * s);
+  const beech = kind === 'beech' || kind === 'copper';
+  const vy = kind === 'poplar' ? 2.6 : kind === 'birch' ? 1.15 : kind === 'willow' ? 0.85 : beech ? 0.95 : 1;
+  const R0 = big ? 34 : Math.round((kind === 'poplar' ? 11 : kind === 'willow' ? 16 : beech ? 17 : 15) * s);
+  const th = big ? 30 : Math.round((kind === 'poplar' ? 9 : kind === 'willow' ? 12 : beech ? 11 : 14) * s);
   const tw = big ? 12 : Math.max(3, Math.round(5 * s * (kind === 'sapling' ? 0.6 : kind === 'poplar' ? 0.8 : 1)));
-  const W = big ? 84 : Math.max(16, Math.round(R0 * 2 * hx * 1.18) + 8);
+  const W = big ? 84 : Math.max(16, Math.round(R0 * 2 * hx * 1.18 + R0 * 0.4) + 8);
   const H = big ? 96 : Math.round(th + R0 * vy * 1.75) + 8;
   const [c, x] = makeCanvas(W, H);
   const cx = W / 2, base = H - 3;
@@ -681,20 +673,23 @@ function makeTree(seed, kind, season = 'summer') {
   x.fillRect(Math.round(cx - tw / 2) - 1, base - 2, 1, 2); x.fillRect(Math.round(cx + tw / 2), base - 2, 1, 2);
   if (big || s > 1.15) { x.fillRect(Math.round(cx - tw / 2) - 3, base - 1, 3, 1); x.fillRect(Math.round(cx + tw / 2), base - 1, 4, 1); }
 
-  // canopy blobs
+  // the crown: a scatter of leafy lobes, leaning a little one way, lit from
+  // the upper left with every lobe catching its own highlight, and the light
+  // dithered between five greens
+  const lean = big ? 0 : (rng() - 0.5) * R0 * 0.32 * hx;
   const blobs = [];
-  const n = big ? 16 : Math.round(7 * Math.max(0.8, s) * (kind === 'poplar' ? 1.6 : 1));
+  const n = big ? 16 : Math.round(7 * Math.max(0.8, s) * (kind === 'poplar' ? 1.6 : beech ? 1.3 : 1));
   for (let i = 0; i < n; i++) {
-    const a = rng() * Math.PI * 2;
-    const d = rng() * R0 * 0.55;
-    blobs.push({ x: cx + Math.cos(a) * d * hx, y: ccy + Math.sin(a) * d * 0.75 * vy, r: Math.round(R0 * (0.38 + rng() * 0.22) * Math.min(1, hx + 0.25)) });
+    const a = rng() * Math.PI * 2, d = Math.sqrt(rng()) * R0 * 0.55, by = ccy + Math.sin(a) * d * 0.75 * vy;
+    blobs.push({ x: cx + Math.cos(a) * d * hx + lean * (0.3 + (ccy - by) / (R0 * vy)), y: by, r: Math.round(R0 * (0.32 + rng() * 0.3) * Math.min(1, hx + 0.25)) });
   }
-  blobs.push({ x: cx, y: ccy, r: Math.round(R0 * 0.6 * Math.min(1, hx + 0.25)) });
-  blobs.sort((a, b) => a.y - b.y);
-  for (const b of blobs) disc(x, b.x, b.y + 1, b.r, pal[0]);
-  for (const b of blobs) disc(x, b.x - 1, b.y - 1, b.r - 1, pal[1]);
-  for (const b of blobs) disc(x, b.x - 2, b.y - 2, Math.max(1, Math.round(b.r * 0.62)), pal[2]);
-  for (const b of blobs) disc(x, b.x - 3, b.y - 4, Math.max(1, Math.round(b.r * 0.3)), pal[3]);
+  blobs.push({ x: cx + lean * 0.3, y: ccy, r: Math.round(R0 * 0.6 * Math.min(1, hx + 0.25)) });
+  paintCrown(x, W, H, blobs, pal, cx + lean * 0.3, ccy, R0 * Math.max(0.7, hx) * 1.2, R0 * vy * 1.2, seed);
+  const spk = x.getImageData(0, 0, W, H).data;
+  for (let k = 0; k < (big ? 130 : Math.round(25 * s * s)); k++) {
+    const px = Math.round(cx + (rng() - 0.5) * R0 * 1.8 * hx), py = Math.round(ccy + (rng() - 0.6) * R0 * 1.3 * vy);
+    if (px >= 0 && py >= 0 && px < W && py < H && spk[(py * W + px) * 4 + 3] > 200) { x.fillStyle = rng() < 0.5 ? pal[4] : pal[1]; x.fillRect(px, py, 1, 1); }
+  }
   const id = x.getImageData(0, 0, W, H).data;
   const solidAt = (px, py) => px >= 0 && py >= 0 && px < W && py < H && id[(py * W + px) * 4 + 3] > 200;
   for (let k = 0; k < (big ? 260 : Math.round(50 * s * s)); k++) {
@@ -726,7 +721,42 @@ function makeTree(seed, kind, season = 'summer') {
       if (solidAt(px, py)) { x.fillStyle = '#d23a2a'; x.fillRect(px, py, 2, 2); x.fillStyle = '#ff8a6a'; x.fillRect(px, py, 1, 1); }
     }
   }
-  return outlineCanvas(c, season === 'autumn' ? '#3a1e0c' : '#18301a');
+  return outlineCanvas(c, shade(pal[0], -0.45));
+}
+
+// Paints a tree's crown from its lobes, pixel by pixel: lighter up to the
+// upper left and on each lobe's own shoulder, darker underneath, with a little
+// leafy noise, the tones dithered with a 4x4 Bayer pattern.
+const BAYER4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+function paintCrown(ctx, W, H, blobs, pal, cx, cy, Rx, Ry, seed) {
+  const cols = pal.map(hexToRgb);
+  let x0 = W, y0 = H, x1 = 0, y1 = 0;
+  for (const b of blobs) { x0 = Math.min(x0, b.x - b.r - 1); y0 = Math.min(y0, b.y - b.r - 1); x1 = Math.max(x1, b.x + b.r + 1); y1 = Math.max(y1, b.y + b.r + 1); }
+  x0 = Math.max(0, Math.floor(x0)); y0 = Math.max(0, Math.floor(y0)); x1 = Math.min(W - 1, Math.ceil(x1)); y1 = Math.min(H - 1, Math.ceil(y1));
+  if (x1 < x0 || y1 < y0) return;
+  const w = x1 - x0 + 1, h = y1 - y0 + 1, img = ctx.getImageData(x0, y0, w, h), d = img.data;
+  const sm = (t) => t * t * (3 - 2 * t);
+  const vn = (x, y) => {
+    const xi = Math.floor(x), yi = Math.floor(y), u = sm(x - xi), v = sm(y - yi), k = seed * 131;
+    const a = hash2(xi + k, yi), b = hash2(xi + 1 + k, yi), c = hash2(xi + k, yi + 1), e = hash2(xi + 1 + k, yi + 1);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + e) * u * v;
+  };
+  for (let py = y0; py <= y1; py++) for (let px = x0; px <= x1; px++) {
+    let bump = -2;
+    for (const b of blobs) {
+      const dx = px - b.x, dy = py - b.y;
+      if (dx * dx + dy * dy > b.r * b.r + b.r * 0.6) continue;
+      bump = Math.max(bump, 1 - Math.hypot(px - (b.x - b.r * 0.35), py - (b.y - b.r * 0.4)) / Math.max(1, b.r));
+    }
+    if (bump < -1.5) continue;
+    const v = clamp(0.5 - ((px - cx) / Rx) * 0.45 - ((py - cy) / Ry) * 0.55 + bump * 0.38 + (vn(px / 3, py / 3) - 0.5) * 0.35, 0, 0.9999);
+    const f = v * (cols.length - 1);
+    let i = Math.floor(f);
+    if (f - i > BAYER4[(py & 3) * 4 + (px & 3)]) i++;
+    const col = cols[Math.min(cols.length - 1, i)], k = ((py - y0) * w + (px - x0)) * 4;
+    d[k] = col[0]; d[k + 1] = col[1]; d[k + 2] = col[2]; d[k + 3] = 255;
+  }
+  ctx.putImageData(img, x0, y0);
 }
 
 // Bushes of seven kinds (the kind comes from the seed), each through the year:
