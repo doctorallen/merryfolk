@@ -5,7 +5,13 @@
 // ---------------------------------------------------------------------------
 
 const T = { GRASS: 0, PATH: 1, WATER: 2, BRIDGE: 3, SOIL: 4, HILL: 5, LAWN: 6, COBBLE: 7, WEED: 8, FIELD: 9 };
-const TILE_COST = [1.5, 1, 0, 1, 3, 0, 1.3, 1, 2.5, 2.2];
+// What each kind of ground costs to walk on: folk keep to paths and cobbles,
+// cut across grass and lawns when it saves a fair way, and avoid tilled earth.
+const TILE_COST = [2.4, 1, 0, 1, 3.5, 0, 1.8, 1, 3, 3];
+// Climbing a terrace bank on the grass is hard going (it's worth a long detour
+// to find a path); where a road, path or bridge crosses one, it's a gentle ramp.
+const BANK_COST = 14, RAMP_COST = 0.4;
+const isRoadTile = (t) => t === T.PATH || t === T.COBBLE || t === T.BRIDGE;
 
 // Hobbit-holes. `site` marks a grassy knoll where a new home can be dug.
 const HOME_DEFS = [
@@ -256,7 +262,7 @@ function buildWorld(seed) {
     inn.serveSpots = [[INN_RECT.x0 + 2, INN_RECT.y1 + 4], [INN_RECT.x1 - 2, INN_RECT.y1 + 4], [INN_RECT.x0 + 3, INN_RECT.y1 + 2], [INN_RECT.x1 - 1, INN_RECT.y1 + 5]].map(([tx, ty]) => ({ x: tx * 16 + 8, y: ty * 16 + 12 }));
     const barrel = makeBarrel();
     for (const [bx, by] of [[INN_RECT.x1 + 1.4, INN_RECT.y1 + 1.5], [INN_RECT.x1 + 2.2, INN_RECT.y1 + 1.2], [INN_RECT.x1 + 1.8, INN_RECT.y1 + 2.1]]) addStatic(barrel, bx * 16, by * 16);
-    blk(INN_RECT.x1 + 1, INN_RECT.y1 + 1); blk(INN_RECT.x1 + 2, INN_RECT.y1 + 1);
+    blk(INN_RECT.x1 + 1, INN_RECT.y1 + 1); blk(INN_RECT.x1 + 2, INN_RECT.y1 + 1); blk(INN_RECT.x1 + 1, INN_RECT.y1 + 2);
   }
   const cot = (opts) => [makeCottage({ ...opts, lit: false }), makeCottage({ ...opts, lit: true })];
   {
@@ -386,7 +392,7 @@ function buildWorld(seed) {
 
   // --- Pipe-weed field ---
   const fenceH = makeFence(true);
-  for (let x = WEED_FIELD.x0; x <= WEED_FIELD.x1; x++) if (tileAt(x, WEED_FIELD.y0 - 1) === T.GRASS) addStatic(fenceH, x * 16 + 8, WEED_FIELD.y0 * 16 - 4);
+  for (let x = WEED_FIELD.x0; x <= WEED_FIELD.x1; x++) if (tileAt(x, WEED_FIELD.y0 - 1) === T.GRASS) { addStatic(fenceH, x * 16 + 8, WEED_FIELD.y0 * 16 - 4); blk(x, WEED_FIELD.y0 - 1); }
   for (let y = WEED_FIELD.y0; y <= WEED_FIELD.y1; y++) {
     if ((y - WEED_FIELD.y0) % 2 === 1) continue;
     for (let x = WEED_FIELD.x0; x <= WEED_FIELD.x1; x++) World.weed.push({ tx: x, ty: y, x: x * 16 + 8, y: y * 16 + 12, stage: 1 + Math.floor(rng() * 4), prog: rng(), claimed: null });
@@ -602,7 +608,7 @@ function furnishHome(h, rng = Math.random) {
     h.bench.home = h;
     World.benches.push(h.bench); res(bx, sy);
   }
-  addStatic(makeMailbox(h.doorColor), (sx + 1) * 16 + 4, sy * 16 + 10);
+  addStatic(makeMailbox(h.doorColor), (sx + 1) * 16 + 4, sy * 16 + 10); blk(sx + 1, sy);
   h.mailbox = { x: (sx + 1) * 16 + 4, y: sy * 16 + 14 };
   if (tileAt(sx + 4, sy) === T.GRASS && !World.block[tIdx(sx + 4, sy)]) { addStatic(makeWoodpile(), (sx + 4) * 16 + 8, sy * 16 + 12); blk(sx + 4, sy); }
   // about half the holes have an apple tree in the garden
@@ -717,6 +723,9 @@ function computeHeights(seed) {
     }
   }
   World.px.level1 = level1;
+  // each tile's terrace, for the pathfinder: taken just below the tile's middle, where folk stand
+  World.tileLevel = new Uint8Array(MAP_W * MAP_H);
+  for (let ty = 0; ty < MAP_H; ty++) for (let tx = 0; tx < MAP_W; tx++) World.tileLevel[ty * MAP_W + tx] = level1[Math.min(Hh - 1, ty * 16 + 11) * W + tx * 16 + 8];
 }
 
 // The ground is painted at GS canvas pixels per world pixel. Colour (hill
@@ -1109,7 +1118,10 @@ function findPath(sx, sy, tx, ty) {
       if (dx && dy && (!walkable(cx + dx, cy) || !walkable(cx, cy + dy))) continue;
       const ni = tIdx(nx, ny);
       if (PF.closed[ni] === gen) continue;
-      const c = TILE_COST[World.tiles[ni]] * (dx && dy ? 1.414 : 1);
+      let c = TILE_COST[World.tiles[ni]];
+      const lv = World.tileLevel;
+      if (lv && lv[ni] !== lv[cur]) c += isRoadTile(World.tiles[ni]) || isRoadTile(World.tiles[cur]) ? RAMP_COST : BANK_COST * Math.abs(lv[ni] - lv[cur]);
+      c *= dx && dy ? 1.414 : 1;
       const g = PF.g[cur] + c;
       if (PF.stamp[ni] !== gen || g < PF.g[ni]) {
         PF.stamp[ni] = gen; PF.g[ni] = g; PF.f[ni] = g + hfn(nx, ny); PF.from[ni] = cur; push(ni);

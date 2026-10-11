@@ -92,6 +92,7 @@ function planFarmland() {
     }
     // a scarecrow-free patch, but a wheelbarrow by the gate
     add(makeBarrow(), (r.x1 + 0.6) * 16, (r.y1 + 1) * 16 + 6);
+    if (walkable(r.x1 + 1, r.y1 + 1)) blk(r.x1 + 1, r.y1 + 1);
     World.allotments.push(allot);
   }
   // hay bales and a cart around the barley fields

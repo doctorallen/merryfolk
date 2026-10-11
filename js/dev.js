@@ -281,6 +281,25 @@ function devOverlay(octx, z, cx, cy, W, H) {
     for (let tx = tx0; tx <= tx1 + 1; tx++) { octx.moveTo(Math.round(sx(tx * 16)) + 0.5, 0); octx.lineTo(Math.round(sx(tx * 16)) + 0.5, H); }
     for (let ty = ty0; ty <= ty1 + 1; ty++) { octx.moveTo(0, Math.round(sy(ty * 16)) + 0.5); octx.lineTo(W, Math.round(sy(ty * 16)) + 0.5); }
     octx.stroke();
+    // terrace edges: where the ground steps up or down a level (steep on grass, a ramp on a path)
+    const lv = World.tileLevel;
+    if (lv) {
+      octx.lineWidth = 2;
+      for (let ty = ty0; ty <= ty1; ty++) for (let tx = tx0; tx <= tx1; tx++) {
+        const i = tIdx(tx, ty);
+        for (const [dx, dy] of [[1, 0], [0, 1]]) {
+          if (tx + dx >= MAP_W || ty + dy >= MAP_H) continue;
+          const j = tIdx(tx + dx, ty + dy);
+          if (lv[i] === lv[j]) continue;
+          octx.strokeStyle = isRoadTile(World.tiles[i]) || isRoadTile(World.tiles[j]) ? 'rgba(120,255,160,0.9)' : 'rgba(255,150,40,0.9)';
+          octx.beginPath();
+          if (dx) { octx.moveTo(sx((tx + 1) * 16), sy(ty * 16)); octx.lineTo(sx((tx + 1) * 16), sy((ty + 1) * 16)); }
+          else { octx.moveTo(sx(tx * 16), sy((ty + 1) * 16)); octx.lineTo(sx((tx + 1) * 16), sy((ty + 1) * 16)); }
+          octx.stroke();
+        }
+      }
+      octx.lineWidth = 1;
+    }
     octx.font = '600 11px ui-monospace, Menlo, monospace'; octx.textBaseline = 'top';
     for (const l of World.lots) {
       const [x0, y0, x1, y1] = lotBounds(l);
