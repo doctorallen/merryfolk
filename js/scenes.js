@@ -37,8 +37,8 @@ const SCENES = [
   {
     id: 'tale', when: (h) => h >= 14 && h < 19,
     pair: (a, b) => a.stage === 'elder' && b.isChild() && b.parents.some((p) => (personById(p) || {}).parents?.includes(a.id)) && (Game.memorials || []).length,
-    lines: (a, b) => { const m = R.pick(Game.memorials); return [[b, 'Grandad, who\'s that stone for?'], [a, `That's ${m.first}. Set off over the hills when I was not much older than you.`], [b, 'Will they come back?'], [a, 'Not to stay. But we tell their stories, and that\'s nearly as good.']]; },
-    after: (a, b) => { b.bond(a, 0.08); learn(b, 0.02, 'family'); b.remember('Grandad told me about the folk on the Remembrance Green.', 2); },
+    lines: (a, b) => { const m = R.pick(Game.memorials); return [[b, `${kinWord(b, a)}, who's that stone for?`], [a, `That's ${m.first}. Set off over the hills when I was not much older than you.`], [b, 'Will they come back?'], [a, 'Not to stay. But we tell their stories, and that\'s nearly as good.']]; },
+    after: (a, b) => { b.bond(a, 0.08); learn(b, 0.02, 'family'); b.remember(`${kinWord(b, a)} told me about the folk on the Remembrance Green.`, 2); },
     chron: (a, b) => `${a.first} took little ${b.first} to the Remembrance Green and told stories about the folk on the stones.`,
   },
   {
