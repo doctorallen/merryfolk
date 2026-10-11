@@ -120,7 +120,10 @@ function stepPet(p, tx, ty, speed, dt) {
 function updatePets(dtMin, hour) {
   for (const p of petsList()) {
     let home = World.homes[p.homeId];
-    if (!home || !home.built || !residentsOf(home).length) {
+    const res = home && home.built ? residentsOf(home) : [];
+    // every pet has its person (cats too), so it knows whom to go with if the family moves
+    if (res.length && (p.owner == null || !Game.villagers.some((v) => v.id === p.owner && !v.leaving))) p.owner = (res.find((v) => v.isGrown()) || res[0]).id;
+    if (!res.length) {
       // the family has moved out: the pet goes along with its person, or waits indoors for whoever comes next
       const o = p.owner != null && Game.villagers.find((v) => v.id === p.owner && !v.leaving);
       const to = o && o.homeId >= 0 && World.homes[o.homeId];
