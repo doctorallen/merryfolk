@@ -214,6 +214,8 @@ const link = (o) => {
   return alive ? `<a data-v="${o.id}">${escapeHtml(o.first)}</a>` : `<span class="gone" title="${away ? 'Away adventuring' : 'Gone on a last adventure'}">${escapeHtml(o.first)}${away ? ' (away)' : ' (departed)'}</span>`;
 };
 const STAGE_WORD = { baby: 'Baby', child: 'Little one', adult: 'Grown-up', elder: 'Elder' };
+const BAND_WORD = { toddler: 'Toddler', young: 'Little one', school: 'Schoolchild', youth: 'Youngster' };
+function stageWord(v) { return (v.isChild && BAND_WORD[kidBand(v)]) || STAGE_WORD[v.stage]; }
 
 function healthChips(v) {
   const out = [];
@@ -233,7 +235,7 @@ function renderPanel(full) {
   if (v._portraitKey !== portraitKey(v)) { drawPortrait($('portrait'), v.genes, v.stage, false, v.look()); v._portraitKey = portraitKey(v); }
   $('p-name').textContent = v.name();
   const blood = bloodWord(v.genes);
-  $('p-sub').textContent = `${v.genes.sex === 'f' ? '♀' : '♂'} ${v.years()} years · ${STAGE_WORD[v.stage]}${blood ? ' · ' + blood : ''}${v.job ? ' · ' + JOBS[v.job].label : ''} · ${v.home().name}`;
+  $('p-sub').textContent = `${v.genes.sex === 'f' ? '♀' : '♂'} ${v.years()} years · ${stageWord(v)}${blood ? ' · ' + blood : ''}${v.job ? ' · ' + JOBS[v.job].label : ''} · ${v.home().name}`;
   $('p-mood').textContent = 'Mood: ' + v.moodWord();
   $('p-mood').dataset.level = v.mood() > 0.6 ? 'good' : v.mood() > 0.35 ? 'mid' : 'low';
   $('p-now').textContent = v.inside && !v.carried ? (v.task ? (v.task.a.label2 ? v.task.a.label2(v) : v.task.a.label) : 'Indoors') + ` (inside ${v.inside.name})` : v.activity();
@@ -612,7 +614,7 @@ function openTree(v) {
     if (!o) return '';
     const alive = Game.villagers.find((x) => x.id === o.id);
     const away = Game.away.find((a) => a.id === o.id);
-    const note = alive ? (alive.job ? JOBS[alive.job].label : STAGE_WORD[alive.stage]) : away ? 'Away adventuring' : 'Departed';
+    const note = alive ? (alive.job ? JOBS[alive.job].label : stageWord(alive)) : away ? 'Away adventuring' : 'Departed';
     return `<button class="tnode ${cls} ${alive ? '' : 'gone'}" data-id="${o.id}"><canvas width="24" height="32" data-pid="${o.id}"></canvas><b>${escapeHtml(o.first)}</b><small>${note}</small></button>`;
   };
   const sp = k.byId(v.spouse);

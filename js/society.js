@@ -82,6 +82,8 @@ function jobFit(v, j) {
   if (LETTERED[j]) s += (v.edu - 0.35) * LETTERED[j] * 1.5 - (v.edu < 0.2 ? 20 : 0);
   else if (['farmer', 'woodwright', 'fisher', 'grower'].includes(j)) s += (0.4 - v.edu) * 8;
   if (j === 'storyteller') s += v.stage === 'elder' ? 25 : -20;
+  // a warm, patient soul who loves little ones, often with some of their own
+  if (j === 'nanny') s += (v.genes.sociability + v.genes.merriness) * 14 - v.genes.temper * 25 + (Game.villagers.some((k) => k.isChild() && k.parents.includes(v.id)) ? 8 : 0) + v.genes.fertility * 10;
   // only the rift-minded know how the gadgets work
   if (j === 'tinker') s += v.tech * 40 - 25;
   return s;
@@ -94,6 +96,7 @@ function jobTargets() {
   return {
     farmer: t(2, 0.2), herder: World.pens.length ? t(1, 0.05) : 0, baker: t(2, 0.11) + (World.buildings.bakery2 ? 1 : 0) + (Village.stores.flour > 40 ? 1 : 0), miller: t(1, 0.05) + (Village.stores.grain > 80 ? 1 : 0) + (Village.stores.grain > 240 ? 1 : 0), brewer: t(1, 0.06), innkeeper: 1, grower: t(1, 0.05), fisher: t(1, 0.1),
     woodwright: Math.min(Math.max(2, Math.round(adults * 0.22)), t(1, Village.projects.some((p) => p.kind !== 'retrofit') ? 0.12 : 0.08) + (Village.projects.filter((p) => p.kind !== 'retrofit').length > 1 ? 1 : 0) + (Village.stores.wood < 10 + firewoodReserve() ? 1 : 0)), herbalist: 1, orchardist: t(1, 0.05), postie: adults > 10 ? 1 : 0, storyteller: kids ? 1 : 0,
+    nanny: (() => { const n = Game.villagers.filter((v) => needsMinder(v)).length; return n >= 8 ? 2 : n >= 2 ? 1 : 0; })(),
     tinker: techAdults ? clamp(Math.round(techAdults * 0.25), 1, 4) + (Village.projects.some((p) => p.kind === 'retrofit') ? 1 : 0) : 0,
   };
 }
@@ -123,7 +126,7 @@ function assignJobs(announce = true) {
       if (v.stage === 'elder' && j !== 'storyteller' && v.age > ELDER_DAYS * 1.2) continue;
       const n = need(j);
       // the trades that only want one or two never take on extra hands
-      if (n <= 0 && ['storyteller', 'herbalist', 'postie', 'innkeeper', 'tinker'].includes(j)) continue;
+      if (n <= 0 && ['storyteller', 'herbalist', 'postie', 'innkeeper', 'tinker', 'nanny'].includes(j)) continue;
       const s = jobFit(v, j) + (n > 0 ? 30 + n * 10 : -25 + n * 10);
       if (s > bs) { bs = s; best = j; }
     }
@@ -134,6 +137,20 @@ function assignJobs(announce = true) {
       const fam = v.parents.some((p) => { const pp = person(p); return pp && pp.job === best; });
       chronicle(`${v.name()} has taken up the ${JOBS[best].label.toLowerCase()}'s trade${fam ? ', just like their parent before them' : ''}.`, 'work');
       v.remember(`Became the village ${JOBS[best].label.toLowerCase()}.`, 1);
+    }
+  }
+  // when the village needs a nanny and nobody's free, the warmest soul among
+  // the grown-ups (often a parent of little ones themselves) takes it up
+  if (need('nanny') > 0) {
+    const short = (j) => need(j) > 0 || counts[j] <= 1;
+    const cands = Game.villagers.filter((v) => v.isGrown() && !v.leaving && !v.playerJob && v.job !== 'nanny' && !(v.stage === 'elder' && v.age > ELDER_DAYS * 1.2) && (!v.job || !short(v.job)));
+    const v = cands.sort((a, b) => jobFit(b, 'nanny') - jobFit(a, 'nanny'))[0];
+    if (v) {
+      if (v.job) counts[v.job]--;
+      if (announce) chronicle(`${v.name()} has opened a nursery at ${v.home().name}, minding the little ones while their folk are at work.`, 'work');
+      v.remember('Became the village nanny.', 1);
+      devLog('jobs', `${v.first} became the nanny${v.job ? ' (was ' + v.job + ')' : ''}`);
+      v.job = 'nanny'; counts.nanny++;
     }
   }
   // experience reshapes careers: overstaffed trades lose a hand to an understaffed one they're suited to
@@ -328,6 +345,8 @@ function dailySociety() {
     const st = v.lifeStage();
     if (st !== v.stage) {
       const was = v.stage;
+      // out of someone's arms and onto their own two feet
+      if (v.heldBy) { const g = personById(v.heldBy); setDownBaby(v); if (g && !v.inside) { v.x = g.x + 8; v.y = g.y; } }
       v.stage = st; v.refreshSprites();
       if (st === 'child') { chronicle(`Little ${v.first} is toddling about now, and getting into everything.`, 'birth'); v.remember('Took my first wobbly steps.', 2); }
       if (was === 'child' && st === 'adult') {

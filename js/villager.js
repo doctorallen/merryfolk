@@ -189,6 +189,9 @@ class Villager {
     if (a.avail && !a.avail(this, h)) return no('not possible now');
     if (this.cool[a.id] && this.cool[a.id] > Game.time) return no(`cooling down, ${Math.ceil(this.cool[a.id] - Game.time)} min`);
     if (this._arms && !ARMS_OK.has(a.id)) return no('has a baby to look after');
+    if (this._kids && !kidsOk(a, h)) return no('has little ones in tow');
+    if (this._stuck && !HOME_ACTS.has(a.id) && a.id !== 'work_nanny') return no('minding the nursery');
+    if (this.isChild()) { const why = kidBlock(this, a); if (why) return no(why); }
     let s = 0;
     if (ex) { ex.relief = []; ex.mul = []; }
     for (const d in a.sat) {
@@ -211,6 +214,9 @@ class Villager {
     if (this.lastAction === a.id && a.id !== 'sleep' && !a.job) mul('did it last', 0.75);
     // with a baby to mind, home is the easier place to be
     if (this._arms && !HOME_ACTS.has(a.id)) mul('baby in arms', 0.6);
+    if (this._flagging) mul('little ones flagging', HOME_ACTS.has(a.id) ? 1.8 : 0.6);
+    // children are home by dark
+    if (this.isChild() && !HOME_ACTS.has(a.id) && (h >= 20.5 || h < 6.5)) mul('past bedtime', 0.1);
     // once out at work, they tend to stay on for another stint rather than trudge home
     if (a.job && this.lastJobAt && Game.time - this.lastJobAt < 40 && this.lastJob === a.id) mul('on a roll', 2);
     const noise = Math.random() * 0.03;
@@ -223,7 +229,8 @@ class Villager {
   // its runners-up, for dev mode.
   think(h) {
     this.thinkDelay = 2;
-    this._arms = this.isGrown() ? armsFull(this) : 0;
+    const care = careLoad(this);
+    this._arms = care.arms; this._kids = care.kids; this._stuck = care.stuck; this._flagging = care.flagging;
     if (this.queue.length) {
       const q = this.queue.shift();
       if (this.begin(q.a, h, q.extra)) { this.noteDecision(q.a.id, 'queued', []); return; }
@@ -243,7 +250,7 @@ class Villager {
       if (this.begin(chosen[1], h)) { this.noteDecision(chosen[1].id, attempt ? `picked (try ${attempt + 1}, the first had nowhere to go)` : 'picked', options); return; }
       top.splice(top.indexOf(chosen), 1);
     }
-    const fallback = this.stage === 'baby' ? ACTIONS.cradle : ACTIONS.stroll;
+    const fallback = this.stage === 'baby' ? ACTIONS.cradle : needsMinder(this) ? ACTIONS.potter : ACTIONS.stroll;
     this.begin(fallback, h);
     this.noteDecision(fallback.id, 'fallback: nothing else worked out', options);
   }
@@ -255,13 +262,20 @@ class Villager {
   }
 
   begin(a, h, extra) {
+    // on the way to work, the little ones are dropped at the nursery first
+    if (a.job && this.isGrown() && !(extra && extra.dropped)) {
+      const plan = dropOffPlan(this, a);
+      if (plan) { this.queue.unshift({ a, extra: { ...(extra || {}), dropped: true } }); return this.begin(ACTIONS.drop_off, h, plan); }
+    }
     const target = a.target(this, h, extra);
     if (!target) { this.cool[a.id] = Game.time + 30; return false; }
     const task = { a, phase: 'go', target, t: a.dur * R.f(0.8, 1.2), data: {}, before: { ...this.drives } };
     if (target.spot) { target.spot.occ = this.id; task.spot = target.spot; target.x = target.spot.x; target.y = target.spot.y; target.facing = target.spot.facing; }
     if (target.building) { target.x = target.building.stepX; target.y = target.building.stepY; }
     // nobody walks out and leaves a baby on their own
-    if (this.isGrown() && !takeLittleOnes(this, a, target)) { this.releaseTask(task); this.cool[a.id] = Game.time + 20; return false; }
+    if (this.stage !== 'baby' && !needsMinder(this) && !takeLittleOnes(this, a, target, h)) { this.releaseTask(task); this.cool[a.id] = Game.time + 20; return false; }
+    // and little ones only go where someone will be keeping an eye on them
+    if (needsMinder(this) && !a.queued && !placeMinded(this, target.other ? { x: target.other.x, y: target.other.y } : target)) { this.releaseTask(task); this.cool[a.id] = Game.time + 10; return false; }
     if (a.start && !a.start(this, task, extra)) { this.releaseTask(task); return false; }
     if (this.inside && target.building === this.inside) { this.task = task; this.arrive(); return true; }
     if (this.inside) this.exitBuilding();
@@ -444,7 +458,7 @@ class Villager {
     if (this.iconT > 0) this.iconT -= dt / Game.minPerSec;
     if (this.carried) return;
     if (this.heldBy) { updateHeld(this); if (this.heldBy) return; }
-    if (baby) {
+    if (baby || this.isChild()) {
       // every few minutes a little one checks there's someone with them
       this.careT = (this.careT ?? R.f(0, 3)) - dt;
       if (this.careT <= 0) { this.careT = 3; careCheck(this); }
@@ -481,6 +495,7 @@ class Villager {
       return;
     }
     const task = this.task;
+    if (task.a.follow) { followMinder(this, task, dt); return; }
     if (task.phase === 'go') {
       if (task.target.other) return this.updateApproach(dt);
       if (task.target.rabbit) {

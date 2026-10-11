@@ -1,13 +1,34 @@
 'use strict';
 // ---------------------------------------------------------------------------
-// Family care. Little ones are never left on their own. A baby is always with
-// a parent: in the cradle at home while a parent is in, or carried in their
-// arms whenever they go out. A parent with a baby in their arms keeps to
-// gentle things (a meal, a stroll, a natter, the Store) and leaves the work and
-// the ale to someone else, so one parent stays home while the other works.
+// Family care. Little ones are never left on their own.
+//
+// A baby is always with a parent: in the cradle at home while a parent is in,
+// or carried in their arms whenever they go out. A parent with a baby in their
+// arms keeps to gentle things (a meal, a stroll, a natter, the Store) and
+// leaves the work and the ale to someone else, so one parent stays home while
+// the other works.
+//
+// Toddlers (two to four) and young children (five to seven) are always with a
+// grown-up: at home with someone in, toddling along beside a parent, at the
+// nanny's nursery or at the story circle. Parents drop them off on the way to
+// work and collect them after. School-age children (eight to eleven) roam the
+// village by day but are home by dark, and nobody under twelve eats at the
+// inn on their own.
+//
 // If a little one is ever found alone, the nearest parent drops everything
 // and comes for them.
 // ---------------------------------------------------------------------------
+
+// Where a child is in growing up, by their age in hobbit years.
+function kidBand(v) {
+  if (!v.isChild()) return null;
+  const y = v.years();
+  return y < 5 ? 'toddler' : y < 8 ? 'young' : y < 12 ? 'school' : 'youth';
+}
+// Little ones who must always have a grown-up with them.
+function needsMinder(v) { const b = kidBand(v); return b === 'toddler' || b === 'young'; }
+// How far a little one strays from whoever is minding them, outdoors.
+function leashOf(v) { return kidBand(v) === 'toddler' ? 2.5 * 16 : 7 * 16; }
 
 // Who's responsible for a little one: their parents, or if they have none
 // here, the grown-ups they live with, or else their grown-up kin.
@@ -19,24 +40,82 @@ function carersOf(v) {
   if (house.length) return house;
   return Game.villagers.filter((o) => ok(o) && related(o, v));
 }
+// Who can keep an eye on a toddler or young child: their carers, any grown-up
+// of the household or of the family, and big brothers and sisters of fourteen
+// or more.
+function mindersOf(v) {
+  const out = carersOf(v);
+  for (const o of Game.villagers) {
+    if (o === v || o.leaving || out.includes(o) || o.stage === 'baby') continue;
+    const big = o.isGrown() || (o.isChild() && o.years() >= 14);
+    if (big && (o.homeId === v.homeId || (o.isGrown() && related(o, v)))) out.push(o);
+  }
+  return out;
+}
 function personById(id) { return id == null ? null : Game.villagers.find((o) => o.id === id) || null; }
+// What a child calls a grown-up.
+function kinWord(kid, o) {
+  if (kid.parents.includes(o.id)) return o.genes.sex === 'f' ? 'Mum' : 'Dad';
+  if (o.parents.some((p) => kid.parents.some((q) => { const pq = personById(q); return pq && pq.parents.includes(p); }))) return o.genes.sex === 'f' ? 'Auntie ' + o.first : 'Uncle ' + o.first;
+  if (kid.parents.some((p) => { const pp = personById(p); return pp && pp.parents.includes(o.id); })) return o.genes.sex === 'f' ? 'Gran' : 'Grandad';
+  return o.first;
+}
 
-// What a grown-up can do with a baby in their arms.
+// What a grown-up can do with a baby in their arms, or with little ones in tow.
 const ARMS_OK = new Set(['sleep', 'eat_home', 'eat_inn', 'tea', 'well', 'chat', 'stroll', 'market', 'read', 'potter', 'tend_baby', 'watch', 'party',
-  'read_item', 'eat_item', 'remedy_item', 'bake_home', 'fetch_child', 'work_story']);
-
+  'read_item', 'eat_item', 'remedy_item', 'bake_home', 'fetch_child', 'collect_child', 'drop_off', 'work_story']);
+const NOT_WITH_KIDS = new Set(['ale', 'smoke', 'ale_item', 'leaf_item', 'nap', 'nurse']);
+function kidsOk(a, h) { return !NOT_WITH_KIDS.has(a.id) && !(a.id === 'party' && (h >= 21.5 || h < 6)); }
 const HOME_ACTS = new Set(['sleep', 'eat_home', 'tea', 'potter', 'bake_home', 'tend_baby']);
+
+// ----- the nursery -----
+// A nanny minds little ones in her own hole while their folk are at work.
+function nurseries() {
+  return Game.villagers.filter((n) => n.job === 'nanny' && !n.leaving && n.inside && n.inside === n.home() && n.task && n.task.a.id === 'work_nanny');
+}
+function atNursery(v) { return !!(v.inside && v.inside.kind === 'home' && v.inside.inside.some((id) => { const n = personById(id); return n && n.job === 'nanny' && n.home() === v.inside; })); }
+function storyOn() { const s = anyStoryteller(); return s && Game.hour < 17.5 ? s : null; }
 
 // Is this little one with someone who's looking after them?
 function isMinded(v) {
   if (v.heldBy) return true;
-  const carers = carersOf(v);
-  if (v.inside) return v.inside.inside.some((id) => carers.some((c) => c.id === id));
-  // out of doors, a carer must be right there
-  return carers.some((c) => !c.inside && dist(c.x, c.y, v.x, v.y) < 3 * 16);
+  const baby = v.stage === 'baby';
+  const ms = baby ? carersOf(v) : mindersOf(v);
+  if (v.inside) {
+    if (v.inside.inside.some((id) => ms.some((c) => c.id === id))) return true;
+    return !baby && atNursery(v);
+  }
+  if (baby) return ms.some((c) => !c.inside && dist(c.x, c.y, v.x, v.y) < 3 * 16);
+  // at the story circle while the storyteller's telling
+  if (v.task && v.task.a.id === 'school' && v.task.phase === 'do' && storyOn()) return true;
+  const leash = leashOf(v);
+  if (ms.some((c) => !c.inside && dist(c.x, c.y, v.x, v.y) < leash + 16)) return true;
+  // young ones may play in the garden while someone's in, watching from the window
+  const home = v.home();
+  return kidBand(v) === 'young' && dist(v.x, v.y, home.stepX, home.stepY) < 5 * 16 && home.inside.some((id) => ms.some((c) => c.id === id));
 }
 
-// ----- carrying -----
+// Would a little one be looked after at this place? Used when choosing what to do.
+function placeMinded(v, target) {
+  const ms = mindersOf(v);
+  if (target.building) {
+    const b = target.building;
+    return b.inside.some((id) => ms.some((c) => c.id === id)) || (b === v.inside && atNursery(v));
+  }
+  const x = target.x, y = target.y;
+  if (x == null) return false;
+  // they don't wander off far on their own
+  const fx = v.inside ? v.inside.stepX : v.x, fy = v.inside ? v.inside.stepY : v.y;
+  if (dist(fx, fy, x, y) > (kidBand(v) === 'toddler' ? 4 : 12) * 16) return false;
+  const leash = leashOf(v);
+  if (ms.some((c) => !c.inside && c.task && c.task.phase === 'do' && dist(c.x, c.y, x, y) < leash)) return true;
+  const home = v.home();
+  if (kidBand(v) === 'young' && dist(x, y, home.stepX, home.stepY) < 5 * 16 && home.inside.some((id) => ms.some((c) => c.id === id))) return true;
+  const st = storyOn();
+  return kidBand(v) === 'young' && !!st && target.spot && target.spot.kind === 'storyseat';
+}
+
+// ----- carrying babies -----
 function holdBaby(g, b) {
   if (b.heldBy === g.id) return;
   if (b.heldBy) setDownBaby(b);
@@ -80,47 +159,191 @@ function updateHeld(b) {
   if (g.inside && g.inside === b.home()) { setDownBaby(b); b.pose = 'inside'; }
 }
 
-// The little ones a grown-up would leave on their own by walking out now.
+// ----- leaving the house -----
+// The little ones someone would leave on their own by walking out now, and
+// whether they're minding other folk's children they can't simply take along.
 function leftBehind(g) {
   const b = g.inside;
-  if (!b) return [];
+  const out = { babies: [], kids: [], stuck: false };
+  if (!b) return out;
   const here = b.inside.map(personById).filter(Boolean);
-  return here.filter((o) => o.stage === 'baby' && !o.heldBy && carersOf(o).includes(g) && !here.some((c) => c !== g && carersOf(o).includes(c)));
+  for (const o of here) {
+    if (o === g || o.heldBy) continue;
+    if (o.stage === 'baby') {
+      const cs = carersOf(o);
+      if (cs.includes(g) && !here.some((c) => c !== g && cs.includes(c))) out.babies.push(o);
+    } else if (needsMinder(o) && !(o.task && o.task.a.follow)) {
+      const ms = mindersOf(o);
+      const others = here.some((c) => c !== g && ms.includes(c)) || (atNursery(o) && g.job !== 'nanny');
+      if (others) continue;
+      if (ms.includes(g)) out.kids.push(o);
+      else if (g.job === 'nanny' && b === g.home()) out.stuck = true;
+    }
+  }
+  return out;
 }
+function tagAlongs(g) { return Game.villagers.filter((o) => o.task && o.task.a.follow && o.task.data.minder === g); }
+// How many babies a grown-up would have in their arms if they went out now.
+function armsFull(g) { return (g.holding ? g.holding.length : 0) + leftBehind(g).babies.length; }
 
-// Before a grown-up sets off, they gather up any baby who'd otherwise be left
-// alone. Returns false if the errand is no place for a baby, or there are
-// more babies than arms.
-function takeLittleOnes(g, a, target) {
+// Before someone sets off they gather up any little one who'd otherwise be
+// left alone: babies into their arms, toddlers and young ones by the hand.
+// Returns false if the errand is no place for them.
+function takeLittleOnes(g, a, target, h) {
   const leaving = !!g.inside && target.building !== g.inside;
   const held = g.holding ? g.holding.length : 0;
-  if (!leaving) return !held || ARMS_OK.has(a.id);
-  const babies = leftBehind(g);
-  if (!babies.length && !held) return true;
-  if (!ARMS_OK.has(a.id) || babies.length + held > 2) return false;
-  for (const b of babies) holdBaby(g, b);
-  if (babies.length && R.chance(0.4)) g.say(R.pick(['Come on, little one, you\'re coming with me.', 'Up you come!', 'Let\'s get you wrapped up warm.']), 2.6);
+  const tow = tagAlongs(g).length;
+  if (!leaving) return (!held || ARMS_OK.has(a.id)) && (!tow || kidsOk(a, h));
+  const lb = leftBehind(g);
+  if (lb.stuck) return false;
+  if ((lb.babies.length || held) && (!ARMS_OK.has(a.id) || lb.babies.length + held > 2)) return false;
+  if ((lb.kids.length || tow) && !kidsOk(a, h)) return false;
+  for (const b of lb.babies) holdBaby(g, b);
+  for (const k of lb.kids) startTagAlong(k, g);
+  if ((lb.babies.length || lb.kids.length) && R.chance(0.4)) {
+    g.say(lb.babies.length ? R.pick(['Come on, little one, you\'re coming with me.', 'Up you come!', 'Let\'s get you wrapped up warm.'])
+      : R.pick(['Shoes on, we\'re going out!', 'Hold my hand, now.', 'Come along, you lot!']), 2.6);
+  }
   return true;
 }
-// How many babies a grown-up would have in their arms if they went out now.
-function armsFull(g) { return (g.holding ? g.holding.length : 0) + leftBehind(g).length; }
+
+// Parents on their way to work drop the little ones at the nursery, or at the
+// story circle if the storyteller's telling. Returns the drop-off errand to
+// run first, or null.
+function dropOffPlan(g, a) {
+  if (!a.job || a.id === 'work_nanny' || Game.hour < 6.5 || Game.hour > 17) return null;
+  const kids = [...new Set([...tagAlongs(g), ...leftBehind(g).kids])];
+  if (!kids.length) return null;
+  const st = storyOn();
+  const young = kids.filter((k) => kidBand(k) === 'young');
+  if (st && young.length === kids.length) return { dest: 'school', kids };
+  const ns = nurseries().filter((n) => n !== g);
+  if (!ns.length) return st && young.length ? { dest: 'school', kids: young } : null;
+  const at = g.inside ? [g.inside.stepX, g.inside.stepY] : [g.x, g.y];
+  const n = ns.sort((p, q) => dist(p.inside.stepX, p.inside.stepY, ...at) - dist(q.inside.stepX, q.inside.stepY, ...at))[0];
+  return { dest: 'nursery', home: n.home(), nanny: n, kids };
+}
+
+// ----- tagging along -----
+function startTagAlong(k, m) {
+  if (k.task && k.task.a.follow && k.task.data.minder === m) return;
+  k.abort();
+  k.queue = [];
+  k.begin(ACTIONS.tag_along, Game.hour, { minder: m });
+}
+// A little one keeps beside whoever is minding them, in and out of doors.
+function followMinder(v, task, dt) {
+  const m = task.data.minder;
+  if (!m || !Game.villagers.includes(m) || m.leaving || m.gone) { v.abort(); return; }
+  const d = v.drives;
+  const relief = () => {
+    d.lonely = Math.max(0, d.lonely - dt * 0.006);
+    d.bored = Math.max(0, d.bored - dt * (m.task && m.task.a.id === 'party' ? 0.01 : 0.0025));
+    // they share the meal
+    const mt = m.task;
+    if (mt && mt.phase === 'do' && (mt.a.id === 'eat_inn' || mt.a.id === 'eat_home')) {
+      d.hunger = Math.max(0, d.hunger - dt * 0.014); d.thirst = Math.max(0, d.thirst - dt * 0.01);
+      task.target.prop = 'plate';
+    } else task.target.prop = null;
+    // and watch them at work
+    if (mt && mt.phase === 'do' && mt.a.job && JOBS[m.job]) v.practice(JOBS[m.job].skill, dt, 0.25);
+  };
+  if (m.inside) {
+    if (v.inside === m.inside) {
+      v.path = null; v.pose = 'inside'; task.phase = 'do';
+      // home together: free to potter about
+      if (m.inside === v.home()) { v.finish(); return; }
+      relief();
+      return;
+    }
+    if (v.inside) v.exitBuilding();
+    const b = m.inside;
+    if (dist(v.x, v.y, b.stepX, b.stepY) < 10) { v.enterBuilding(b); v.pose = 'inside'; v.path = null; return; }
+    task.repathT = (task.repathT || 0) - dt;
+    if (!v.path || task.repathT <= 0) { task.repathT = 2; if (!v.repathTo(b.stepX, b.stepY)) { v.x = b.stepX; v.y = b.stepY; } }
+    v.walk(dt, 1.2); task.phase = 'go';
+    return;
+  }
+  if (v.inside) v.exitBuilding();
+  const side = (v.id % 2 ? 1 : -1) * (kidBand(v) === 'toddler' ? 9 : 12);
+  const tx = m.x + side, ty = m.y + 2;
+  const gap = dist(v.x, v.y, tx, ty);
+  if (gap > 6) {
+    task.repathT = (task.repathT || 0) - dt;
+    const end = v.path && v.path[v.path.length - 1];
+    if (!v.path || task.repathT <= 0 || (end && dist(end[0], end[1], tx, ty) > 20)) {
+      task.repathT = 1.5;
+      if (!v.repathTo(tx, ty)) { v.x = m.x; v.y = m.y; v.path = null; }
+    }
+    v.walk(dt, gap > 50 ? 1.4 : 1.1);
+    task.phase = 'go';
+    if (gap > 30) return;
+  } else {
+    v.path = null;
+    v.pose = m.pose === 'dance' ? 'dance' : m.pose === 'sit' ? 'sit' : 'stand';
+    v.facing = m.pose === 'walk' ? m.facing : m.x < v.x ? 'left' : 'right';
+  }
+  task.phase = 'do';
+  relief();
+}
+
+// The grown-up hands the little ones over at the nursery or the story circle.
+function handOver(g, task) {
+  const plan = task.data.plan;
+  if (!plan) return;
+  const kids = tagAlongs(g);
+  for (const k of kids) {
+    k.abort();
+    k.queue = [];
+    if (plan.dest === 'nursery' && plan.home) {
+      if (k.inside !== plan.home) { if (k.inside) k.exitBuilding(); k.enterBuilding(plan.home); }
+      k.begin(ACTIONS.nursery, Game.hour, { home: plan.home });
+    } else {
+      if (!k.begin(ACTIONS.school, Game.hour)) startTagAlong(k, g);
+    }
+    if (R.chance(0.5)) k.say(kidBand(k) === 'toddler' ? R.pick(['Bye-bye!', 'Mama stay!', '*waves*']) : R.pick([`Bye, ${kinWord(k, g)}!`, 'See you later!', 'Can I go now?']), 2.4);
+  }
+  if (kids.length) g.say(plan.dest === 'nursery' && plan.nanny ? R.pick([`Be good for ${plan.nanny.first}!`, 'I\'ll be back for you after work.', 'Thank you ever so much.']) : R.pick(['Listen to the story, now.', 'Off you go, and pay attention!']), 2.6);
+}
 
 // ----- found alone -----
-// Every few minutes each little one checks they're with someone. If not, the
-// nearest carer is sent for.
+// Every few minutes each little one checks there's someone with them. A
+// young child who can see their parent runs after them; otherwise the
+// nearest grown-up who looks after them is sent for, and the little one waits.
 function careCheck(v) {
-  if (v.stage !== 'baby' || v.heldBy || v.leaving || v.carried || v.gone) return;
+  if (v.heldBy || v.leaving || v.carried || v.gone) return;
+  const band = kidBand(v);
+  if (v.stage !== 'baby' && !needsMinder(v)) {
+    // older children: home by dark
+    const h = Game.hour;
+    if ((band === 'school' && (h >= 21 || h < 6)) && !v.inside && !(v.task && (v.task.a.follow || v.task.a.id === 'sleep'))) {
+      v.abort();
+      v.begin(ACTIONS.sleep, h);
+    }
+    return;
+  }
   if (isMinded(v)) { v.alone = 0; return; }
+  if (v.task && v.task.a.follow) {
+    const m = v.task.data.minder;
+    if (m && Game.villagers.includes(m) && !m.leaving) return;
+  }
   v.alone = (v.alone || 0) + 1;
-  const carers = carersOf(v);
-  if (!carers.length) { fosterLittleOne(v); return; }
-  if (carers.some((c) => c.task && c.task.a.id === 'fetch_child' && c.task.data.child === v)) return;
+  const baby = v.stage === 'baby';
+  const pool = baby ? carersOf(v) : mindersOf(v);
+  if (!pool.length) { if (!carersOf(v).length) fosterLittleOne(v); return; }
+  if (pool.some((c) => c.task && c.task.a.id === 'fetch_child' && c.task.data.child === v)) return;
   const at = (o) => (o.inside ? [o.inside.stepX, o.inside.stepY] : [o.x, o.y]);
   const [vx, vy] = at(v);
-  const g = carers.slice().sort((a, b) => dist(...at(a), vx, vy) - dist(...at(b), vx, vy))[0];
+  const near = (o) => dist(...at(o), vx, vy);
+  // carers first, then anyone else who minds them
+  const carers = carersOf(v);
+  const g = pool.slice().sort((a, b) => (carers.includes(b) - carers.includes(a)) * 160 + near(a) - near(b))[0];
+  // a young one who can see them runs after them
+  if (!baby && !g.inside && near(g) < (band === 'toddler' ? 6 : 18) * 16 && !(g.task && g.task.a.id === 'sleep')) { startTagAlong(v, g); return; }
   devLog('family', `${v.first} was left alone ${v.inside ? 'in ' + v.inside.name : 'outdoors'}; ${g.first} is coming for them`);
-  if (g.task && g.task.a.id !== 'deliver') g.abort();
-  else if (g.task) { g.queue.unshift({ a: ACTIONS.fetch_child, extra: { child: v } }); return; }
+  if (!baby && !(v.task && v.task.a.id === 'wait_kid')) { v.abort(); v.queue = []; v.begin(ACTIONS.wait_kid, Game.hour); }
+  if (g.task && g.task.a.id === 'deliver') { g.queue.unshift({ a: ACTIONS.fetch_child, extra: { child: v } }); return; }
+  if (g.task) g.abort();
   if (!g.begin(ACTIONS.fetch_child, Game.hour, { child: v })) {
     // can't get there: as a last resort the little one is simply taken home
     if (v.inside) v.exitBuilding();
@@ -130,13 +353,23 @@ function careCheck(v) {
 function fetchArrive(g, task) {
   const c = task.data.child;
   if (!c || !Game.villagers.includes(c)) return;
+  const kidsToo = [c];
   if (c.stage === 'baby') {
     // at home, being there is enough; anywhere else, they're scooped up
     if (c.inside && c.inside === c.home() && g.inside === c.inside) return;
     if (armsFull(g) < 2) holdBaby(g, c);
+  } else {
+    // brothers and sisters at the same place come along too
+    if (c.inside) for (const id of c.inside.inside) { const o = personById(id); if (o && o !== c && needsMinder(o) && mindersOf(o).includes(g)) kidsToo.push(o); }
+    for (const k of kidsToo) if (!(k.inside && k.inside === k.home() && g.inside === k.inside)) startTagAlong(k, g);
   }
-  g.say(R.pick(['There you are!', 'Come here, poppet.', 'What are you doing out here on your own?']), 2.6);
-  c.bond(g, 0.02);
+  if (task.a.id === 'collect_child') g.say(R.pick(['Time to go home!', 'Did you have a lovely day?', 'Come on, supper\'s waiting.']), 2.6);
+  else g.say(R.pick(['There you are!', 'Come here, poppet.', 'What are you doing out here on your own?']), 2.6);
+  for (const k of kidsToo) k.bond(g, 0.02);
+}
+// Little ones of mine at the nursery or the story circle, to collect.
+function awayKids(g) {
+  return Game.villagers.filter((k) => needsMinder(k) && carersOf(k).includes(g) && k.task && (k.task.a.id === 'nursery' || k.task.a.id === 'school'));
 }
 
 // A little one with nobody at all is taken in by kin, or by a kindly family.
@@ -155,13 +388,79 @@ function fosterLittleOne(v) {
   devLog('family', `${v.first} had nobody to look after them: fostered at ${h.name}`);
 }
 
+// ----- choosing what to do -----
+// Worked out once each time someone thinks: what they have in their care.
+function careLoad(v) {
+  if (v.stage === 'baby' || needsMinder(v)) return { arms: 0, kids: 0, stuck: false, flagging: false };
+  const lb = v.inside ? leftBehind(v) : { babies: [], kids: [], stuck: false };
+  const tow = tagAlongs(v);
+  return {
+    arms: (v.holding ? v.holding.length : 0) + lb.babies.length,
+    kids: tow.length + lb.kids.length,
+    stuck: lb.stuck,
+    // tired or hungry little ones in tow want taking home
+    flagging: tow.some((k) => k.drives.tired > 0.72 || k.drives.hunger > 0.72),
+  };
+}
+// Why a little one can't do something on their own, or null if they can.
+function kidBlock(v, a) {
+  const band = kidBand(v);
+  if (band === 'toddler' || band === 'young' || band === 'school') {
+    if (a.id === 'eat_inn') return 'too young to eat out on their own';
+  }
+  if (!needsMinder(v)) return null;
+  if (a.queued) return null;
+  if (['market', 'well', 'stroll', 'read', 'fish', 'forage', 'gift', 'watch', 'party', 'nap', 'seek_home', 'rift_watch', 'rift_gawk', 'apprentice'].includes(a.id)) return 'needs a grown-up to go with them';
+  if (a.id === 'school' && (band === 'toddler' || !storyOn())) return 'too little to go to the story circle alone';
+  return null;
+}
+
 // ----- the actions involved -----
+JOBS.nanny = { label: 'Nanny', skill: 'lore', icon: 'baby', desc: 'Minds the little ones in her hole while their folk are at work: songs, games, stories and naps.' };
+
 Object.assign(ACTIONS, {
   // a baby in someone's arms
   held: {
     label: 'Snug in someone\'s arms', icon: null, sat: {}, dur: 1e9, pose: 'inside', manual: true, queued: true, stages: ['baby'],
     label2: (v) => { const g = personById(v.heldBy); return g ? `Snug in ${g.first}'s arms` : 'Being carried'; },
     target: () => ({}),
+  },
+  // a toddler or young child beside whoever is minding them
+  tag_along: {
+    label: 'Tagging along', icon: null, sat: {}, dur: 1e9, pose: 'stand', manual: true, queued: true, follow: true, stages: ['child'],
+    label2: (v) => {
+      const m = v.task && v.task.data.minder;
+      if (!m) return 'Tagging along';
+      const w = kinWord(v, m);
+      const mt = m.task;
+      if (mt && mt.phase === 'do' && (mt.a.id === 'eat_inn' || mt.a.id === 'eat_home')) return `Having a bite with ${w}`;
+      if (mt && mt.phase === 'do' && mt.a.job) return `Watching ${w} at work`;
+      return kidBand(v) === 'toddler' ? `Toddling along, holding ${w}'s hand` : `Tagging along with ${w}`;
+    },
+    target: (v, h, extra) => (extra && extra.minder ? { x: v.x, y: v.y } : null),
+    start: (v, task, extra) => { task.data.minder = extra.minder; return true; },
+  },
+  wait_kid: {
+    label: 'Waiting for a grown-up', icon: 'baby', sat: {}, dur: 45, pose: 'stand', manual: true, queued: true, stages: ['child'],
+    target: (v) => (v.inside ? { building: v.inside } : { x: v.x, y: v.y }),
+    tick: (v, task, dt) => {
+      if (Math.random() < dt * 0.03) v.say(kidBand(v) === 'toddler' ? R.pick(['Mama?', 'Dada?', 'Waaah!', '*sniff*']) : R.pick(['Mum? Where are you?', 'Hello? Is anybody there?', 'I want to go home...']), 2.4);
+    },
+  },
+  nursery: {
+    label: 'At the nursery', icon: 'heart', sat: {}, dur: 600, pose: 'inside', manual: true, queued: true, stages: ['child'],
+    label2: (v) => { const n = v.inside && v.inside.inside.map(personById).find((o) => o && o.job === 'nanny'); return n ? `At ${n.first}'s nursery` : 'At the nursery'; },
+    target: (v, h, extra) => (extra && extra.home ? { building: extra.home } : null),
+    tick: (v, task, dt) => {
+      if (!atNursery(v)) { task.t = 0; return; }
+      const d = v.drives;
+      d.lonely = Math.max(0, d.lonely - dt * 0.008); d.bored = Math.max(0, d.bored - dt * 0.008);
+      // a little lunch and an afternoon nap
+      if (d.hunger > 0.5) d.hunger = Math.max(0, d.hunger - dt * 0.01);
+      if (d.thirst > 0.4) d.thirst = Math.max(0, d.thirst - dt * 0.01);
+      if (kidBand(v) === 'toddler' && Game.hour > 12.5 && Game.hour < 15) d.tired = Math.max(0, d.tired - dt * 0.004);
+      learn(v, dt * 0.00015, 'school');
+    },
   },
   fetch_child: {
     label: 'Fetching a little one', icon: 'baby', sat: {}, dur: 2, pose: 'stand', queued: true,
@@ -174,6 +473,45 @@ Object.assign(ACTIONS, {
     start: (v, task, extra) => { task.data.child = extra.child; return true; },
     tick: (v, task) => { if (!task.data.done) { task.data.done = true; fetchArrive(v, task); } },
   },
+  // collecting the little ones from the nursery or story circle after work
+  collect_child: {
+    label: 'Collecting the little ones', icon: 'baby', sat: { lonely: -0.2 }, dur: 2, pose: 'stand', stages: ADULT,
+    label2: (v) => (v.task && v.task.data.child ? `Collecting little ${v.task.data.child.first}` : 'Collecting the little ones'),
+    avail: (v) => awayKids(v).length > 0,
+    extra: (v, h) => (h >= 16.5 ? 0.9 : h >= 15 ? 0.35 : 0.02) + (v.task && v.task.a.job ? 0 : 0.1) + (h >= 19 ? 1.5 : 0),
+    target: (v) => {
+      const k = awayKids(v)[0];
+      if (!k) return null;
+      return k.inside ? { building: k.inside } : { other: k };
+    },
+    start: (v, task) => { task.data.child = awayKids(v)[0]; return !!task.data.child; },
+    tick: (v, task) => { if (!task.data.done) { task.data.done = true; fetchArrive(v, task); } },
+  },
+  drop_off: {
+    label: 'Dropping off the little ones', icon: 'baby', sat: {}, dur: 2, pose: 'stand', queued: true, stages: ADULT,
+    label2: (v) => (v.task && v.task.data.plan && v.task.data.plan.dest === 'school' ? 'Walking the little ones to the story circle' : 'Dropping the little ones at the nursery'),
+    target: (v, h, plan) => {
+      if (!plan) return null;
+      if (plan.dest === 'nursery') return { x: plan.home.stepX + R.i(-8, 8), y: plan.home.stepY + R.i(4, 10), facing: 'up' };
+      const st = World.storyteller;
+      return { x: st.x + R.i(-14, 14), y: st.y + R.i(10, 18), facing: 'up' };
+    },
+    start: (v, task, plan) => { task.data.plan = plan; return true; },
+    done: (v, task) => handOver(v, task),
+  },
+  work_nanny: {
+    label: 'Minding the little ones', icon: 'baby', sat: { industry: -0.45, lonely: -0.35, bored: -0.25 }, dur: 120, pose: 'inside', job: 'nanny', skill: 'lore',
+    time: (h) => workHours(h, 7, 18),
+    extra: () => 0.1 + Math.min(4, Game.villagers.filter((k) => needsMinder(k)).length) * 0.04,
+    target: (v) => ({ building: v.home() }),
+    tick: (v, task, dt) => {
+      // songs, games, letters and naps for whoever's in
+      for (const id of v.inside ? v.inside.inside : []) { const k = personById(id); if (k && k.isChild()) learn(k, dt * 0.00008 * (0.5 + v.edu), 'school'); }
+    },
+  },
 });
-for (const k of ['held', 'fetch_child']) ACTIONS[k].id = k;
-Object.assign(ACTION_NAMES, { held: 'Being carried', fetch_child: 'Fetching little ones' });
+for (const k of ['held', 'tag_along', 'wait_kid', 'nursery', 'fetch_child', 'collect_child', 'drop_off', 'work_nanny']) ACTIONS[k].id = k;
+Object.assign(ACTION_NAMES, {
+  held: 'Being carried', tag_along: 'Tagging along', wait_kid: 'Waiting for a grown-up', nursery: 'The nursery', fetch_child: 'Fetching little ones',
+  collect_child: 'Collecting little ones', drop_off: 'Dropping off little ones', work_nanny: 'Nannying',
+});
