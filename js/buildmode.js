@@ -176,6 +176,11 @@ function makePlan(tool, tiles) {
 function planUnit(p) { return p.tool === 'clear' || BTOOL[p.tool].kind === 'brush' || BTOOL[p.tool].kind === 'point' ? p.work : BTOOL[p.tool].unit; }
 const haveRes = (k) => (k === 'wood' ? buildWood() : k === 'coin' ? Game.coin || 0 : Village.stores[k] || 0);
 function payRes(k, n) { if (k === 'coin') Game.coin = Math.max(0, (Game.coin || 0) - n); else Village.use(k, n); }
+// Taking back a plan nobody has started on: whatever a builder already took for it goes back.
+function dropPlan(p) {
+  if (p.paid && p.cost) for (const [k, n] of Object.entries(p.cost)) { if (k === 'coin') Game.coin = (Game.coin || 0) + n; else Village.stores[k] = (Village.stores[k] || 0) + n; }
+  Game.plans = plansList().filter((x) => x !== p);
+}
 function openPlans() { return plansList().filter((p) => p.paid || !p.cost || Object.entries(p.cost).every(([k, n]) => haveRes(k) >= n)); }
 
 // Doing it: tile by tile for paths and paint, all at once for the rest.
@@ -362,7 +367,7 @@ function undoPlan() {
     const id = Build.history.pop(), p = plansList().find((x) => x.id === id);
     if (!p) continue;
     if (p.prog > 0) { toast('That one\'s already being built.', 'info'); Build.history.push(id); return; }
-    Game.plans = plansList().filter((x) => x !== p);
+    dropPlan(p);
     renderBuildBar();
     return;
   }
@@ -456,7 +461,7 @@ function buildPointer(e, phase) {
   const tool = Build.tool, T0 = BTOOL[tool];
   if (phase === 'down') {
     if (T0.kind === 'site') { const r = placeSite(tool, tx, ty); if (typeof r === 'string') toast(r, 'info'); renderBuildBar(); return true; }
-    if (tool === 'cancel') { const p = planAt(tx, ty); if (p && p.prog === 0) { Game.plans = plansList().filter((x) => x !== p); renderBuildBar(); } return true; }
+    if (tool === 'cancel') { const p = planAt(tx, ty); if (p && p.prog === 0) { dropPlan(p); renderBuildBar(); } return true; }
     Build.drag = { start: [tx, ty], tiles: strokeTiles(tool, [tx, ty], [tx, ty]), seen: new Set([tileKey(tx, ty)]) };
     return true;
   }
