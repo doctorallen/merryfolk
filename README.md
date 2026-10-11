@@ -95,6 +95,7 @@ The **☺ contentment** pill in the top bar opens the Steward's Desk, the first 
 - **Rations** (as in Stronghold). *Lean* half-portions stretch the food a long way, but folk feel the short rations. *Generous* and *Feasts* mean bigger helpings and a merrier village, and the Store empties fast. The desk shows how many days the food would last at the current rations.
 - **Ale.** *Dry* (the barrels last, the taproom sulks), *a pint or two*, or *flowing* (merrier evenings, twice the ale used).
 - **The working week.** *Easy* adds Sunday off (less done, happier folk); *Busy* cancels Highday (more done, wearier folk).
+- **Idle hands.** Trades whose workers are standing idle are flagged on the desk with the reason (*the flour bins are full*, *no letters in the bag*), so you can move hands elsewhere or sell off the surplus.
 - **Workforce** (as in Age of Empires). Every trade shows hands now against hands wanted. Use − and + to set how many each trade should have: folk are moved over from trades that can spare them (the best-suited first) or let go to find other work. *auto* hands a trade back to the village.
 
 ### The Lamplighter's Children: the story of the rifts
@@ -125,6 +126,14 @@ Every rift-born has their own story:
 
 Hill-folk invite rift-folk round to **supper** ("Is tea a stimulant or a ritual?" "Yes."). The two peoples swap **customs**: mushroom ramen, the Low Battery Blues, neon bunting, saying "full signal" for happy, second breakfast, the Willow Lamp song, the maypole. Customs spread between friends, and once eight folk know one it becomes a Thistledown tradition.
 
+### The giant hand's gifts have a cost
+
+The toolbar's gifts come out of somewhere:
+- **Taken from the Common Store** (and not possible when there's none): a seed-cake (1 cake), a keg (6 pints of ale), a pouch of pipe-weed (3) or a remedy (1).
+- **Paid for in pennies:** a storybook (3), a patch of flowers (1), fireworks (8).
+
+Fireworks in the party field start a party at most once a night.
+
 ### Charters, renown and the eras of Thistledown
 
 The **coin pill** (pennies and the village's rank) in the top bar opens the **Charter** tab.
@@ -133,7 +142,7 @@ The **coin pill** (pennies and the village's rank) in the top bar opens the **Ch
 - **Unlocks.** Each era opens new build tools:
   - **Village:** raising and lowering the land, and digging and filling ponds.
   - **Market Town:** siting public buildings, new wells, and stone statues of famous hobbits (30 pennies).
-  - **Shire Town:** fountains (60 pennies).
+  - **Shire Town:** fountains (60 pennies), and a **Great Fair** at every season's festival, with contests, a caravan in the square and renown.
 
   Locked tools show greyed in the build bar, saying what unlocks them.
 
@@ -257,6 +266,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/illness.js` | Flu (laid up abed), sprained ankles, and friends bringing soup |
 | `js/almanac.js` | The seasonal Almanac report: population, contentment, food, coin, renown, stories and advice |
+| `js/balance.js` | Costs for the gifts, policies felt in full, honest forecasts, idle-trade warnings, the Great Fair |
 | `js/hearts.js` | Sentiments between people, likes and dislikes, friendly rivals and contests, inspirations and sulks, masterpieces |
 | `js/riftstory.js` | The rift-folk storyline: stages, clues, Moot decisions, personal arcs and reunions, suppers, shared customs |
 | `js/appeal.js` | Appeal (how lovely each spot is, and how it affects folk at home) and requests pinned to the notice board |

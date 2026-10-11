@@ -469,9 +469,10 @@ function dailySociety() {
   // the cold months bring sniffles
   const chillChance = { spring: 0.02, summer: 0.005, autumn: 0.04, winter: 0.07 }[World.season];
   for (const v of vs) if (!v.leaving && R.chance(chillChance * (1.3 - v.genes.hardiness))) v.catchCold(R.pick(['the damp', 'a draughty window', 'wet feet', 'the chill']));
-  // new blood: when the village is small, folk from over the hills come to settle
+  // new blood: a very small village always draws a settler or two; beyond that,
+  // folk only come if word of a contented village gets about (steward.js)
   const live = Game.villagers.filter((v) => !v.leaving).length;
-  if (live < 30 && R.chance(live < 22 ? 0.7 : 0.3)) {
+  if (live < 20 && R.chance(0.5)) {
     const r = welcomeTraveller(null, true);
     if (r.ok) chronicle(`${r.v.name()}, a traveller from over the hills, has come up the West Road looking for a quiet place to settle, and found one in ${r.v.home().name}.`, 'birth');
   }

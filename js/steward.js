@@ -177,7 +177,7 @@ function stewardHTML() {
     h += `<div class="wg-row"><span class="wg-label">${P.label}</span><div><div class="wg-seg">${P.opts.map(([v, l]) => `<button data-pol="${k}" data-val="${v}" class="${cur === v ? 'on' : ''}">${l}</button>`).join('')}</div><div class="sub">${P.desc[cur]}</div></div></div>`;
   }
   const food = Village.foodTotal() + World.homes.reduce((n, hm) => n + (hm.built ? pantryTotal(hm) + (typeof jarsTotal === 'function' ? jarsTotal(hm) : 0) : 0), 0), eaters = Game.villagers.length;
-  const perDay = Math.max(1, eaters * 2.2 * { lean: 0.6, fair: 1, generous: 1.3, feast: 1.8 }[policy('rations')]);
+  const perDay = Math.max(1, eaters * 2.2 * { lean: 0.77, fair: 1, generous: 1.3, feast: 1.8 }[policy('rations')]);
   const days = Math.round(food / perDay);
   h += `<div class="sub">The Store, larders and jars hold ${food} helpings for ${eaters} folk: ${days < 1 ? 'less than a day' : days === 1 ? 'about a day' : `about ${days} days`} at these rations, if nothing more came in. The taproom has ${Village.stores.ale || 0} pints of ale.</div>`;
   h += '<h3>Workforce</h3><div class="st-jobs">';
