@@ -38,6 +38,7 @@
       <span id="hud-pop" class="pop">0 folk</span>
       <button id="btn-folk" title="List everyone in the village">Folk</button>
       <button id="btn-village" title="The village ledger: stores, trades, census (V)">Village</button>
+      <button id="btn-build" title="Build mode: paths, gardens, benches, lamps, ponds, terrain and new buildings (B)">Build</button>
       <button id="btn-zoomout" title="Zoom out (-)" aria-label="Zoom out">−</button>
       <button id="btn-zoomin" title="Zoom in (+)" aria-label="Zoom in">+</button>
       <button id="btn-sound">Music: off</button>
@@ -125,6 +126,7 @@
   <footer id="bottom">
     <div id="tool-hint" class="tool-hint"></div>
     <nav id="toolbar" class="card" aria-label="Tools"></nav>
+    <section id="buildbar" class="card" aria-label="Build tools" hidden></section>
   </footer>
 
   <div id="intro">
@@ -206,6 +208,7 @@
 <script src="js/post.js"></script>
 <script src="js/gossip.js"></script>
 <script src="js/pets.js"></script>
+<script src="js/buildmode.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/worldgen_ui.js"></script>
 <script src="js/dev.js"></script>

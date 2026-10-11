@@ -152,7 +152,7 @@ function plantNature(rng, addStatic, blk) {
   let boulders = 0;
   const rock = (x, y, size, bias = 0) => {
     const img = makeRock(Math.floor(rng() * 9999), size);
-    addStatic(img, x * 16 + 8 + Math.round((rng() - 0.5) * 6), y * 16 + 13, { sortBias: size < 2 ? -6 : bias });
+    addStatic(img, x * 16 + 8 + Math.round((rng() - 0.5) * 6), y * 16 + 13, { sortBias: size < 2 ? -6 : bias }).rock = size + 1;
     if (size >= 2) { blk(x, y); boulders++; }
   };
   for (let y = 1; y < MAP_H - 1; y++) for (let x = 1; x < MAP_W - 1; x++) {

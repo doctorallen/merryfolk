@@ -92,7 +92,7 @@ function newVillage() {
 function save() {
   try {
     const data = {
-      v: 2, world: World.gen, farewells: Game.farewells || [], memorials: Game.memorials || [], mathoms: Game.mathoms || [], mathomSeq: Game.mathomSeq || 0, mailbag: Game.mailbag || [], pets: (Game.pets || []).map((pt) => ({ ...pt, say: null, tx: null })), petSeq: Game.petSeq || 0, news: Game.news || [], newsSeq: Game.newsSeq || 0, lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
+      v: 2, world: World.gen, farewells: Game.farewells || [], memorials: Game.memorials || [], mathoms: Game.mathoms || [], mathomSeq: Game.mathomSeq || 0, mailbag: Game.mailbag || [], pets: (Game.pets || []).map((pt) => ({ ...pt, say: null, tx: null })), petSeq: Game.petSeq || 0, plans: (Game.plans || []).map((pl) => ({ ...pl, workers: 0 })), planDone: Game.planDone || [], terra: Game.terra || [], playerLots: Game.playerLots || [], lotMoves: Game.lotMoves || {}, planSeq: Game.planSeq || 0, news: Game.news || [], newsSeq: Game.newsSeq || 0, lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
       villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
       archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
@@ -124,6 +124,8 @@ function load() {
   Village.reset();
   Object.assign(Village.stores, data.stores || {});
   Village.wantHomes = data.wantHomes || 0;
+  Game.plans = data.plans || []; Game.planDone = data.planDone || []; Game.terra = data.terra || []; Game.playerLots = data.playerLots || []; Game.lotMoves = data.lotMoves || {}; Game.planSeq = data.planSeq || 0;
+  replayBuilds();
   loadTown(data.town);
   // older saves kept a single building project
   if (data.project && !data.town) Village.projects = [{ kind: 'home', homeId: data.project.homeId, prog: data.project.prog || 0 }];

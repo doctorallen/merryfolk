@@ -88,6 +88,23 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 | Grendels and Ettins causing mischief | Rabbits sneak out of the woods to nibble gardens (children and gardeners chase them off), and crows raid the barley. Click them to shoo |
 | Observation Kit graphs | The Census ledger charts population, children and village mood day by day |
 
+### Shaping the village (build mode)
+
+Press **Build** (or <kbd>B</kbd>) to shape Thistledown yourself. Pick a tool and click or drag on the map:
+- **Path:** drag a footpath across the grass.
+- **Flowers:** sow a bed of wildflowers in season.
+- **Tree:** plant a young oak, birch, apple or poplar.
+- **Hedge:** drag a straight hawthorn hedgerow.
+- **Bench** (2 timber): a place to sit and gossip.
+- **Lamp** (1 timber): a lamp-post that joins the lamplighter's round.
+- **Clear:** drag a box over trees, bushes, hedges and stones. Felled trees give timber to the Store.
+- **Raise** and **Lower:** lift or sink the ground a terrace at a time, three tiles across, and the banks reshape around it.
+- **Pond** and **Fill in:** dig water, or fill in what you dug. The river is left alone.
+- **Hobbit-hole** and **Well:** stake out a new knoll or well anywhere there's room and a way in. The woodwrights dig it like any other.
+- **Buildings:** choose where the village's next public building (storehouse, smokehouse, second inn, bakehouse) will go, and start it now.
+
+A green or red ghost previews every stroke, with the cost or the reason it won't go (*too close to a building*, *that's the river*). Nothing appears by magic: each stroke becomes a plan, pencilled on the map with stakes, and grown-ups with time on their hands (woodwrights first) come and do the work, paths tile by tile. They take timber from the Store, and a plan waits if the Store is short. **Undo** (<kbd>Ctrl</kbd>+<kbd>Z</kbd>) or **Cancel plan** takes back anything not yet started, at no cost. When something's finished, passers-by admire it ("Ooh, a new bench!") and the builder is proud of it. Everything you build is saved and put back when the valley is rebuilt.
+
 ### Life in the village
 
 - **Feelings.** Besides their needs, folk carry a handful of passing feelings, each with a reason and a while to last: *Danced at the party*, *Had my favourite: honey cakes*, *Slept soundly*, *Had words with Rose*, *Caught in the rain*, *Slept rough*, *A present from Bilbo*, *Just married!*, *A new baby in the family*, *Proud of my new carved badger*, *Getting good at baking*. Some are states and last as long as the state does: merrily tipsy, a sore head, warm and cosy by the fire on an autumn evening, a cold hearth at home, no roof of one's own, happily married. Each lifts or sinks their mood a little (within limits), they're listed with their weight on the villager's Life tab, and whatever's most on their mind comes out when they muse aloud.
@@ -136,6 +153,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 | `js/genetics.js` | Genome, inheritance, dominance, mutation, posting villagers as codes |
 | `js/world.js` | Map layout, seasonal ground painting, places, crops, critters, A* pathfinding |
 | `js/worldgen_ui.js` | The *Shape your valley* setup screen and the stage-by-stage generation map |
+| `js/buildmode.js` | Build mode: the tool palette, ghost previews, plans the villagers build, terraforming, ponds, new lots |
 | `js/pets.js` | Cats and dogs: adoption, following their person, pottering near home, being stroked |
 | `js/gossip.js` | News spreading through conversations, shared rooms, dinner tables and the taproom |
 | `js/post.js` | Letters: written at home, sent from the road, carried round by the postie |
