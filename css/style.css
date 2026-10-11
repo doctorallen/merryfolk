@@ -754,3 +754,8 @@ body.building #panel { display: none !important; }
 .ec-p.first span:first-child { font-weight: 700; color: var(--moss); }
 .ec-p button { font-size: 12px; padding: 1px 6px; }
 @media (max-width: 560px) { .ec-p { grid-template-columns: 1fr auto; } .ec-p .bar, .ec-p .sub { grid-column: 1 / -1; } }
+
+#minimap { position: absolute; right: 10px; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); width: 192px; height: 144px; image-rendering: pixelated; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 3px 3px 0 var(--shadow); cursor: crosshair; z-index: 2; background: #3a5a2a; }
+body.building #minimap { bottom: calc(var(--hud-bottom) + 4px); }
+#panel:not([hidden]) ~ #minimap { display: none; }
+@media (max-width: 760px) { #minimap { display: none; } }

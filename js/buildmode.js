@@ -262,7 +262,7 @@ function completePlan(p, by, quiet = false) {
   else if (['path', 'pond', 'fill'].includes(p.tool)) refreshGround([[Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]]);
   applySeasonToStatics(World.season);
   unstick();
-  const name = what || { path: 'path', flowers: 'flower bed', pond: 'pond', fill: 'patch of filled-in ground', clear: 'clearing' }[p.tool];
+  const name = what || { path: 'path', flowers: 'flower bed', pond: 'pond', fill: 'patch of filled-in ground', clear: 'clearing', orchard: 'orchard', woodlot: 'woodlot' }[p.tool] || BTOOL[p.tool].label.toLowerCase();
   const cx = (Math.min(...xs) + Math.max(...xs) + 1) * 8, cy = (Math.min(...ys) + Math.max(...ys) + 1) * 8;
   FX.sparkle(cx, cy - 8, '#ffe680');
   if (by) { feel(by, 'proud_work', name); by.say(R.pick(['There! Done.', `A fine ${name}, if I say so myself.`, 'That\'ll do nicely.']), 2.6); }
