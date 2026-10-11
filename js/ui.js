@@ -109,7 +109,7 @@ function buildUI() {
   $('btn-zoomout').addEventListener('click', () => zoomStep(-1));
   $('roster-close').addEventListener('click', () => { $('roster').hidden = true; });
   $('panel-close').addEventListener('click', () => selectVillager(null));
-  $('p-now').addEventListener('click', () => { const v = Game.selected; if (v && v.inside && v.inside.kind === 'home') openInterior(v.inside); });
+  $('p-now').addEventListener('click', () => { const v = Game.selected; if (v && v.inside && (v.inside.kind === 'home' || v.inside.kind === 'building')) openInterior(v.inside); });
   $('b-pat').addEventListener('click', doPat);
   $('b-tut').addEventListener('click', doTut);
   $('b-teach').addEventListener('click', doTeach);
@@ -240,7 +240,7 @@ function renderPanel(full) {
   $('p-mood').textContent = 'Mood: ' + v.moodWord();
   $('p-mood').dataset.level = v.mood() > 0.6 ? 'good' : v.mood() > 0.35 ? 'mid' : 'low';
   $('p-now').textContent = v.inside && !v.carried ? (v.task ? (v.task.a.label2 ? v.task.a.label2(v) : v.task.a.label) : 'Indoors') + ` (inside ${v.inside.name})` : v.activity();
-  const peek = !!(v.inside && v.inside.kind === 'home' && !v.carried && Interior.home !== v.inside);
+  const peek = !!(v.inside && (v.inside.kind === 'home' || v.inside.kind === 'building') && !v.carried && Interior.home !== v.inside);
   $('p-now').classList.toggle('peek', peek);
   $('p-now').title = peek ? `Look inside ${v.inside.name}` : '';
   $('b-teach').hidden = v.stage === 'baby' || v.edu > 0.95;
@@ -717,6 +717,7 @@ function placeAt(wx, wy) {
       const lines = [b.name, INFO[k] || (CIVIC_BY_KEY[k] ? CIVIC_BY_KEY[k].desc : '')];
       if (k === 'store' || k === 'barn' || k === 'storehouse') lines.push(`Food ${Village.foodTotal()} · barley ${Village.stores.grain} · timber ${Village.stores.wood} · ale ${Village.stores.ale}`);
       lines.push(inside.length ? 'Inside: ' + inside.join(', ') : 'Quiet inside');
+      if (BUILDING_KIND[k]) lines.push('Click to look inside');
       return lines;
     }
   }

@@ -276,6 +276,8 @@ function paintStatic(L) {
   X = ctx;
   const { IW, h } = L;
   const winter = World.season === 'winter';
+  if (L.building) paintShell(L);
+  else {
   // the hill: grass crust, earth, stones and roots
   for (let x = 0; x < IW; x++) {
     const y0 = L.crust(x);
@@ -302,6 +304,7 @@ function paintStatic(L) {
     IR(x - 8, top - 3, 17, 4, '#4a3a2a'); IR(x - 8, top - 3, 17, 1, '#6a5a4a');
     if (winter) IR(x - 8, top - 5, 17, 2, '#f4f8ff');
     L.chimTop = { x, y: top - 4 };
+  }
   }
   for (const r of L.rooms) paintRoom(L, r);
   // the gaps between rooms: a passage arch in each dividing wall

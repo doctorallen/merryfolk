@@ -1024,7 +1024,7 @@ function updateHover() {
   Game.hovered = villagerAt(wx, wy);
   const p = Game.hovered ? null : placeAt(wx, wy);
   Game.hoverPlace = p ? { lines: p, sx: pointer.x, sy: pointer.y } : null;
-  view.style.cursor = Game.carrying ? 'grabbing' : Game.tool !== 'hand' ? 'copy' : Game.hovered || (p && homeAt(wx, wy)?.built) ? 'pointer' : pointer.down ? 'grabbing' : 'grab';
+  view.style.cursor = Game.carrying ? 'grabbing' : Game.tool !== 'hand' ? 'copy' : Game.hovered || (p && (homeAt(wx, wy)?.built || buildingAt(wx, wy))) ? 'pointer' : pointer.down ? 'grabbing' : 'grab';
 }
 
 function cycleVillager(dir) {
@@ -1049,6 +1049,8 @@ function handleClick(sx, sy) {
     else {
       const h = homeAt(wx, wy);
       if (h && h.built) { openInterior(h); return; }
+      const bd = buildingAt(wx, wy);
+      if (bd) { openInterior(bd); return; }
       // shoo rabbits and crows with a click
       for (const r of World.rabbits) if (dist(r.x, r.y, wx, wy) < 14) { r.flee = 40; r.fx = wx; r.fy = wy; FX.puff(r.x, r.y - 4); }
       for (const c of World.crows) if (c.state === 'peck' && dist(c.x, c.y, wx, wy) < 40) { c.state = 'fly'; c.leaving = true; c.tx = c.x + R.f(-300, 300); c.ty = -60; }

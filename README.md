@@ -40,6 +40,18 @@ Click any finished hobbit-hole to open a live cutaway of it. The view is from de
 
 Hover over anything for a closer look. Click a villager inside to open their panel. The `−` / `+` buttons resize the cutaway, and it scrolls sideways for bigger homes.
 
+### Inside every other building
+
+Every other building opens the same way: click it on the map, or *Look inside* on the panel of someone who's in there. It's a cutaway of the building under its pitched roof, furnished for its trade:
+- **The inns:** a taproom with an inglenook fire, tables and a bar backed by barrels and bottles, the kitchen, and a lodgers' room with three narrow beds.
+- **The Common Store, storehouse and granary:** a counter and shelves stocked with what's actually in the Store, loaf for loaf and sack for sack.
+- **The mills:** millstones that turn and dust the air while the miller works, plus the sack loft.
+- **The bakehouses:** ovens that glow while baking, a kneading table, racks of loaves.
+- **The brewhouse:** a copper that steams while brewing, and a cellar of barrels.
+- **Everything else:** the herbalist's stillroom, the woodwright's workshop and timber stack, the smokehouse with fish and hams in the smoke, and the rift-folk's machine rooms of flickering screens and charging racks.
+
+Whoever's inside is at work at the right spot, sitting at a table, or asleep in a lodger's bed.
+
 ## Developer mode
 
 Press `` ` `` (or the Dev button) to open a console drawer:
@@ -127,6 +139,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 | `js/society.js` | The Common Store, trade assignment, courtship, births, homes, adventures, the archive |
 | `js/ui.js` | Toolbar, HUD, the five-tab inspector, the village ledger, family trees |
 | `js/interior.js` | Hobbit-hole interiors: room layout from the household, furniture, larder, lighting and folk inside |
+| `js/interior_buildings.js` | Cutaways of every other building: the shell, the furniture of each trade, stock on the shelves, where folk stand |
 | `js/dev.js` | Developer mode: decision explanations, the event log, world stats, tools and map overlays |
 | `js/main.js` | Game loop, seasons and weather, rendering, input, saving |
 
