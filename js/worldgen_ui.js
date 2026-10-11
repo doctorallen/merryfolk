@@ -117,6 +117,7 @@ function drawGenMap(ctx, nStatics, grow) {
         const lv = Math.floor(h * TERRACES), k = 0.72 + h * 0.35 + lv * 0.04;
         col = `rgb(${Math.round(78 * k)},${Math.round(138 * k)},${Math.round(52 * k)})`;
         if (t === T.HILL) col = mix(col, '#9ac85a', 0.35);
+        if (World.cliff && World.cliff[i] === 1) col = '#8a7050';
         // once the rain has been worked out, wet runnels show bluer
         if (L && L.flow[i] > 30) col = mix(col, '#4a8ac8', clamp(Math.log(L.flow[i] / 30) * 0.12, 0, 0.35));
       }

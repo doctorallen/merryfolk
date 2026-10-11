@@ -113,6 +113,21 @@ function computeCliffs(seed) {
       if (one[i] > CLIFF_MIN && !nb) M2[i] = M[i];
       else if (one[i] <= CLIFF_MIN && nb >= 3 && dist[i] >= 2) M2[i] = Math.max(M2[i], CLIFF_MIN + 0.1);
     }
+    // and three tiles together at the least, or it's a stub of rock sticking up
+    const seen2 = new Uint8Array(N);
+    for (let i = 0; i < N; i++) {
+      if (seen2[i] || M2[i] <= CLIFF_MIN || M[i] > CLIFF_MIN) continue;
+      const run = [i]; seen2[i] = 1;
+      for (let h = 0; h < run.length; h++) {
+        const j = run[h], x = j % W, y = (j / W) | 0;
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nx = x + dx, ny = y + dy, n = ny * W + nx;
+          if (nx < 0 || ny < 0 || nx >= W || ny >= H || seen2[n] || M2[n] <= CLIFF_MIN || M[n] > CLIFF_MIN) continue;
+          seen2[n] = 1; run.push(n);
+        }
+      }
+      if (run.length < 3) for (const j of run) M2[j] = M[j];
+    }
     const core = new Float32Array(M2);
     for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
       const i = y * W + x;

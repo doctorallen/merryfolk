@@ -413,6 +413,28 @@ function plantNature(rng, addStatic, blk) {
     else if (hb.shade && r < 0.015 && boulders < 45) rock(x, y, 2);
     else if (r < 0.006) rock(x, y, 0);
   }
+  // Along the cliffs: scree and fallen stones at the foot of the rock, and
+  // gorse, heather, thistles and bracken along the lip above it. (Only
+  // valleys with cliffs draw these, so older ones come out as they were.)
+  const C = World.cliff;
+  if (!C) return;
+  const rockAt = (x, y) => inMap(x, y) && C[tIdx(x, y)] === 1;
+  for (let y = 1; y < MAP_H - 1; y++) for (let x = 1; x < MAP_W - 1; x++) {
+    if (!open(x, y)) continue;
+    if (rockAt(x, y - 1) || (rockAt(x - 1, y - 1) && rockAt(x + 1, y - 1))) {
+      // the foot: pebbles, a stone or two, now and then a boulder where the way isn't needed
+      const r = rng();
+      if (r < 0.45) rock(x, y, 0);
+      else if (r < 0.7) rock(x, y, 1);
+      else if (r < 0.8 && boulders < 60 && walkable(x - 1, y) && walkable(x + 1, y) && walkable(x, y + 1) && !rockAt(x - 1, y + 1) && !rockAt(x + 1, y + 1)) rock(x, y, 2);
+      if (rng() < 0.3) tuft(x, y, wildV(rng() < 0.5 ? 'foxtail' : 'bracken', rng));
+    } else if (rockAt(x, y + 1) || rockAt(x, y + 2)) {
+      // the lip: dry, thin-soiled and sunny, so gorse and heather, thistles and foxtail
+      const r = rng();
+      if (r < 0.12) { const bs = 500 + (rng() < 0.5 ? 3 : 6) + 7 * Math.floor(rng() * 10); addStatic(makeBush(bs), x * 16 + 8, y * 16 + 12, { gen: { type: 'bush', seed: bs } }); blk(x, y); }
+      else if (r < 0.5) for (let k = 0, n = 1 + Math.floor(rng() * 2); k < n; k++) tuft(x, y, wildV(rng() < 0.6 ? 'thistle' : 'foxtail', rng));
+    }
+  }
 }
 
 // Wildflowers by habitat: buttercups, daisies and clover in the meadows,
