@@ -235,6 +235,33 @@ function afterMeal(v, kind) {
 // ---------------------------------------------------------------------------
 // Action catalogue
 // ---------------------------------------------------------------------------
+// Everyone keeps their own hours. A body clock from their nature (the merry
+// and the lazy stay up and lie in; others are early birds), shifted by their
+// trade (bakers are up before dawn, the innkeeper keeps late hours), and a
+// little different from one day to the next.
+const TRADE_HOURS = { baker: -1.7, farmer: -0.8, herder: -1.1, miller: -0.5, fisher: -0.9, orchardist: -0.4, innkeeper: 1.7, brewer: 0.3, storyteller: 0.4, postie: -0.3 };
+function bodyClock(v) {
+  const g = v.genes;
+  return (g.merriness - 0.5) * 1.2 + (g.laziness - 0.5) * 1.5 + (hash2(v.id, 3) - 0.5) * 1.3 + (v.stage === 'elder' ? -0.7 : 0);
+}
+function wakeOf(v) {
+  const day = (hash2(Game.day, v.id * 7) - 0.5) * 0.8;
+  if (v.stage === 'baby') return 7 + day;
+  if (v.isChild()) return 7 + bodyClock(v) * 0.25 + day;
+  return clamp(6.2 + bodyClock(v) * 0.7 + (TRADE_HOURS[v.job] || 0) + day, 4, 9.5);
+}
+// about eight hours' sleep before they wake
+function bedOf(v) {
+  if (v.stage === 'baby') return 19.5;
+  if (v.isChild()) return kidBand(v) === 'toddler' ? 19.5 : v.years() < 12 ? 20.5 : 21.5 + bodyClock(v) * 0.3;
+  return wakeOf(v) + 15.8;
+}
+// is it within their sleeping hours?
+function sleepHours(v, h) {
+  const b = bedOf(v) % 24, w = wakeOf(v);
+  return b < w ? h >= b && h < w : h >= b || h < w;
+}
+
 const ADULT = ['adult', 'elder'];
 const AWAKE = ['child', 'adult', 'elder'];
 
@@ -243,7 +270,7 @@ const ACTIONS = {
     label: 'Sleeping', icon: 'zzz', sat: { tired: -1 }, dur: 720, pose: 'inside', manual: true, stages: ['baby', 'child', 'adult', 'elder'],
     time: (h, v) => {
       if (v.isSick() && !isNight(h)) return 2.5;
-      const bed = v.stage === 'baby' ? (isNight(h) || h >= 19.5 ? 4 : v.drives.tired > 0.6 ? 2 : 0.3) : (isNight(h) || (v.isChild() && h >= 20.5)) ? 4 : v.drives.tired > 0.85 ? 1 : 0.04;
+      const bed = v.stage === 'baby' ? (isNight(h) || h >= 19.5 ? 4 : v.drives.tired > 0.6 ? 2 : 0.3) : sleepHours(v, h) ? 4 : v.drives.tired > 0.85 ? 1 : 0.04;
       return bed * (Game.party.on && !v.isChild() && h < 23.5 && v.stage !== 'baby' ? 0.35 : 1);
     },
     trait: (v) => 0.8 + v.genes.laziness * 0.4,
@@ -251,8 +278,7 @@ const ACTIONS = {
     tick: (v, task, dt, h) => {
       v.drives.tired = Math.max(0, v.drives.tired - dt * (0.16 / 60));
       v.drives.ache = Math.max(0, v.drives.ache - dt * (0.05 / 60));
-      const wake = v.stage === 'baby' ? 7.5 : v.isChild() ? 7 : 6.2;
-      if (v.drives.tired < 0.04 && h >= wake && h < 20 && !v.isSick()) task.t = 0;
+      if (v.drives.tired < 0.04 && !sleepHours(v, h) && !v.isSick()) task.t = 0;
       if (v.drives.hunger > 0.95 && h >= 5) task.t = 0;
       if (v.isSick() && !isNight(h) && v.drives.tired < 0.1 && R.chance(dt * 0.004)) task.t = 0;
     },
