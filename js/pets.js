@@ -14,7 +14,9 @@ const PET_NAMES = { cat: ['Pudding', 'Mittens', 'Smudge', 'Biscuit', 'Tansy', 'M
 const PET_COATS = { cat: [['#d8873a', '#b86a2a', 'ginger'], ['#3a3438', '#24202a', 'black'], ['#9a948e', '#6e6a66', 'grey'], ['#e8e0d0', '#3a3438', 'black-and-white'], ['#8a6a4a', '#5a4430', 'tabby']], dog: [['#8a5a32', '#5a3a1e', 'brown'], ['#2a2628', '#f0ece4', 'black-and-white'], ['#d8a85a', '#b8883a', 'golden'], ['#a89a8a', '#7a6e62', 'grey']] };
 MOODLETS.new_pet = ['We\'ve a new {x}!', 0.14, 1440, ['Our very own pet!', 'I\'ve never been so happy.']];
 
-// --- Sprites: side-on, facing right; sit, walk ×2, sleep ----------------------
+// --- Sprites: side-on facing right (sit, walk ×2, sleep), and coming towards
+// you or going away (walk ×2 each), so a pet crossing the screen up or down
+// doesn't slide along sideways ---------------------------------------------------
 const PET_SPR = {};
 function petSprites(kind, coat) {
   const key = kind + coat;
@@ -28,6 +30,10 @@ function petSprites(kind, coat) {
       walk1: ['........d.d', '........cdc', 'dd......ece', '..dcccccccc', '...ccccccc.', '...c.c..c.c', '...........'],
       walk2: ['........d.d', '........cdc', '.dd.....ece', '...dccccccc', '...ccccccc.', '....c.cc.c.', '...........'],
       sleep: ['...........', '...........', '...........', '...ccccc...', '.dcccccccd.', 'dcccccccce.', '.ccccccccc.'],
+      down1: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.cecwcec.', '.cccpccc.', '..ccccc..', '.ccccccc.', '.ccccccc.', '.c.c.c.c.'],
+      down2: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.cecwcec.', '.cccpccc.', '..ccccc..', '.ccccccc.', '.ccccccc.', '..cc.cc..'],
+      up1: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.ccccccc.', '.ccccccc.', '..ccdcc..', '.cccdccc.', '.cccdccc.', '.c.c.c.c.'],
+      up2: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.ccccccc.', '.ccccccc.', '..ccdcc..', '.ccdcccc.', '.cccdccc.', '..cc.cc..'],
     };
   } else {
     frames = {
@@ -35,6 +41,10 @@ function petSprites(kind, coat) {
       walk1: ['.........dd..', '........dccce', 'dd......cccce', '..dcccccccc..', '...ccccccc...', '...c.c..c.c..', '...c.....c...'],
       walk2: ['.........dd..', '........dccce', '.dd.....cccce', '...dccccccc..', '...ccccccc...', '....c.c.c.c..', '....c...c....'],
       sleep: ['............', '............', '............', '....ccccdd..', '.dccccccccce', 'dccccccccccc', '.cccccccccc.'],
+      down1: ['..d.....d..', '.dcccccccd.', '.dcecccecd.', '..ccccccc..', '...ccecc...', '..ccccccc..', '.ccccccccc.', '.ccccccccc.', '.cc.ccc.cc.'],
+      down2: ['..d.....d..', '.dcccccccd.', '.dcecccecd.', '..ccccccc..', '...ccecc...', '..ccccccc..', '.ccccccccc.', '.ccccccccc.', '..cc.c.cc..'],
+      up1: ['..d.....d..', '.dcccccccd.', '.dcccccccd.', '..ccccccc..', '..ccccccc..', '..cccdccc..', '.ccccdcccc.', '.ccccccccc.', '.cc.ccc.cc.'],
+      up2: ['..d.....d..', '.dcccccccd.', '.dcccccccd.', '..ccccccc..', '..ccccccc..', '..cccdccc..', '.cccdccccc.', '.ccccccccc.', '..cc.c.cc..'],
     };
   }
   const out = {};
@@ -113,9 +123,22 @@ function stepPet(p, tx, ty, speed, dt) {
   const moved = Math.hypot(p.x - ox, p.y - oy);
   p.stuck = moved < s * 0.3 ? (p.stuck || 0) + dt : 0;
   if (p.stuck > 4) { p.stuck = 0; p.route = null; p.tx = null; return true; }
-  if (Math.abs(ex) > 0.5) p.face = ex > 0 ? 1 : -1;
+  petFacing(p, ex, ey, dt);
   p.walk = (p.walk || 0) + moved;
   return false;
+}
+// Which way a pet shows as it moves: side-on, towards you or away, keeping
+// the view it has until the other axis clearly wins; and it only turns round
+// once it has been heading the other way for a moment, so a dog dithering
+// about a spot doesn't flick left and right.
+function petFacing(p, ex, ey, dt) {
+  const ax = Math.abs(ex), ay = Math.abs(ey);
+  if (p.dir === 'down' || p.dir === 'up') { if (ax > ay * 1.6) p.dir = 'side'; }
+  else if (ay > ax * 1.6) p.dir = ey > 0 ? 'down' : 'up';
+  if ((p.dir === 'down' && ey < 0 && ay > ax) || (p.dir === 'up' && ey > 0 && ay > ax)) p.dir = ey > 0 ? 'down' : 'up';
+  const want = ex > 3 ? 1 : ex < -3 ? -1 : 0;
+  if (want && want !== p.face) { p.faceT = (p.faceT || 0) + dt; if (p.faceT >= 1) { p.face = want; p.faceT = 0; } }
+  else p.faceT = 0;
 }
 function updatePets(dtMin, hour) {
   for (const p of petsList()) {
@@ -149,13 +172,25 @@ function updatePets(dtMin, hour) {
     if (owner && !owner.inside && !owner.leaving && dist(owner.x, owner.y, home.stepX, home.stepY) < 900) {
       const d = dist(p.x, p.y, owner.x, owner.y);
       if (d > 360) { p.x = owner.x - 14 * (owner.facing === 'left' ? -1 : 1); p.y = owner.y + 2; }
-      if (d > 22) {
-        // at heel, or the other side if that's walled off
-        const side = owner.facing === 'left' ? -1 : 1, hx = petWalkable(owner.x - 12 * side, owner.y + 3) ? owner.x - 12 * side : petWalkable(owner.x + 12 * side, owner.y + 3) ? owner.x + 12 * side : owner.x;
+      // sets off once its person has got a fair way ahead, and keeps trotting
+      // until it's right at heel, rather than stopping and starting at the edge
+      if (d > 28) p.heeling = true;
+      else if (d < 14) p.heeling = false;
+      if (p.heeling) {
+        // at heel (the side it was on, unless its person turns round), or the other side if that's walled off
+        if (owner.facing === 'left' || owner.facing === 'right') p.heelSide = owner.facing === 'left' ? -1 : 1;
+        const side = p.heelSide || 1, hx = petWalkable(owner.x - 12 * side, owner.y + 3) ? owner.x - 12 * side : petWalkable(owner.x + 12 * side, owner.y + 3) ? owner.x + 12 * side : owner.x;
         p.state = 'walk';
-        if (stepPet(p, hx, owner.y + 3, owner.path ? 20 : 16, dtMin)) p.state = 'sit';
+        // slowing as it comes up, so it never overshoots and has to turn back
+        const speed = clamp((d - 8) * 1.1, 7, owner.path ? 22 : 18);
+        if (stepPet(p, hx, owner.y + 3, speed, dtMin)) { p.state = 'sit'; p.heeling = false; }
       }
-      else { p.state = owner.task && owner.task.phase === 'do' && owner.pose === 'sit' ? 'sleep' : 'sit'; if (Math.random() < dtMin * 0.004) p.say = { text: R.pick(['Woof!', 'Wuff.', '*pant pant*']), t: 2 }; }
+      else {
+        p.state = owner.task && owner.task.phase === 'do' && owner.pose === 'sit' ? 'sleep' : 'sit';
+        // sat at heel it looks the way its person does
+        if (owner.facing === 'left' || owner.facing === 'right') { p.face = owner.facing === 'left' ? -1 : 1; p.dir = 'side'; }
+        if (Math.random() < dtMin * 0.004) p.say = { text: R.pick(['Woof!', 'Wuff.', '*pant pant*']), t: 2 };
+      }
       continue;
     }
     // otherwise pottering about near home: sit a while, wander a bit
@@ -172,7 +207,7 @@ function updatePets(dtMin, hour) {
 }
 function petFrame(p) {
   const S = petSprites(p.kind, p.coat);
-  if (p.state === 'walk') return Math.floor((p.walk || 0) / 5) % 2 ? S.walk2 : S.walk1;
+  if (p.state === 'walk') { const k = Math.floor((p.walk || 0) / 5) % 2 ? 2 : 1; return S[(p.dir === 'down' || p.dir === 'up' ? p.dir : 'walk') + k]; }
   return p.state === 'sleep' ? S.sleep : S.sit;
 }
 
