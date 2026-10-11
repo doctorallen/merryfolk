@@ -564,13 +564,51 @@ function buildWorld(seed) {
 }
 
 // Raises a knoll on the map and makes the home record for it.
+// A hobbit-hole is dug into its own little hillside, not a dome: each one's
+// hill is a lopsided, lumpy rise (wider one way than the other, so the door
+// sits off-centre) whose south side is cut back into a face of dry-stone wall
+// with the door and windows set in it. The same shape gives the hill tiles
+// and the painted hill.
+function homeShape(d, id, doorTy) {
+  if (d._shape && d._shape.id === id) return d._shape;
+  const r = mulberry32(id * 4409 + 23);
+  const shift = d.grand ? (r() - 0.5) * 1.6 : (r() < 0.5 ? -1 : 1) * (0.7 + r() * 1.1);
+  const sh = {
+    id, hcx: d.cx + 0.5 + shift, hcy: d.cy + 0.3, hrx: d.rx * (1.1 + r() * 0.28), hry: d.ry * (0.95 + r() * 0.22),
+    ph: [r() * 6.3, r() * 6.3, r() * 6.3], amp: [0.06 + r() * 0.05, 0.035 + r() * 0.035, 0.025], pw: 2.1 + r() * 0.7,
+  };
+  // how far out a point is: under 1 is inside the hill (x, y in tiles)
+  sh.u = (x, y) => {
+    const nx = (x - sh.hcx) / sh.hrx, ny = (y - sh.hcy) / sh.hry;
+    const th = Math.atan2(ny, nx);
+    const rad = 1 + sh.amp[0] * Math.sin(2 * th + sh.ph[0]) + sh.amp[1] * Math.sin(3 * th + sh.ph[1]) + sh.amp[2] * Math.sin(5 * th + sh.ph[2]);
+    return Math.pow(Math.pow(Math.abs(nx), sh.pw) + Math.pow(Math.abs(ny), sh.pw), 1 / sh.pw) / rad;
+  };
+  // the foot of the hill's south face in a column (tiles), or null
+  sh.bottom = (x) => {
+    let y = sh.hcy;
+    if (sh.u(x, y) >= 1) return null;
+    while (y < sh.hcy + sh.hry * 1.5 && sh.u(x, y + 0.02) < 1) y += 0.02;
+    return y;
+  };
+  // set it down so the face meets the ground exactly where the door is
+  if (doorTy != null) { const b = sh.bottom(d.cx + 0.5); if (b != null) sh.hcy += doorTy + 1 - b; }
+  d._shape = sh;
+  return sh;
+}
+
 function createHome(d, i, surname, name) {
   const tiles = World.tiles;
+  // the door's row comes from the knoll's footprint (the lanes were laid to it)
   let doorTy = 0;
-  for (let y = Math.floor(d.cy - d.ry - 1); y <= Math.ceil(d.cy + d.ry + 1); y++) for (let x = Math.floor(d.cx - d.rx - 1); x <= Math.ceil(d.cx + d.rx + 1); x++) {
+  for (let y = Math.floor(d.cy - d.ry - 1); y <= Math.ceil(d.cy + d.ry + 1); y++) {
+    const ny = (y - d.cy) / d.ry;
+    if (ny * ny < 1) doorTy = Math.max(doorTy, y);
+  }
+  const sh = homeShape(d, i, doorTy);
+  for (let y = Math.floor(sh.hcy - sh.hry * 1.3); y <= doorTy; y++) for (let x = Math.floor(sh.hcx - sh.hrx * 1.3); x <= Math.ceil(sh.hcx + sh.hrx * 1.3); x++) {
     if (!inMap(x, y)) continue;
-    const nx = (x - d.cx) / d.rx, ny = (y - d.cy) / d.ry;
-    if (nx * nx + ny * ny < 1) { tiles[tIdx(x, y)] = T.HILL; if (x === d.cx) doorTy = Math.max(doorTy, y); }
+    if (sh.u(x + 0.5, y + 0.5) < 1 || (x === d.cx && y > sh.hcy)) tiles[tIdx(x, y)] = T.HILL;
   }
   const stepTy = doorTy + 1;
   const doorX = d.cx * 16 + 8, doorY = (doorTy + 1) * 16;
@@ -590,22 +628,25 @@ function createHome(d, i, surname, name) {
     tint: (vr() - 0.5) * 0.14, flowers: vr() < 0.45, frameCol: ['#4a2e1a', '#2f4a3a', '#5a2a2a', '#3a3a5a'][Math.floor(vr() * 4)],
   };
   if (d.grand) Object.assign(V, { frame: 0, door: 0, porch: false, lantern: true, boxes: true });
-  // windows sit on the mound's front face, following the curve of its painted
-  // edge (the same ellipse paintMound draws), so the outer ones never slip
-  // off the hill onto the grass
-  const wo = Math.round(d.rx * 16 * 0.42);
-  const mcx = (d.cx + 0.5) * 16, mcy = (d.cy + 0.5) * 16, mrx = d.rx * 16 - 4, mry = d.ry * 16 - 8;
-  const edgeY = (x) => { const u = (x - mcx) / mrx; return mcy + mry * Math.sqrt(Math.max(0, 1 - u * u)); };
+  // windows are set into the stone face either side of the door, or higher
+  // up in the grassy slope, wherever the hill rises behind them
+  const foot = (x) => { const b = sh.bottom(x / 16); return b == null ? null : b * 16; };
   const win = (dx, lift) => {
-    const x = Math.round(doorX + clamp(dx, -mrx * 0.62, mrx * 0.62));
-    return { x, y: Math.round(Math.min(doorY - 13, edgeY(x) - lift)) };
+    const x = Math.round(doorX + dx), f = foot(x);
+    return f == null ? null : { x, y: Math.round(f - lift) };
   };
-  const sides = V.nwin === 1 ? [vr() < 0.5 ? -1 : 1] : [-1, 1];
-  for (const sgn of sides) home.windows.push(win(sgn * wo, 13));
-  if (V.nwin >= 3 && !d.grand) home.windows.push(win((vr() < 0.5 ? -1 : 1) * wo * 1.5, 24));
-  if (d.grand) home.windows.push(win(-wo * 1.7, 22), win(wo * 1.7, 22));
-  if (V.chim2) home.chimney2 = { x: doorX - Math.round(d.rx * 16 * 0.45), y: Math.round((d.cy + 0.5) * 16 - d.ry * 16 * 0.35) };
-  if (V.roofWin) home.roofWin = { x: doorX + Math.round(d.rx * 16 * (vr() - 0.5) * 0.5), y: Math.round((d.cy + 0.5) * 16 - d.ry * 16 * 0.45) };
+  const wo = Math.round(d.rx * 16 * 0.42) + 4;
+  const towards = sh.hcx * 16 > doorX ? 1 : -1; // the bigger side of the hill
+  const spots = [];
+  if (V.nwin === 1) spots.push([towards * wo, 10]);
+  else spots.push([-wo, 10], [wo, 10]);
+  if (V.nwin >= 3 && !d.grand) spots.push([towards * wo * 1.7, 9]);
+  if (d.grand) spots.push([-wo * 1.75, 9], [wo * 1.75, 9]);
+  for (const [dx, lift] of spots) { const w = win(dx, lift); if (w) home.windows.push(w); }
+  // the chimney rises from the top of the hill
+  home.chimney = { x: Math.round(sh.hcx * 16 + (towards > 0 ? 0.25 : -0.25) * sh.hrx * 16), y: Math.round((sh.hcy - sh.hry * 0.55) * 16) };
+  if (V.chim2) home.chimney2 = { x: Math.round(sh.hcx * 16 - towards * sh.hrx * 16 * 0.45), y: Math.round((sh.hcy - sh.hry * 0.3) * 16) };
+  if (V.roofWin) home.roofWin = { x: Math.round(sh.hcx * 16 + (vr() - 0.5) * sh.hrx * 8), y: Math.round((sh.hcy - sh.hry * 0.4) * 16) };
   return home;
 }
 
@@ -1042,9 +1083,11 @@ const MOUND_PAL = {
 // into the ground at full detail.
 function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
   const d = h.def, G = GS;
-  const cx = (d.cx + 0.5) * 16, cy = (d.cy + 0.5) * 16;
-  const rx = d.rx * 16 - 4, ry = d.ry * 16 - 8;
-  const x0 = Math.floor((cx - rx - 4) * G), y0 = Math.floor((cy - ry - 4) * G), w = Math.ceil((rx * 2 + 8) * G), hh = Math.ceil((ry * 2 + 14) * G);
+  const sh = homeShape(d, h.id, Math.round(h.doorY / 16) - 1);
+  // the box the hill covers, in half-pixels
+  const cx = sh.hcx * 16, cy = sh.hcy * 16, rx = sh.hrx * 16, ry = sh.hry * 16;
+  const x0 = Math.floor((cx - rx * 1.25) * G), y0 = Math.floor((cy - ry * 1.3) * G);
+  const w = Math.ceil(rx * 2.5 * G), hh = Math.ceil((ry * 2.3 + 22) * G);
   const ox = org.x * G, oy = org.y * G;
   const img = ctx.getImageData(x0 - ox, y0 - oy, w, hh);
   const p = img.data;
@@ -1054,35 +1097,74 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
   const roofFlowers = h.v && h.v.flowers && season !== 'winter';
   const petal = [[240, 120, 150], [250, 220, 90], [190, 150, 240], [255, 255, 255]][h.id % 4];
   const winter = season === 'winter';
-  const edge = (px) => 1 + (hash2(px >> 1, 77) - 0.5) * 0.05 + Math.sin(px * 0.35) * 0.012;
+  // per half-pixel column: the foot of the south face, and how tall the
+  // stone face is there (full height in front, sinking into the slope at the sides)
+  const footY = new Float32Array(w), faceH = new Float32Array(w);
+  for (let i = 0; i < w; i++) {
+    const px = (x0 + i) / G, b = sh.bottom(px / 16);
+    footY[i] = b == null ? -1 : b * 16;
+    const nxc = (px - cx) / rx;
+    const front = clamp(1 - Math.abs(nxc) / 0.82, 0, 1);
+    faceH[i] = b == null ? 0 : (h.built || h.buildProg > 0.3 ? 15 : 0) * Math.pow(front, 0.5) * (1 + Math.sin(px * 0.21 + h.id) * 0.06);
+  }
+  const stones = winter ? [[176, 180, 186], [196, 198, 204], [150, 154, 162]] : [[132, 124, 110], [154, 146, 130], [112, 106, 96], [140, 128, 104]];
   for (let j = 0; j < hh; j++) for (let i = 0; i < w; i++) {
     const qx = x0 + i, qy = y0 + j, px = qx / G, py = qy / G;
-    const nx = (px - cx) / rx, ny = (py - cy) / ry;
-    const dd = nx * nx + ny * ny;
     const k = (j * w + i) * 4;
-    const lim = edge(Math.floor(px));
-    if (dd < lim) {
-      let l = -nx * 0.3 - ny * 0.55 + (1 - dd) * 0.35 - 0.05;
-      if (ny > 0.35) l -= (ny - 0.35) * 0.6;
-      if (dd > lim - 0.05) l += ny < -0.2 ? 0.25 : -0.35;
-      const hsh = hash2(qx, qy);
-      if (hsh < 0.06) l -= 0.16; else if (hsh > 0.94) l += 0.16;
-      // tufts: short darker strokes
-      if (!winter && hash2(qx, qy >> 1) > 0.965) l -= 0.14;
-      const t = clamp(l, -1, 1);
-      const col = t < 0 ? [lerp(base[0], dark[0], -t), lerp(base[1], dark[1], -t), lerp(base[2], dark[2], -t)]
-        : [lerp(base[0], light[0], t), lerp(base[1], light[1], t), lerp(base[2], light[2], t)];
+    const u = sh.u(px / 16, py / 16);
+    const fy = footY[i], fh = faceH[i];
+    // the stone face: dry-stone courses, mortar dark, a grassy lip over the top
+    if (fy > 0 && fh > 0.5 && py <= fy && py > fy - fh) {
+      const up = fy - py, row = Math.floor(up / 3.4), off = (row % 2) * 4 + hash2(row, h.id) * 3;
+      const sx = Math.floor((px + off) / (6 + (row % 3)));
+      const inRow = up - row * 3.4, inStone = (px + off) % (6 + (row % 3));
+      let col;
+      if (inRow < 0.6 || inStone < 0.6) col = winter ? [120, 124, 132] : [70, 62, 54];
+      else { col = stones[Math.floor(hash2(sx, row * 7 + h.id) * stones.length)].slice(); if (inRow > 2.6) col = col.map((c) => c * 1.12); if (hash2(qx, qy) < 0.05) col = col.map((c) => c * 0.85); }
+      // moss and ivy creeping over the stones
+      if (!winter && hash2(sx * 3, row + 11) < 0.12 && hash2(qx >> 1, qy >> 1) < 0.6) col = [74, 112, 52];
+      if (up > fh - 1.2) col = winter ? [236, 242, 248] : [52, 92, 40];
       p[k] = col[0]; p[k + 1] = col[1]; p[k + 2] = col[2];
-      if (!winter && hsh > 0.997) { p[k] = 240; p[k + 1] = 220; p[k + 2] = 90; }
-      if (roofFlowers && ny < 0.1 && dd < 0.8 && hash2(qx >> 4, qy >> 4) > 0.55 && hash2(qx, qy) > 0.982) {
-        p[k] = petal[0]; p[k + 1] = petal[1]; p[k + 2] = petal[2];
-        if (hash2(qx + 1, qy) > 0.5) { const k2 = k + w * 4; if (k2 < p.length) { p[k2] = 70; p[k2 + 1] = 120; p[k2 + 2] = 50; } }
-      }
-      if (!winter && hsh > 0.9985) { p[k] = 245; p[k + 1] = 245; p[k + 2] = 245; }
-    } else {
-      const sy = (py - cy - 7) / ry, sx2 = (px - cx - 3) / rx;
-      if (py > cy - ry * 0.3 && sx2 * sx2 + sy * sy < 1) { p[k] *= 0.68; p[k + 1] *= 0.72; p[k + 2] *= 0.74; }
+      continue;
     }
+    // the shadow the face casts on the ground in front
+    if (fy > 0 && fh > 0.5 && py > fy && py < fy + 3) { p[k] *= 0.72; p[k + 1] *= 0.74; p[k + 2] *= 0.78; continue; }
+    if (u >= 1.12) continue;
+    // the grassy hillside, lit from the north-west; its edges fade into the
+    // meadow rather than stopping at a line
+    const nx = (px - cx) / rx, ny = (py - cy) / ry;
+    if (fy > 0 && fh > 0.5 && py > fy) continue;
+    const edgeFade = clamp((1.12 - u) / 0.24, 0, 1);
+    if (edgeFade < 1 && hash2(qx, qy) > edgeFade) continue;
+    // a rounded slope: brightest up on the north-west shoulder, darker down the
+    // south and east sides and towards the foot, with a soft ridge along the top
+    let l = -nx * 0.42 - ny * 0.62 + (1 - u * u) * 0.5 - 0.2;
+    if (u > 0.78) l -= (u - 0.78) * 0.9;
+    const ridge = Math.abs(ny + 0.55 - nx * 0.15);
+    if (ridge < 0.12) l += (0.12 - ridge) * 1.6;
+    if (fy > 0 && fh > 0.5 && py > fy - fh - 4) l -= 0.15 * (1 - (fy - fh - py) / 4); // overhang shadow
+    const hsh = hash2(qx, qy);
+    if (hsh < 0.06) l -= 0.16; else if (hsh > 0.94) l += 0.16;
+    if (!winter && hash2(qx, qy >> 1) > 0.965) l -= 0.14;
+    const t = clamp(l * edgeFade + (1 - edgeFade) * 0, -1, 1);
+    const col = t < 0 ? [lerp(base[0], dark[0], -t), lerp(base[1], dark[1], -t), lerp(base[2], dark[2], -t)]
+      : [lerp(base[0], light[0], t), lerp(base[1], light[1], t), lerp(base[2], light[2], t)];
+    // at the faded edge, blend towards the ground already painted there
+    const m = edgeFade;
+    p[k] = lerp(p[k], col[0], m); p[k + 1] = lerp(p[k + 1], col[1], m); p[k + 2] = lerp(p[k + 2], col[2], m);
+    if (!winter && hsh > 0.997 && u < 0.95) { p[k] = 240; p[k + 1] = 220; p[k + 2] = 90; }
+    if (roofFlowers && ny < 0.1 && u < 0.8 && hash2(qx >> 4, qy >> 4) > 0.55 && hash2(qx, qy) > 0.982) {
+      p[k] = petal[0]; p[k + 1] = petal[1]; p[k + 2] = petal[2];
+      if (hash2(qx + 1, qy) > 0.5) { const k2 = k + w * 4; if (k2 < p.length) { p[k2] = 70; p[k2 + 1] = 120; p[k2 + 2] = 50; } }
+    }
+    if (!winter && hsh > 0.9985 && u < 0.95) { p[k] = 245; p[k + 1] = 245; p[k + 2] = 245; }
+  }
+  // grass hanging down over the top of the face
+  if (!winter) for (let i = 0; i < w; i++) {
+    const fy = footY[i], fh = faceH[i];
+    if (fy < 0 || fh < 2 || hash2(x0 + i, h.id) > 0.3) continue;
+    const top = Math.round((fy - fh) * G) - y0, len = 1 + Math.floor(hash2(i, 5) * 3);
+    for (let j = 0; j < len; j++) { const k = ((top + j) * w + i) * 4; if (k >= 0 && k < p.length) { p[k] = 58; p[k + 1] = 100; p[k + 2] = 42; } }
   }
   ctx.putImageData(img, x0 - ox, y0 - oy);
   if (!h.built) return;
@@ -1106,11 +1188,22 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
     ctx.fillStyle = k % 2 ? FR[1] : FR[2]; ctx.fillRect(sx, sy, 5, 5); ctx.fillStyle = shade(FR[2], 0.18); ctx.fillRect(sx, sy, 4, 1);
   }
   if (winter) for (let a = 0; a < 20; a++) { const ang = Math.PI + (a / 19) * Math.PI; ctx.fillStyle = '#f4f8ff'; ctx.fillRect(Math.round(dx + Math.cos(ang) * (r + 1)) - 2, Math.round(dy + Math.sin(ang) * (r + 1)) - 2, 4, 3); }
-  // the doorstep
-  const sx0 = (h.doorX - h.doorR - 3) * G, sw = (h.doorR * 2 + 7) * G, sy0 = h.doorY * G;
-  ctx.fillStyle = '#a89a80'; ctx.fillRect(sx0, sy0, sw, 5);
-  ctx.fillStyle = '#c8bca4'; ctx.fillRect(sx0 + 1, sy0, sw - 2, 1);
-  ctx.fillStyle = '#7a6c54'; ctx.fillRect(sx0, sy0 + 5, sw, 1);
+  // a raised flagstone terrace along the foot of the face, and stone steps
+  // down from the door to the lane
+  const tw = Math.round(sh.hrx * 16 * 0.55), side = sh.hcx * 16 > h.doorX ? 1 : -1;
+  const tx0 = (side > 0 ? h.doorX - h.doorR - 4 : h.doorX - tw) * G, tx1 = (side > 0 ? h.doorX + tw : h.doorX + h.doorR + 4) * G;
+  const ty = h.doorY * G;
+  ctx.fillStyle = winter ? '#d8dce4' : '#a89a80'; ctx.fillRect(tx0, ty, tx1 - tx0, 8);
+  for (let x = tx0; x < tx1; x += 9 + ((x >> 3) % 3)) { ctx.fillStyle = winter ? '#b8bcc6' : '#8a7c64'; ctx.fillRect(x, ty, 1, 8); }
+  ctx.fillStyle = winter ? '#f4f8ff' : '#c8bca4'; ctx.fillRect(tx0, ty, tx1 - tx0, 1);
+  ctx.fillStyle = winter ? '#9aa0aa' : '#6a5e48'; ctx.fillRect(tx0, ty + 8, tx1 - tx0, 3);
+  ctx.fillStyle = 'rgba(30,40,20,0.3)'; ctx.fillRect(tx0, ty + 11, tx1 - tx0, 2);
+  for (let k = 0; k < 3; k++) {
+    const sw = (h.doorR * 2 + 6 + k * 4) * G, sx = Math.round(h.doorX * G - sw / 2), sy = ty + 8 + k * 6;
+    ctx.fillStyle = winter ? '#dfe4ea' : '#a89a80'; ctx.fillRect(sx, sy, sw, 6);
+    ctx.fillStyle = winter ? '#ffffff' : '#c8bca4'; ctx.fillRect(sx + 1, sy, sw - 2, 1);
+    ctx.fillStyle = winter ? '#9aa0aa' : '#6a5e48'; ctx.fillRect(sx, sy + 5, sw, 1);
+  }
   // window surrounds
   for (const wdw of h.windows) {
     const wx = wdw.x * G, wy = wdw.y * G;
