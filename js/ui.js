@@ -411,8 +411,20 @@ function panelWork(v) {
 // ---------------------------------------------------------------------------
 // Roster
 // ---------------------------------------------------------------------------
+// The list is built once and then only the activity lines are refreshed
+// while it's open; it's rebuilt when someone moves, grows up or changes trade.
 function renderRoster() {
   const list = $('roster-list');
+  const sig = Game.villagers.map((v) => `${v.id}:${v.homeId}:${v.stage}:${v.job || ''}:${v.techTier}`).join(',') + '|' + Game.away.length;
+  if (list._sig === sig) {
+    for (const row of list.querySelectorAll('.roster-row')) {
+      const v = row._v, sm = row._small;
+      const text = v.inside ? (v.task ? (v.task.a.label2 ? v.task.a.label2(v) : v.task.a.label) : 'Indoors') : v.activity();
+      if (sm.textContent !== text) sm.textContent = text;
+    }
+    return;
+  }
+  list._sig = sig;
   list.innerHTML = '';
   const byHome = World.homes.map((h) => [h, Game.villagers.filter((v) => v.homeId === h.id)]).filter(([, vs]) => vs.length);
   for (const [h, vs] of byHome) {
@@ -420,11 +432,18 @@ function renderRoster() {
     g.innerHTML = `<h4>${escapeHtml(h.name)}</h4>`;
     for (const v of vs) {
       const b = document.createElement('button'); b.className = 'roster-row';
-      const c = document.createElement('canvas'); c.width = 24; c.height = 32; drawPortrait(c, v.genes, v.stage, false, v.look());
+      // the villager's own standing sprite, already drawn, scaled to fit
+      const c = document.createElement('canvas'); c.width = 24; c.height = 32;
+      const sp = v.sprites.down.stand, cx = c.getContext('2d');
+      cx.imageSmoothingEnabled = false;
+      const k = Math.min(c.width / sp.width, c.height / sp.height);
+      cx.drawImage(sp, Math.floor((c.width - sp.width * k) / 2), c.height - sp.height * k, sp.width * k, sp.height * k);
       b.appendChild(c);
       const s = document.createElement('span');
-      s.innerHTML = `<b>${escapeHtml(v.first)}${v.job ? ` <em>${JOBS[v.job].label}</em>` : v.stage === 'baby' ? ' <em>baby</em>' : ''}</b><small>${escapeHtml(v.inside ? (v.task ? v.task.a.label : 'Indoors') : v.activity())}</small>`;
+      s.innerHTML = `<b>${escapeHtml(v.first)}${v.job ? ` <em>${JOBS[v.job].label}</em>` : v.stage === 'baby' ? ' <em>baby</em>' : ''}</b><small></small>`;
       b.appendChild(s);
+      b._v = v; b._small = s.querySelector('small');
+      b._small.textContent = v.inside ? (v.task ? v.task.a.label : 'Indoors') : v.activity();
       b.addEventListener('click', () => { selectVillager(v); focusVillager(v); });
       g.appendChild(b);
     }
