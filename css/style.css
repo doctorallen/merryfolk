@@ -775,3 +775,8 @@ body.building #minimap { bottom: calc(var(--hud-bottom) + 4px); }
 .lore-card.locked { opacity: 0.55; }
 .lore-card.cur { border: 2px solid var(--brass); }
 .lore-card button { justify-self: start; font-size: 12px; padding: 1px 8px; }
+
+.log-filters { display: flex; flex-wrap: wrap; gap: 3px; padding: 4px 8px; border-bottom: 1px dashed var(--parch-3); }
+.log-filters button { font-family: var(--font-ui); font-size: 11px; padding: 1px 7px; border: 1px solid var(--ink-3); border-radius: 10px; background: var(--parch); cursor: pointer; color: var(--ink); }
+.log-filters button.on { background: var(--ink); color: var(--parch); }
+#chronicle.collapsed .log-filters { display: none; }
