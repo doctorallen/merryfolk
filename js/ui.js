@@ -294,7 +294,7 @@ function panelLife(v) {
   h += '</div>';
   const home = v.home();
   const larder = PANTRY_KINDS.filter((k) => home.pantry[k] > 0).map((k) => `${home.pantry[k]} ${FOODS[k].label}`).join(', ') || 'bare!';
-  h += `<div class="pocket">${v.isGrown() && v.genes.pipeLove > 0.15 ? `Leaf pouch: ${v.pouch} pinch${v.pouch === 1 ? '' : 'es'}<br>` : ''}Larder at home: ${larder}${home.chilly ? '<br><b>The hearth at home is cold. No timber!</b>' : ''}</div>`;
+  h += `<div class="pocket">${v.isGrown() && v.genes.pipeLove > 0.15 ? `Leaf pouch: ${v.pouch} pinch${v.pouch === 1 ? '' : 'es'}<br>` : ''}Larder at home: ${larder}${jarsTotal(home) ? ` · ${jarsTotal(home)} jars put by for winter` : ''}${home.chilly ? '<br><b>The hearth at home is cold. No timber!</b>' : ''}</div>`;
   if (v.expecting) { const o = person(v.expecting.with); h += `<div class="note">Expecting a little one with ${link(o)} any day now!</div>`; }
   return h;
 }

@@ -96,7 +96,7 @@ function save() {
       villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
       archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
-      homes: World.homes.map((h) => ({ built: h.built, buildProg: h.buildProg, pantry: h.pantry, chilly: h.chilly, neon: !!h.neon, plots: h.plots.map((p) => [p.stage, p.prog]), crafts: h.crafts, collection: h.collection })),
+      homes: World.homes.map((h) => ({ built: h.built, buildProg: h.buildProg, pantry: h.pantry, chilly: h.chilly, neon: !!h.neon, plots: h.plots.map((p) => [p.stage, p.prog]), crafts: h.crafts, collection: h.collection, jars: h.jars || {} })),
       rifts: World.rifts, scars: World.riftScars, riftNext: Game.riftNext, riftsOn: Village.riftsOn, wayHome: Village.wayHome || 0, wayHomeTries: Village.wayHomeTries || 0, riftPower: Village.riftPower || null,
       allot: World.allotments.map((a) => a.plots.map((p) => p.stage)), pens: World.pens.map((p) => p.tend),
       weed: World.weed.map((w) => w.stage), fields: World.fields.map((f) => f.plots.map((p) => p.stage)), herbs: World.herbBeds.map((p) => p.stage),
@@ -134,7 +134,7 @@ function load() {
     if (h.built && !home.built) { home.built = true; furnishHome(home); addHomeFlowers(home); }
     home.buildProg = h.buildProg || 0;
     home.pantry = Object.assign(emptyPantry(), h.pantry || {}); home.chilly = !!h.chilly; home.neon = !!h.neon;
-    home.crafts = h.crafts || {}; home.collection = h.collection || {};
+    home.crafts = h.crafts || {}; home.collection = h.collection || {}; home.jars = h.jars || {};
     (h.plots || []).forEach(([s, p], j) => { if (home.plots[j]) { home.plots[j].stage = s; home.plots[j].prog = p; } });
   });
   Village.projects = Village.projects.filter((p) => p.kind !== 'home' || (World.homes[p.homeId] && !World.homes[p.homeId].built));
