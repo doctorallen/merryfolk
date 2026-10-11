@@ -219,3 +219,43 @@ window.addEventListener('DOMContentLoaded', () => {
   const nv = newVillage;
   newVillage = function () { Game.factions = {}; Game.petition = null; Game.petitionsSeen = []; Game.lastPetitionDay = 0; Game.highdayDance = false; Game.swing = false; Game.neonSquare = false; Game.breePact = false; return nv(); };
 });
+
+// --- What the petitions leave on the map ---------------------------------------
+// neon strung round the square, glowing after dark
+window.addEventListener('DOMContentLoaded', () => {
+  const cl = collectLights;
+  collectLights = function () {
+    const L = cl();
+    if (Game.neonSquare && Game.darkness > 0.15) {
+      const cols = ['#ff3aa8', '#3af0ff', '#ffe04a', '#7aff5a'];
+      for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; L.push({ x: (PLAZA.cx + Math.cos(a) * 5) * 16, y: (PLAZA.cy + Math.sin(a) * 4.2) * 16 - 10, r: 16 * (0.9 + Math.sin(tReal * 3 + i) * 0.1), a: 0.75, col: cols[i % 4] }); }
+    }
+    return L;
+  };
+});
+// the swing on the party tree
+function makeSwing() {
+  const rows = Array(30).fill('k........k').concat(['wwwwwwwwww', 'WWWWWWWWWW']);
+  return finishSprite(rows, { k: '#c8b890', w: '#9a6a40', W: '#6e4628' });
+}
+function placeSwing() {
+  if (!World._addStatic || World.swingSpot) return;
+  const x = (PARTY.treeX + 1.6) * 16, y = (PARTY.treeY + 1) * 16 + 10;
+  World._addStatic(makeSwing(), x, y, { sortBias: 2 });
+  World.swingSpot = makeSpot(x, y + 1, 'down', 'sit', 'swing');
+}
+ACTIONS.swing = {
+  id: 'swing', label: 'On the swing', icon: 'heart', sat: { bored: -0.6, lonely: -0.1 }, dur: 20, pose: 'sit', outdoor: true, stages: ['child'],
+  avail: () => !!World.swingSpot && !World.swingSpot.occ,
+  extra: () => 0.25,
+  time: (h) => (h >= 8 && h < 19 ? 1 : 0.02),
+  target: () => (World.swingSpot && !World.swingSpot.occ ? { spot: World.swingSpot } : null),
+  tick: (v) => { if (Math.random() < 0.02) v.say(R.pick(['Wheee!', 'Higher!', 'Look, no hands!']), 2); },
+};
+ACTION_NAMES.swing = 'Swinging';
+window.addEventListener('DOMContentLoaded', () => {
+  const oh = onHour;
+  onHour = function (h) { const r = oh(h); if (Game.swing && !World.swingSpot) placeSwing(); return r; };
+  const nv = newVillage;
+  newVillage = function () { World.swingSpot = null; return nv(); };
+});

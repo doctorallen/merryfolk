@@ -177,7 +177,7 @@ Every couple of days one of the village's interests brings a petition to the Ste
 - **The rift-folk:** neon lights in the square, from salvage?
 - **The little ones:** a swing on the party tree?
 
-Each is a real choice with a cost and a benefit, and each pleases some and disappoints others. A 📜 Petition chip pulses in the top bar until you answer; you can think it over, but leave it a day and it's taken as a no. How each interest feels about the Steward (*devoted*, *pleased*, *neutral*, *grumbling*, *fed up*) is shown on the Steward's Desk. Folk whose interest is listened to are cheerful about it; those who feel ignored grumble. Moots, petitions and the Almanac wait their turn rather than interrupting each other.
+Each is a real choice with a cost and a benefit, and each pleases some and disappoints others. A 📜 Petition chip pulses in the top bar until you answer; you can think it over, but leave it a day and it's taken as a no. How each interest feels about the Steward (*devoted*, *pleased*, *neutral*, *grumbling*, *fed up*) is shown on the Steward's Desk. Folk whose interest is listened to are cheerful about it; those who feel ignored grumble. Granted petitions leave their mark: neon strung round the square glows after dark, and the little ones queue for the swing on the party tree. Moots, petitions and the Almanac wait their turn rather than interrupting each other.
 
 ### Charters, renown and the eras of Thistledown
 

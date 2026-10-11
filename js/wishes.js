@@ -194,7 +194,8 @@ function rollWish(v) {
   opts.sort((a, b) => b[1] - a[1]);
   addWish(v, opts[0][0]);
 }
-function grantWish(v, w) {
+const PLAYER_EVENTS = new Set(['act:eat_item', 'act:read_item', 'act:ale_item', 'fireworks', 'feel:patted']);
+function grantWish(v, w, ev) {
   v.wishes = wishesOf(v).filter((x) => x !== w);
   const text = wishText(w);
   feel(v, 'wish', text.charAt(0).toLowerCase() + text.slice(1));
@@ -202,7 +203,7 @@ function grantWish(v, w) {
   v.stats.wishes = (v.stats.wishes || 0) + 1;
   if (!v.inside) { FX.sparkle(v.x, v.y - 20, '#ffe680'); v.say(R.pick(['My wish came true!', 'Oh, how wonderful!', 'Just what I wanted!']), 2.6); }
   // the ones you granted get a word in the corner
-  if (WISHES[w.k].hint && !WISHES[w.k].on.includes('poll') && typeof toast === 'function') toast(`${v.first}'s wish came true: ${text.charAt(0).toLowerCase() + text.slice(1)}.`, 'love');
+  if (PLAYER_EVENTS.has(ev) && typeof toast === 'function') toast(`${v.first}'s wish came true: ${text.charAt(0).toLowerCase() + text.slice(1)}.`, 'love');
   devLog('mood', `${v.first}'s wish came true: ${text}`);
 }
 // Something happened to them: does it grant a wish?
@@ -212,7 +213,7 @@ function wishEvent(v, ev, x) {
     const W = WISHES[w.k];
     if (!W || !W.on.includes(ev)) continue;
     if (w.x && x !== undefined && x !== w.x && ev.startsWith('feel:')) continue;
-    grantWish(v, w);
+    grantWish(v, w, ev);
   }
 }
 

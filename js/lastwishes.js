@@ -26,8 +26,8 @@ function setLastWishes(f) {
 }
 window.addEventListener('DOMContentLoaded', () => {
   const gw = grantWish;
-  grantWish = function (v, w) {
-    const r = gw(v, w);
+  grantWish = function (v, w, ev) {
+    const r = gw(v, w, ev);
     if (w.last) { const f = (Game.farewells || []).find((x) => x.id === v.id || x.comp === v.id); if (f) (f.granted || (f.granted = [])).push(w.k === 'pint' ? 'one more pint at the Badger' : `a last natter with ${w.x}`); }
     return r;
   };
