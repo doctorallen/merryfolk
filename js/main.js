@@ -769,6 +769,22 @@ function wrapText(ctx, text, maxW) {
 
 // Crisp text layer: speech bubbles and name tags
 let BUBBLE_SEQ = 0;
+// How far down the screen the top bar (and, on phones, the charter card under it) reaches.
+let bubbleCeilAt = -1e9, bubbleCeilY = 0;
+function bubbleCeiling() {
+  const now = performance.now();
+  if (now - bubbleCeilAt < 500) return bubbleCeilY;
+  bubbleCeilAt = now;
+  const top = overlay.getBoundingClientRect().top, wide = overlay.clientWidth * 0.6;
+  let y = 0;
+  for (const id of ['topbar', 'objectives']) {
+    const el = document.getElementById(id);
+    if (!el || el.hidden || el.offsetParent === null) continue;
+    const r = el.getBoundingClientRect();
+    if (r.width >= wide || id === 'topbar') y = Math.max(y, r.bottom - top);
+  }
+  return (bubbleCeilY = y);
+}
 function renderOverlay() {
   const z = Game.zoom, cam = Game.cam;
   octx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -796,24 +812,42 @@ function renderOverlay() {
     items.push({ v, sx, think, to, lines, bw, bh, bx, by, by0: by, top: to && !think ? 15 : 2 });
   }
   items.sort((p, q) => p.v.bubble.seq - q.v.bubble.seq);
+  // each newer bubble takes the nearest free spot: where it would be, above or
+  // beside one already there, never up behind the top bar or off the sides
+  const ceil = bubbleCeiling() + 4;
+  const hits = (it, x, y, o) => x - 2 < o.bx + o.bw + 5 && x + it.bw + 5 > o.bx - 2 && y - it.top < o.by + o.bh + 4 && y + it.bh + 4 > o.by - o.top;
   const placed = [];
   for (const it of items) {
-    for (let moved = true, n = 0; moved && n < 12; n++) {
-      moved = false;
-      for (const o of placed) {
-        if (it.bx - 2 < o.bx + o.bw + 5 && it.bx + it.bw + 5 > o.bx - 2 && it.by - it.top < o.by + o.bh + 4 && it.by + it.bh + 4 > o.by - o.top) {
-          it.by = o.by - o.top - it.bh - 6; moved = true;
-        }
+    // a speaker right under the top bar has their bubble pinned just below it
+    const x0 = it.bx, y0 = Math.max(it.by, ceil + it.top);
+    const xs = [x0], ys = [y0];
+    for (const o of placed) { xs.push(o.bx - it.bw - 9, o.bx + o.bw + 9); ys.push(o.by - o.top - it.bh - 6, o.by + o.bh + it.top + 6); }
+    let best = null, bestCost = Infinity;
+    for (const x of xs) {
+      if (x < 4 || x > W - it.bw - 4) continue;
+      for (const y of ys) {
+        if (y - it.top < ceil || y + it.bh > H - 4) continue;
+        const cost = (y <= y0 ? y0 - y : (y - y0) * 1.6) + Math.abs(x - x0) * 0.8;
+        if (cost < bestCost && !placed.some((o) => hits(it, x, y, o))) { best = [x, y]; bestCost = cost; }
+      }
+    }
+    if (best) [it.bx, it.by] = best;
+    else {
+      // nowhere free in view: stack upwards as before
+      for (let moved = true, n = 0; moved && n < 12; n++) {
+        moved = false;
+        for (const o of placed) if (hits(it, it.bx, it.by, o)) { it.by = o.by - o.top - it.bh - 6; moved = true; }
       }
     }
     placed.push(it);
   }
   // lifted bubbles keep a thin stem down to whoever's speaking
   for (const it of items) {
-    if (it.by0 - it.by < 3) continue;
+    if (Math.abs(it.by0 - it.by) < 3) continue;
+    const ax = clamp(it.sx - 3, it.bx + 6, it.bx + it.bw - 6);
     octx.globalAlpha = Math.min(1, it.v.bubble.t * 2.5) * 0.8;
     octx.strokeStyle = it.think ? '#5a5e70' : '#2a1c12'; octx.lineWidth = 2;
-    octx.beginPath(); octx.moveTo(it.sx - 3, it.by + it.bh + 4); octx.lineTo(it.sx - 3, it.by0 + it.bh + (it.think ? 12 : 8)); octx.stroke();
+    octx.beginPath(); octx.moveTo(ax, it.by + it.bh + 4); octx.lineTo(it.sx - 3, it.by0 + it.bh + (it.think ? 12 : 8)); octx.stroke();
   }
   for (const { v, sx, think, to, lines, bw, bh, bx, by } of items) {
     octx.globalAlpha = Math.min(1, v.bubble.t * 2.5);
