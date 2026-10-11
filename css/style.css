@@ -805,6 +805,8 @@ body.building #minimap { bottom: calc(var(--hud-bottom) + 4px); }
   #toasts .toast { font-size: 13px; padding: 5px 10px; }
 }
 #errand { z-index: 9; }
+/* the ledger has the floor while it's open: the errand card waits behind it */
+body:has(#village:not([hidden])) #errand { display: none; }
 @media (pointer: coarse) {
   kbd { display: none; }
   #errand .err-skip, .obj-x, .log-filters button, #bb-undo, #bb-done, .lore-card button, #ch-moot, .wg-seg button, .ch-r button, .int-head button, .ex button, .ec-o button, .ec-p button { min-height: 40px; min-width: 40px; }
