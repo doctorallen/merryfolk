@@ -128,6 +128,8 @@ function charterHTML() {
     h += `<div class="sub">${next.blurb}</div>`;
     h += `<div class="row-btns"><button id="ch-moot" class="${eraReady(e + 1) ? 'primary' : ''}" ${eraReady(e + 1) ? '' : 'disabled'}>Call a Moot: become a ${next.name}</button></div>`;
   } else h += '<p>Thistledown is as grand as a Shire town gets. Long may it prosper.</p>';
+  const mps = Game.masterpieces || [];
+  if (mps.length) h += `<h3>Treasures of Thistledown</h3><div class="likes">${mps.map((m) => `<div><b>${escapeHtml(m.name)}</b>, a ${escapeHtml(m.thing)} by ${escapeHtml(m.byName)} (day ${m.day}), showing ${escapeHtml(m.shows)}</div>`).join('')}</div>`;
   return h;
 }
 

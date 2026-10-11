@@ -631,3 +631,6 @@ body.dev-on #chronicle { visibility: hidden; }
 .moot-opt b { font-family: var(--font-ui); font-size: 17px; color: var(--moss); }
 .moot-opt span { font-size: 14px; line-height: 1.35; }
 .moot-opt:hover { background: #fff6dc; }
+
+.sent { display: flex; flex-wrap: wrap; gap: 3px; margin: 0 0 4px 4px; }
+.sent .chip { font-size: 11px; padding: 0 6px; }

@@ -307,7 +307,9 @@ function panelNature(v) {
     const word = val >= 0.68 ? hi : val <= 0.32 ? lo : '';
     h += `<div class="trait"><span class="tl">${label}</span>${meter(val)}<span class="tw">${word}</span></div>`;
   }
-  h += '</div><h3>Talents</h3><div class="talents">';
+  h += '</div>';
+  if (v.stage !== 'baby') { likesOf(v); h += `<div class="likes"><div><b>Loves</b> ${v.likes.map((k) => LIKES[k]).join(' and ')}</div><div><b>Can't abide</b> ${v.dislikes.map((k) => LIKES[k]).join(', ')}</div></div>`; }
+  h += '<h3>Talents</h3><div class="talents">';
   for (const s of topTalents(g, 3)) h += `<div><span>${SKILL_LABEL[s]}</span><span class="stars" title="Aptitude">${stars(g.apt[s])}</span></div>`;
   h += '</div><h3>Inherited looks</h3><div class="genes">';
   for (const [k, val] of geneDescription(g)) h += `<div><b>${k}</b> ${val}</div>`;
@@ -423,8 +425,11 @@ function panelKin(v) {
   const rivals = others.filter(([, f]) => f < -0.15).sort((a, b) => a[1] - b[1]).slice(0, 3);
   h += '<h3>Friends</h3><div class="friends">';
   if (!friends.length) h += '<div>Still getting to know everyone.</div>';
-  for (const [o, f] of friends) h += `<div class="friend">${link(o)}${bar(f, 'good')}${(v.love[o.id] || 0) > 0.2 ? '<span class="heart" title="Fond of them">♥</span>' : ''}</div>`;
+  for (const [o, f] of friends) { const st = sentimentsOf(v, o); h += `<div class="friend">${link(o)}${bar(f, 'good')}${(v.love[o.id] || 0) > 0.2 ? '<span class="heart" title="Fond of them">♥</span>' : ''}</div>${st.length ? `<div class="sent">${st.map((x) => `<span class="chip ${SENT[x.tag][1] > 0 ? 'good' : 'bad'}">${SENT[x.tag][0]}: ${escapeHtml(x.why)}</span>`).join('')}</div>` : ''}`; }
   h += '</div>';
+  const rv = rivalOf(v);
+  if (rv) h += `<h3>Friendly rival</h3><div class="likes"><div>${link(rv)} at ${SKILL_LABEL[v.rivalSkill || 'farming'].toLowerCase()}: ${v.rivalScore || 0} wins to ${rv.rivalScore || 0}${sentimentsOf(v, rv).length ? ` · ${sentimentsOf(v, rv).map((x) => SENT[x.tag][0].toLowerCase() + ' (' + escapeHtml(x.why) + ')').join(', ')}` : ''}</div></div>`;
+  if (v.sulk) h += `<div class="note">${escapeHtml(v.first)} is sulking. A visit from a friend, a letter or a kind pat might help.</div>`;
   if (rivals.length) {
     h += '<h3>Rivals</h3><div class="friends">';
     for (const [o, f] of rivals) h += `<div class="friend">${link(o)}${bar(-f, 'low')}</div>`;

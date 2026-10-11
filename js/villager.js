@@ -55,7 +55,7 @@ class Villager {
     this.techTier = techTier(this.tech);
     this.memories = o.memories ?? [];
     this.moodlets = o.moodlets ?? [];
-    this.wishes = o.wishes ?? []; this.dream = o.dream ?? null; this.dreamsDone = o.dreamsDone ?? []; this.heirlooms = o.heirlooms ?? []; this.owesThanks = o.owesThanks ?? []; this.arc = o.arc ?? null;
+    this.wishes = o.wishes ?? []; this.dream = o.dream ?? null; this.dreamsDone = o.dreamsDone ?? []; this.heirlooms = o.heirlooms ?? []; this.owesThanks = o.owesThanks ?? []; this.arc = o.arc ?? null; this.sent = o.sent ?? {}; this.likes = o.likes ?? null; this.dislikes = o.dislikes ?? null; this.rival = o.rival ?? null; this.rivalSkill = o.rivalSkill ?? null; this.rivalScore = o.rivalScore ?? 0; this.masterpiece = o.masterpiece ?? null; this.sulk = o.sulk ?? null;
     this.job = o.job ?? null;
     this.playerJob = o.playerJob ?? false;
     this.wary = o.wary ?? 0;
@@ -725,7 +725,7 @@ class Villager {
       playerJob: this.playerJob, wary: this.wary, pouch: this.pouch, stats: this.stats, born: this.born, expecting: this.expecting, lastFood: this.lastFood,
       battery: this.battery, newcomer: this.newcomer, lodgeDay: this.lodgeDay, refusedDay: this.refusedDay,
       hobbies: this.hobbies, hobbySkill: this.hobbySkill, hobbyMat: this.hobbyMat, birds: this.birds,
-      moodlets: (this.moodlets || []).filter((m) => m.until > Game.time), wishes: this.wishes, dream: this.dream, dreamsDone: this.dreamsDone, heirlooms: this.heirlooms, owesThanks: this.owesThanks, arc: this.arc,
+      moodlets: (this.moodlets || []).filter((m) => m.until > Game.time), wishes: this.wishes, dream: this.dream, dreamsDone: this.dreamsDone, heirlooms: this.heirlooms, owesThanks: this.owesThanks, arc: this.arc, sent: this.sent, likes: this.likes, dislikes: this.dislikes, rival: this.rival, rivalSkill: this.rivalSkill, rivalScore: this.rivalScore, masterpiece: this.masterpiece, sulk: this.sulk,
     };
   }
 }
