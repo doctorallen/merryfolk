@@ -103,7 +103,17 @@ function ellipseFill(ctx, cx, cy, rx, ry, col) {
 }
 
 // Adds a 1px outline around every opaque pixel of a canvas.
+// If anything is drawn right up to the canvas edge, the canvas grows by a
+// pixel all round first so the outline isn't cut off there (callers use the
+// canvas returned).
 function outlineCanvas(c, col = '#2a1c12', alpha = 255) {
+  {
+    const w = c.width, h = c.height, d = c.getContext('2d').getImageData(0, 0, w, h).data;
+    let edge = false;
+    for (let x = 0; x < w && !edge; x++) edge = d[x * 4 + 3] > 100 || d[((h - 1) * w + x) * 4 + 3] > 100;
+    for (let y = 0; y < h && !edge; y++) edge = d[y * w * 4 + 3] > 100 || d[(y * w + w - 1) * 4 + 3] > 100;
+    if (edge) { const [p, px] = makeCanvas(w + 2, h + 2); px.drawImage(c, 1, 1); c = p; }
+  }
   const ctx = c.getContext('2d');
   const img = ctx.getImageData(0, 0, c.width, c.height);
   const d = img.data, w = c.width, h = c.height;

@@ -578,8 +578,7 @@ function makeBareTree(seed, kind, big) {
     const a = -Math.PI / 2 + (k / (arms - 1) - 0.5) * 2.1 + (rng() - 0.5) * 0.3;
     branch(cx + (rng() - 0.5) * tw * 0.6, top + rng() * 4, a, big ? 16 + rng() * 8 : 7 + rng() * 4, big ? 3 : 2, big ? 3 : 2);
   }
-  outlineCanvas(c, kind === 'birch' ? '#4a463c' : '#22160c', 160);
-  return addSnow(c, 0, base - 4, 1, seed);
+  return addSnow(outlineCanvas(c, kind === 'birch' ? '#4a463c' : '#22160c', 160), 0, base - 4, 1, seed);
 }
 
 function makeTree(seed, kind, season = 'summer') {
@@ -613,8 +612,8 @@ function makeTree(seed, kind, season = 'summer') {
         }
       }
     }
-    outlineCanvas(c, '#14261a');
-    return season === 'winter' ? addSnow(c, 0, base - 8, 2, seed) : c;
+    const o = outlineCanvas(c, '#14261a');
+    return season === 'winter' ? addSnow(o, 0, base - 8, 2, seed) : o;
   }
 
   // trunk
@@ -680,8 +679,8 @@ function makeBush(seed, season = 'summer') {
     const col = season === 'autumn' ? '#d83a2a' : r < 0.2 ? '#7a2a6a' : r < 0.35 ? '#f0e8f0' : '#e85a6a';
     for (let k = 0; k < 6; k++) { x.fillStyle = col; x.fillRect(3 + rng() * 14 | 0, 4 + rng() * 7 | 0, 1, 1); }
   }
-  outlineCanvas(c, '#18301a');
-  return season === 'winter' ? addSnow(c, 0, 12, 2, seed) : c;
+  const o = outlineCanvas(c, '#18301a');
+  return season === 'winter' ? addSnow(o, 0, 12, 2, seed) : o;
 }
 
 function makeFlowerPatch(seed) {
@@ -981,10 +980,12 @@ function makeHay() {
 }
 
 function makeWoodpile() {
-  const [c, x] = makeCanvas(18, 11);
-  for (let j = 0; j < 3; j++) for (let i = 0; i < 4 - (j > 1 ? 1 : 0); i++) {
-    const px = 1 + i * 4 + j * 2, py = 7 - j * 3;
-    disc(x, px + 1.5, py + 1.5, 2, '#7a5030'); x.fillStyle = '#d8b07a'; x.fillRect(px + 1, py + 1, 2, 2);
+  // a stack of split logs, ends out: four along the bottom, then three, then two
+  const [c, x] = makeCanvas(20, 14);
+  for (let j = 0; j < 3; j++) for (let i = 0; i < 4 - j; i++) {
+    const px = 2 + i * 4 + j * 2, py = 9 - j * 3.5;
+    disc(x, px + 1.5, py + 1.5, 2, '#7a5030'); x.fillStyle = '#d8b07a'; x.fillRect(px + 1, Math.round(py) + 1, 2, 2);
+    x.fillStyle = '#a07a50'; x.fillRect(px + 1, Math.round(py) + 1, 1, 1);
   }
   return outlineCanvas(c, OUTLINE);
 }
@@ -1115,8 +1116,7 @@ function makeCottage(opts) {
     if (ic) x.drawImage(ic, sx + 1, sy + 4);
   }
   if (opts.extra) opts.extra(x, { L, Rr, wallTop, wallBot, W, H, lit });
-  outlineCanvas(c, OUTLINE);
-  return c;
+  return outlineCanvas(c, OUTLINE);
 }
 
 // ---------------------------------------------------------------------------
@@ -1155,8 +1155,7 @@ function makeRelay(lit) {
   x.fillStyle = '#26262e'; for (let k = 0; k < 10; k++) x.fillRect(mx - 3 - k, base - 2 + Math.round(Math.sin(k / 3) * 2), 1, 1);
   // a neon strip under the eaves
   x.fillStyle = lit ? '#3af0ff' : '#2a6a74'; x.fillRect(6, wallTop, W - 12, 1);
-  outlineCanvas(c, OUTLINE);
-  return c;
+  return outlineCanvas(c, OUTLINE);
 }
 
 function makeNeonBar(lit) {
@@ -1199,8 +1198,7 @@ function makeSolarArray(lit) {
   x.fillStyle = '#2a2a32'; x.fillRect(bx + 4, by + 6, 6, 12);
   x.fillStyle = lit ? '#7aff5a' : '#2a5a2a'; x.fillRect(bx + 2, by + 2, 2, 2);
   x.fillStyle = lit ? '#ffd23a' : '#5a4a1a'; x.fillRect(bx + 10, by + 2, 2, 2);
-  outlineCanvas(c, OUTLINE);
-  return c;
+  return outlineCanvas(c, OUTLINE);
 }
 
 function makeBeehive() {
