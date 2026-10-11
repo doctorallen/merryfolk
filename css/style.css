@@ -28,6 +28,8 @@ kbd {
 }
 
 #game { position: fixed; inset: 0; }
+/* no text selection, magnifier or callout when a finger rests on the village */
+#view { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 #view { position: absolute; left: 0; top: 0; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; cursor: grab; }
 #overlay { position: absolute; left: 0; top: 0; pointer-events: none; }
 
@@ -148,8 +150,8 @@ button:focus-visible, .tool:focus-visible { outline: 3px solid var(--brass); out
 .meter i { display: block; height: 100%; background: var(--ink-3); }
 .traits { display: grid; gap: 2px; }
 .trait { display: grid; grid-template-columns: 112px 70px 1fr; gap: 8px; align-items: center; font-size: 13px; }
-.trait .meter { width: 70px; }
-.trait .tw { color: var(--ink-2); font-style: italic; font-size: 12.5px; }
+.trait .meter { width: 100%; }
+.trait .tw { color: var(--ink-2); font-style: italic; font-size: 12.5px; padding-left: 4px; min-width: 0; }
 .talents div, .skills .skill { display: grid; grid-template-columns: 96px 1fr auto; gap: 8px; align-items: center; font-size: 13.5px; margin: 2px 0; }
 .talents div { grid-template-columns: 1fr auto; }
 .stars { color: #b8902a; font-size: 12px; letter-spacing: 1px; white-space: nowrap; }

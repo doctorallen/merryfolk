@@ -818,12 +818,15 @@ function setZoom(z, anchorX, anchorY) {
 function centerOn(x, y) { Game.cam.x = x - Game.cam.w / 2; Game.cam.y = y - Game.cam.h / 2; clampCam(); }
 function screenToWorld(sx, sy) { return [Game.cam.x + sx / Game.zoom, Game.cam.y + sy / Game.zoom]; }
 
-function villagerAt(wx, wy) {
+// The villager under a point. A fingertip is much bigger than a mouse pointer,
+// so touches reach about 22 screen pixels around each villager.
+function villagerAt(wx, wy, touch = pointer.touch) {
+  const pad = touch ? Math.max(0, 22 / Game.zoom - 4) : 0;
   let best = null, bd = 1e9;
   for (const v of Game.villagers) {
     if (v.inside || v.carried) continue;
     const top = v._top ?? v.y - 16;
-    if (wx >= v.x - 7 && wx <= v.x + 7 && wy >= top - 2 && wy <= v.y + 3) {
+    if (wx >= v.x - 7 - pad && wx <= v.x + 7 + pad && wy >= top - 2 - pad && wy <= v.y + 3 + pad) {
       const d = Math.abs(wy - (v.y - 7)) + Math.abs(wx - v.x);
       if (d < bd) { bd = d; best = v; }
     }
@@ -861,6 +864,7 @@ function setupInput() {
       pointer.pinched = false;
     }
     pointer.down = true; pointer.moved = false; pointer.sx = e.clientX; pointer.sy = e.clientY;
+    pointer.touch = e.pointerType === 'touch';
     pointer.camX = Game.cam.x; pointer.camY = Game.cam.y;
     const [wx, wy] = screenToWorld(e.clientX, e.clientY);
     pointer.cand = Game.tool === 'hand' ? villagerAt(wx, wy) : null;
