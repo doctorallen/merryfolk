@@ -634,3 +634,9 @@ body.dev-on #chronicle { visibility: hidden; }
 
 .sent { display: flex; flex-wrap: wrap; gap: 3px; margin: 0 0 4px 4px; }
 .sent .chip { font-size: 11px; padding: 0 6px; }
+
+.alm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px 14px; margin: 4px 0 8px; }
+.alm-grid > div { display: grid; }
+.alm-grid b { font-family: var(--font-ui); font-size: 16px; font-variant-numeric: tabular-nums; }
+.alm-list { margin: 2px 0 8px; padding-left: 20px; font-size: 14px; line-height: 1.4; }
+#moot h3 { font-family: var(--font-ui); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-2); margin: 10px 0 4px; }
