@@ -67,6 +67,8 @@ async function runWorldGen() {
   for (;;) {
     const r = steps.next();
     if (r.done) break;
+    // the first stage may have set the map's size
+    if (cv.width !== MAP_W * PREVIEW_S || cv.height !== MAP_H * PREVIEW_S) { cv.width = MAP_W * PREVIEW_S; cv.height = MAP_H * PREVIEW_S; GenUI.ground = null; }
     stages.push(r.value);
     $('wg-stage').textContent = r.value;
     $('wg-bar').style.width = Math.round((stages.length / GEN_STAGES) * 100) + '%';
@@ -99,7 +101,7 @@ function drawGenMap(ctx, nStatics, grow) {
   const S = PREVIEW_S, W = MAP_W, H = MAP_H, tiles = World.tiles, L = World.land;
   if (!GenUI.ground || GenUI.groundFor !== GenUI.stage) {
     const g = GenUI.ground || document.createElement('canvas');
-    g.width = W * S; g.height = H * S;
+    if (g.width !== W * S || g.height !== H * S) { g.width = W * S; g.height = H * S; }
     const gx = g.getContext('2d'), nh = makeNoise(World.seed + 9);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const i = y * W + x, t = tiles[i];

@@ -1356,7 +1356,20 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
 const PF = {
   g: new Float32Array(MAP_W * MAP_H), f: new Float32Array(MAP_W * MAP_H),
   from: new Int32Array(MAP_W * MAP_H), stamp: new Uint32Array(MAP_W * MAP_H), closed: new Uint32Array(MAP_W * MAP_H), gen: 0,
+  cap: 30000, // how far one search may spread, scaled with the map
 };
+// Sets the map's size in tiles, before a world is built on it: every array
+// sized from the map is made afresh (and so is cleared).
+function setMapSize(w, h) {
+  if (w === MAP_W && h === MAP_H && World.tiles.length === w * h) return;
+  MAP_W = w; MAP_H = h;
+  const n = w * h;
+  World.tiles = new Uint8Array(n); World.block = new Uint8Array(n); World.reserved = new Uint8Array(n);
+  World.px = null; World.land = null; World.tileLevel = null; World.ground = null; World.prevGround = null; World.paintJob = null;
+  World.cliffMask = null; World.cliffZone = null; World.cliff = null; World._mini = null;
+  PF.g = new Float32Array(n); PF.f = new Float32Array(n); PF.from = new Int32Array(n); PF.stamp = new Uint32Array(n); PF.closed = new Uint32Array(n); PF.gen = 0;
+  PF.cap = Math.round((30000 * n) / (128 * 96));
+}
 function nearestWalkable(tx, ty) {
   if (walkable(tx, ty)) return [tx, ty];
   for (let r = 1; r < 8; r++) for (let j = -r; j <= r; j++) for (let i = -r; i <= r; i++) {
@@ -1395,7 +1408,7 @@ function findPath(sx, sy, tx, ty) {
   PF.g[si] = 0; PF.f[si] = hfn(sx, sy); PF.stamp[si] = gen; PF.from[si] = -1;
   push(si);
   let found = false, iter = 0;
-  while (heap.length && iter++ < 30000) {
+  while (heap.length && iter++ < PF.cap) {
     const cur = pop();
     if (PF.closed[cur] === gen) continue;
     PF.closed[cur] = gen;
@@ -1485,7 +1498,7 @@ function updateRabbits(dtMin, season, hour) {
   const day = hour > 6 && hour < 20;
   if (day && season !== 'winter' && World.rabbits.length < 4 && Math.random() < dtMin * 0.004) {
     const fromEast = R.chance(0.6);
-    const sx = fromEast ? R.i(110, 120) : R.i(10, 110), sy = fromEast ? R.i(30, 90) : R.i(3, 5);
+    const sx = fromEast ? R.i(MAP_W - 18, MAP_W - 8) : R.i(10, MAP_W - 18), sy = fromEast ? R.i(30, MAP_H - 6) : R.i(3, 5);
     if (walkable(sx, sy)) World.rabbits.push({ x: sx * 16 + 8, y: sy * 16 + 12, target: null, t: 0, flee: 0, life: R.f(240, 480), nibbled: 0, hop: 0, face: 1, id: Math.random() });
   }
   for (const r of World.rabbits) {
@@ -1509,7 +1522,7 @@ function updateRabbits(dtMin, season, hour) {
         for (const h of World.homes) if (h.built) for (const p of h.plots) if (p.stage >= 3) cands.push(p);
         for (const f of World.fields) for (const p of f.plots) if (p.stage >= 3 && Math.random() < 0.05) cands.push(p);
         r.target = cands.length && r.life > 60 ? cands.sort((a, b) => dist(a.x, a.y, r.x, r.y) - dist(b.x, b.y, r.x, r.y))[Math.min(cands.length - 1, R.i(0, 2))] : null;
-        if (!r.target) { r.exit = r.exit || { x: R.chance(0.5) ? 118 * 16 : R.i(20, 100) * 16, y: R.chance(0.5) ? R.i(30, 90) * 16 : 3 * 16 }; }
+        if (!r.target) { r.exit = r.exit || { x: R.chance(0.5) ? (MAP_W - 10) * 16 : R.i(20, MAP_W - 28) * 16, y: R.chance(0.5) ? R.i(30, MAP_H - 6) * 16 : 3 * 16 }; }
       }
       const tg = r.target || r.exit;
       const d = dist(tg.x, tg.y, r.x, r.y);
@@ -1524,7 +1537,7 @@ function updateRabbits(dtMin, season, hour) {
       const go = Math.sin(r.hop * 1.6) > -0.2 ? 1 : 0;
       const nx = r.x + sx * dtMin * speed * go, ny = r.y + sy * dtMin * speed * go;
       if (walkable(Math.floor(nx / 16), Math.floor((ny - 2) / 16)) || tileAt(Math.floor(nx / 16), Math.floor((ny - 2) / 16)) === T.SOIL) { r.x = nx; r.y = ny; }
-      else { r.target = null; r.exit = { x: R.i(5, 120) * 16, y: R.chance(0.5) ? 3 * 16 : 92 * 16 }; r.x += R.f(-2, 2); r.y += R.f(-2, 2); }
+      else { r.target = null; r.exit = { x: R.i(5, MAP_W - 8) * 16, y: R.chance(0.5) ? 3 * 16 : (MAP_H - 4) * 16 }; r.x += R.f(-2, 2); r.y += R.f(-2, 2); }
       r.face = sx < 0 ? -1 : 1;
       r.moving = go;
     } else r.moving = 0;

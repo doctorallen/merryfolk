@@ -8,8 +8,10 @@ const TILE = 16;
 // world pixel. Game logic, positions and the map all stay in world pixels.
 const RS = 2;
 const GS = 2; // the painted ground, likewise
-const MAP_W = 128;
-const MAP_H = 96;
+// The map's size in tiles; the classic valley is 128×96. Changed only before
+// a world is built, through setMapSize (world.js).
+let MAP_W = 128;
+let MAP_H = 96;
 
 function mulberry32(a) {
   return function () {

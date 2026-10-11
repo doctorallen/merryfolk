@@ -168,11 +168,17 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- The minimap ---------------------------------------------------------------------------
-const MINI_S = 1.5;
+// The minimap's box is 192 pixels wide whatever the map's size.
+const miniScale = () => 192 / MAP_W;
+function sizeMinimap(cv) {
+  const S = miniScale();
+  if (cv.width !== Math.round(MAP_W * S) || cv.height !== Math.round(MAP_H * S)) { cv.width = Math.round(MAP_W * S); cv.height = Math.round(MAP_H * S); cv.style.height = Math.round(192 * MAP_H / MAP_W) + 'px'; World._mini = null; }
+}
 function drawMinimap() {
   const cv = $('minimap');
   if (!cv || cv.hidden || !World.tiles) return;
-  const W = MAP_W, H = MAP_H, ctx = cv.getContext('2d');
+  const W = MAP_W, H = MAP_H, ctx = cv.getContext('2d'), MINI_S = miniScale();
+  sizeMinimap(cv);
   if (!World._mini || World._miniAt !== World.paintStamp || performance.now() - (World._miniT || 0) > 8000) {
     World._miniT = performance.now();
     const [c, g] = makeCanvas(W, H);
@@ -205,7 +211,7 @@ function drawMinimap() {
 }
 window.addEventListener('DOMContentLoaded', () => {
   const cv = $('minimap');
-  cv.width = MAP_W * MINI_S; cv.height = MAP_H * MINI_S;
+  sizeMinimap(cv);
   const jump = (e) => { const r = cv.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width * MAP_W * 16, y = (e.clientY - r.top) / r.height * MAP_H * 16; Game.follow = false; centerOn(x, y); };
   let drag = false;
   cv.addEventListener('pointerdown', (e) => { drag = true; cv.setPointerCapture(e.pointerId); jump(e); e.stopPropagation(); });
