@@ -160,24 +160,9 @@ function buildWorld(seed) {
     World.homes.push(createHome(d, i, surname, name));
   });
 
-  // Roads
-  for (const [r, ...pts] of ROADS) {
-    for (let s = 0; s < pts.length - 1; s++) {
-      const [ax, ay] = pts[s], [bx, by] = pts[s + 1];
-      const len = Math.hypot(bx - ax, by - ay);
-      for (let t = 0; t <= len; t += 0.2) {
-        const px = ax + (bx - ax) * (t / len), py = ay + (by - ay) * (t / len);
-        for (let y = Math.floor(py - r - 1); y <= Math.ceil(py + r + 1); y++)
-          for (let x = Math.floor(px - r - 1); x <= Math.ceil(px + r + 1); x++) {
-            if (!inMap(x, y)) continue;
-            if (Math.hypot(x - px, y - py) > r) continue;
-            const cur = tiles[tIdx(x, y)];
-            if (cur === T.HILL) continue;
-            tiles[tIdx(x, y)] = cur === T.WATER || cur === T.BRIDGE ? T.BRIDGE : T.PATH;
-          }
-      }
-    }
-  }
+  // Roads: each stretch between the lanes' waypoints is walked by the easiest
+  // way, keeping to the contours and away from wet and steep ground
+  routeRoads(seed);
   // Plaza
   for (let y = PLAZA.cy - 6; y < PLAZA.cy + 6; y++) for (let x = PLAZA.cx - 7; x < PLAZA.cx + 7; x++) if (Math.hypot(x - PLAZA.cx, (y - PLAZA.cy) * 1.2) < PLAZA.r + 0.7) tiles[tIdx(x, y)] = T.COBBLE;
   // Inn yard
@@ -537,6 +522,77 @@ function buildWorld(seed) {
 
   keepReachable();
   computePixelTypes(seed);
+}
+
+// The lanes. Each stretch between two of a lane's waypoints follows the
+// least-cost way across the land (a cheap A*): steep ground and terrace banks
+// cost more, so lanes run along the contours and take banks at an angle; wet
+// ground near the river costs more; joining a lane already laid is cheap, so
+// lanes merge. Each stretch keeps within a couple of tiles of its straight
+// line, so the buildings set along it stay clear. River crossings stay
+// straight, as bridges.
+function routeRoads(seed) {
+  const tiles = World.tiles, W = MAP_W, H = MAP_H;
+  const nh = makeNoise(seed + 9);
+  const hgt = new Float32Array(W * H);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) hgt[y * W + x] = landHeight(nh, x + 0.5, y + 0.5);
+  const lvl = (i) => Math.floor(hgt[i] * TERRACES);
+  const carve = (px, py, r) => {
+    for (let y = Math.floor(py - r - 1); y <= Math.ceil(py + r + 1); y++)
+      for (let x = Math.floor(px - r - 1); x <= Math.ceil(px + r + 1); x++) {
+        if (!inMap(x, y) || Math.hypot(x - px, y - py) > r) continue;
+        const cur = tiles[tIdx(x, y)];
+        if (cur === T.HILL) continue;
+        tiles[tIdx(x, y)] = cur === T.WATER || cur === T.BRIDGE ? T.BRIDGE : T.PATH;
+      }
+  };
+  const straight = (ax, ay, bx, by, r) => { const len = Math.hypot(bx - ax, by - ay); for (let t = 0; t <= len; t += 0.2) carve(ax + (bx - ax) * (t / len), ay + (by - ay) * (t / len), r); };
+  const crossesWater = (ax, ay, bx, by) => { const len = Math.hypot(bx - ax, by - ay); for (let t = 0; t <= len; t += 0.5) { const x = Math.round(ax + (bx - ax) * (t / len)), y = Math.round(ay + (by - ay) * (t / len)); if (inMap(x, y) && tiles[tIdx(x, y)] === T.WATER) return true; } return false; };
+  const g = new Float32Array(W * H), from = new Int32Array(W * H), closed = new Uint8Array(W * H);
+  const route = (ax, ay, bx, by) => {
+    const sx = Math.round(ax), sy = Math.round(ay), ex = Math.round(bx), ey = Math.round(by);
+    const len = Math.hypot(ex - sx, ey - sy) || 1, ux = (ex - sx) / len, uy = (ey - sy) / len;
+    const offLine = (x, y) => Math.abs((x - sx) * uy - (y - sy) * ux);
+    g.fill(1e9); closed.fill(0); from.fill(-1);
+    const open = [[0, sy * W + sx]];
+    g[sy * W + sx] = 0;
+    while (open.length) {
+      let bi = 0; for (let k = 1; k < open.length; k++) if (open[k][0] < open[bi][0]) bi = k;
+      const [, i] = open.splice(bi, 1)[0];
+      if (closed[i]) continue;
+      closed[i] = 1;
+      const x = i % W, y = (i / W) | 0;
+      if (x === ex && y === ey) break;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+        const nx = x + dx, ny = y + dy;
+        if (!inMap(nx, ny) || offLine(nx, ny) > 2.2) continue;
+        const n = ny * W + nx, t = tiles[n];
+        if (t === T.HILL || t === T.WATER) continue;
+        let c = (dx && dy ? 1.414 : 1) * (t === T.PATH || t === T.BRIDGE ? 0.45 : 1);
+        c += Math.abs(hgt[n] - hgt[i]) * 60;
+        if (lvl(n) !== lvl(i)) c += 3.5;
+        if (t === T.FIELD || t === T.WEED || t === T.SOIL) c += 4;
+        const pn = g[i] + c;
+        if (pn < g[n]) { g[n] = pn; from[n] = i; open.push([pn + Math.hypot(ex - nx, ey - ny), n]); }
+      }
+    }
+    const end = ey * W + ex;
+    if (from[end] < 0 && end !== sy * W + sx) return null;
+    const path = [];
+    for (let i = end; i >= 0; i = from[i]) { path.push([i % W, (i / W) | 0]); if (i === sy * W + sx) break; }
+    return path.reverse();
+  };
+  for (const [r, ...pts] of ROADS) {
+    for (let s = 0; s < pts.length - 1; s++) {
+      const [ax, ay] = pts[s], [bx, by] = pts[s + 1];
+      const p = !crossesWater(ax, ay, bx, by) && Math.hypot(bx - ax, by - ay) > 3 ? route(ax, ay, bx, by) : null;
+      if (!p) { straight(ax, ay, bx, by, r); continue; }
+      // smooth the way so it curves rather than zigzags, then lay it
+      const pts2 = [[ax, ay], ...p.slice(1, -1).map(([x, y]) => [x, y]), [bx, by]];
+      for (let pass = 0; pass < 3; pass++) for (let k = 1; k < pts2.length - 1; k++) pts2[k] = [(pts2[k - 1][0] + pts2[k][0] * 2 + pts2[k + 1][0]) / 4, (pts2[k - 1][1] + pts2[k][1] * 2 + pts2[k + 1][1]) / 4];
+      for (let k = 0; k < pts2.length - 1; k++) straight(pts2[k][0], pts2[k][1], pts2[k + 1][0], pts2[k + 1][1], r);
+    }
+  }
 }
 
 // Raises a knoll on the map and makes the home record for it.

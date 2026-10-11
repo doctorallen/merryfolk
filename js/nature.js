@@ -374,10 +374,10 @@ function plantHedges(rng, { addStatic, blk }) {
   const nextToPath = (x, y) => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => [T.PATH, T.COBBLE, T.BRIDGE].includes(tiles[tIdx(x + dx, y + dy)]));
   // lays one straight stretch: a gate every so often and wherever a lane meets
   // it, a standard tree now and then, and the hedge between drawn in one piece
-  const run = (cells, dir) => {
+  const run = (cells, dir, minLen = 1) => {
     let seg = [], n = 0;
     const flush = () => {
-      if (!seg.length) return;
+      if (seg.length < minLen) { seg = []; return; }
       const seed = 700 + Math.floor(rng() * 12);
       if (dir === 'h') {
         const [x0, y] = seg[0], len = seg.length;
@@ -432,7 +432,7 @@ function plantHedges(rng, { addStatic, blk }) {
         if (rng() < 0.55) {
           // break the line into straight stretches, each across or up-and-down
           let part = [];
-          const go = () => { if (part.length > 1) run(part, part[0][1] === part[part.length - 1][1] ? 'h' : 'v'); part = []; };
+          const go = () => { if (part.length > 3) run(part, part[0][1] === part[part.length - 1][1] ? 'h' : 'v', 3); part = []; };
           for (const c of cells) { if (part.length && c[1] !== part[part.length - 1][1] && c[0] !== part[part.length - 1][0]) go(); part.push(c); }
           go();
         }
