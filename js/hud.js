@@ -69,6 +69,8 @@ const ERRANDS = [
   { text: 'Press Done, then speed up time (2× or 4×) and watch your folk lay it.', target: '[data-speed="3"]', done: () => (Game.planDone || []).length > 0 },
   { text: 'How is the village feeling? Click the ☺ contentment chip.', target: '#hud-content', done: () => Game.tut.saw.steward },
   { text: 'Charters are goals that earn pennies and renown. Click the rank chip.', target: '#hud-era', done: () => Game.tut.saw.charter },
+  { text: 'Pick something for the village to study: Charter, then Lore.', target: '#hud-era', done: () => !!(Game.lore && (Game.lore.study || Game.lore.known.length)) },
+  { text: 'When a 📜 Petition chip appears at the top, read it and decide.', target: '#hud-petition', done: () => (Game.petitionsSeen || []).length > 0 && !Game.petition },
   { text: 'On Trewsday a trader comes. Sell what you can spare in Store & Market.', target: '#btn-village', done: () => (Game.stats.sold || 0) > 0 || Game.tut.saw.market },
 ];
 function tut() { return Game.tut || (Game.tut = { step: 0, saw: {}, off: false }); }

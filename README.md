@@ -110,7 +110,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
   - **Folk:** census and Almanac, the Remembered, and travellers.
   - **Rifts.**
 - **Build tools.** Locked tools show a 🔒 with the era that unlocks them. Tapping one shows exactly what's still needed.
-- **The Steward's Errands.** A short guide for new villages: meet a hobbit, pat them, lay a path, watch it built, check contentment, look at the charters, trade with a caravan. It can be skipped, or restarted from ⚙.
+- **The Steward's Errands.** A short guide for new villages: meet a hobbit, pat them, lay a path, watch it built, check contentment, look at the charters, pick something to study, answer a petition, trade with a caravan. It can be skipped, or restarted from ⚙.
 - **On phones.** Bigger touch targets, pinch to zoom, the chronicle starts folded, the villager panel keeps its buttons in reach, and build mode becomes a full-width dock with a scrolling row of tools.
 
 ### Running the village (the Steward's Desk)
