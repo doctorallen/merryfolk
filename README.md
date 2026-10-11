@@ -27,6 +27,15 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 
 The village saves to `localStorage` every in-game hour and when you leave the page. **?** → *Start a fresh village* resets it.
 
+**Scenarios.** The setup screen also offers a scenario, each with its own conditions and a goal:
+- **A Gentle Start:** become a Village.
+- **The Long Winter:** a hard frost every winter and a lean Store. Become a Village and see out the first winter.
+- **The Flood Plain:** a wild, meandering river that floods almost every spring. Become a Market Town by the end of year two.
+- **Hard Times:** a near-bare Store, an empty chest and low spirits. Become a Market Town by the end of year two.
+- **The Open Valley:** no goal and no clock.
+
+The goal shows at the top of the Charter. Meet it and the village is honoured (+50 renown); miss it and you simply play on.
+
 **Shaping the valley.** A new village (the very first, or a fresh start) begins on the *Shape your valley* screen. Pick a seed (or roll one) and how the land is made: gentle, rolling or hilly ground; a lazy, winding or meandering river; sparse, fair or thick woodland; dry, fair or damp ground; no hedgerows, some or many; few wildflowers, plenty or a riot; few rocks, some or many. Then watch it being made on a map, stage by stage: the river finds its way down the valley, knolls rise for the hobbit-holes, lanes wind along the contours, fields are ploughed, rain runs off the hills and the soil settles, the mills and the inn go up, then hedges, woods, willows, long grass and stones, and finally the wildflowers. The same seed and settings always make the same valley, and they're saved with the village. One in-game day takes 8 real minutes at 1×, and each season lasts three days.
 
 ## Inside the hobbit-holes
@@ -340,6 +349,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/illness.js` | Flu (laid up abed), sprained ankles, and friends bringing soup |
 | `js/almanac.js` | The seasonal Almanac report: population, contentment, food, coin, renown, stories and advice |
+| `js/scenarios.js` | Scenarios on the setup screen: starting conditions, harsher seasons and goals |
 | `js/scenes.js` | Heart scenes: short vignettes between pairs of folk, played on the map |
 | `js/surface.js` | Chronicle filters, clue hints, weddings on the map, and keeping stock lines from repeating |
 | `js/lore.js` | Lore points from reading and lessons, and the three-tier tree of discoveries the player chooses |

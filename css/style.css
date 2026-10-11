@@ -786,3 +786,6 @@ body.building #minimap { bottom: calc(var(--hud-bottom) + 4px); }
 
 #log li.goto { cursor: pointer; }
 #log li.goto:hover span { text-decoration: underline dotted; }
+
+.wg-scen .wg-seg button { min-width: 0; }
+.wg-scen .sub { margin-top: 4px; }
