@@ -94,12 +94,12 @@ const Iso = {
   let TEX = null, texSeason = null;
   const dirty = [];
   const SEASON_GRASS = {
-    spring: ['#5f9a3c', '#74ad48', '#88b856', '#4e8a32', '#9cc060', '#3f7a2a'],
-    summer: ['#5a8a34', '#6f9a3f', '#86a44a', '#507d2e', '#9da656', '#3c6526'],
-    autumn: ['#7a8a3a', '#8e9a44', '#a8a04a', '#6a7a32', '#b8a454', '#5a6a2a'],
+    spring: ['#4f8030', '#64913a', '#7aa044', '#3e6a26', '#8ea64a', '#2f5620'],
+    summer: ['#4a7428', '#5e8230', '#768e36', '#3a6022', '#94943e', '#2c4c1c'],
+    autumn: ['#6e7a2e', '#84853a', '#9c8c40', '#5a6626', '#b08a3e', '#47521e'],
     winter: ['#dfe6ea', '#eef2f4', '#d2dade', '#c8d2d8', '#f6f8fa', '#b8c4cc'],
   };
-  const BLADES = { spring: ['#7ab44a', '#4f8a2c', '#94c45a', '#3e7a24'], summer: ['#7aa44a', '#4f7c2c', '#94b45a', '#3e6a24'], autumn: ['#a0a04a', '#7a7a32', '#b8a858', '#6a6a2a'], winter: ['#c8d0d4', '#a8b2b8', '#e6eaec', '#b0bcc4'] };
+  const BLADES = { spring: ['#7aa040', '#4a7426', '#a0b450', '#365c1e'], summer: ['#8a9a40', '#4a6a24', '#b0a850', '#33521c', '#6a8a32'], autumn: ['#a89040', '#76702c', '#c0a050', '#5c5a22'], winter: ['#c8d0d4', '#a8b2b8', '#e6eaec', '#b0bcc4'] };
   function tileAtT(tx, ty) { return tx < 0 || ty < 0 || tx >= MAP_W || ty >= MAP_H ? T.GRASS : World.tiles[ty * MAP_W + tx]; }
   // A mask for a kind of ground at 4px a tile: blurred, roughened and sharpened
   // again, so paths and ponds have curved, slightly ragged edges instead of steps.
@@ -128,6 +128,7 @@ const Iso = {
     g.save(); g.beginPath(); g.rect(px0, py0, pw, ph); g.clip();
     g.fillStyle = SEASON_GRASS[season][0]; g.fillRect(px0, py0, pw, ph);
     noiseLayer(g, Wt, Ht, [[9, 0.5], [24, 0.38], [70, 0.28], [200, 0.18], [600, 0.12]], SEASON_GRASS[season], rng(77));
+    if (season !== 'winter') noiseLayer(g, Wt, Ht, [[16, 0.45], [48, 0.3]], ['#1e2a0c', '#6a5a24', '#c8b060', '#3a3a18', '#a08a3a'], rng(91), 'soft-light');
     // each kind of ground through a soft mask made from the tiles
     const layer = (types, paint, soft = 1) => {
       const m = softMask(types, rx0, ry0, rx1, ry1, soft);
@@ -218,6 +219,11 @@ const Iso = {
     if (style === 'stone') {
       g.fillStyle = '#5a5046'; g.fillRect(0, 0, len, h);
       for (let y = h, row = 0; y > -12 * s; y -= 8 * s, row++) for (let x = -(row % 2) * 6 * s; x < len; x += (11 + R() * 7) * s) { const w = (10 + R() * 7) * s; g.fillStyle = pick(R, ['#a49884', '#968a76', '#b2a690', '#8a7e6a']); g.beginPath(); g.roundRect(x + 0.7, y - 7.4 * s, w - 1.4, 7 * s, 2); g.fill(); g.fillStyle = 'rgba(255,250,230,0.2)'; g.fillRect(x + 1.4, y - 7 * s, w - 2.8, 1.4 * s); }
+    } else if (style === 'log') {
+      g.fillStyle = '#3a2614'; g.fillRect(0, 0, len, h);
+      const lh = 5.5 * s;
+      for (let y = h, k = 0; y > -lh; y -= lh, k++) { const lg = g.createLinearGradient(0, y - lh, 0, y); lg.addColorStop(0, '#9a7448'); lg.addColorStop(0.45, k % 2 ? '#7a5634' : '#86603a'); lg.addColorStop(1, '#4a3018'); g.fillStyle = lg; g.fillRect(0, y - lh + 0.6, len, lh - 0.8); g.fillStyle = 'rgba(30,18,8,0.35)'; for (let x = R() * 20 * s; x < len; x += (16 + R() * 18) * s) g.fillRect(x, y - lh * 0.6, 4 * s, 0.8); }
+      for (let y = h, k = 0; y > 0; y -= lh, k++) { const eg = g.createRadialGradient(len - 1.5 * s, y - lh / 2, 0.5, len - 1.5 * s, y - lh / 2, lh * 0.55); eg.addColorStop(0, '#d8b680'); eg.addColorStop(1, '#8a6440'); g.fillStyle = eg; g.beginPath(); g.arc(len - 1.5 * s, y - lh / 2, lh * 0.5, 0, Math.PI * 2); g.fill(); }
     } else if (style === 'plank') {
       g.fillStyle = '#7a4a2a'; g.fillRect(0, 0, len, h);
       for (let x = 0; x < len; x += 7 * s) { g.fillStyle = pick(R, ['#8a5634', '#7a4a2a', '#94603a', '#6e4224']); g.fillRect(x, 0, 6.2 * s, h); g.fillStyle = 'rgba(20,10,4,0.4)'; g.fillRect(x + 6.2 * s, 0, 0.8 * s, h); }
@@ -256,8 +262,10 @@ const Iso = {
     g.save(); pathPoly(g, pts); g.clip();
     const box = [minX - 4, minY - 4, maxX - minX + 8, maxY - minY + 8];
     if (kind === 'thatch') {
-      g.fillStyle = '#b8924e'; g.fillRect(...box); g.lineWidth = 1.2;
-      batched(g, ['#d2ad62', '#a8823e', '#8a6a32', '#e2c27a', '#bf9a52'], Math.round(((maxX - minX) * (maxY - minY)) / 6), (pp) => { const x = minX + Math.random() * (maxX - minX), y = minY + Math.random() * (maxY - minY), L = (5 + Math.random() * 7) * BK; pp.moveTo(x, y); pp.lineTo(x + dx * L, y + dy * L); });
+      g.fillStyle = '#a8823e'; g.fillRect(...box); g.lineWidth = 1.3;
+      batched(g, ['#d2ad62', '#a8823e', '#7a5c2a', '#e2c27a', '#bf9a52', '#6a4e22'], Math.round(((maxX - minX) * (maxY - minY)) / 4), (pp) => { const x = minX + Math.random() * (maxX - minX), y = minY + Math.random() * (maxY - minY), L = (5 + Math.random() * 9) * BK; pp.moveTo(x, y); pp.lineTo(x + dx * L + (Math.random() - 0.5) * 2, y + dy * L); });
+      // darker courses where one layer of reed laps over the next
+      g.strokeStyle = 'rgba(60,40,14,0.35)'; g.lineWidth = 2 * BK; for (let t = 0.25; t < 1; t += 0.25) { g.beginPath(); g.moveTo(pts[0][0] + (top[0] - pts[0][0]) * t, pts[0][1] + (top[1] - pts[0][1]) * t); g.lineTo(pts[1][0] + (top[0] - pts[1][0]) * t, pts[1][1] + (top[1] - pts[1][1]) * t); g.stroke(); }
     } else {
       const base = kind === 'red' ? '#8a3a2a' : kind === 'shingle' ? '#6a4a2e' : '#3e4450';
       const tiles = kind === 'red' ? ['#9a4430', '#8a3a2a', '#a8503a', '#7a3224'] : kind === 'shingle' ? ['#7a5634', '#6a4a2e', '#866040', '#5e4028'] : ['#4c5460', '#58606c', '#444a56', '#5e6672'];
@@ -270,12 +278,16 @@ const Iso = {
     if (snow) { g.fillStyle = 'rgba(245,248,250,0.78)'; g.fillRect(...box); }
     g.restore();
     weather(g, pts, 0.45);
+    if (kind === 'thatch' && !snow) { // a thick, ragged eave
+      const [a, b] = [pts[0], pts[1]]; g.strokeStyle = '#6a4e22'; g.lineWidth = 4 * BK; g.lineCap = 'round'; g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke();
+      g.lineWidth = 1.2; batched(g, ['#8a6a32', '#5a4018', '#a8823e'], Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / 1.5), (pp) => { const t = Math.random(), x = a[0] + (b[0] - a[0]) * t, y = a[1] + (b[1] - a[1]) * t; pp.moveTo(x, y); pp.lineTo(x + dx * 3 * BK, y + (3 + Math.random() * 4) * BK); });
+    }
   }
 
   // --- trees and shrubs -------------------------------------------------------------
   const CANOPY = {
-    spring: [[92, 48, 46], [98, 46, 30], [108, 42, 18]], summer: [[86, 46, 42], [96, 42, 26], [110, 40, 14]],
-    autumn: [[34, 70, 52], [24, 64, 36], [14, 58, 22]], winter: null,
+    spring: [[90, 46, 42], [98, 44, 26], [110, 42, 14]], summer: [[80, 44, 38], [94, 42, 22], [108, 40, 11]],
+    autumn: [[32, 72, 50], [22, 66, 34], [12, 60, 20]], winter: null,
   };
   function treeSprite(kind, season, variant) {
     const R = rng(variant * 977 + kind.length * 31 + 7);
@@ -312,7 +324,7 @@ const Iso = {
     if (kind === 'willow') pal = pal.map(([h, sat, l]) => [h + 10, sat - 8, l + 4]);
     if (kind === 'birch' && season !== 'autumn') pal = pal.map(([h, sat, l]) => [h - 6, sat + 4, l + 6]);
     const blobs = [];
-    for (let n = 0; n < 70; n++) { const a = R() * Math.PI * 2, d = Math.sqrt(R()); blobs.push([ccx + Math.cos(a) * d * rx, ccy + Math.sin(a) * d * ry * 0.95 - (1 - d) * 10 * s, (15 + R() * 15) * s * (tall ? 0.75 : 1)]); }
+    for (let n = 0; n < 110; n++) { const a = R() * Math.PI * 2, d = Math.sqrt(R()); blobs.push([ccx + Math.cos(a) * d * rx, ccy + Math.sin(a) * d * ry * 0.95 - (1 - d) * 10 * s, (11 + R() * 13) * s * (tall ? 0.75 : 1)]); }
     blobs.sort((p, q) => p[1] - q[1]);
     for (const [x, y, r] of blobs) {
       const L = clamp01(0.5 - ((x - ccx) / rx) * 0.3 - ((y - ccy) / ry) * 0.35);
@@ -321,9 +333,12 @@ const Iso = {
       g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
     }
     if (kind === 'willow') { g.strokeStyle = `hsla(${pal[1][0]},${pal[1][1]}%,${pal[1][2] + 6}%,0.7)`; g.lineWidth = 1.2 * s; for (let n = 0; n < 40; n++) { const x = ccx + (R() - 0.5) * rx * 1.8, y = ccy + R() * ry * 0.5; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 2 * s, y + 25 * s, x - 2 * s, y + (35 + R() * 25) * s); g.stroke(); } }
-    const dabs = [new Path2D(), new Path2D()];
-    for (let n = 0; n < 500 * size; n++) { const a = R() * Math.PI * 2, d = Math.sqrt(R()), x = ccx + Math.cos(a) * d * rx, y = ccy + Math.sin(a) * d * ry, lit = -((x - ccx) / rx) - ((y - ccy) / ry); const k = lit > 0.3 ? 0 : 1; dabs[k].moveTo(x + 2 * s, y); dabs[k].ellipse(x, y, 2 * s, 1.4 * s, R() * 3, 0, Math.PI * 2); }
-    g.fillStyle = season === 'autumn' ? 'rgba(255,210,120,0.45)' : 'rgba(200,225,120,0.45)'; g.fill(dabs[0]); g.fillStyle = 'rgba(10,30,8,0.32)'; g.fill(dabs[1]);
+    // leaf clusters: bright on the sunny side, deep shade in the crevices
+    const dabs = [new Path2D(), new Path2D(), new Path2D()];
+    for (let n = 0; n < 1100 * size; n++) { const a = R() * Math.PI * 2, d = Math.sqrt(R()), x = ccx + Math.cos(a) * d * rx * 1.04, y = ccy + Math.sin(a) * d * ry, lit = -((x - ccx) / rx) * 0.8 - ((y - ccy) / ry) + (R() - 0.5) * 0.6; const k = lit > 0.45 ? 0 : lit < -0.3 ? 2 : 1; const r = (1.4 + R() * 1.6) * s; dabs[k].moveTo(x + r, y); dabs[k].ellipse(x, y, r, r * 0.7, R() * 3, 0, Math.PI * 2); }
+    g.fillStyle = season === 'autumn' ? 'rgba(255,196,96,0.55)' : 'rgba(196,214,104,0.5)'; g.fill(dabs[0]);
+    g.fillStyle = season === 'autumn' ? 'rgba(170,70,20,0.3)' : 'rgba(70,110,30,0.3)'; g.fill(dabs[1]);
+    g.fillStyle = 'rgba(8,22,6,0.42)'; g.fill(dabs[2]);
     if (kind === 'apple' && season !== 'spring') for (let n = 0; n < 22; n++) { const a = R() * Math.PI * 2, d = Math.sqrt(R()) * 0.9; g.fillStyle = '#c4302a'; g.beginPath(); g.arc(ccx + Math.cos(a) * d * rx, ccy + Math.sin(a) * d * ry, 3 * s, 0, Math.PI * 2); g.fill(); }
     if (kind === 'apple' && season === 'spring') for (let n = 0; n < 60; n++) { const a = R() * Math.PI * 2, d = Math.sqrt(R()); g.fillStyle = R() < 0.5 ? '#f8e0e8' : '#ffffff'; g.beginPath(); g.arc(ccx + Math.cos(a) * d * rx, ccy + Math.sin(a) * d * ry, 2 * s, 0, Math.PI * 2); g.fill(); }
     return { c, ax: bx, ay: by, h: Ht };
@@ -378,7 +393,7 @@ const Iso = {
     const x0 = sh.hcx - sh.hrx * 1.3, x1 = sh.hcx + sh.hrx * 1.3, y0 = sh.hcy - sh.hry * 1.3, y1 = sh.hcy + sh.hry * 1.3;
     const dx = (h.doorX + 0.5) / 16, dy0 = h.doorY / 16;
     let fy = dy0; while (fy > sh.hcy && sh.u(dx, fy) > 0.8) fy -= 0.05;
-    const r = (h.def.grand ? 19 : 15) * BK, wins = h.v && h.v.nwin >= 2 ? 2 : 1;
+    const r = (h.def.grand ? 24 : 19) * BK, wins = h.v && h.v.nwin >= 2 ? 2 : 1;
     const lenU = (r / BK) * 3.6 + wins * ((r / BK) * 1.6 + 16), w = lenU / 35.78;
     const D = { r, wins, col: h.doorColor || '#2f6a3a', seed: h.id * 31 + 7, snow };
     const built = !!h.built;
@@ -398,18 +413,29 @@ const Iso = {
     // soft shadow to the east
     { const [sx, sy] = P(sh.hcx + 0.9, sh.hcy + 0.6, 0), sg = g.createRadialGradient(sx, sy, 2, sx, sy, sh.hrx * 34 * BK); sg.addColorStop(0, 'rgba(20,24,8,0.32)'); sg.addColorStop(1, 'rgba(20,24,8,0)'); g.fillStyle = sg; g.save(); g.translate(sx, sy); g.scale(1, 0.5); g.translate(-sx, -sy); g.beginPath(); g.arc(sx, sy, sh.hrx * 34 * BK, 0, Math.PI * 2); g.fill(); g.restore(); }
     const items = [], step = 0.11;
-    const base = hexRgb(snow ? '#e8eef2' : season === 'autumn' ? '#8a9a46' : season === 'spring' ? '#74aa48' : '#6f9a3f');
+    const base = hexRgb(snow ? '#e8eef2' : season === 'autumn' ? '#86883e' : season === 'spring' ? '#64923c' : '#628634');
     for (let x = x0; x < x1; x += step) for (let y = y0; y < y1; y += step) {
       const h00 = ht(x, y), h10 = ht(x + step, y), h11 = ht(x + step, y + step), h01 = ht(x, y + step);
       if (h00 + h10 + h11 + h01 < 0.4) continue;
       const gx = (h10 + h11 - h00 - h01) / (2 * step * 32), gy = (h01 + h11 - h00 - h10) / (2 * step * 32), nl = Math.hypot(gx, gy, 1);
-      const lit2 = Math.max(0, (gx * 0.62 + gy * 0.2 + 0.76) / nl), k = 0.5 + lit2 * 0.62, n = 0.92 + 0.16 * (Math.sin(x * 17.3 + y * 7.1) * 0.5 + Math.sin(x * 5.7 - y * 11.9) * 0.5 + 1) / 2;
+      const lit2 = Math.max(0, (gx * 0.62 + gy * 0.2 + 0.76) / nl), k = 0.5 + lit2 * 0.62, n = 0.97 + 0.06 * (Math.sin(x * 3.1 + y * 1.7) * 0.5 + Math.sin(x * 1.3 - y * 2.9) * 0.5 + 1) / 2;
+      const fade = Math.min(1, Math.max(h00, h10, h11, h01) / 10);
       const steep = snow && Math.hypot(gx, gy) > 1.1, bc = steep ? hexRgb('#6a7a5a') : base;
       const col = `rgb(${Math.min(255, bc[0] * k * n) | 0},${Math.min(255, bc[1] * k * n) | 0},${Math.min(255, bc[2] * k * n) | 0})`;
       const pts = [P(x, y, h00), P(x + step, y, h10), P(x + step, y + step, h11), P(x, y + step, h01)];
-      items.push([x + y + step, () => { g.fillStyle = col; g.strokeStyle = col; g.lineWidth = 1; pathPoly(g, pts); g.fill(); g.stroke(); }]);
+      items.push([x + y + step, () => { g.globalAlpha = fade; g.fillStyle = col; g.strokeStyle = col; g.lineWidth = 1; pathPoly(g, pts); g.fill(); g.stroke(); g.globalAlpha = 1; }]);
     }
     const Rh = rng(h.id * 13 + 1);
+    {
+      const bands = new Map(), cols = snow ? ['rgba(255,255,255,0.5)', 'rgba(150,170,180,0.35)'] : ['rgba(190,200,96,0.55)', 'rgba(20,40,10,0.35)', 'rgba(110,140,50,0.5)'];
+      for (let i = 0; i < sh.hrx * sh.hry * 260; i++) {
+        const a = Rh() * Math.PI * 2, d = Math.sqrt(Rh()) * 0.98, x = sh.hcx + Math.cos(a) * d * sh.hrx, y = sh.hcy + Math.sin(a) * d * sh.hry, z = ht(x, y); if (z < 2) continue;
+        const key = Math.round((x + y) * 4) / 4; let b = bands.get(key); if (!b) bands.set(key, (b = cols.map(() => new Path2D())));
+        const [px, py] = P(x, y, z), L = (2 + Rh() * 3) * BK, k = Rh() < 0.4 ? 0 : Rh() < 0.5 ? 1 : cols.length - 1;
+        b[k].moveTo(px, py); b[k].lineTo(px - L * 0.4, py - L);
+      }
+      for (const [key, b] of bands) items.push([key + 0.005, () => { g.lineWidth = 1; b.forEach((pp, k) => { g.strokeStyle = cols[k]; g.stroke(pp); }); }]);
+    }
     if (!snow) for (let i = 0; i < 160; i++) {
       const a = Rh() * Math.PI * 2, d = Math.sqrt(Rh()) * 0.9, x = sh.hcx + Math.cos(a) * d * sh.hrx, y = sh.hcy + Math.sin(a) * d * sh.hry, z = ht(x, y); if (z < 3) continue;
       const [px, py] = P(x, y, z), flower = Rh() < 0.35, col = flower ? pick(Rh, ['#f4f1e0', '#f2d75a', '#e48aa8', '#ffffff']) : pick(Rh, ['#4f7c2c', '#7aa44a', '#3e6a24']);
@@ -442,13 +468,13 @@ const Iso = {
   const STYLE = {
     inn: { wall: 'timber', roof: 'thatch', storeys: 2, sign: true }, inn2: { wall: 'timber', roof: 'thatch', storeys: 2, sign: true },
     bakery: { wall: 'stone', roof: 'slate' }, bakery2: { wall: 'stone', roof: 'slate' }, brewhouse: { wall: 'stone', roof: 'thatch', copper: true },
-    workshop: { wall: 'timber', roof: 'shingle' }, herbalist: { wall: 'timber', roof: 'thatch' }, store: { wall: 'stone', roof: 'slate', storeys: 2 },
-    storehouse: { wall: 'stone', roof: 'slate' }, barn: { wall: 'plank', roof: 'red' }, smokehouse: { wall: 'stone', roof: 'slate' },
+    workshop: { wall: 'log', roof: 'thatch' }, herbalist: { wall: 'log', roof: 'thatch' }, store: { wall: 'stone', roof: 'slate', storeys: 2 },
+    storehouse: { wall: 'stone', roof: 'slate' }, barn: { wall: 'plank', roof: 'red' }, smokehouse: { wall: 'log', roof: 'thatch' },
     mill: { wall: 'stone', roof: 'thatch' }, mill2: { wall: 'stone', roof: 'thatch' },
     relay: { wall: 'stone', roof: 'slate', neon: true }, glowworm: { wall: 'timber', roof: 'slate', neon: true }, array: { wall: 'stone', roof: 'slate', neon: true }, dynamo: { wall: 'stone', roof: 'slate', neon: true }, turbine: { wall: 'stone', roof: 'slate', neon: true },
   };
   function buildingBake(b, lit, season) {
-    const st = STYLE[b.key] || (b.isInn ? STYLE.inn : { wall: b.key.length % 2 ? 'timber' : 'stone', roof: 'thatch' });
+    const st = STYLE[b.key] || (b.isInn ? STYLE.inn : { wall: ['timber', 'stone', 'log'][b.key.length % 3], roof: 'thatch' });
     const X0 = b.x0, X1 = b.x1 + 1, Y1 = b.y1 + 1, Y0 = Y1 - Math.max(1.6, Math.min(3, b.y1 - b.y0 + 1));
     const snow = season === 'winter', windmill = b.key === 'windmill';
     const hw = windmill ? 0 : st.storeys > 1 ? 58 : 38, rh = windmill ? 0 : (Y1 - Y0) * 13 + 6;
@@ -587,6 +613,8 @@ const Iso = {
     for (const [ix, iy] of spr.chims || []) if ((ref.smoking || ref.lit) && !ref.neon) smoke(g, (ix - (Iso.cx - Iso.cy) * 2) * zm + W() / 2, (iy - (Iso.cx + Iso.cy)) * zm + H() / 2, zm, ix);
     if (spr.hub) sails(g, (spr.hub[0] - (Iso.cx - Iso.cy) * 2) * zm + W() / 2, (spr.hub[1] - (Iso.cx + Iso.cy)) * zm + H() / 2, zm);
   }
+  let BLOB = null;
+  function blob() { if (BLOB) return BLOB; const c = mk(128, 128), g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 4, 64, 64, 64); gr.addColorStop(0, 'rgba(14,18,6,0.85)'); gr.addColorStop(0.55, 'rgba(14,18,6,0.5)'); gr.addColorStop(1, 'rgba(14,18,6,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return (BLOB = c); }
   function smoke(g, x, y, zm, seed) {
     for (let k = 0; k < 6; k++) { const ph = (tReal * 0.3 + k / 6 + (seed % 97) * 0.013) % 1, sx = x + (Math.sin(ph * 5 + seed) * 4 + ph * 24) * zm, sy = y - ph * 80 * zm, r = (3 + ph * 12) * zm; g.fillStyle = `rgba(225,222,215,${(1 - ph) * 0.38})`; g.beginPath(); g.arc(sx, sy, r, 0, Math.PI * 2); g.fill(); }
   }
@@ -614,7 +642,7 @@ const Iso = {
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     if (Iso.water) Iso.water(g, w2s, zm);
 
-    const list = [];
+    const list = [], shadows = [];
     const seen = (x, y, m = 160) => { const [sx, sy] = w2s(x, y); return sx > -m * zm && sx < W() + m * zm && sy > -m * 0.6 * zm && sy < H() + m * 1.6 * zm; };
     const skip = new Set();
     for (const key in World.buildings) { const b = World.buildings[key]; if (b.static) skip.add(b.static); }
@@ -638,8 +666,10 @@ const Iso = {
       const depth = s.x + s.y;
       if (s.gen && s.gen.type === 'tree') {
         const spr = cached(`t${s.gen.kind}:${season}:${(s.gen.seed || 0) % 4}`, () => treeSprite(s.gen.kind, season, (s.gen.seed || 0) % 4));
+        shadows.push([s.x, s.y, spr.h / BK]);
         list.push([depth, () => { const [sx, sy] = w2s(s.x, s.y); g.drawImage(spr.c, sx - (spr.ax / BK) * zm, sy - (spr.ay / BK) * zm, (spr.c.width / BK) * zm, (spr.c.height / BK) * zm); }]);
       } else if (s.gen && s.gen.type === 'bush') {
+        shadows.push([s.x, s.y, 26]);
         const spr = cached(`u${season}:${(s.gen.seed || 0) % 5}`, () => bushSprite((s.gen.seed || 0) % 5, season));
         list.push([depth, () => { const [sx, sy] = w2s(s.x, s.y); g.drawImage(spr.c, sx - (spr.ax / BK) * zm, sy - (spr.ay / BK) * zm, (spr.c.width / BK) * zm, (spr.c.height / BK) * zm); }]);
       } else {
@@ -681,6 +711,7 @@ const Iso = {
       list.push([v.x + v.y, () => folk(g, v, zm)]);
     }
     list.sort((a, b) => a[0] - b[0]);
+    for (const [x, y, h] of shadows) { const [sx, sy] = w2s(x, y), rx = h * 0.5 * zm, ry = h * 0.15 * zm; g.save(); g.globalAlpha = 0.72; g.translate(sx + h * 0.36 * zm, sy + h * 0.04 * zm); g.rotate(-0.12); g.drawImage(blob(), -rx, -ry, rx * 2, ry * 2); g.restore(); }
     hits.length = 0;
     for (const [, fn] of list) fn();
     if (winter && World.bonfire) billboard(g, World.bonfire.x, World.bonfire.y, () => drawBonfire(g, tReal, Game.party.on), k);
@@ -704,8 +735,9 @@ const Iso = {
     for (const v of Game.villagers) if (v._isx != null) billboard(g, v.x, v.y - 16, () => { const t = v._top; v._top = v.y - 16; drawThought(g, v); v._top = t; }, k * 0.8);
     const sel = Game.selected;
     if (sel && sel._isx != null) { const bob = Math.sin(tReal * 5) * 2, ax = sel._isx, ay = sel._isy - 10 + bob; g.fillStyle = '#2a1c12'; g.beginPath(); g.moveTo(ax - 7, ay - 6); g.lineTo(ax + 7, ay - 6); g.lineTo(ax, ay + 3); g.closePath(); g.fill(); g.fillStyle = '#ffe14a'; g.beginPath(); g.moveTo(ax - 4.5, ay - 4.5); g.lineTo(ax + 4.5, ay - 4.5); g.lineTo(ax, ay + 1); g.closePath(); g.fill(); }
-    const vg = g.createRadialGradient(W() / 2, H() / 2, Math.min(W(), H()) * 0.45, W() / 2, H() / 2, Math.max(W(), H()) * 0.75);
-    vg.addColorStop(0, 'rgba(20,12,4,0)'); vg.addColorStop(1, 'rgba(20,12,4,0.26)'); g.fillStyle = vg; g.fillRect(0, 0, W(), H());
+    g.globalCompositeOperation = 'soft-light'; g.fillStyle = 'rgba(255,168,80,0.24)'; g.fillRect(0, 0, W(), H()); g.globalCompositeOperation = 'source-over';
+    const vg = g.createRadialGradient(W() / 2, H() / 2, Math.min(W(), H()) * 0.38, W() / 2, H() / 2, Math.max(W(), H()) * 0.72);
+    vg.addColorStop(0, 'rgba(20,12,4,0)'); vg.addColorStop(1, 'rgba(16,10,2,0.42)'); g.fillStyle = vg; g.fillRect(0, 0, W(), H());
   }
   function folk(g, v, zm, lift = 0) {
     const [sx, sy] = w2s(v.x, v.y); const y = sy - lift * zm;
