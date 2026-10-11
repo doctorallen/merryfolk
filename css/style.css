@@ -780,3 +780,6 @@ body.building #minimap { bottom: calc(var(--hud-bottom) + 4px); }
 .log-filters button { font-family: var(--font-ui); font-size: 11px; padding: 1px 7px; border: 1px solid var(--ink-3); border-radius: 10px; background: var(--parch); cursor: pointer; color: var(--ink); }
 .log-filters button.on { background: var(--ink); color: var(--parch); }
 #chronicle.collapsed .log-filters { display: none; }
+.ec-orders { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 6px; }
+.ec-o { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: center; padding: 6px 8px; border: 1px solid var(--parch-3); border-radius: 4px; background: var(--parch); }
+.ec-o b { font-size: 14px; } .ec-o .sub { grid-column: 1; font-size: 12.5px; } .ec-o button { grid-row: 1 / span 2; grid-column: 2; }

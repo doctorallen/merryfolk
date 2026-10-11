@@ -128,3 +128,24 @@ window.addEventListener('DOMContentLoaded', () => {
   const oh = onHour;
   onHour = function (h) { const r = oh(h); if (h === 6) leaversDaily(); return r; };
 });
+
+// --- The Steward's orders: things coin can buy at any time -------------------
+const ORDERS = [
+  { id: 'feast', label: 'Throw a village feast', cost: 30, need: () => Village.foodTotal() >= 25, why: 'needs 25 helpings in the Store', desc: 'Tables on the green tonight: 30 pennies and 25 helpings. Everyone\'s spirits lift for days.', fn: () => { let left = 25; for (const k of ['stew', 'pie', 'cake', 'bread', 'veg', 'fish', 'apple', 'cheese']) { const n = Math.min(left, Math.floor(Village.stores[k] || 0)); Village.use(k, n); left -= n; if (!left) break; } Game.party.planned = 'feast'; for (const v of Game.villagers) if (v.stage !== 'baby') feel(v, 'feasted'); chronicle('By the Steward\'s order, there\'s to be a feast on the green tonight! Long tables, lanterns, and pies as far as the eye can see.', 'party'); } },
+  { id: 'masons', label: 'Send for dwarf masons', cost: 50, need: () => !masonsOn(), why: 'already here', desc: 'Every building job goes twice as fast for two days.', fn: () => { Game.masonsUntil = Game.time + 2 * 1440; chronicle('A crew of dwarf masons has come over the hills at the Steward\'s invitation. Building goes twice as fast for two days.', 'build'); } },
+  { id: 'books', label: 'Buy books from Bree', cost: 20, need: () => true, desc: 'A crate of books from Bree: +15 lore at once.', fn: () => { addLore(15); chronicle('A crate of books has come from Bree. The village\'s readers are delighted.', 'learn'); } },
+  { id: 'labour', label: 'Hire day labourers', cost: 25, need: () => World.season !== 'winter', why: 'not in winter', desc: 'Hands from over the hills bring the crops on in every field and garden.', fn: () => { const bump = (p) => { if (p.stage >= 1 && p.stage < 4) { p.prog += 0.6; if (p.prog >= 1) { p.prog = 0; p.stage++; } } }; for (const f of World.fields) f.plots.forEach(bump); for (const a of World.allotments) a.plots.forEach(bump); for (const h of World.homes) if (h.built) h.plots.forEach(bump); chronicle('Day labourers from over the hills have been hired: hoeing, weeding and watering in every field.', 'work'); } },
+];
+MOODLETS.feasted = ['The Steward\'s feast', 0.12, 2160, ['What a feast that was!', 'I couldn\'t eat another bite. Well, maybe one.']];
+function ordersHTML() {
+  return `<h3>The Steward's orders</h3><div class="ec-orders">${ORDERS.map((o) => { const ok = o.need() && (Game.coin || 0) >= o.cost; return `<div class="ec-o"><b>${escapeHtml(o.label)}</b><span class="sub">${escapeHtml(o.desc)}</span><button data-order="${o.id}" ${ok ? '' : 'disabled'} title="${!o.need() ? escapeHtml(o.why || '') : (Game.coin || 0) < o.cost ? 'Not enough pennies' : ''}">${o.cost}p</button></div>`; }).join('')}</div>`;
+}
+window.addEventListener('DOMContentLoaded', () => {
+  const sh = stewardHTML;
+  stewardHTML = function () { const h = sh(); const i = h.indexOf('<h3>Workforce</h3>'); return i >= 0 ? h.slice(0, i) + ordersHTML() + h.slice(i) : h + ordersHTML(); };
+  const hook = hookStewardUI;
+  hookStewardUI = function (body) {
+    body.querySelectorAll('[data-order]').forEach((b) => b.addEventListener('click', () => { const o = ORDERS.find((x) => x.id === b.dataset.order); if (!o || !o.need() || (Game.coin || 0) < o.cost) return; Game.coin -= o.cost; o.fn(); renderVillage(); }));
+    return hook(body);
+  };
+});

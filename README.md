@@ -113,6 +113,11 @@ The **☺ contentment** pill in the top bar opens the Steward's Desk, the first 
 - **The working week.** *Easy* adds Sunday off (less done, happier folk); *Busy* cancels Highday (more done, wearier folk).
 - **Economy board.** For every good: what's in the Store (against its capacity), what was made and used yesterday, and how many days it would last if yesterday repeated. The chains (barley → flour → bread, barley → ale, apples → pies, vegetables → stew) are checked for their bottleneck, with a plain-spoken warning: *Flour is piling up but the bread shelves are bare: more bakers.* It also warns when food is under a day or the builders are starved of timber.
 - **Building works.** Every project in hand with its progress and what it's waiting for (timber, scrap, hands). Mark one **Do first** and the builders put their backs into it.
+- **The Steward's orders.** Things coin can buy at any time:
+  - throw a village feast (30 pennies and 25 helpings: spirits lift for days)
+  - send for dwarf masons (50: building twice as fast for two days)
+  - buy books from Bree (20: +15 lore)
+  - hire day labourers (25: every crop brought on)
 - **Shortages bite.** Famished folk can't put their backs into their work, at their trade or on the building sites. Folk who stay miserable for days start talking about moving to Bree (the Chronicle says so, and the desk lists who and why). Cheer them up and they'll stay, glad they did; leave it, and unattached grown-ups pack a cart and go.
 - **Idle hands.** Trades whose workers are standing idle are flagged on the desk with the reason (*the flour bins are full*, *no letters in the bag*), so you can move hands elsewhere or sell off the surplus.
 - **Workforce** (as in Age of Empires). Every trade shows hands now against hands wanted. Use − and + to set how many each trade should have: folk are moved over from trades that can spare them (the best-suited first) or let go to find other work. *auto* hands a trade back to the village.
