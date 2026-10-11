@@ -811,3 +811,4 @@ body.building #minimap { bottom: calc(var(--hud-bottom) + 4px); }
   .rel a[data-v], .likes a[data-v], .friend a { display: inline-block; padding: 8px 2px; }
 }
 #bb-done { background: var(--moss); color: var(--parch); }
+@media (max-width: 760px) { #topbar .controls { flex-wrap: nowrap; overflow-x: auto; max-width: calc(100vw - 20px); scrollbar-width: none; } #topbar .controls::-webkit-scrollbar { display: none; } }
