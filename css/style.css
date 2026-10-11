@@ -407,7 +407,7 @@ body.rift-mode, .rift-skin {
   --hi: #2a1f44;
   color-scheme: dark;
 }
-.card, .tabs button, .controls button, .tool, .bar, .now, .chip, #portrait { transition: background-color .35s, border-color .35s, color .35s, box-shadow .35s; }
+.card, .tabs button, .controls button, .tool, .bar, .now, .chip, #portrait { transition: background-color .35s, border-color .35s, color .35s; }
 body.rift-mode .card {
   border-color: var(--moss-2);
   background-image: repeating-linear-gradient(0deg, rgba(58, 240, 255, 0.045) 0 1px, transparent 1px 3px);
@@ -437,19 +437,20 @@ body.rift-mode #log time::before { content: "[ "; } body.rift-mode #log time::af
 body.rift-mode #toast { background: #07080e; color: var(--ink); }
 body.rift-mode .rel a { color: var(--moss-2); }
 body.rift-mode .tool-hint { color: var(--ink); background: rgba(7, 8, 14, 0.82); }
-body.glitching .card { animation: rift-shake .42s steps(2) 1; }
+body.glitching .card { animation: rift-shake .42s steps(2) 1; will-change: transform; }
 @keyframes rift-glitch {
   0%, 92% { text-shadow: 2px 0 0 rgba(255, 58, 168, 0.7), -2px 0 0 rgba(58, 240, 255, 0.6); transform: none; }
   93% { text-shadow: -4px 0 0 rgba(255, 58, 168, 0.9), 4px 0 0 rgba(58, 240, 255, 0.9); transform: translateX(2px); }
   95% { text-shadow: 3px 1px 0 rgba(122, 255, 90, 0.8), -3px -1px 0 rgba(255, 58, 168, 0.8); transform: translateX(-2px) skewX(-8deg); }
   97% { text-shadow: 2px 0 0 rgba(255, 58, 168, 0.7), -2px 0 0 rgba(58, 240, 255, 0.6); transform: none; }
 }
+/* transform only, so the shake is composited rather than repainted */
 @keyframes rift-shake {
-  0% { transform: translate(0, 0); filter: hue-rotate(0deg); }
-  25% { transform: translate(-3px, 1px); filter: hue-rotate(90deg) saturate(2); }
-  50% { transform: translate(3px, -1px); filter: hue-rotate(-60deg); }
-  75% { transform: translate(-1px, 0); filter: hue-rotate(30deg) saturate(1.6); }
-  100% { transform: translate(0, 0); filter: none; }
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 1px) skewX(-2deg); }
+  50% { transform: translate(3px, -1px); }
+  75% { transform: translate(-1px, 0) skewX(1deg); }
+  100% { transform: translate(0, 0); }
 }
 @media (prefers-reduced-motion: reduce) {
   body.rift-mode .who h2, body.glitching .card { animation: none; }

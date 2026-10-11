@@ -1163,6 +1163,9 @@ function boot() {
   setupInput();
   setupInterior();
   devLoad();
+  // fetch the rift interface's fonts while idle, so the first switch to it
+  // doesn't stall waiting for them
+  if (document.fonts) setTimeout(() => { for (const f of ['16px "Share Tech Mono"', '500 16px Rajdhani', '600 16px Rajdhani', '700 16px Rajdhani']) document.fonts.load(f).catch(() => {}); }, 1200);
   renderLog();
   updateSoundBtn();
   openIntro(true);
