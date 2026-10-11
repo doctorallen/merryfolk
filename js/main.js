@@ -768,6 +768,7 @@ function wrapText(ctx, text, maxW) {
 }
 
 // Crisp text layer: speech bubbles and name tags
+let BUBBLE_SEQ = 0;
 function renderOverlay() {
   const z = Game.zoom, cam = Game.cam;
   octx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -776,22 +777,47 @@ function renderOverlay() {
   // the same half-pixel camera the world is drawn with, so text sits exactly on it
   const cx = Math.round(cam.x * RS) / RS, cy = Math.round(cam.y * RS) / RS;
   const W = overlay.width / dpr, H = overlay.height / dpr;
+  // measure every bubble first, then lay them out so none sits on another:
+  // older ones keep their place and newer ones stack above whatever they'd cover
+  const items = [];
   for (const v of Game.villagers) {
     if (v.inside || !v.bubble) continue;
     const sx = (v.x - cx) * z;
-    let sy = ((v._top ?? v.y - 16) - cy) * z - (Game.selected === v || v.iconT > 0 || v.isSick() ? 14 * z : 4);
+    const sy = ((v._top ?? v.y - 16) - cy) * z - (Game.selected === v || v.iconT > 0 || v.isSick() ? 14 * z : 4);
     if (sx < -100 || sx > W + 100 || sy < -40 || sy > H + 40) continue;
-    const alpha = Math.min(1, v.bubble.t * 2.5);
-    octx.globalAlpha = alpha;
     const think = v.bubble.think, to = v.bubble.to;
-    // when both of a pair are talking, one bubble sits above the other's
-    if (to && to.bubble && !to.inside && v.id > to.id && Math.abs(to.x - v.x) < 120) sy -= 40;
     octx.font = think ? 'italic 600 15px "Alegreya Sans", system-ui, sans-serif' : '600 14px "Pixelify Sans", ui-monospace, monospace';
     // whole sentences wrap onto a few lines
     if (!v.bubble.lines) v.bubble.lines = wrapText(octx, v.bubble.text, 210);
+    if (v.bubble.seq == null) v.bubble.seq = ++BUBBLE_SEQ;
     const lines = v.bubble.lines;
     const tw = Math.max(...lines.map((l) => octx.measureText(l).width));
     const bw = tw + 16, bh = 8 + lines.length * 17, bx = Math.round(sx - bw / 2), by = Math.round(sy - bh - (think ? 14 : 8));
+    items.push({ v, sx, think, to, lines, bw, bh, bx, by, by0: by, top: to && !think ? 15 : 2 });
+  }
+  items.sort((p, q) => p.v.bubble.seq - q.v.bubble.seq);
+  const placed = [];
+  for (const it of items) {
+    for (let moved = true, n = 0; moved && n < 12; n++) {
+      moved = false;
+      for (const o of placed) {
+        if (it.bx - 2 < o.bx + o.bw + 5 && it.bx + it.bw + 5 > o.bx - 2 && it.by - it.top < o.by + o.bh + 4 && it.by + it.bh + 4 > o.by - o.top) {
+          it.by = o.by - o.top - it.bh - 6; moved = true;
+        }
+      }
+    }
+    placed.push(it);
+  }
+  // lifted bubbles keep a thin stem down to whoever's speaking
+  for (const it of items) {
+    if (it.by0 - it.by < 3) continue;
+    octx.globalAlpha = Math.min(1, it.v.bubble.t * 2.5) * 0.8;
+    octx.strokeStyle = it.think ? '#5a5e70' : '#2a1c12'; octx.lineWidth = 2;
+    octx.beginPath(); octx.moveTo(it.sx - 3, it.by + it.bh + 4); octx.lineTo(it.sx - 3, it.by0 + it.bh + (it.think ? 12 : 8)); octx.stroke();
+  }
+  for (const { v, sx, think, to, lines, bw, bh, bx, by } of items) {
+    octx.globalAlpha = Math.min(1, v.bubble.t * 2.5);
+    octx.font = think ? 'italic 600 15px "Alegreya Sans", system-ui, sans-serif' : '600 14px "Pixelify Sans", ui-monospace, monospace';
     if (think) {
       // musing to themselves: a soft thought cloud, trailing little bubbles
       const fill = '#f7f4ee', edge = '#5a5e70';
