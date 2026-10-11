@@ -66,6 +66,8 @@ function tileWhy(tool, tx, ty) {
       if (t !== T.GRASS && t !== T.LAWN && !(tool !== 'tree' && tool !== 'hedge' && (t === T.PATH || t === T.COBBLE))) return 'Needs grass';
       if (blocked) return 'Something\'s in the way';
       if (World.reserved[tIdx(tx, ty)] && tool === 'tree') return 'Kept clear for building';
+      // the lamplighter stands beside the post, one side or the other
+      if (tool === 'lamp' && !walkable(tx + 1, ty) && !walkable(tx - 1, ty)) return 'No room beside it for the lamplighter';
       return underBuilding(tx, ty) ? 'Too close to a building' : '';
     case 'clear': return staticsOnTile(tx, ty).some(clearable) ? '' : 'Nothing to clear';
     case 'raise': case 'lower':
