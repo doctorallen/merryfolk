@@ -155,10 +155,51 @@ function placeSite(tool, tx, ty, quiet = false) {
 }
 
 // --- Plans ---------------------------------------------------------------------
+// Hedges, ponds and the like shut tiles off. Before planning one, make sure
+// nobody's door (or anybody out and about) would be cut off from the square,
+// counting what's already planned but not yet built.
+const BLOCKING_TOOLS = new Set(['tree', 'lamp', 'statue', 'fountain', 'hedge', 'pond']);
+function reachableFrom(sx, sy, shut) {
+  const seen = new Uint8Array(MAP_W * MAP_H), q = [tIdx(sx, sy)];
+  seen[q[0]] = 1;
+  while (q.length) {
+    const i = q.pop(), x = i % MAP_W, y = (i / MAP_W) | 0;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = x + dx, ny = y + dy;
+      if (!inMap(nx, ny)) continue;
+      const ni = tIdx(nx, ny);
+      if (seen[ni] || shut.has(ni) || !walkable(nx, ny)) continue;
+      seen[ni] = 1; q.push(ni);
+    }
+  }
+  return seen;
+}
+function wouldWallIn(tiles) {
+  const before = new Set();
+  for (const p of plansList()) if (BLOCKING_TOOLS.has(p.tool)) for (const [x, y] of p.tiles) before.add(tIdx(x, y));
+  const after = new Set(before), mine = new Set(tiles.map(([x, y]) => tIdx(x, y)));
+  for (const i of mine) after.add(i);
+  const root = nearestWalkable(PLAZA.cx, PLAZA.cy);
+  if (!root) return false;
+  const was = reachableFrom(root[0], root[1], before), now = reachableFrom(root[0], root[1], after);
+  const spots = [];
+  for (const h of World.homes) if (h.built) spots.push([h.stepX, h.stepY]);
+  for (const k in World.buildings) { const b = World.buildings[k]; if (b.stepX != null) spots.push([b.stepX, b.stepY]); }
+  for (const v of Game.villagers) if (!v.inside) spots.push([v.x, v.y]);
+  return spots.some(([px, py]) => {
+    const tx = Math.floor(px / 16), ty = Math.floor((py - 2) / 16);
+    if (!inMap(tx, ty)) return false;
+    const i = tIdx(tx, ty);
+    return !mine.has(i) && was[i] && !now[i];
+  });
+}
+let planRefusal = null;
 function makePlan(tool, tiles) {
   const T0 = BTOOL[tool];
+  planRefusal = null;
   const ok = tiles.filter(([x, y]) => !tileWhy(tool, x, y));
   if (!ok.length) return null;
+  if (BLOCKING_TOOLS.has(tool) && wouldWallIn(ok)) { planRefusal = 'That would wall folk in: leave them a way through.'; return null; }
   let work = T0.unit * ok.length;
   if (tool === 'clear') work = T0.unit * ok.reduce((s, [x, y]) => s + staticsOnTile(x, y).filter(clearable).length, 0);
   if (T0.kind === 'brush') work = T0.unit;
@@ -481,7 +522,8 @@ function buildPointer(e, phase) {
     const tiles = Build.drag.tiles;
     const p = makePlan(tool, tiles);
     Build.drag = null;
-    if (!p) toast(`Can't plan that there: ${(tiles.map(([x, y]) => tileWhy(tool, x, y)).find(Boolean) || (BTOOL[tool].kind === 'brush' ? 'the ground can\'t go any ' + (tool === 'raise' ? 'higher' : 'lower') : 'not here')).toLowerCase()}.`, 'info');
+    if (!p && planRefusal) toast(planRefusal, 'info');
+    else if (!p) toast(`Can't plan that there: ${(tiles.map(([x, y]) => tileWhy(tool, x, y)).find(Boolean) || (BTOOL[tool].kind === 'brush' ? 'the ground can\'t go any ' + (tool === 'raise' ? 'higher' : 'lower') : 'not here')).toLowerCase()}.`, 'info');
     renderBuildBar();
     return true;
   }
