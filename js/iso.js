@@ -22,6 +22,8 @@ const Iso = {
 (() => {
   const VIEW_KEY = 'merryfolk-view';
   try { Iso.on = localStorage.getItem(VIEW_KEY) !== 'classic'; } catch (e) { /* storage unavailable: isometric by default */ }
+  // phones start further out, so the square and its homes fit on the screen
+  Iso.zoom = window.innerWidth < 700 ? 0.8 : window.innerWidth < 1100 ? 1.1 : 1.4;
 
   const ZMS = [0.7, 1, 1.4, 2, 2.8];
   const TPX = 24;                 // ground texture pixels per tile
