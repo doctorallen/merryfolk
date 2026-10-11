@@ -812,3 +812,5 @@ body.building #minimap { bottom: calc(var(--hud-bottom) + 4px); }
 }
 #bb-done { background: var(--moss); color: var(--parch); }
 @media (max-width: 760px) { #topbar .controls { flex-wrap: nowrap; overflow-x: auto; max-width: calc(100vw - 20px); scrollbar-width: none; } #topbar .controls::-webkit-scrollbar { display: none; } }
+/* the scrolling row clips anything absolutely placed inside it, so on phones the settings menu floats free, placed under the button when opened */
+@media (max-width: 760px) { .gear-menu { position: fixed; right: auto; z-index: 30; } }

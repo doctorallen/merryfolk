@@ -133,7 +133,17 @@ window.addEventListener('DOMContentLoaded', () => {
     while (ToastQ.length > most) { const t = ToastQ.shift(); t.el.remove(); }
   };
   // the gear menu
-  $('btn-gear').addEventListener('click', (e) => { e.stopPropagation(); $('gear-menu').hidden = !$('gear-menu').hidden; });
+  $('btn-gear').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const menu = $('gear-menu');
+    menu.hidden = !menu.hidden;
+    // on phones the menu is position: fixed (the controls row scrolls and would clip it), so put it under the button
+    if (!menu.hidden && getComputedStyle(menu).position === 'fixed') {
+      const r = $('btn-gear').getBoundingClientRect();
+      menu.style.top = Math.round(r.bottom + 6) + 'px';
+      menu.style.left = Math.round(Math.max(8, Math.min(r.left, window.innerWidth - menu.offsetWidth - 8))) + 'px';
+    } else { menu.style.top = ''; menu.style.left = ''; }
+  });
   document.addEventListener('click', (e) => { if (!e.target.closest('.gear-wrap')) $('gear-menu').hidden = true; });
   $('btn-guide').addEventListener('click', () => { Game.tut = { step: 0, saw: {}, off: false }; Game.objHidden = false; $('gear-menu').hidden = true; renderErrand(); });
   // chips
