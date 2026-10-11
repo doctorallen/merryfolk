@@ -90,7 +90,7 @@ function computeLand(seed) {
   for (let i = 0; i < N; i++) { twi[i] = Math.log(flow[i] / (slope[i] + 0.004)); tmax = Math.max(tmax, twi[i]); }
   for (let i = 0; i < N; i++) {
     const t = clamp((twi[i] - 5) / Math.max(1, tmax - 5), 0, 1);
-    moist[i] = water[i] ? 1 : clamp(0.62 * Math.exp(-distWater[i] / 4.5) + 0.5 * t, 0, 1);
+    moist[i] = water[i] ? 1 : clamp(0.62 * Math.exp(-distWater[i] / 4.5) + 0.5 * t + gen('wet'), 0, 1);
     // 6. soil, from where the tile lies
     const s = slope[i] / 0.03;
     soil[i] = h[i] < 0.24 && distWater[i] < 7 ? SOIL.ALLUVIUM : h[i] > 0.62 || s > 1.1 ? SOIL.THIN : moist[i] > 0.4 && s < 0.6 ? SOIL.CLAY : SOIL.LOAM;

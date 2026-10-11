@@ -170,7 +170,7 @@ function plantNature(rng, addStatic, blk) {
     else n = noise(x * 0.09, y * 0.09) > 0.6 ? (rng() < 0.55 ? 1 + Math.floor(rng() * 2) : 0) : rng() < 0.05 ? 1 : 0;
     for (let k = 0; k < n; k++) tuft(x, y, reed && rng() < 0.75 ? 6 + Math.floor(rng() * 2) : Math.floor(rng() * 6));
     // rocks
-    const r = rng();
+    const r = rng() / gen('rocks');
     if (hb.soil === SOIL.THIN && hb.slope > 0.9 && r < 0.12 && boulders < 45) rock(x, y, r < 0.04 ? 3 : 2);
     else if (hb.soil === SOIL.THIN && r < 0.06) rock(x, y, 1);
     else if (hb.flow > 40 && hb.water > 1.5 && r < 0.18) rock(x, y, 0);
@@ -218,7 +218,7 @@ function plantWildflowers(rng) {
   const treeNear = new Set((World.treeAt || []).map(([x, y]) => x + ',' + y));
   const ok = (x, y) => inMap(x, y) && (tiles[tIdx(x, y)] === T.GRASS || tiles[tIdx(x, y)] === T.LAWN) && !World.block[tIdx(x, y)];
   let placed = 0;
-  for (let k = 0; k < 2600 && placed < 420; k++) {
+  for (let k = 0; k < 2600 * gen('flowers') && placed < 420 * gen('flowers'); k++) {
     const x = Math.floor(rng() * MAP_W), y = Math.floor(rng() * MAP_H);
     if (!ok(x, y)) continue;
     const hb = habitat(x, y, treeNear);
@@ -307,7 +307,7 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
   for (const [x, y] of order) {
     if (tiles[tIdx(x, y)] !== T.GRASS || World.reserved[tIdx(x, y)] || World.block[tIdx(x, y)] || nearRoad(x, y, 1)) continue;
     const p = potential(x, y);
-    if (p <= 0 || rng() > p * 2.2) continue;
+    if (p <= 0 || rng() > p * 2.2 * gen('woods')) continue;
     const kind = kindFor(x, y), r = RADIUS[kind];
     if (near(x, y, r)) continue;
     const [s0, sn] = TREE_SEEDS[kind];
@@ -411,10 +411,12 @@ function plantHedges(rng, { addStatic, blk }) {
     for (let y = r.y0; y <= r.y1; y++) { left.push([r.x0 - 1, y]); right.push([r.x1 + 1, y]); }
     run(top, 'h'); run(bot, 'h'); run(left, 'v'); run(right, 'v');
   };
-  fieldEdge = true;
-  for (const f of FIELDS) ring(f);
-  ring(WEED_FIELD);
-  fieldEdge = false;
+  if (gen('hedges') > 0) {
+    fieldEdge = true;
+    for (const f of FIELDS) ring(f);
+    ring(WEED_FIELD);
+    fieldEdge = false;
+  }
   // along the country lanes, well away from the village centre
   for (const [w, ...pts] of ROADS) {
     if (w < 0.85) continue;
@@ -429,7 +431,7 @@ function plantHedges(rng, { addStatic, blk }) {
           if (Math.hypot(x - PLAZA.cx, y - PLAZA.cy) < 24 || (cells.length && cells[cells.length - 1][0] === x && cells[cells.length - 1][1] === y)) continue;
           cells.push([x, y]);
         }
-        if (rng() < 0.55) {
+        if (rng() < gen('hedges')) {
           // break the line into straight stretches, each across or up-and-down
           let part = [];
           const go = () => { if (part.length > 3) run(part, part[0][1] === part[part.length - 1][1] ? 'h' : 'v', 3); part = []; };

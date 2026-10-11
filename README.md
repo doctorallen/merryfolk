@@ -25,7 +25,9 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 | Pause / speed | `Space`, or the 1× to 16× buttons |
 | Developer mode | `` ` `` (backtick), or the Dev button |
 
-The village saves to `localStorage` every in-game hour and when you leave the page. **?** → *Start a fresh village* resets it. One in-game day takes 8 real minutes at 1×, and each season lasts three days.
+The village saves to `localStorage` every in-game hour and when you leave the page. **?** → *Start a fresh village* resets it.
+
+**Shaping the valley.** A new village (the very first, or a fresh start) begins on the *Shape your valley* screen. Pick a seed (or roll one) and how the land is made: gentle, rolling or hilly ground; a lazy, winding or meandering river; sparse, fair or thick woodland; dry, fair or damp ground; no hedgerows, some or many; few wildflowers, plenty or a riot; few rocks, some or many. Then watch it being made on a map, stage by stage: the river finds its way down the valley, knolls rise for the hobbit-holes, lanes wind along the contours, fields are ploughed, rain runs off the hills and the soil settles, the mills and the inn go up, then hedges, woods, willows, long grass and stones, and finally the wildflowers. The same seed and settings always make the same valley, and they're saved with the village. One in-game day takes 8 real minutes at 1×, and each season lasts three days.
 
 ## Inside the hobbit-holes
 
@@ -123,6 +125,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 | `js/sprites.js` | Procedural pixel art: villagers (with genes), seasonal trees, cottages and workshops, critters, props, icons |
 | `js/genetics.js` | Genome, inheritance, dominance, mutation, posting villagers as codes |
 | `js/world.js` | Map layout, seasonal ground painting, places, crops, critters, A* pathfinding |
+| `js/worldgen_ui.js` | The *Shape your valley* setup screen and the stage-by-stage generation map |
 | `js/terrain.js` | The lie of the land: height, slope, sun, drainage and flow, wetness, soil |
 | `js/nature.js` | Wind, swaying trees, long grass and reeds, rocks |
 | `js/fx.js` | Particles, fireworks, weather (rain, storms, snow, fog, leaves, petals), lighting |

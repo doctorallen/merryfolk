@@ -149,6 +149,31 @@
       </div>
     </div>
   </div>
+  <div id="worldgen" hidden>
+    <div class="intro-card card wg-card">
+      <section id="wg-setup">
+        <h2>Shape your valley</h2>
+        <p class="wg-lede">Choose how the land lies before the first families dig in. The same seed and settings always make the same valley.</p>
+        <div class="wg-row">
+          <label class="wg-label" for="wg-seed">Seed</label>
+          <div class="wg-seedbox"><input id="wg-seed" type="number" min="1" max="999999" inputmode="numeric"><button id="wg-dice" title="Another valley" aria-label="Roll a new seed">⚄ Roll</button></div>
+        </div>
+        <div id="wg-opts"></div>
+        <div class="intro-actions">
+          <button id="wg-begin" class="primary">Make the valley</button>
+          <button id="wg-back" class="ghost">Back</button>
+        </div>
+      </section>
+      <section id="wg-watch" hidden>
+        <h2>The valley takes shape</h2>
+        <div class="wg-mapwrap"><canvas id="wg-map"></canvas></div>
+        <p id="wg-stage" class="wg-stage" aria-live="polite"></p>
+        <div class="wg-progress"><div id="wg-bar"></div></div>
+        <ol id="wg-log" class="wg-log"></ol>
+        <div class="intro-actions"><button id="wg-enter" class="primary" hidden>Enter Thistledown</button></div>
+      </section>
+    </div>
+  </div>
 </div>
 
 <script src="js/version.js"></script>
@@ -172,6 +197,7 @@
   <script src="js/rift.js"></script>
   <script src="js/riftpower.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/worldgen_ui.js"></script>
 <script src="js/dev.js"></script>
 <script src="js/interior.js"></script>
 <script src="js/interior_buildings.js"></script>

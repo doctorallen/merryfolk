@@ -65,7 +65,12 @@ const ROADS = [
   [0.85, [86, 8], [87, 15], [89, 20], [91, 22]],
 ];
 
-const RIVER_Y = (x) => 54 + 2.5 * Math.sin(x * 0.06 + 0.8) + 1.2 * Math.sin(x * 0.17);
+// A wilder river swings further, but calms where it passes the knoll at x 36
+// so it never runs through anybody's garden.
+const RIVER_Y = (x) => {
+  const g = gen('river'), calm = Math.exp(-(((x - 36) / 8) ** 2)), k = g > 1 ? g - (g - 1) * calm : g;
+  return 54 + (2.5 * Math.sin(x * 0.06 + 0.8) + 1.2 * Math.sin(x * 0.17)) * k + (g > 1.2 ? 1.3 * Math.sin(x * 0.11 + 2) * (1 - calm) : 0);
+};
 const POND = { cx: 100, cy: 78, rx: 6, ry: 4 };
 const PARTY = { cx: 100, cy: 16, rx: 11, ry: 7, treeX: 100, treeY: 12, danceX: 100, danceY: 17.4 };
 const PLAZA = { cx: 64, cy: 28, r: 4 };
@@ -134,8 +139,32 @@ function applySeasonToStatics(season) {
 }
 
 // ---------------------------------------------------------------------------
-function buildWorld(seed) {
+// How the valley is to be made: chosen on the setup screen when a village is
+// started, and saved with it.
+const GEN_OPTIONS = {
+  hills: { label: 'The land', opts: [['gentle', 'Gentle', 0.6], ['rolling', 'Rolling', 1], ['hilly', 'Hilly', 1.5]] },
+  river: { label: 'The river', opts: [['lazy', 'Lazy', 0.45], ['winding', 'Winding', 1], ['meandering', 'Meandering', 1.6]] },
+  woods: { label: 'Woodland', opts: [['sparse', 'Sparse', 0.5], ['fair', 'Fair', 1], ['thick', 'Thick', 1.6]] },
+  wet: { label: 'Wetness', opts: [['dry', 'Dry', -0.12], ['fair', 'Fair', 0], ['damp', 'Damp', 0.14]] },
+  hedges: { label: 'Hedgerows', opts: [['none', 'None', 0], ['some', 'Some', 0.55], ['many', 'Many', 0.95]] },
+  flowers: { label: 'Wildflowers', opts: [['few', 'Few', 0.45], ['plenty', 'Plenty', 1], ['riot', 'A riot', 1.9]] },
+  rocks: { label: 'Rocks', opts: [['few', 'Few', 0.45], ['some', 'Some', 1], ['many', 'Many', 1.9]] },
+};
+function defaultGen(seed = 1337) { return { seed, hills: 'rolling', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some' }; }
+// The number behind a setting, e.g. gen('woods') → 1.6 for thick woodland.
+function gen(key) {
+  const g = World.gen || defaultGen(), o = GEN_OPTIONS[key].opts.find((x) => x[0] === g[key]);
+  return o ? o[2] : GEN_OPTIONS[key].opts[1][2];
+}
+
+function buildWorld(cfg) { for (const _ of buildWorldSteps(cfg)); }
+// Builds the valley a stage at a time, yielding a line about each, so the
+// setup screen can show it taking shape.
+function* buildWorldSteps(cfg) {
+  World.gen = typeof cfg === 'object' ? { ...defaultGen(), ...cfg } : defaultGen(cfg);
+  const seed = World.gen.seed;
   World.seed = seed;
+  World.land = null; World.grass = []; World.statics = []; World.flowers = [];
   const rng = mulberry32(seed);
   const tiles = World.tiles;
   tiles.fill(T.GRASS);
@@ -146,6 +175,7 @@ function buildWorld(seed) {
     const px = (x + 0.5 - POND.cx) / POND.rx, py = (y + 0.5 - POND.cy) / POND.ry;
     if (px * px + py * py < 1) tiles[tIdx(x, y)] = T.WATER;
   }
+  yield 'The river finds its way down the valley';
   // Party lawn
   for (let y = 0; y < MAP_H; y++) for (let x = 0; x < MAP_W; x++) {
     const px = (x - PARTY.cx) / PARTY.rx, py = (y - PARTY.cy) / PARTY.ry;
@@ -160,9 +190,11 @@ function buildWorld(seed) {
     World.homes.push(createHome(d, i, surname, name));
   });
 
+  yield 'Knolls rise where the hobbit-holes will be dug';
   // Roads: each stretch between the lanes' waypoints is walked by the easiest
   // way, keeping to the contours and away from wet and steep ground
   routeRoads(seed);
+  yield 'Lanes wind along the contours';
   // Plaza
   for (let y = PLAZA.cy - 6; y < PLAZA.cy + 6; y++) for (let x = PLAZA.cx - 7; x < PLAZA.cx + 7; x++) if (Math.hypot(x - PLAZA.cx, (y - PLAZA.cy) * 1.2) < PLAZA.r + 0.7) tiles[tIdx(x, y)] = T.COBBLE;
   // Inn yard
@@ -170,8 +202,10 @@ function buildWorld(seed) {
   // Pipe-weed field, barley fields
   for (let y = WEED_FIELD.y0; y <= WEED_FIELD.y1; y++) for (let x = WEED_FIELD.x0; x <= WEED_FIELD.x1; x++) tiles[tIdx(x, y)] = T.WEED;
   for (const f of FIELDS) for (let y = f.y0; y <= f.y1; y++) for (let x = f.x0; x <= f.x1; x++) if (tiles[tIdx(x, y)] !== T.PATH) tiles[tIdx(x, y)] = T.FIELD;
+  yield 'Fields are ploughed and the square is cobbled';
   // the lie of the land: slope, sun, drainage, wetness and soil, for siting what grows where
   computeLand(seed);
+  yield 'Rain runs off the hills; soil settles in the hollows';
 
   World.block.fill(0);
   World.reserved.fill(0);
@@ -314,6 +348,7 @@ function buildWorld(seed) {
     for (let y = wy - 5; y <= wy; y++) for (let x = wx - 3; x <= wx + 3; x++) res(x, y);
   }
 
+  yield 'The mills, the inn and the workshops go up';
   // --- Plaza: well, market, notice board, signpost, benches, lamps ---
   addStatic(makeWell(), 67.5 * 16, 25 * 16 + 2); blk(67, 24);
   World.wellSpot = makeSpot(67.5 * 16, 25 * 16 + 12, 'up', 'stand', 'well');
@@ -446,6 +481,7 @@ function buildWorld(seed) {
   // --- Pens, a second orchard and allotments, then spare land for the village to grow into ---
   planFarmland();
   planLots(seed);
+  yield 'Pens, orchards and allotments are laid out';
 
   // --- Trees: woods along the borders (thick to the east), copses elsewhere ---
   const noise = makeNoise(seed + 7);
@@ -464,7 +500,9 @@ function buildWorld(seed) {
   const treeAt = [];
   World.treeAt = treeAt;
   plantHedges(rng, { addStatic, blk });
+  yield gen('hedges') ? 'Hawthorn hedges grow along the field edges' : 'The fields are left open, with no hedges';
   plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt });
+  yield 'Woods grow where nobody has cleared them';
 
   // --- Weeping willows along the river and round the pond ---
   for (let y = 2; y < MAP_H - 2; y++) for (let x = 2; x < MAP_W - 2; x++) {
@@ -477,6 +515,7 @@ function buildWorld(seed) {
     blk(x, y); treeAt.push([x, y]);
   }
 
+  yield 'Willows lean over the water';
   // --- Woodland spots: mushrooms, wild herbs, timber ---
   const woodsCands = [];
   for (let y = 4; y < MAP_H - 3; y++) for (let x = 3; x < MAP_W - 2; x++) {
@@ -510,9 +549,11 @@ function buildWorld(seed) {
 
   // --- Long grass, reeds and rocks ---
   plantNature(rng, addStatic, blk);
+  yield 'Long grass, reeds and stones';
 
   // --- Decorative wildflowers ---
   plantWildflowers(rng);
+  yield 'Wildflowers come up in drifts';
   for (const h of World.homes) if (h.built) addHomeFlowers(h);
 
   // --- Ducks ---
@@ -522,6 +563,7 @@ function buildWorld(seed) {
 
   keepReachable();
   computePixelTypes(seed);
+  yield 'Ready';
 }
 
 // The lanes. Each stretch between two of a lane's waypoints follows the
@@ -838,7 +880,8 @@ function landHeight(nh, x, y) {
   const base = north ? 0.18 + away * 0.62 : 0.12 + away * 0.38;
   const n = nh(x * 0.045, y * 0.045) - 0.5, n2 = nh(x * 0.12 + 40, y * 0.12 + 40) - 0.5;
   const valley = clamp((Math.abs(y - ry) - 2) / 9, 0, 1);
-  return clamp((base + n * 0.55 + n2 * 0.12) * (0.25 + valley * 0.75), 0, 1);
+  const k = gen('hills');
+  return clamp((base + n * 0.55 * k + n2 * 0.12 * k) * (0.25 + valley * 0.75), 0, 1);
 }
 function computeHeights(seed) {
   const { JW } = World.px, JH = (MAP_H * TILE) / 2;

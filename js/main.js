@@ -92,7 +92,7 @@ function newVillage() {
 function save() {
   try {
     const data = {
-      v: 2, time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
+      v: 2, world: World.gen, time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
       villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
       archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
@@ -1136,6 +1136,8 @@ let last = performance.now(), hudT = 0;
 function frame(now) {
   const dtReal = Math.min(0.1, (now - last) / 1000);
   last = now;
+  // the valley is being made afresh on the setup screen: nothing to run or draw yet
+  if (Game.generating) { requestAnimationFrame(frame); return; }
   tReal += dtReal;
   try {
     const speed = SPEEDS[Game.speedIdx];
@@ -1169,7 +1171,8 @@ function boot() {
   overlay = $('overlay'); octx = overlay.getContext('2d');
   buildIcons();
   buildWorldSprites();
-  buildWorld(SEED);
+  // the valley the saved village lives in (older saves: the original one)
+  buildWorld(savedGen() || SEED);
   FX.initAmbient();
   Game.zoom = snapZoom(Math.min(window.innerWidth / 240, window.innerHeight / 280));
   resize();

@@ -115,9 +115,11 @@ function buildUI() {
   $('b-teach').addEventListener('click', doTeach);
   $('b-follow').addEventListener('click', toggleFollow);
   $('log-toggle').addEventListener('click', () => { $('chronicle').classList.toggle('collapsed'); });
-  $('intro-go').addEventListener('click', () => startGame(false));
+  // a first village begins by shaping its valley
+  $('intro-go').addEventListener('click', () => (!Game.started && !hasSave() ? openWorldSetup() : startGame(false)));
   $('intro-new').addEventListener('click', () => { $('intro-new').hidden = true; $('intro-confirm').hidden = false; });
-  $('intro-confirm-yes').addEventListener('click', () => startGame(true));
+  $('intro-confirm-yes').addEventListener('click', openWorldSetup);
+  setupWorldGenUI();
   $('intro-confirm-no').addEventListener('click', () => { $('intro-new').hidden = false; $('intro-confirm').hidden = true; });
   document.querySelectorAll('#panel .tabs button').forEach((b) => b.addEventListener('click', () => { Game.panelTab = b.dataset.tab; renderPanel(true); }));
   document.querySelectorAll('#village .tabs button').forEach((b) => b.addEventListener('click', () => { Game.villageTab = b.dataset.tab; renderVillage(); }));
@@ -780,21 +782,8 @@ function closeModals() {
 }
 
 function startGame(fresh) {
-  if (fresh) {
-    try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* ignore */ }
-    buildWorld(SEED);
-    World.season = 'spring';
-    Game.stats = {};
-    newVillage();
-    applySeasonToStatics('spring');
-    World.prevGround = null; World.paintJob = null;
-    paintGroundSoon('spring');
-    FX.initAmbient();
-    Game.lastHour = Math.floor(Game.time / 60); Game.lastDay = Game.day = 1; Game.festivalDay = -1;
-    selectVillager(null);
-    renderLog();
-    centerOn(PLAZA.cx * 16, (PLAZA.cy - 2) * 16);
-  }
+  // straight to a new village in the original valley (the setup screen does this a stage at a time)
+  if (fresh) { buildWorld(SEED); finishFreshVillage(); }
   $('intro').hidden = true;
   Game.introOpen = false;
   if (!Game.started) {

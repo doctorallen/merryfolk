@@ -357,6 +357,41 @@ textarea { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: 
 .intro-actions .primary { background: var(--moss); color: var(--parch); font-size: 17px; padding: 6px 18px; }
 .intro-actions .ghost { background: transparent; box-shadow: none; border-color: var(--ink-3); }
 .intro-actions .bad { background: #f0c4b4; }
+/* ---------- shaping the valley ---------- */
+#worldgen {
+  position: absolute; inset: 0; display: grid; place-items: center; background: rgba(20, 28, 14, 0.7); padding: 16px; z-index: 11;
+  overflow-y: auto;
+}
+#worldgen[hidden] { display: none; }
+.wg-card { width: min(720px, 100%); }
+.wg-card h2 { font-family: var(--font-ui); font-weight: 700; font-size: 28px; color: var(--moss); margin: 0 0 6px; text-wrap: balance; }
+.wg-lede { font-size: 16px; line-height: 1.45; margin: 0 0 14px; max-width: 62ch; }
+#wg-opts { display: grid; gap: 8px; margin-bottom: 18px; }
+.wg-row { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center; margin-bottom: 8px; }
+.wg-label { font-family: var(--font-ui); font-weight: 600; color: var(--ink-2); font-size: 15px; }
+.wg-seg { display: flex; flex-wrap: wrap; gap: 0; }
+.wg-seg button {
+  font-family: var(--font-ui); font-size: 14px; padding: 4px 12px; background: var(--parch-2); color: var(--ink);
+  border: 2px solid var(--ink); margin-left: -2px; cursor: pointer; min-width: 78px;
+}
+.wg-seg button:first-child { margin-left: 0; border-radius: 4px 0 0 4px; }
+.wg-seg button:last-child { border-radius: 0 4px 4px 0; }
+.wg-seg button.on { background: var(--moss); color: var(--parch); }
+.wg-seedbox { display: flex; gap: 8px; align-items: center; }
+#wg-seed { width: 110px; font-family: var(--font-ui); font-size: 15px; padding: 4px 8px; border: 2px solid var(--ink); border-radius: 4px; background: var(--parch); color: var(--ink); font-variant-numeric: tabular-nums; }
+#wg-dice { font-family: var(--font-ui); font-size: 14px; padding: 4px 10px; border: 2px solid var(--ink); border-radius: 4px; background: var(--parch-2); color: var(--ink); cursor: pointer; }
+.wg-mapwrap { border: 2px solid var(--ink); border-radius: 4px; overflow: hidden; background: #3a5a2a; line-height: 0; }
+#wg-map { display: block; width: 100%; max-width: 100%; height: auto; image-rendering: pixelated; }
+.wg-stage { font-family: var(--font-ui); font-size: 17px; color: var(--ink); margin: 10px 0 6px; min-height: 1.4em; }
+.wg-progress { height: 8px; border: 2px solid var(--ink); border-radius: 4px; background: var(--parch-2); overflow: hidden; margin-bottom: 8px; }
+#wg-bar { height: 100%; width: 0; background: var(--moss-2); transition: width 0.3s; }
+.wg-log { margin: 0 0 14px; padding-left: 22px; font-size: 14px; line-height: 1.45; color: var(--ink-3); columns: 2; column-gap: 24px; }
+.wg-log li.wg-now { color: var(--ink); font-weight: 600; }
+@media (max-width: 560px) {
+  .wg-row { grid-template-columns: 1fr; gap: 4px; }
+  .wg-seg button { min-width: 0; flex: 1; padding: 4px 6px; }
+  .wg-log { columns: 1; }
+}
 #intro-confirm { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 14px; }
 #intro-confirm[hidden] { display: none; }
 
