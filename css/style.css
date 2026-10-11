@@ -462,6 +462,7 @@ body.glitching .card { animation: rift-shake .42s steps(2) 1; }
   display: flex; flex-direction: column; background: var(--dv-bg); color: var(--dv-fg); border: 1px solid var(--dv-line); border-radius: 6px;
   font: 12px/1.45 "Share Tech Mono", ui-monospace, "SFMono-Regular", Menlo, monospace; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
 }
+#dev[hidden] { display: none; }
 body.dev-on #chronicle { visibility: hidden; }
 .dev-head { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-bottom: 1px solid var(--dv-line); }
 .dev-head b { color: var(--dv-hi); letter-spacing: 2px; }
