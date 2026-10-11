@@ -508,7 +508,7 @@ function drawLotSite(ctx, lot, prog) {
   const shown = Math.round(img.height * clamp(prog, 0, 1) * 0.92);
   ctx.fillStyle = 'rgba(90,58,34,0.55)';
   ctx.fillRect(left + 4, bottom - 6, img.width - 8, 6);
-  if (shown > 0) ctx.drawImage(img, 0, img.height - shown, img.width, shown, left, bottom - shown, img.width, shown);
+  if (shown > 0) ctx.drawImage(hd(img), 0, (img.height - shown) * RS, img.width * RS, shown * RS, left, bottom - shown, img.width, shown);
   if (lot.kind === 'well') return;
   const top = bottom - Math.max(shown + 8, 20);
   ctx.fillStyle = '#8a6440';

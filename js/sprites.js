@@ -17,143 +17,100 @@ const NEON_COLS = ['#3af0ff', '#ff3aa8', '#b45aff', '#7aff5a', '#ffd23a', '#ff6a
 const RIFT_HAIR = ['#ff3aa8', '#3af0ff', '#b45aff', '#7aff5a', '#ff8a2a', '#e8e8f8', '#26262e', '#3a2a5a'];
 const RIFT_JACKETS = ['#2a2a3a', '#1e2a3a', '#3a1e3a', '#22343a', '#3a2a24', '#2a2a2a'];
 
-// ----- villager templates (10 px wide) -----
-const FRONT_BODY = [
-  '...hhhh...',
-  '..hhhhhh..',
-  '.hhhsshhh.',
-  '.hsessesh.',
-  '.hrssssrh.',
-  '...ssss...',
-  '..vvwwvv..',
-  '.wvvwwvvw.',
-  '.wvbwwbvw.',
-  '.svvvvvvs.',
-];
-const BACK_BODY = [
-  '...hhhh...',
-  '..hhhhhh..',
-  '.hhhHhhhh.',
-  '.hhhhhHhh.',
-  '.hhhhhhhh.',
-  '...ssss...',
-  '..vvvvvv..',
-  '.wvvvvvvw.',
-  '.wvvVVvvw.',
-  '.svvvvvvs.',
-];
-const SIDE_BODY = [
-  '...hhhh...',
-  '..hhhhhh..',
-  '..hhhhsss.',
-  '..hhhsses.',
-  '..hhhsssss',
-  '...hssr...',
-  '...vvwv...',
-  '...vwwv...',
-  '...vwsv...',
-  '...vvvv...',
-];
-const LEGS = {
-  front: {
-    stand: ['..tttttt..', '..tt..tt..', '..ss..ss..', '.fFf..fFf.'],
-    walk1: ['..tttttt..', '..tt..tt..', '..ss..fFf.', '.fFf......'],
-    walk2: ['..tttttt..', '..tt..tt..', '.fFf..ss..', '......fFf.'],
-    sit: ['.tttttttt.', '.fFf..fFf.'],
-  },
-  side: {
-    stand: ['...tttt...', '...tttt...', '....ss....', '....fFff..'],
-    walk1: ['...tttt...', '..tt..tt..', '..ss..ss..', '.ff....fFf'],
-    walk2: ['...tttt...', '...tttt...', '....ss....', '....fFff..'],
-    sit: ['...ttttt..', '....ssfFf.'],
-  },
-};
-// Babies are a swaddled bundle with a round face.
-const BABY_FRONT = ['..hhhh..', '.hssssh.', '.sesses.', '.srssrs.', '..ssss..', '.wwwwww.', 'wwwWwwww', '.wwwwww.', '..wwww..'];
-const BABY_BACK = ['..hhhh..', '.hhhhhh.', '.hhhhhh.', '.hhhhhh.', '..ssss..', '.wwwwww.', 'wwwwWwww', '.wwwwww.', '..wwww..'];
-
-function applyHairStyle(rows, view, style, freckles) {
-  rows = rows.map((r) => r.split(''));
-  const set = (j, i, ch) => { if (rows[j] && rows[j][i] !== undefined) rows[j][i] = ch; };
-  if (style === 1) {
-    if (view === 'front') for (let j = 4; j <= 7; j++) { set(j, 1, 'h'); set(j, 8, 'h'); }
-    if (view === 'back') for (let j = 5; j <= 7; j++) for (let i = 2; i <= 7; i++) set(j, i, 'h');
-    if (view === 'side') for (let j = 4; j <= 7; j++) set(j, 2, 'h');
+// ---------------------------------------------------------------------------
+// Double resolution. Art drawn at world resolution is upscaled with Scale2x,
+// which rounds off its staircases, and its outline is thinned back to a single
+// half-pixel so it matches the art drawn at double resolution (the villagers).
+// hd(img) is cached per image; native double-resolution canvases carry .hd.
+// ---------------------------------------------------------------------------
+const HD_CACHE = new WeakMap();
+function hd(img) {
+  if (!img || img.hd) return img;
+  let out = HD_CACHE.get(img);
+  if (!out) { out = scale2x(img); out.hd = true; HD_CACHE.set(img, out); }
+  return out;
+}
+const OUTLINE_U32 = (() => { const [r, g, b] = hexToRgb(OUTLINE); return ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0; })();
+function scale2x(src) {
+  const w = src.width, h = src.height;
+  let sctx = src.getContext ? src.getContext('2d') : null;
+  if (!sctx) { const [c, x] = makeCanvas(w, h); x.drawImage(src, 0, 0); sctx = x; }
+  const s = new Uint32Array(sctx.getImageData(0, 0, w, h).data.buffer);
+  const W = w * 2, H = h * 2;
+  const [c, x] = makeCanvas(W, H);
+  const out = x.createImageData(W, H), o = new Uint32Array(out.data.buffer);
+  for (let y = 0; y < h; y++) for (let i = 0; i < w; i++) {
+    const k = y * w + i, P = s[k];
+    const A = y > 0 ? s[k - w] : P, D = y < h - 1 ? s[k + w] : P, Cc = i > 0 ? s[k - 1] : P, B = i < w - 1 ? s[k + 1] : P;
+    const q = (y * 2) * W + i * 2;
+    o[q] = Cc === A && Cc !== D && A !== B ? A : P;
+    o[q + 1] = A === B && A !== Cc && B !== D ? B : P;
+    o[q + W] = D === Cc && D !== B && Cc !== A ? Cc : P;
+    o[q + W + 1] = B === D && B !== A && D !== Cc ? D : P;
   }
-  if (style === 2) {
-    for (let j = 0; j <= 2; j++) for (let i = 0; i < 10; i++) if (rows[j][i] === 'h' && (i + j) % 3 === 0) rows[j][i] = 'H';
+  // thin the outline: the inner half of a two-pixel border takes the fill colour beside it
+  const src2 = o.slice();
+  const clear = (v) => (v >>> 24) === 0;
+  const at = (i, y) => (i < 0 || y < 0 || i >= W || y >= H ? 0 : src2[y * W + i]);
+  const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  for (let y = 0; y < H; y++) for (let i = 0; i < W; i++) {
+    const v = src2[y * W + i];
+    if ((v >>> 0) !== OUTLINE_U32) continue;
+    if (N4.some(([a, b]) => clear(at(i + a, y + b)))) continue;
+    const edgeOutline = N4.some(([a, b]) => (at(i + a, y + b) >>> 0) === OUTLINE_U32 && N4.some(([c2, d2]) => clear(at(i + a + c2, y + b + d2))));
+    if (!edgeOutline) continue;
+    const fillN = N4.map(([a, b]) => at(i + a, y + b)).find((u) => !clear(u) && (u >>> 0) !== OUTLINE_U32);
+    if (fillN !== undefined) o[y * W + i] = fillN;
   }
-  if (style === 3) {
-    // curls: a fuller, bumpy mop
-    set(0, 2, 'h'); set(0, 7, 'h');
-    if (view === 'front') { set(4, 0, 'h'); set(4, 9, 'h'); set(5, 1, 'h'); set(5, 8, 'h'); }
-    if (view === 'side') { set(5, 2, 'h'); set(1, 1, 'h'); }
-    if (view === 'back') for (let i = 1; i <= 8; i++) set(5, i, (i % 2) ? 'h' : 'H');
-    for (let j = 0; j <= 4; j++) for (let i = 0; i < 10; i++) if (rows[j][i] === 'h' && (i + j) % 2 === 0) rows[j][i] = 'H';
-  }
-  if (freckles) {
-    if (view === 'front') { set(4, 3, 'k'); set(4, 6, 'k'); }
-    if (view === 'side') { set(4, 6, 'k'); }
-  }
-  return rows.map((r) => r.join(''));
+  x.putImageData(out, 0, 0);
+  return c;
+}
+// Draws any sprite at its world size: native double-resolution art as it is,
+// world-resolution art through the upscaler.
+function blit(ctx, img, x, y, flip = false) {
+  const lw = img.hd ? img.width / RS : img.width, lh = img.hd ? img.height / RS : img.height;
+  const src = img.hd ? img : hd(img);
+  if (flip) { ctx.save(); ctx.translate(x + lw, y); ctx.scale(-1, 1); ctx.drawImage(src, 0, 0, lw, lh); ctx.restore(); }
+  else ctx.drawImage(src, x, y, lw, lh);
 }
 
-// Lasses wear a ribbon in their hair; grown lads have sideburns.
-function applySex(rows, view, sex, child) {
-  rows = rows.map((r) => r.split(''));
-  const set = (j, i, ch) => { if (rows[j] && rows[j][i] !== undefined) rows[j][i] = ch; };
-  if (sex === 'f') {
-    if (view === 'front') { set(1, 7, 'R'); set(1, 8, 'R'); set(0, 7, 'R'); }
-    if (view === 'back') { set(1, 4, 'R'); set(1, 5, 'R'); set(2, 4, 'R'); set(2, 5, 'R'); }
-    if (view === 'side') { set(1, 3, 'R'); set(1, 4, 'R'); set(0, 4, 'R'); }
-  } else if (!child) {
-    if (view === 'front') { set(4, 1, 'H'); set(4, 8, 'H'); }
-    if (view === 'side') { set(4, 3, 'H'); }
-  }
-  return rows.map((r) => r.join(''));
-}
-
+// ---------------------------------------------------------------------------
+// Villagers, drawn at double resolution on a 20-wide grid of half-pixels:
+// a round head about half their height with pointed ears, a waistcoat over a
+// shirt, breeches (or a skirt) and big bare hairy feet. Every look comes from
+// the genome (hair colour and style, eyes, freckles, skin, clothes, sex) and
+// from rift ways (neon trim, synth-weave, a visor), plus age.
+//
+// Palette letters: h/H/j hair (and shade, highlight), d brows, s/S skin, N nose,
+// r blush, k freckles, m mouth, e eyes, w shine, v/V/u waistcoat, p pocket,
+// y watch chain, b buttons, c/C shirt, l belt, o buckle, t/T breeches,
+// f/F feet (skin, hair), R ribbon, n neon, z/Z visor, g chrome eye, G spectacles.
+// ---------------------------------------------------------------------------
 function villagerPalette(genes, stage, look = {}) {
   const ex = expressed(genes);
   let hair = ex.hair;
   if (stage === 'elder') hair = mix(hair, '#d9d6cc', 0.8);
   const skin = ex.skin;
   const pal = {
-    h: hair, H: shade(hair, -0.28), s: skin, S: shade(skin, -0.15), e: ex.eyes, r: mix(skin, '#e0705a', 0.35), k: mix(skin, '#7a3a1a', 0.45),
-    v: ex.vest, V: shade(ex.vest, -0.25), w: ex.shirt, W: shade(ex.shirt, -0.12),
-    t: ex.legs, T: shade(ex.legs, -0.2), f: shade(skin, -0.12), F: shade(hair, -0.05), b: '#e8c860', R: mix(ex.vest, '#ff5a7a', 0.6),
-    c: '#6af8ff', n: ex.neon, z: mix(ex.neon, '#101018', 0.35), Z: '#1a1a22',
+    h: hair, H: shade(hair, -0.3), j: shade(hair, 0.26), d: shade(hair, -0.42),
+    s: skin, S: shade(skin, -0.14), N: shade(skin, -0.2), r: mix(skin, '#e0705a', 0.42), k: mix(skin, '#7a3a1a', 0.5), m: mix(skin, '#8a3a2a', 0.6),
+    e: ex.eyes, w: '#ffffff', v: ex.vest, V: shade(ex.vest, -0.28), u: shade(ex.vest, 0.2), p: shade(ex.vest, -0.42),
+    c: ex.shirt, C: shade(ex.shirt, -0.14), b: '#e8c860', y: '#e8c860', l: '#4a2e1a', o: '#e8c860',
+    t: ex.legs, T: shade(ex.legs, -0.25), f: shade(skin, -0.06), F: shade(ex.hair, -0.12), R: mix(ex.vest, '#ff5a7a', 0.6),
+    n: ex.neon, z: mix(ex.neon, '#101018', 0.35), Z: '#e8ffff', g: '#6af8ff', G: '#8a7a5a',
   };
   const tier = look.tier || 0;
   // folk taking up rift ways wear neon trim; the thoroughly rift-minded go about in synth-weave
   if (tier >= 1) { pal.b = ex.neon; pal.R = ex.neon; }
   if (tier >= 2) {
-    pal.v = mix(ex.vest, '#1e1e2a', 0.72); pal.V = shade(pal.v, -0.3);
-    pal.w = mix(ex.shirt, '#4a4a5a', 0.8); pal.W = shade(pal.w, -0.15);
+    pal.v = mix(ex.vest, '#1e1e2a', 0.72); pal.V = shade(pal.v, -0.3); pal.u = shade(pal.v, 0.15);
+    pal.c = mix(ex.shirt, '#4a4a5a', 0.8); pal.C = shade(pal.c, -0.15);
     pal.t = mix(ex.legs, '#24242e', 0.7); pal.T = shade(pal.t, -0.2);
   }
   return pal;
 }
 
-// Chrome eyes, neon belts and visors drawn over the base template.
-function applyRiftLook(rows, view, ex, look, child) {
-  rows = rows.map((r) => r.split(''));
-  const set = (j, i, ch) => { if (rows[j] && rows[j][i] !== undefined) rows[j][i] = ch; };
-  const tier = look.tier || 0;
-  if (ex.chrome) { if (view === 'front') set(3, 6, 'c'); if (view === 'side') set(3, 8, 'c'); }
-  if (tier >= 1) {
-    const belt = child ? 7 : 9;
-    if (view === 'front' || view === 'back') for (let i = 2; i <= 7; i++) set(belt, i, 'n');
-    if (view === 'side') for (let i = 3; i <= 6; i++) set(belt, i, 'n');
-  }
-  if (look.visor && tier >= 2) {
-    if (view === 'front') for (let i = 2; i <= 7; i++) set(3, i, 'z');
-    if (view === 'side') for (let i = 6; i <= 9; i++) set(3, i, 'z');
-    if (view === 'back') { set(3, 1, 'Z'); set(3, 8, 'Z'); for (let i = 2; i <= 7; i++) set(3, i, 'Z'); }
-  }
-  return rows.map((r) => r.join(''));
-}
-
+// A world-resolution sprite from a template, with the usual outline (critters use this).
 function finishSprite(rows, pal) {
   const raw = spriteFrom(rows, pal);
   const [c, x] = makeCanvas(raw.width + 2, raw.height + 2);
@@ -161,30 +118,293 @@ function finishSprite(rows, pal) {
   return outlineCanvas(c, OUTLINE);
 }
 
+const FOLK_W = 20;
+// What a body looks like: the parts each view and pose draw from.
+function folkBody(genes, stage, look) {
+  const ex = expressed(genes);
+  const child = stage === 'child';
+  const style = ex.style === 0 && ex.sex === 'f' ? 1 : ex.style;
+  return {
+    ex, child, elder: stage === 'elder', female: ex.sex === 'f', style,
+    skirt: ex.garment === 1, tier: look.tier || 0, visor: !!look.visor && (look.tier || 0) >= 2,
+    spiky: (genes.rift || 0) >= 0.5,
+    specs: stage === 'elder' && genes.wit > 0.45,
+    H: child ? 25 : 30, top: 15, bot: child ? 19 : 22,
+  };
+}
+
+function folkGrid(H) {
+  const g = Array.from({ length: H }, () => Array(FOLK_W).fill('.'));
+  const put = (x, y, k) => { if (y >= 0 && y < H && x >= 0 && x < FOLK_W) g[y][x] = k; };
+  const rect = (x0, y0, x1, y1, k) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) put(x, y, k); };
+  const get = (x, y) => (y >= 0 && y < H && x >= 0 && x < FOLK_W ? g[y][x] : '.');
+  return { g, put, rect, get };
+}
+
+// ----- facing the viewer -----
+function folkFront(B, pose) {
+  const sit = pose === 'sit';
+  const H = sit ? B.bot + 6 : B.H;
+  const { g, put, rect, get } = folkGrid(H);
+  const hx = 9.5, hy = 7.6, rx = 6.6, ry = 6.6;
+  const inHead = (x, y) => ((x - hx) / rx) ** 2 + ((y - hy) / ry) ** 2 < 1;
+  for (let y = 0; y < 15; y++) for (let x = 0; x < FOLK_W; x++) if (inHead(x, y)) put(x, y, x >= 14 ? 'S' : 's');
+  for (const [x, y] of [[2, 8], [2, 7], [1, 6]]) put(x, y, 's');
+  for (const [x, y] of [[17, 8], [17, 7], [18, 6]]) put(x, y, 'S');
+  // hair
+  for (let y = 0; y < 15; y++) for (let x = 0; x < FOLK_W; x++) {
+    if (!inHead(x, y)) continue;
+    const fringe = y <= 4 || (y === 5 && ![6, 7, 12, 13].includes(x));
+    const side = (x <= 4 || x >= 15) && y <= 8;
+    if (fringe || side) put(x, y, x >= 14 ? 'H' : 'h');
+  }
+  for (const [x, y] of [[6, 1], [7, 1], [8, 1], [5, 2], [6, 2], [7, 3]]) put(x, y, 'j');
+  if (B.style === 1) {
+    // long hair falling past the shoulders
+    for (let y = 5; y <= (B.child ? 13 : 16); y++) { put(2, y, 'h'); put(3, y, 'h'); put(16, y, 'H'); put(17, y, 'H'); }
+    put(1, 9, 'h'); put(18, 9, 'H');
+  }
+  if (B.style === 2) {
+    // tousled: tufts sticking up and out
+    for (const [x, y] of [[5, 0], [9, 0], [13, 0], [3, 2], [16, 2]]) put(x, y, x >= 14 ? 'H' : 'h');
+    for (const [x, y] of [[8, 5], [11, 5]]) put(x, y, 'h');
+  }
+  if (B.style === 3) {
+    // curls: a bumpy edge with highlights through it
+    for (let y = 0; y <= 5; y++) for (let x = 0; x < FOLK_W; x++) if ((get(x, y) === 'h' || get(x, y) === 'H') && (x + y * 2) % 4 === 0) put(x, y, get(x, y) === 'h' ? 'j' : 'h');
+    for (let x = 4; x <= 15; x += 2) if (get(x, 1) !== '.' && get(x, 0) === '.') put(x, 0, x >= 14 ? 'H' : 'h');
+    for (const [x, y] of [[2, 4], [17, 4], [2, 6], [17, 6]]) put(x, y, x > 9 ? 'H' : 'h');
+  }
+  if (B.spiky) {
+    for (let x = 0; x < FOLK_W; x++) if ('hHj'.includes(get(x, 0))) put(x, 0, '.');
+    for (const x of [4, 7, 10, 13, 16]) { put(x, 0, 'h'); put(x, 1, 'h'); }
+  }
+  // face
+  rect(5, 6, 7, 6, 'd'); rect(12, 6, 14, 6, 'd');
+  rect(6, 7, 7, 9, 'e'); rect(12, 7, 13, 9, 'e'); put(7, 7, 'w'); put(13, 7, 'w');
+  if (B.female) { put(5, 7, 'e'); put(14, 7, 'e'); }
+  put(4, 10, 'r'); put(5, 10, 'r'); put(14, 10, 'r'); put(15, 10, 'r');
+  if (B.ex.freckles) for (const [x, y] of [[4, 9], [6, 10], [13, 10], [15, 9]]) put(x, y, 'k');
+  put(10, 9, 'N'); put(10, 10, 'N');
+  rect(8, 11, 11, 11, 'm'); put(7, 10, 'm'); put(12, 10, 'm');
+  rect(8, 14, 11, 14, 'S');
+  if (B.female) { rect(13, 1, 15, 2, 'R'); put(16, 2, 'R'); }
+  else if (!B.child) { rect(3, 9, 3, 11, 'H'); rect(16, 9, 16, 11, 'H'); }
+  if (B.elder && !B.female) { rect(7, 12, 12, 13, 'h'); rect(8, 11, 11, 11, 'm'); }
+  if (B.specs) {
+    for (const ox of [5, 11]) { rect(ox, 6, ox + 3, 6, 'G'); rect(ox, 10, ox + 3, 10, 'G'); rect(ox, 6, ox, 10, 'G'); rect(ox + 3, 6, ox + 3, 10, 'G'); }
+    rect(9, 8, 10, 8, 'G');
+  }
+  if (B.ex.chrome) { rect(12, 7, 13, 9, 'g'); put(13, 7, 'w'); }
+  if (B.visor) { rect(3, 7, 16, 9, 'z'); rect(5, 7, 8, 7, 'Z'); put(17, 8, 'n'); }
+  // body
+  const top = B.top, bot = B.bot;
+  frontTorso(B, rect, put, top, bot, 5, 14);
+  // legs
+  const lt = bot + 1;
+  if (sit) {
+    rect(4, lt, 15, lt + 1, 't'); rect(13, lt, 15, lt + 1, 'T');
+    if (B.skirt) { rect(3, lt, 16, lt + 1, 'v'); rect(14, lt, 16, lt + 1, 'V'); rect(3, lt + 2, 16, lt + 2, 'u'); }
+    for (const fx of [4, 11]) { put(fx + 1, lt + 2 + (B.skirt ? 1 : 0), 's'); rect(fx, lt + 3, fx + 4, lt + 3, 'F'); rect(fx, lt + 4, fx + 4, lt + 4, 'f'); }
+  } else {
+    const lb = H - 4, ank = H - 3;
+    rect(5, lt, 14, lb, 't'); rect(12, lt, 14, lb, 'T');
+    rect(9, lt + 2, 10, lb, '.');
+    const feet = { stand: [[4, 0], [11, 0]], walk1: [[4, 0], [12, -1]], walk2: [[3, -1], [11, 0]] }[pose] || [[4, 0], [11, 0]];
+    for (const [fx, dy] of feet) {
+      put(fx + 2, ank + dy, 's'); put(fx + 3, ank + dy, 'S');
+      rect(fx, ank + 1 + dy, fx + 4, ank + 1 + dy, 'F'); rect(fx, ank + 2 + dy, fx + 4, ank + 2 + dy, 'f');
+      put(fx, ank + 1 + dy, 'f'); put(fx + 4, ank + 2 + dy, 'F');
+    }
+    if (B.skirt) {
+      for (let y = lt; y <= lb; y++) { const fl = Math.round((y - lt) * 0.9); rect(5 - fl, y, 14 + fl, y, 'v'); rect(13 + fl, y, 14 + fl, y, 'V'); }
+      const fl = Math.round((lb - lt) * 0.9); rect(5 - fl, lb, 14 + fl, lb, 'u');
+    }
+  }
+  return { g, anchors: { mouth: [10.5, 11], handR: [16, bot], handL: [3.5, bot], chest: [9.5, top + 3] } };
+}
+
+// The torso from the front: an open waistcoat over a shirt, or a closed
+// synth-weave jacket with a neon collar and zip for the thoroughly rift-minded.
+function frontTorso(B, rect, put, top, bot, x0, x1) {
+  const mid = 9;
+  rect(x0 + 1, top, x1 - 1, bot, 'c'); rect(mid, top + 1, mid + 1, bot, 'C');
+  rect(x0, top, mid - 1, bot, 'v'); rect(mid + 2, top, x1, bot, 'v'); rect(x1, top, x1, bot, 'V');
+  put(mid - 1, top, 'u'); put(mid - 1, top + 1, 'u'); put(mid + 2, top, 'u'); put(mid + 2, top + 1, 'u');
+  for (let k = 3; k < bot - top; k += 2) put(mid - 2, top + k, 'b');
+  if (!B.child && !B.female) { put(mid + 3, top + 3, 'p'); put(mid + 4, top + 3, 'p'); put(mid + 3, top + 2, 'y'); put(mid + 2, top + 3, 'y'); }
+  // sleeves and hands
+  rect(x0 - 2, top, x0 - 1, bot - 2, 'c'); rect(x0 - 2, top, x0 - 2, bot - 2, 'C');
+  rect(x1 + 1, top, x1 + 2, bot - 2, 'c'); rect(x1 + 2, top, x1 + 2, bot - 2, 'C');
+  rect(x0 - 2, bot - 1, x0 - 1, bot, 's'); rect(x1 + 1, bot - 1, x1 + 2, bot, 'S');
+  rect(x0, bot, x1, bot, 'l'); put(mid, bot, 'o'); put(mid + 1, bot, 'o');
+  if (B.tier >= 1) rect(x0, bot, x1, bot, 'n');
+  if (B.tier >= 2) {
+    for (let y = top; y < bot; y++) { rect(x0, y, x1, y, 'v'); put(x1, y, 'V'); }
+    rect(mid - 2, top, mid + 3, top, 'n'); put(mid - 3, top + 1, 'n'); put(mid + 4, top + 1, 'n');
+    for (let y = top + 1; y < bot; y++) put(mid + (y % 2), y, 'n');
+  }
+}
+
+// ----- seen from behind -----
+function folkBack(B, pose) {
+  const sit = pose === 'sit';
+  const H = sit ? B.bot + 6 : B.H;
+  const { g, put, rect, get } = folkGrid(H);
+  const hx = 9.5, hy = 7.6, rx = 6.6, ry = 6.6;
+  const inHead = (x, y) => ((x - hx) / rx) ** 2 + ((y - hy) / ry) ** 2 < 1;
+  for (let y = 0; y < 15; y++) for (let x = 0; x < FOLK_W; x++) if (inHead(x, y)) put(x, y, y >= 12 ? 'S' : x >= 13 ? 'H' : 'h');
+  for (const [x, y] of [[2, 8], [2, 7], [1, 6]]) put(x, y, 's');
+  for (const [x, y] of [[17, 8], [17, 7], [18, 6]]) put(x, y, 'S');
+  for (const [x, y] of [[7, 1], [8, 1], [6, 2], [9, 3], [5, 5], [11, 7]]) put(x, y, 'j');
+  for (let x = 6; x <= 13; x += 2) put(x, 11, 'H');
+  if (B.style === 1) { for (let y = 10; y <= (B.child ? 15 : 18); y++) rect(4, y, 15, y, y % 3 ? 'h' : 'H'); rect(13, 10, 15, B.child ? 15 : 18, 'H'); }
+  if (B.style === 3) for (let y = 0; y <= 11; y++) for (let x = 0; x < FOLK_W; x++) if ((get(x, y) === 'h' || get(x, y) === 'H') && (x + y * 2) % 4 === 0) put(x, y, get(x, y) === 'h' ? 'j' : 'h');
+  if (B.spiky) { for (let x = 0; x < FOLK_W; x++) if ('hHj'.includes(get(x, 0))) put(x, 0, '.'); for (const x of [4, 7, 10, 13, 16]) { put(x, 0, 'h'); put(x, 1, 'h'); } }
+  if (B.female) { rect(8, 2, 11, 3, 'R'); put(7, 2, 'R'); put(12, 2, 'R'); }
+  if (B.visor) { rect(2, 8, 17, 8, 'Z'); }
+  rect(8, 13, 11, 14, 'S');
+  const top = B.top, bot = B.bot;
+  rect(5, top, 14, bot, 'v'); rect(9, top + 1, 10, bot - 1, 'V'); rect(14, top, 14, bot, 'V');
+  rect(3, top, 4, bot - 2, 'c'); rect(15, top, 16, bot - 2, 'C');
+  rect(3, bot - 1, 4, bot, 's'); rect(15, bot - 1, 16, bot, 'S');
+  rect(5, bot, 14, bot, B.tier >= 1 ? 'n' : 'l');
+  if (B.tier >= 2) { for (let y = top; y < bot; y++) put(9 + (y % 2), y, 'n'); rect(7, top, 12, top, 'n'); }
+  if (B.style === 1 && !B.child) rect(5, top, 14, top + 2, 'h');
+  const lt = bot + 1;
+  if (sit) {
+    rect(4, lt, 15, lt + 1, 't'); rect(13, lt, 15, lt + 1, 'T');
+    if (B.skirt) rect(3, lt, 16, lt + 2, 'v');
+    rect(5, lt + 2, 7, lt + 3, 'S'); rect(12, lt + 2, 14, lt + 3, 'S');
+  } else {
+    const lb = H - 4, ank = H - 3;
+    rect(5, lt, 14, lb, 't'); rect(12, lt, 14, lb, 'T'); rect(9, lt + 2, 10, lb, '.');
+    const feet = { stand: [[5, 0], [11, 0]], walk1: [[5, 0], [11, -1]], walk2: [[5, -1], [11, 0]] }[pose] || [[5, 0], [11, 0]];
+    for (const [fx, dy] of feet) { rect(fx + 1, ank + dy, fx + 2, ank + dy, 'S'); rect(fx, ank + 1 + dy, fx + 3, ank + 2 + dy, 'f'); rect(fx, ank + 1 + dy, fx + 3, ank + 1 + dy, 'F'); }
+    if (B.skirt) { for (let y = lt; y <= lb; y++) { const fl = Math.round((y - lt) * 0.9); rect(5 - fl, y, 14 + fl, y, 'v'); rect(13 + fl, y, 14 + fl, y, 'V'); } const fl = Math.round((lb - lt) * 0.9); rect(5 - fl, lb, 14 + fl, lb, 'u'); }
+  }
+  return { g, anchors: { mouth: [10.5, 11], handR: [3.5, bot], handL: [16, bot], chest: [9.5, top + 3] } };
+}
+
+// ----- side on, facing right (flipped for left) -----
+function folkSide(B, pose) {
+  const sit = pose === 'sit';
+  const H = sit ? B.bot + 6 : B.H;
+  const { g, put, rect, get } = folkGrid(H);
+  const hx = 10.5, hy = 7.6, rx = 6.2, ry = 6.6;
+  const inHead = (x, y) => ((x - hx) / rx) ** 2 + ((y - hy) / ry) ** 2 < 1;
+  for (let y = 0; y < 15; y++) for (let x = 0; x < FOLK_W; x++) if (inHead(x, y)) put(x, y, 's');
+  // hair over the crown and the back of the head
+  for (let y = 0; y < 15; y++) for (let x = 0; x < FOLK_W; x++) {
+    if (!inHead(x, y)) continue;
+    if (y <= 4 || (y === 5 && x >= 11 && x !== 13) || (x <= 9 && y <= 10) || (x <= 7 && y <= 12)) put(x, y, x <= 6 ? 'H' : 'h');
+  }
+  for (const [x, y] of [[9, 1], [10, 1], [11, 1], [8, 2], [9, 2]]) put(x, y, 'j');
+  if (B.style === 1) for (let y = 6; y <= (B.child ? 13 : 16); y++) rect(4, y, 7, y, y > 12 ? 'H' : 'h');
+  if (B.style === 2) for (const [x, y] of [[7, 0], [11, 0], [15, 1], [5, 2]]) put(x, y, 'h');
+  if (B.style === 3) for (let y = 0; y <= 12; y++) for (let x = 0; x < FOLK_W; x++) if ((get(x, y) === 'h' || get(x, y) === 'H') && (x + y * 2) % 4 === 0) put(x, y, get(x, y) === 'h' ? 'j' : 'h');
+  if (B.spiky) { for (let x = 0; x < FOLK_W; x++) if ('hHj'.includes(get(x, 0))) put(x, 0, '.'); for (const x of [6, 9, 12, 15]) { put(x, 0, 'h'); put(x, 1, 'h'); } put(4, 2, 'h'); }
+  // ear, eye, nose and mouth
+  put(9, 8, 's'); put(9, 9, 's'); put(8, 7, 's'); put(9, 7, 'r');
+  rect(13, 6, 15, 6, 'd');
+  rect(14, 7, 14, 9, 'e'); put(15, 7, 'w'); put(15, 8, 'e');
+  if (B.female) put(15, 6, 'e');
+  put(14, 10, 'r'); put(13, 10, 'r');
+  if (B.ex.freckles) { put(13, 9, 'k'); put(15, 10, 'k'); }
+  put(17, 9, 's'); put(17, 10, 'N'); put(16, 10, 'N');
+  put(15, 11, 'm'); put(16, 11, 'm'); put(14, 11, 'm');
+  rect(9, 14, 12, 14, 'S');
+  if (B.female) { rect(7, 1, 8, 2, 'R'); put(6, 2, 'R'); }
+  else if (!B.child) rect(10, 9, 10, 11, 'H');
+  if (B.elder && !B.female) rect(12, 12, 16, 13, 'h');
+  if (B.specs) { rect(13, 6, 16, 6, 'G'); rect(13, 10, 16, 10, 'G'); rect(13, 6, 13, 10, 'G'); rect(16, 6, 16, 10, 'G'); rect(10, 8, 12, 8, 'G'); }
+  if (B.ex.chrome) { rect(14, 7, 14, 9, 'g'); put(15, 7, 'w'); put(15, 8, 'g'); }
+  if (B.visor) { rect(11, 7, 17, 9, 'z'); rect(13, 7, 15, 7, 'Z'); put(10, 8, 'n'); }
+  // body: the waistcoat front faces right; one arm swings
+  const top = B.top, bot = B.bot;
+  rect(7, top, 13, bot, 'v'); rect(7, top, 8, bot, 'V');
+  rect(13, top, 13, top + 3, 'c'); put(12, top, 'u');
+  put(12, top + 3, 'b'); put(12, top + 5, 'b');
+  rect(7, bot, 13, bot, B.tier >= 1 ? 'n' : 'l'); put(12, bot, B.tier >= 1 ? 'n' : 'o');
+  if (B.tier >= 2) { rect(7, top, 13, bot - 1, 'v'); rect(7, top, 8, bot - 1, 'V'); rect(11, top, 13, top, 'n'); for (let y = top + 1; y < bot; y++) put(13, y, 'n'); }
+  if (B.style === 1 && !B.child) rect(5, top, 7, top + 2, 'H');
+  const swing = sit ? 0 : { stand: 0, walk1: 2, walk2: -2 }[pose] || 0;
+  const ax = 9 + swing;
+  rect(ax, top + 1, ax + 2, bot - 2, 'c'); rect(ax, top + 1, ax, bot - 2, 'C');
+  rect(ax, bot - 1, ax + 2, bot, 's');
+  const lt = bot + 1;
+  if (sit) {
+    rect(8, lt, 16, lt + 1, 't'); rect(8, lt + 1, 16, lt + 1, 'T');
+    if (B.skirt) rect(7, lt, 17, lt + 1, 'v');
+    rect(15, lt + 2, 16, lt + 3, 's');
+    rect(14, lt + 4, 18, lt + 4, 'F'); rect(14, lt + 5, 18, lt + 5, 'f');
+    return { g, anchors: { mouth: [16, 11], handR: [ax + 1, bot], handL: [ax + 1, bot], chest: [11, top + 3] } };
+  }
+  const lb = H - 4, ank = H - 3;
+  const leg = (x0, dx, k) => { for (let y = lt; y <= lb; y++) { const o = Math.round(((y - lt) / Math.max(1, lb - lt)) * dx); rect(x0 + o, y, x0 + o + 2, y, k); } return x0 + dx; };
+  let feet;
+  if (pose === 'walk1') { const b2 = leg(8, -3, 'T'), f2 = leg(10, 3, 't'); feet = [[b2 - 1, -1, 'T'], [f2, 0, 't']]; }
+  else if (pose === 'walk2') { leg(9, 0, 'T'); const f2 = leg(10, 1, 't'); feet = [[9, -1, 'T'], [f2, 0, 't']]; }
+  else { rect(8, lt, 12, lb, 't'); rect(8, lt, 9, lb, 'T'); feet = [[8, 0, 't']]; }
+  for (const [fx, dy] of feet) {
+    put(fx + 1, ank + dy, 's'); put(fx + 2, ank + dy, 'S');
+    rect(fx, ank + 1 + dy, fx + 5, ank + 1 + dy, 'F'); rect(fx, ank + 2 + dy, fx + 5, ank + 2 + dy, 'f');
+  }
+  if (B.skirt) { for (let y = lt; y <= lb; y++) { const fl = Math.round((y - lt) * 0.7); rect(7 - fl, y, 13 + fl, y, 'v'); put(7 - fl, y, 'V'); } rect(7 - Math.round((lb - lt) * 0.7), lb, 13 + Math.round((lb - lt) * 0.7), lb, 'u'); }
+  return { g, anchors: { mouth: [16, 11], handR: [ax + 1, bot], handL: [ax + 1, bot], chest: [11, top + 3] } };
+}
+
+// ----- a swaddled baby: a round face peeking out of a blanket -----
+function folkBaby(B, view) {
+  const H = 18, W = 16;
+  const g = Array.from({ length: H }, () => Array(FOLK_W).fill('.'));
+  const put = (x, y, k) => { if (y >= 0 && y < H && x >= 0 && x < FOLK_W) g[y][x] = k; };
+  const rect = (x0, y0, x1, y1, k) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) put(x, y, k); };
+  const ox = 2;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const head = ((x - 7.5) / 5.4) ** 2 + ((y - 5.5) / 5) ** 2 < 1;
+    const wrap = ((x - 7.5) / 6.6) ** 2 + ((y - 11.5) / 6.2) ** 2 < 1 && y >= 7;
+    if (wrap) put(x + ox, y, (x + y) % 5 === 0 ? 'C' : x >= 11 ? 'C' : 'c');
+    else if (head) put(x + ox, y, view === 'up' ? (y < 8 ? 'h' : 'S') : x >= 11 ? 'S' : 's');
+  }
+  if (view !== 'up') {
+    rect(ox + 5, 0, ox + 10, 1, 'h'); put(ox + 7, 2, 'h'); put(ox + 8, 2, 'j');
+    rect(ox + 5, 5, ox + 5, 6, 'e'); rect(ox + 10, 5, ox + 10, 6, 'e'); put(ox + 5, 5, 'w');
+    put(ox + 3, 7, 'r'); put(ox + 12, 7, 'r'); put(ox + 7, 8, 'm'); put(ox + 8, 8, 'm');
+    rect(ox + 3, 10, ox + 12, 10, 'C');
+  } else rect(ox + 3, 1, ox + 12, 6, 'h');
+  return { g, anchors: { mouth: [10, 8], handR: [14, 12], handL: [5, 12], chest: [10, 12] } };
+}
+
+// Turns a grid into a double-resolution canvas with a single half-pixel outline.
+function folkCanvas(grid, pal) {
+  const H = grid.length, W = FOLK_W;
+  const [c, x] = makeCanvas(W + 2, H + 2);
+  const solid = (i, j) => j >= 0 && j < H && i >= 0 && i < W && grid[j][i] !== '.' && pal[grid[j][i]];
+  for (let j = -1; j <= H; j++) for (let i = -1; i <= W; i++) {
+    if (solid(i, j)) { x.fillStyle = pal[grid[j][i]]; x.fillRect(i + 1, j + 1, 1, 1); }
+    else if (solid(i - 1, j) || solid(i + 1, j) || solid(i, j - 1) || solid(i, j + 1)) { x.fillStyle = OUTLINE; x.fillRect(i + 1, j + 1, 1, 1); }
+  }
+  c.hd = true;
+  return c;
+}
+
 function buildVillagerSprites(genes, stage, look = {}) {
   const pal = villagerPalette(genes, stage, look);
-  const ex = expressed(genes);
+  const B = folkBody(genes, stage, look);
   const out = { down: {}, up: {}, side: {} };
+  const make = (r) => { const c = folkCanvas(r.g, pal); c.anchors = r.anchors; return c; };
   if (stage === 'baby') {
-    pal.w = mix(ex.vest, '#fff8e8', 0.65); pal.W = mix(ex.vest, '#fff8e8', 0.3);
-    const f = finishSprite(BABY_FRONT, pal), b = finishSprite(BABY_BACK, pal);
+    const ex = expressed(genes);
+    pal.c = mix(ex.vest, '#fff8e8', 0.65); pal.C = mix(ex.vest, '#fff8e8', 0.3);
+    const f = make(folkBaby(B, 'down')), b = make(folkBaby(B, 'up'));
     for (const pose of ['stand', 'walk1', 'walk2', 'sit']) { out.down[pose] = f; out.up[pose] = b; out.side[pose] = f; }
     return out;
   }
-  const child = stage === 'child';
-  const views = [['down', FRONT_BODY, 'front'], ['up', BACK_BODY, 'front'], ['side', SIDE_BODY, 'side']];
-  for (const [dir, body, legKind] of views) {
-    const view = dir === 'down' ? 'front' : dir === 'up' ? 'back' : 'side';
-    let b = applyHairStyle(body, view, ex.sex === 'f' && ex.style === 0 ? 1 : ex.style, ex.freckles);
-    b = applySex(b, view, ex.sex, child);
-    if (child) b = [0, 1, 2, 3, 4, 6, 8, 9].map((i) => b[i]);
-    b = applyRiftLook(b, view, ex, look, child);
-    for (const pose of ['stand', 'walk1', 'walk2', 'sit']) {
-      let legs = LEGS[legKind][pose].slice();
-      if (ex.garment === 1 && pose !== 'sit') legs[1] = legKind === 'front' ? '.tttttttt.' : '..tttttt..';
-      if (child && pose !== 'sit') legs = legs.slice(2);
-      out[dir][pose] = finishSprite(b.concat(legs), pal);
-    }
+  for (const pose of ['stand', 'walk1', 'walk2', 'sit']) {
+    out.down[pose] = make(folkFront(B, pose));
+    out.up[pose] = make(folkBack(B, pose));
+    out.side[pose] = make(folkSide(B, pose));
   }
   return out;
 }

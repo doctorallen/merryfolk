@@ -525,23 +525,26 @@ function goHome(v, r) {
 function drawRift(ctx, r, t) {
   const a = clamp(r.a, 0, 1);
   if (a <= 0) return;
-  const H = Math.round(46 * a), W = 9 * a;
-  const x = Math.round(r.x), base = Math.round(r.y);
+  const alpha0 = ctx.globalAlpha;
+  ctx.save(); ctx.scale(1 / RS, 1 / RS);
+  // drawn in half-pixels: rows of light, two to every world pixel
+  const H = Math.round(46 * a * RS), W = 9 * a * RS;
+  const x = Math.round(r.x * RS), base = Math.round(r.y * RS);
   // a soft violet glow on the grass beneath
   ctx.globalCompositeOperation = 'lighter';
-  ctx.globalAlpha = 0.3 * a;
-  ellipseFill(ctx, x, base - 1, 20 * a, 5 * a, '#9a40ff');
-  ctx.globalAlpha = 0.25 * a;
-  ellipseFill(ctx, x, base - 1, 11 * a, 3 * a, '#40e0ff');
-  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
-  const glitch = hash2(Math.floor(t * 7), r.seed) > 0.8 ? Math.round((hash2(Math.floor(t * 7), r.seed + 1) - 0.5) * 8) : 0;
+  ctx.globalAlpha = 0.3 * a * alpha0;
+  ellipseFill(ctx, x, base - 2, 20 * a * RS, 5 * a * RS, '#9a40ff');
+  ctx.globalAlpha = 0.25 * a * alpha0;
+  ellipseFill(ctx, x, base - 2, 11 * a * RS, 3 * a * RS, '#40e0ff');
+  ctx.globalAlpha = alpha0; ctx.globalCompositeOperation = 'source-over';
+  const glitch = hash2(Math.floor(t * 7), r.seed) > 0.8 ? Math.round((hash2(Math.floor(t * 7), r.seed + 1) - 0.5) * 16) : 0;
   const gRow = Math.floor(hash2(Math.floor(t * 7), r.seed + 2) * H);
   for (let j = 0; j < H; j++) {
     const k = j / H;
-    let half = Math.sin(Math.PI * k) * W + Math.sin(t * 9 + j * 0.8 + r.seed) * 0.8;
-    if (half < 0.5) half = 0.5;
-    const off = Math.abs(j - gRow) < 3 ? glitch : 0;
-    const y = base - 4 - H + j, hw = Math.round(half);
+    let half = Math.sin(Math.PI * k) * W + Math.sin(t * 9 + j * 0.4 + r.seed) * 1.6;
+    if (half < 1) half = 1;
+    const off = Math.abs(j - gRow) < 6 ? glitch : 0;
+    const y = base - 8 - H + j, hw = Math.round(half);
     ctx.fillStyle = r.home ? '#ffc840' : '#c050ff'; ctx.fillRect(x - hw - 2 + off, y, hw * 2 + 5, 1);
     ctx.fillStyle = r.home ? '#fff4c0' : '#5af8ff'; ctx.fillRect(x - hw - 1 + off, y, hw * 2 + 3, 1);
     ctx.fillStyle = r.home ? '#1a1030' : '#0c0618'; ctx.fillRect(x - hw + off, y, hw * 2 + 1, 1);
@@ -550,38 +553,45 @@ function drawRift(ctx, r, t) {
     // stars on the far side
     for (let i = -hw; i <= hw; i++) {
       const h = hash2(i * 13 + r.seed, j * 7 + Math.floor(t * 3));
-      if (h > 0.965) { ctx.fillStyle = h > 0.99 ? '#ffffff' : h > 0.98 ? '#ff6ac8' : '#6af0ff'; ctx.fillRect(x + i + off, y, 1, 1); }
+      if (h > 0.975) { ctx.fillStyle = h > 0.993 ? '#ffffff' : h > 0.985 ? '#ff6ac8' : '#6af0ff'; ctx.fillRect(x + i + off, y, 1, 1); }
     }
   }
+  ctx.restore();
 }
 
 function drawRiftScar(ctx, s) {
-  const x = Math.round(s.x), y = Math.round(s.y);
-  for (let i = -10; i <= 10; i++) {
-    const yy = y - 2 + Math.round(Math.sin(i * 0.9 + s.seed) * 1.5);
-    ctx.fillStyle = '#2a1a3a'; ctx.fillRect(x + i, yy, 1, 1);
-    if (hash2(i + s.seed, Math.floor(tReal * 2)) > 0.8) { ctx.fillStyle = '#c050ff'; ctx.fillRect(x + i, yy - 1, 1, 1); }
+  ctx.save(); ctx.scale(1 / RS, 1 / RS);
+  const x = Math.round(s.x * RS), y = Math.round(s.y * RS);
+  // a jagged crack in the turf, glinting violet now and then
+  for (let i = -20; i <= 20; i++) {
+    const yy = y - 4 + Math.round(Math.sin(i * 0.45 + s.seed) * 3);
+    ctx.fillStyle = '#2a1a3a'; ctx.fillRect(x + i, yy, 1, 2);
+    if (hash2(i + s.seed, Math.floor(tReal * 2)) > 0.85) { ctx.fillStyle = '#c050ff'; ctx.fillRect(x + i, yy - 1, 1, 1); }
   }
   // scattered salvage: bits of grey metal and glowing glass
-  for (let k = 0; k < s.stock * 2; k++) {
-    const dx = Math.round((hash2(k, s.seed) - 0.5) * 30), dy = Math.round((hash2(s.seed, k) - 0.5) * 10);
-    ctx.fillStyle = k % 3 ? '#8a9098' : '#3af0ff'; ctx.fillRect(x + dx, y + dy, 2, k % 2 + 1);
+  for (let k = 0; k < s.stock * 3; k++) {
+    const dx = Math.round((hash2(k, s.seed) - 0.5) * 60), dy = Math.round((hash2(s.seed, k) - 0.5) * 20);
+    ctx.fillStyle = k % 3 ? '#8a9098' : '#3af0ff'; ctx.fillRect(x + dx, y + dy, 3, k % 2 + 2);
+    if (k % 3) { ctx.fillStyle = '#c8ccd4'; ctx.fillRect(x + dx, y + dy, 2, 1); }
   }
+  ctx.restore();
 }
 
 // A neon arch round the round door; drawn again over the night shade so it glows.
 function drawNeonArch(ctx, h, alpha = 1) {
-  const r = h.doorR, x = h.doorX, y = h.doorY - r - 1;
+  ctx.save(); ctx.scale(1 / RS, 1 / RS);
+  const K = RS, r = h.doorR * K, x = h.doorX * K, y = (h.doorY - h.doorR - 1) * K;
   const n1 = NEON_COLS[h.id % NEON_COLS.length], n2 = NEON_COLS[(h.id + 2) % NEON_COLS.length];
-  const R2 = r + 5;
+  const R2 = r + 11;
   ctx.globalAlpha = alpha * (0.75 + 0.25 * Math.sin(tReal * 2 + h.id));
-  for (let k = 0; k <= 24; k++) {
-    const ang = Math.PI + (k / 24) * Math.PI;
-    ctx.fillStyle = Math.floor(k / 3 + tReal * 2) % 4 ? n1 : n2;
+  for (let k = 0; k <= 48; k++) {
+    const ang = Math.PI + (k / 48) * Math.PI;
+    ctx.fillStyle = Math.floor(k / 5 + tReal * 2) % 4 ? n1 : n2;
     ctx.fillRect(Math.round(x + Math.cos(ang) * R2) - 1, Math.round(y + Math.sin(ang) * R2) - 1, 2, 2);
   }
-  ctx.fillStyle = n1; ctx.fillRect(x - R2 - 1, y, 2, r); ctx.fillRect(x + R2, y, 2, r);
+  ctx.fillStyle = n1; ctx.fillRect(x - R2 - 1, y, 2, r + 2); ctx.fillRect(x + R2 - 1, y, 2, r + 2);
   ctx.globalAlpha = 1;
+  ctx.restore();
 }
 function dishPos(h) {
   const d = h.def;
@@ -589,30 +599,28 @@ function dishPos(h) {
 }
 
 function drawNeonHome(ctx, h) {
-  const r = h.doorR, x = h.doorX, y = h.doorY - r - 1, d = h.def;
+  drawNeonArch(ctx, h);
+  ctx.save(); ctx.scale(1 / RS, 1 / RS);
+  const K = RS, d = h.def, R = (x0, y0, w, hh, col) => { ctx.fillStyle = col; ctx.fillRect(x0, y0, w, hh); };
   const n2 = NEON_COLS[(h.id + 2) % NEON_COLS.length];
   const pulse = 0.7 + 0.3 * Math.sin(tReal * 2 + h.id);
-  const R2 = r + 5;
-  drawNeonArch(ctx, h);
   // a sky-dish on the mound, blinking red
-  const { x: dx, y: top } = dishPos(h);
-  ctx.fillStyle = '#4a4e56'; ctx.fillRect(dx, top - 5, 1, 6); ctx.fillRect(dx - 2, top, 5, 1);
-  ctx.fillStyle = '#9aa0a8'; ctx.fillRect(dx - 4, top - 10, 7, 5);
-  ctx.fillStyle = '#d8dce4'; ctx.fillRect(dx - 3, top - 11, 5, 1); ctx.fillRect(dx - 3, top - 10, 4, 3);
-  ctx.fillStyle = '#6a7078'; ctx.fillRect(dx - 4, top - 5, 7, 1);
-  ctx.fillStyle = '#4a4e56'; ctx.fillRect(dx, top - 13, 1, 3);
-  ctx.fillStyle = Math.floor(tReal * 1.4 + h.id) % 2 ? '#ff4a4a' : '#7a2a2a'; ctx.fillRect(dx, top - 14, 1, 1);
+  const p = dishPos(h), dx = p.x * K, top = p.y * K;
+  R(dx, top - 10, 2, 11, '#4a4e56'); R(dx - 4, top, 10, 2, '#4a4e56');
+  R(dx - 8, top - 20, 13, 10, '#9aa0a8'); R(dx - 7, top - 21, 11, 2, '#d8dce4'); R(dx - 7, top - 19, 9, 6, '#c8ccd4'); R(dx - 8, top - 11, 13, 1, '#6a7078');
+  R(dx - 1, top - 26, 2, 6, '#4a4e56');
+  R(dx - 1, top - 28, 2, 2, Math.floor(tReal * 1.4 + h.id) % 2 ? '#ff4a4a' : '#7a2a2a');
   // a sun-glass panel on the slope
-  const sx = Math.round(x + d.rx * 16 * 0.02), sy = top + 3;
-  ctx.fillStyle = '#26262e'; ctx.fillRect(sx - 1, sy - 1, 14, 7);
-  ctx.fillStyle = '#1e3a6a'; ctx.fillRect(sx, sy, 12, 5);
-  ctx.fillStyle = '#5a7ab0'; ctx.fillRect(sx + 4, sy, 1, 5); ctx.fillRect(sx + 8, sy, 1, 5); ctx.fillRect(sx, sy + 2, 12, 1);
-  ctx.fillStyle = '#c8e0ff'; ctx.fillRect(sx + 1, sy, 2, 1);
-  if (World.season === 'winter') { ctx.fillStyle = '#f4f8ff'; ctx.fillRect(sx - 1, sy - 2, 14, 1); ctx.fillRect(dx - 3, top - 12, 5, 1); }
+  const sx = Math.round((h.doorX + d.rx * 16 * 0.02) * K), sy = (p.y + 3) * K;
+  R(sx - 2, sy - 2, 28, 14, '#26262e'); R(sx, sy, 24, 10, '#1e3a6a');
+  for (let k = 1; k < 4; k++) R(sx + k * 6, sy, 1, 10, '#5a7ab0');
+  R(sx, sy + 5, 24, 1, '#5a7ab0'); R(sx + 2, sy + 1, 4, 1, '#c8e0ff');
+  if (World.season === 'winter') { R(sx - 2, sy - 4, 28, 2, '#f4f8ff'); R(dx - 7, top - 23, 11, 2, '#f4f8ff'); }
   // a little holo-plate with the house number
-  const px = x + R2 + 3, py = y - 4;
-  ctx.fillStyle = '#14141c'; ctx.fillRect(px, py, 7, 5);
-  ctx.globalAlpha = pulse; ctx.fillStyle = n2; ctx.fillRect(px + 1, py + 1, 1, 3); ctx.fillRect(px + 3, py + 1, 3, 1); ctx.fillRect(px + 5, py + 2, 1, 2); ctx.globalAlpha = 1;
+  const px = (h.doorX + h.doorR + 8) * K, py = (h.doorY - h.doorR - 3) * K;
+  R(px, py, 14, 10, '#14141c');
+  ctx.globalAlpha = pulse; R(px + 2, py + 2, 2, 6, n2); R(px + 6, py + 2, 6, 2, n2); R(px + 10, py + 4, 2, 4, n2); ctx.globalAlpha = 1;
+  ctx.restore();
 }
 
 // Neon and rift-light drawn over the night shade, so they glow in the dark.
@@ -630,12 +638,14 @@ function drawRiftEmissive(ctx, cam) {
   ctx.globalAlpha = 1;
   for (const v of Game.villagers) {
     if (v.inside || v.carried || v.stage === 'baby' || !v._top || !seen(v.x, v.y)) continue;
-    const ex = expressed(v.genes), ey = v._top + 4;
+    const ex = expressed(v.genes), ey = v._top + 8 / RS;
     const side = v.facing === 'left' || v.facing === 'right';
     if (v.facing === 'up') continue;
+    // eye and visor positions on the double-resolution sprite (22 half-pixels wide with its outline)
+    const X = (cx, w) => v._sx + (v._flip ? 22 - cx - w : cx) / RS;
     ctx.globalAlpha = dk * 0.9;
-    if (v.visor && v.techTier >= 2) { ctx.fillStyle = ex.neon; ctx.fillRect(Math.round(v.x) + (side ? (v.facing === 'left' ? -5 : 1) : -3), ey, side ? 4 : 6, 1); }
-    else if (ex.chrome) { ctx.fillStyle = '#7af8ff'; ctx.fillRect(Math.round(v.x) + (side ? (v.facing === 'left' ? -4 : 3) : 1), ey, 1, 1); }
+    if (v.visor && v.techTier >= 2) { ctx.fillStyle = ex.neon; if (side) ctx.fillRect(X(12, 7), ey, 7 / RS, 3 / RS); else ctx.fillRect(X(4, 14), ey, 14 / RS, 3 / RS); }
+    else if (ex.chrome) { ctx.fillStyle = '#7af8ff'; if (side) ctx.fillRect(X(15, 1), ey, 1 / RS, 3 / RS); else ctx.fillRect(X(13, 2), ey, 2 / RS, 3 / RS); }
     ctx.globalAlpha = 1;
   }
 }

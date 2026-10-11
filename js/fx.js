@@ -90,73 +90,77 @@ const FX = {
   },
 
   // Emissive particles (fireworks) are drawn after the lighting pass so they glow.
+  // Particles are drawn in half-pixels, like everything else.
   draw(ctx, emissive = false) {
+    const hp = (v) => Math.round(v * RS) / RS, H = 1 / RS;
+    const R = (x, y, w, h) => ctx.fillRect(x, y, w * H, h * H); // a box measured in half-pixels
+    const round = (x, y, r, col) => { ctx.save(); ctx.scale(H, H); disc(ctx, Math.round(x * RS), Math.round(y * RS), Math.max(1, Math.round(r * RS)), col); ctx.restore(); };
     for (const p of this.parts) {
       if (p.t < 0) continue;
       if ((p.k === 'spark' || p.k === 'rocket' || p.k === 'flash') !== emissive) continue;
       const f = p.t / p.life;
-      const x = Math.round(p.x), y = Math.round(p.y);
+      const x = hp(p.x), y = hp(p.y);
       switch (p.k) {
         case 'ring': {
           ctx.globalAlpha = (1 - f) * 0.85;
-          ctx.strokeStyle = '#f0ece4'; ctx.lineWidth = 1;
-          const r = Math.round(p.r);
           ctx.fillStyle = '#f0ece4';
-          for (let a = 0; a < 12; a++) { const an = a / 12 * Math.PI * 2; ctx.fillRect(Math.round(x + Math.cos(an) * r), Math.round(y + Math.sin(an) * r * 0.6), 1, 1); }
+          for (let a = 0; a < 20; a++) { const an = a / 20 * Math.PI * 2; R(hp(x + Math.cos(an) * p.r), hp(y + Math.sin(an) * p.r * 0.6), 1, 1); }
           break;
         }
         case 'smoke':
           ctx.globalAlpha = (1 - f) * (p.heavy ? 0.65 : 0.55);
-          disc(ctx, x, y, Math.round(p.r), p.heavy ? '#b8b4ac' : '#dcd8d0');
-          if (p.r > 3) { ctx.globalAlpha *= 0.6; disc(ctx, x - 1, y - 1, Math.round(p.r * 0.6), '#f4f2ee'); }
+          round(x, y, p.r, p.heavy ? '#b8b4ac' : '#dcd8d0');
+          if (p.r > 2) { ctx.globalAlpha *= 0.6; round(x - 0.5, y - 0.5, p.r * 0.55, '#f4f2ee'); }
           break;
         case 'puff':
           ctx.globalAlpha = (1 - f) * 0.8;
-          disc(ctx, x, y, Math.round(p.r), '#8a8a8a');
+          round(x, y, p.r, '#8a8a8a');
           break;
         case 'z':
           ctx.globalAlpha = 1 - f;
           ctx.fillStyle = '#e8f0ff';
-          ctx.fillRect(x, y, 3, 1); ctx.fillRect(x + 1, y + 1, 1, 1); ctx.fillRect(x, y + 2, 3, 1);
+          R(x, y, 5, 1); R(x + 3 * H, y + H, 1, 1); R(x + 2 * H, y + 2 * H, 1, 1); R(x + H, y + 3 * H, 1, 1); R(x, y + 4 * H, 5, 1);
           break;
-        case 'heart':
+        case 'heart': {
           ctx.globalAlpha = 1 - f * f;
+          const rows = ['.##.##.', '#######', '#######', '.#####.', '..###..', '...#...'];
           ctx.fillStyle = '#e8404a';
-          ctx.fillRect(x - 2, y - 1, 2, 2); ctx.fillRect(x + 1, y - 1, 2, 2); ctx.fillRect(x - 2, y, 5, 1); ctx.fillRect(x - 1, y + 1, 3, 1); ctx.fillRect(x, y + 2, 1, 1);
-          ctx.fillStyle = '#ff9aa0'; ctx.fillRect(x - 2, y - 1, 1, 1);
+          rows.forEach((r, j) => { for (let i = 0; i < r.length; i++) if (r[i] === '#') R(x + (i - 3) * H, y + (j - 2) * H, 1, 1); });
+          ctx.fillStyle = '#ff9aa0'; R(x - 2 * H, y - H, 1, 1);
           break;
+        }
         case 'note':
           ctx.globalAlpha = 1 - f;
           ctx.fillStyle = p.col;
-          ctx.fillRect(x + 2, y - 4, 1, 5); ctx.fillRect(x, y, 3, 2); ctx.fillRect(x + 3, y - 4, 2, 1); ctx.fillRect(x + 4, y - 3, 1, 1);
+          R(x + 3 * H, y - 6 * H, 1, 8); R(x, y, 4, 3); R(x + H, y - H, 2, 1); R(x + 4 * H, y - 6 * H, 2, 1); R(x + 5 * H, y - 5 * H, 1, 2);
           break;
         case 'dots':
           ctx.globalAlpha = 1 - f;
-          ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 5, y - 2, 11, 5);
-          ctx.fillStyle = '#2a1c12'; for (let i = 0; i < 3; i++) ctx.fillRect(x - 3 + i * 3, y, 1, 1);
+          ctx.fillStyle = '#ffffff'; R(x - 10 * H, y - 4 * H, 21, 9); R(x - 8 * H, y + 5 * H, 2, 2);
+          ctx.fillStyle = '#2a1c12'; for (let i = 0; i < 3; i++) R(x - 6 * H + i * 5 * H, y, 2, 2);
           break;
         case 'drop':
           ctx.globalAlpha = 1 - f;
-          ctx.fillStyle = p.col || '#cfe8ff'; ctx.fillRect(x, y, 1, 1);
+          ctx.fillStyle = p.col || '#cfe8ff'; R(x, y, 1, 2);
           break;
         case 'snowball':
           ctx.globalAlpha = 1;
-          ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 1, y - 1, 3, 3); ctx.fillStyle = '#c8d8e8'; ctx.fillRect(x + 1, y + 1, 1, 1);
+          round(x, y, 1.5, '#ffffff'); ctx.fillStyle = '#c8d8e8'; R(x + H, y + H, 1, 1);
           break;
         case 'spark':
           ctx.globalAlpha = 1 - f * f;
           ctx.fillStyle = p.col;
-          if (p.big && f < 0.6) { ctx.fillRect(x - 1, y - 1, 2, 2); ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 1, y - 1, 1, 1); }
-          else ctx.fillRect(x, y, 1, 1);
-          if (p.big && f < 0.25) { ctx.globalAlpha = 0.5; ctx.fillRect(x - 2, y, 4, 1); ctx.fillRect(x, y - 2, 1, 4); }
+          if (p.big && f < 0.6) { R(x - H, y - H, 3, 3); ctx.fillStyle = '#ffffff'; R(x, y, 1, 1); }
+          else R(x, y, 1, 1);
+          if (p.big && f < 0.25) { ctx.globalAlpha = 0.5; ctx.fillStyle = p.col; R(x - 3 * H, y, 7, 1); R(x, y - 3 * H, 1, 7); }
           break;
         case 'rocket':
           ctx.globalAlpha = 1;
-          ctx.fillStyle = '#fff2c0'; ctx.fillRect(x, y, 1, 2);
+          ctx.fillStyle = '#fff2c0'; R(x, y, 1, 4); ctx.fillStyle = '#ffb040'; R(x, y + 4 * H, 1, 2);
           break;
         case 'flash':
           ctx.globalAlpha = (1 - f) * 0.5;
-          disc(ctx, x, y, Math.round(6 + f * 10), p.col);
+          round(x, y, 6 + f * 10, p.col);
           break;
       }
     }
@@ -202,13 +206,13 @@ const FX = {
   drawAmbientDay(ctx, game, cam) {
     if (game.darkness > 0.35 || game.raining || World.season === 'winter' || World.season === 'autumn') return;
     for (const b of this.butterflies) {
-      const x = Math.round(b.x), y = Math.round(b.y);
+      const x = Math.round(b.x * RS) / RS, y = Math.round(b.y * RS) / RS, H = 1 / RS;
       if (x < cam.x - 10 || x > cam.x + cam.w + 10 || y < cam.y - 10 || y > cam.y + cam.h + 10) continue;
       const open = Math.sin(b.t * 18) > 0;
       ctx.fillStyle = b.col;
-      if (open) { ctx.fillRect(x - 2, y, 2, 2); ctx.fillRect(x + 1, y, 2, 2); }
-      else { ctx.fillRect(x - 1, y - 1, 1, 2); ctx.fillRect(x + 1, y - 1, 1, 2); }
-      ctx.fillStyle = '#2a1c12'; ctx.fillRect(x, y, 1, 2);
+      if (open) { ctx.fillRect(x - 2.5, y - 1, 2, 1.5); ctx.fillRect(x + 1, y - 1, 2, 1.5); ctx.fillRect(x - 2, y + 0.5, 1.5, 1); ctx.fillRect(x + 1, y + 0.5, 1.5, 1); }
+      else { ctx.fillRect(x - 1, y - 1.5, H, 2); ctx.fillRect(x + 1, y - 1.5, H, 2); }
+      ctx.fillStyle = '#2a1c12'; ctx.fillRect(x, y - 0.5, 1, 2);
     }
   },
 
@@ -227,7 +231,7 @@ const FX = {
       const on = Math.sin(f.t * 3) > 0.2;
       if (!on) continue;
       if (f.x < cam.x || f.x > cam.x + cam.w || f.y < cam.y || f.y > cam.y + cam.h) continue;
-      ctx.fillStyle = '#e8ff8a'; ctx.fillRect(Math.round(f.x), Math.round(f.y), 1, 1);
+      ctx.fillStyle = '#e8ff8a'; ctx.fillRect(Math.round(f.x * RS) / RS, Math.round(f.y * RS) / RS, 1 / RS, 1 / RS);
       lights.push({ x: f.x, y: f.y, r: 9, a: 0.5 });
     }
   },
@@ -247,10 +251,10 @@ const FX = {
       f.y += f.v * dt; f.ph += dt * 2; f.x += Math.sin(f.ph) * dt * (kind === 'snow' ? 6 : 14) - dt * (kind === 'snow' ? 2 : 8);
       if (f.y > cam.h + 4) { f.y = R.f(-20, 0); f.x = R.f(0, cam.w + 40); }
       if (f.x < -10) f.x = cam.w + 10;
-      const x = Math.round(cam.x + f.x), y = Math.round(cam.y + f.y);
+      const x = Math.round((cam.x + f.x) * RS) / RS, y = Math.round((cam.y + f.y) * RS) / RS;
       ctx.fillStyle = f.col;
-      if (kind === 'snow') { ctx.globalAlpha = 0.9; ctx.fillRect(x, y, f.v > 22 ? 2 : 1, f.v > 22 ? 2 : 1); }
-      else { ctx.globalAlpha = 0.85; ctx.fillRect(x, y, 2, 1); if (Math.sin(f.ph) > 0) ctx.fillRect(x + 1, y + 1, 1, 1); }
+      if (kind === 'snow') { ctx.globalAlpha = 0.9; const s2 = f.v > 22 ? 1.5 : 1; ctx.fillRect(x, y, s2, s2); }
+      else { ctx.globalAlpha = 0.85; ctx.fillRect(x, y, 1.5, 1); if (Math.sin(f.ph) > 0) ctx.fillRect(x + 0.5, y + 1, 1, 0.5); }
     }
     ctx.globalAlpha = 1;
   },
@@ -287,8 +291,8 @@ const FX = {
         if (Math.random() < 0.4) this.add({ k: 'drop', x: cam.x + r.x, y: cam.y + r.y - R.f(0, 30), vx: R.f(-8, 8), vy: -R.f(8, 14), t: 0, life: 0.3 });
         r.y = R.f(-40, 0); r.x = R.f(0, cam.w + 40);
       }
-      const x = Math.round(cam.x + r.x), y = Math.round(cam.y + r.y);
-      ctx.fillRect(x, y, 1, 3); ctx.fillRect(x - 1, y + 3, 1, 2);
+      const x = Math.round((cam.x + r.x) * RS) / RS, y = Math.round((cam.y + r.y) * RS) / RS;
+      ctx.fillRect(x, y, 0.5, 3); ctx.fillRect(x - 0.5, y + 3, 0.5, 2);
     }
   },
 };
@@ -320,7 +324,8 @@ const Light = {
       x.fillStyle = g;
       x.fillRect(sx - l.r, sy - l.r, l.r * 2, l.r * 2);
     }
-    ctx.drawImage(this.c, cam.x, cam.y);
+    // the shade is soft anyway, so let it scale up smoothly
+    ctx.imageSmoothingEnabled = true; ctx.drawImage(this.c, cam.x, cam.y); ctx.imageSmoothingEnabled = false;
     // warm additive glow
     ctx.globalCompositeOperation = 'lighter';
     for (const l of lights) {

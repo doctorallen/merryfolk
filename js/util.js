@@ -4,6 +4,10 @@
 // ---------------------------------------------------------------------------
 
 const TILE = 16;
+// The game draws everything at double resolution: two canvas pixels to every
+// world pixel. Game logic, positions and the map all stay in world pixels.
+const RS = 2;
+const GS = 2; // the painted ground, likewise
 const MAP_W = 128;
 const MAP_H = 96;
 

@@ -102,8 +102,8 @@ function buildUI() {
   $('btn-help').addEventListener('click', () => openIntro(false));
   $('btn-folk').addEventListener('click', () => { const r = $('roster'); r.hidden = !r.hidden; if (!r.hidden) renderRoster(); });
   $('btn-village').addEventListener('click', toggleVillage);
-  $('btn-zoomin').addEventListener('click', () => setZoom(Game.zoom + 1));
-  $('btn-zoomout').addEventListener('click', () => setZoom(Game.zoom - 1));
+  $('btn-zoomin').addEventListener('click', () => zoomStep(1));
+  $('btn-zoomout').addEventListener('click', () => zoomStep(-1));
   $('roster-close').addEventListener('click', () => { $('roster').hidden = true; });
   $('panel-close').addEventListener('click', () => selectVillager(null));
   $('b-pat').addEventListener('click', doPat);
@@ -748,8 +748,8 @@ function startGame(fresh) {
     Game.stats = {};
     newVillage();
     applySeasonToStatics('spring');
-    paintGround('spring');
     World.prevGround = null; World.paintJob = null;
+    paintGroundSoon('spring');
     FX.initAmbient();
     Game.lastHour = Math.floor(Game.time / 60); Game.lastDay = Game.day = 1; Game.festivalDay = -1;
     selectVillager(null);

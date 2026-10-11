@@ -624,7 +624,6 @@ function completeHome(h) {
   furnishHome(h);
   addHomeFlowers(h);
   applySeasonToStatics(World.season);
-  const g = World.ground.getContext('2d');
   // the tiles under the new garden plots changed, so repaint the patch
   repaintRect((h.def.cx - 8) * 16, (h.def.cy - 5) * 16, 17 * 16, 11 * 16);
   if (World.paintJob) startSeasonPaint(World.paintJob.season);
@@ -645,14 +644,24 @@ const GROUND_PAL = {
 function computePixelTypes(seed, rect) {
   const W = MAP_W * TILE, H = MAP_H * TILE;
   const base = (t) => (t === T.HILL ? T.GRASS : t === T.BRIDGE ? T.WATER : t);
+  // every half-pixel gets a kind of ground; each world pixel takes its top-left half-pixel's
+  const W2 = W * GS;
   const fill = (px0, py0, px1, py1) => {
-    const { type, jx, jy, JW } = World.px;
-    for (let py = py0; py < py1; py++) {
-      const row = (py >> 1) * JW;
-      for (let px = px0; px < px1; px++) {
-        const j = row + (px >> 1);
-        const tx = Math.floor((px + jx[j]) / 16), ty = Math.floor((py + jy[j]) / 16);
-        type[py * W + px] = base(World.tiles[clamp(ty, 0, MAP_H - 1) * MAP_W + clamp(tx, 0, MAP_W - 1)]);
+    const { type, type2, jx, jy, JW } = World.px;
+    const JH = (H >> 1) - 1;
+    for (let qy = py0 * GS; qy < py1 * GS; qy++) {
+      // the wobble is stored every 2 world pixels; blend between them so edges stay smooth
+      const gy = qy / 4, iy = Math.min(JH - 1, Math.floor(gy)), wy = gy - iy, fy = qy / GS;
+      const r0 = iy * JW, r1 = (iy + 1) * JW;
+      for (let qx = px0 * GS; qx < px1 * GS; qx++) {
+        const gx = qx / 4, ix = Math.min(JW - 2, Math.floor(gx)), wx = gx - ix;
+        const a0 = r0 + ix, a1 = r1 + ix;
+        const jxv = (jx[a0] * (1 - wx) + jx[a0 + 1] * wx) * (1 - wy) + (jx[a1] * (1 - wx) + jx[a1 + 1] * wx) * wy;
+        const jyv = (jy[a0] * (1 - wx) + jy[a0 + 1] * wx) * (1 - wy) + (jy[a1] * (1 - wx) + jy[a1 + 1] * wx) * wy;
+        const tx = Math.floor((qx / GS + jxv) / 16), ty = Math.floor((fy + jyv) / 16);
+        const t = base(World.tiles[clamp(ty, 0, MAP_H - 1) * MAP_W + clamp(tx, 0, MAP_W - 1)]);
+        type2[qy * W2 + qx] = t;
+        if (!(qx & 1) && !(qy & 1)) type[(qy >> 1) * W + (qx >> 1)] = t;
       }
     }
   };
@@ -666,7 +675,7 @@ function computePixelTypes(seed, rect) {
     jy[y * JW + x] = (nJ2(x * 0.16, y * 0.16) - 0.5) * 9;
     nz[y * JW + x] = nC(x * 0.05, y * 0.05);
   }
-  World.px = { W, H, type: new Uint8Array(W * H), noise: nz, JW, jx, jy, seed };
+  World.px = { W, H, W2, type: new Uint8Array(W * H), type2: new Uint8Array(W2 * H * GS), noise: nz, JW, jx, jy, seed };
   computeHeights(seed);
   fill(0, 0, W, H);
 }
@@ -696,10 +705,26 @@ function computeHeights(seed) {
     level[y * JW + x] = Math.floor(h * TERRACES);
   }
   World.px.height = height; World.px.level = level;
+  // terrace levels per world pixel, from the heights blended smoothly, so bank edges don't step in blocks
+  const W = MAP_W * TILE, Hh = MAP_H * TILE, level1 = new Uint8Array(W * Hh);
+  for (let py = 0; py < Hh; py++) {
+    const gy = Math.min(JH - 1.001, py / 2), iy = Math.floor(gy), wy = gy - iy;
+    for (let px = 0; px < W; px++) {
+      const gx = Math.min(JW - 1.001, px / 2), ix = Math.floor(gx), wx = gx - ix;
+      const a0 = iy * JW + ix, a1 = a0 + JW;
+      const h = (height[a0] * (1 - wx) + height[a0 + 1] * wx) * (1 - wy) + (height[a1] * (1 - wx) + height[a1 + 1] * wx) * wy;
+      level1[py * W + px] = Math.floor(h * TERRACES);
+    }
+  }
+  World.px.level1 = level1;
 }
 
-function* paintGroundGen(season, target, rect) {
-  const { W, H, type, noise, JW, height, level } = World.px;
+// The ground is painted at GS canvas pixels per world pixel. Colour (hill
+// shading, terrace banks, wet edges) is worked out once per world pixel; the
+// finer detail (grass blades, pebbles, furrows, cobbles, sparkles) and the
+// edges between kinds of ground are done per half-pixel.
+function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
+  const { W, H, W2, type, type2, noise, JW, height, level1 } = World.px;
   const JH = H >> 1;
   const bankCol = { spring: [96, 102, 50], summer: [92, 96, 46], autumn: [120, 98, 54], winter: [168, 180, 196] }[season];
   const lipCol = { spring: [170, 214, 110], summer: [160, 204, 100], autumn: [196, 190, 100], winter: [255, 255, 255] }[season];
@@ -714,113 +739,185 @@ function* paintGroundGen(season, target, rect) {
   const at = (x, y) => type[clamp(y, 0, H - 1) * W + clamp(x, 0, W - 1)];
   const near = (px, py, t, r) => at(px + r, py) === t || at(px - r, py) === t || at(px, py + r) === t || at(px, py - r) === t;
   const notNear = (px, py, t, r) => at(px + r, py) !== t || at(px - r, py) !== t || at(px, py + r) !== t || at(px, py - r) !== t;
-  const SLICE = 64, RW = R0.x1 - R0.x0;
+
+  // the broad colour of one world pixel of a kind of ground
+  const colorAt = (t, px, py) => {
+    const n = noise[(py >> 1) * JW + (px >> 1)];
+    let col;
+    if (t === T.GRASS || t === T.LAWN) {
+      col = lerpC(C.G1, C.G2, n);
+      if (t === T.LAWN && Math.floor((px + py * 0.5) / 10) % 2) col = lerpC(col, C.L2, 0.25);
+      if (near(px, py, T.WATER, 2)) return lerpC(col, C.bank, 0.65);
+      // relief: soft hill-shading lit from the north-west, then terrace banks
+      const cx = px >> 1, cy = py >> 1, j = cy * JW + cx;
+      const hx0 = height[cy * JW + Math.max(0, cx - 3)], hx1 = height[cy * JW + Math.min(JW - 1, cx + 3)];
+      const hy0 = height[Math.max(0, cy - 3) * JW + cx], hy1 = height[Math.min(JH - 1, cy + 3) * JW + cx];
+      const lit = clamp(((hx0 - hx1) * 0.7 + (hy0 - hy1)) * 9, -0.22, 0.22);
+      col = lit > 0 ? lerpC(col, [255, 255, 235], lit * 0.6) : lerpC(col, [20, 40, 30], -lit);
+      const pj = py * W + px, lv = level1[pj];
+      col = lerpC(col, winter ? [255, 255, 255] : [214, 230, 140], (lv - 1) * 0.05);
+      const up = (k) => (py - k * 2 >= 0 ? level1[pj - k * 2 * W] : lv);
+      const dn1 = py < H - 2 ? level1[pj + 2 * W] : lv;
+      let face = 0;
+      for (let k = 1; k <= 8; k++) if (up(k) > lv) { face = k; break; }
+      if (face && face <= 5) {
+        const tt = face / 5;
+        col = lerpC(col, bankCol, 0.75 - tt * 0.25);
+        if (!winter && hash2(px >> 1, py >> 2) < 0.22) col = lerpC(col, [104, 80, 50], 0.55);
+        if (face === 1 && hash2(px >> 1, 9) < 0.6) col = lerpC(col, lipCol, 0.45);
+      } else if (face) col = lerpC(col, [20, 40, 24], 0.24 - (face - 6) * 0.08);
+      else if (dn1 < lv) col = lerpC(col, lipCol, 0.4);
+      col.bank = face && face <= 5;
+      return col;
+    }
+    if (t === T.PATH) {
+      col = lerpC(C.P1, C.P2, n);
+      if (notNear(px, py, T.PATH, 2)) col = lerpC(col, winter ? [220, 228, 236] : [138, 138, 72], 0.45);
+      return col;
+    }
+    if (t === T.SOIL || t === T.WEED || t === T.FIELD) {
+      col = lerpC(C.S1, C.S2, n);
+      if (t === T.WEED) col = lerpC(col, [130, 90, 60], winter ? 0.05 : 0.2);
+      if (t === T.FIELD && !winter) col = lerpC(col, [150, 120, 70], 0.15);
+      return col;
+    }
+    if (t === T.WATER) {
+      col = lerpC(C.W1, C.W2, n);
+      if (notNear(px, py, T.WATER, 3)) col = lerpC(col, C.WS, 0.7);
+      return col;
+    }
+    if (t === T.COBBLE) return [149, 143, 132];
+    return [255, 0, 255];
+  };
+
+  // the fine detail of one half-pixel
+  const detail = (t, col, qx, qy) => {
+    const h = hash2(qx, qy);
+    if (t === T.GRASS || t === T.LAWN) {
+      if (col.bank) {
+        if (!winter && hash2(qx, qy >> 1) > 0.93) return lerpC(col, [150, 140, 120], 0.6);
+        return h < 0.08 ? lerpC(col, [60, 48, 30], 0.25) : col;
+      }
+      if (winter) {
+        if (h < 0.04) return lerpC(col, [170, 190, 210], 0.4);
+        if (h > 0.998 && hash2(qx >> 3, qy >> 3) < 0.4) return [120, 150, 110];
+        return col;
+      }
+      // blades: a darker stroke with a lighter tip above it
+      if (hash2(qx, qy >> 1) > 0.975) return lerpC(col, [44, 90, 34], (qy & 1) ? 0.42 : 0.22);
+      if (h < 0.045) return lerpC(col, [40, 80, 30], 0.35);
+      if (h > 0.97) return lerpC(col, [196, 232, 140], 0.38);
+      if (((qx * 7 + qy * 3) % 13 === 0) && hash2(qx >> 2, qy >> 2) < 0.4) return lerpC(col, [50, 100, 40], 0.3);
+      if (h > 1 - pal.fleck * 0.6) return season === 'autumn' ? (h > 1 - pal.fleck * 0.3 ? [200, 90, 40] : [220, 170, 60]) : (h > 1 - pal.fleck * 0.3 ? [255, 255, 255] : [250, 220, 90]);
+      return col;
+    }
+    if (t === T.PATH) {
+      // snow lies in drifts along the paths, soft-edged
+      if (winter) { const sn = noise[(qy >> 2) * JW + (qx >> 2)] + hash2(qx >> 1, qy >> 1) * 0.12 - Math.sin(qx * 0.07 + qy * 0.05) * 0.06; if (sn > 0.52) return lerpC(col, [235, 240, 246], sn > 0.56 ? 0.75 : 0.45); }
+      if (h < 0.03) return winter ? [150, 140, 125] : [151, 118, 74];
+      if (h > 0.985) return winter ? [240, 244, 250] : [232, 210, 160];
+      if (h > 0.96 && hash2(qx + 1, qy) > 0.5) return lerpC(col, [120, 96, 64], 0.3);
+      return col;
+    }
+    if (t === T.SOIL || t === T.WEED || t === T.FIELD) {
+      if (qy % 10 === 0) return lerpC(col, winter ? [150, 165, 180] : [60, 38, 24], 0.5);
+      if (qy % 10 === 1) return lerpC(col, winter ? [235, 240, 246] : [140, 100, 70], 0.2);
+      if (h < 0.05) return lerpC(col, winter ? [255, 255, 255] : [150, 110, 80], 0.4);
+      return col;
+    }
+    if (t === T.WATER) {
+      if (((qx + qy * 3) % 47 === 0) && h < 0.35) return lerpC(col, [200, 230, 250], 0.45);
+      return col;
+    }
+    if (t === T.COBBLE) {
+      const row = Math.floor(qy / 10), off = (row % 2) * 6, u = (qx + off) % 12, v = qy % 10;
+      if (v === 0 || u === 0) return winter ? [200, 205, 212] : [106, 101, 91];
+      const cxx = Math.floor((qx + off) / 12);
+      if (winter && hash2(cxx, row * 3) < 0.3) return v === 1 ? [255, 255, 255] : [236, 240, 246];
+      let c = lerpC([149, 143, 132], [180, 174, 159], hash2(cxx, row));
+      if (v === 1 || u === 1) c = lerpC(c, [230, 226, 214], 0.25);
+      else if (v === 9 || u === 11) c = lerpC(c, [80, 76, 68], 0.22);
+      return c;
+    }
+    return col;
+  };
+
+  const SLICE = 32, RW = R0.x1 - R0.x0, QW = RW * GS;
   for (let y0 = R0.y0; y0 < R0.y1; y0 += SLICE) {
     const rows = Math.min(SLICE, R0.y1 - y0);
-    const img = ctx.createImageData(RW, rows);
+    const img = ctx.createImageData(QW, rows * GS);
     const d = img.data;
     for (let r = 0; r < rows; r++) {
       const py = y0 + r;
       for (let px = R0.x0; px < R0.x1; px++) {
-        const i = (r * RW + px - R0.x0) * 4;
         const t = type[py * W + px];
-        const h = hash2(px, py);
-        const n = noise[(py >> 1) * JW + (px >> 1)];
-        let col;
-        if (t === T.GRASS || t === T.LAWN) {
-          col = lerpC(C.G1, C.G2, n);
-          if (t === T.LAWN && Math.floor((px + py * 0.5) / 10) % 2) col = lerpC(col, C.L2, 0.25);
-          if (near(px, py, T.WATER, 2)) col = lerpC(col, C.bank, 0.65);
-          else {
-            // relief: soft hill-shading lit from the north-west, then terrace banks
-            const cx = px >> 1, cy = py >> 1, j = cy * JW + cx;
-            const hx0 = height[cy * JW + Math.max(0, cx - 3)], hx1 = height[cy * JW + Math.min(JW - 1, cx + 3)];
-            const hy0 = height[Math.max(0, cy - 3) * JW + cx], hy1 = height[Math.min(JH - 1, cy + 3) * JW + cx];
-            const lit = clamp(((hx0 - hx1) * 0.7 + (hy0 - hy1)) * 9, -0.22, 0.22);
-            col = lit > 0 ? lerpC(col, [255, 255, 235], lit * 0.6) : lerpC(col, [20, 40, 30], -lit);
-            const lv = level[j];
-            // higher ground catches more light
-            col = lerpC(col, winter ? [255, 255, 255] : [214, 230, 140], (lv - 1) * 0.05);
-            const at = (k) => (cy - k >= 0 ? level[j - k * JW] : lv);
-            const dn1 = cy < JH - 1 ? level[j + JW] : lv;
-            // how far below the edge of a higher terrace this pixel sits (in 2px cells)
-            let face = 0;
-            for (let k = 1; k <= 8; k++) if (at(k) > lv) { face = k; break; }
-            if (face && face <= 5) {
-              // the face of a bank: earthy, streaked, with grass tufts hanging over the lip
-              const t = face / 5;
-              col = lerpC(col, bankCol, 0.75 - t * 0.25);
-              if (!winter && hash2(px >> 1, py >> 2) < 0.22) col = lerpC(col, [104, 80, 50], 0.55);
-              if (!winter && hash2(px, py >> 1) > 0.93) col = lerpC(col, [150, 140, 120], 0.6);
-              if (face === 1 && hash2(px >> 1, 9) < 0.6) col = lerpC(col, lipCol, 0.45);
-            } else if (face) col = lerpC(col, [20, 40, 24], 0.24 - (face - 6) * 0.08);
-            else if (dn1 < lv) col = lerpC(col, lipCol, 0.4);
-          }
-          if (winter) {
-            if (h < 0.04) col = lerpC(col, [170, 190, 210], 0.4);
-            else if (h > 0.997 && hash2(px >> 3, py >> 3) < 0.4) col = [120, 150, 110];
-          } else {
-            if (h < 0.05) col = lerpC(col, [40, 80, 30], 0.35);
-            else if (h > 0.965) col = lerpC(col, [190, 230, 130], 0.35);
-            if (((px * 7 + py * 3) % 11 === 0) && hash2(px >> 2, py >> 2) < 0.4) col = lerpC(col, [50, 100, 40], 0.3);
-            if (h > 1 - pal.fleck) col = season === 'autumn' ? (h > 1 - pal.fleck / 2 ? [200, 90, 40] : [220, 170, 60]) : (h > 1 - pal.fleck / 2 ? [255, 255, 255] : [250, 220, 90]);
-          }
-        } else if (t === T.PATH) {
-          col = lerpC(C.P1, C.P2, n);
-          if (notNear(px, py, T.PATH, 2)) col = lerpC(col, winter ? [220, 228, 236] : [138, 138, 72], 0.45);
-          if (h < 0.03) col = winter ? [150, 140, 125] : [151, 118, 74]; else if (h > 0.985) col = winter ? [240, 244, 250] : [232, 210, 160];
-          if (winter && hash2(px >> 2, py >> 2) < 0.35) col = lerpC(col, [235, 240, 246], 0.6);
-        } else if (t === T.SOIL || t === T.WEED || t === T.FIELD) {
-          col = lerpC(C.S1, C.S2, n);
-          if (t === T.WEED) col = lerpC(col, [130, 90, 60], winter ? 0.05 : 0.2);
-          if (t === T.FIELD && !winter) col = lerpC(col, [150, 120, 70], 0.15);
-          if (py % 5 === 0) col = lerpC(col, winter ? [150, 165, 180] : [60, 38, 24], 0.5);
-          if (h < 0.06) col = lerpC(col, winter ? [255, 255, 255] : [150, 110, 80], 0.4);
-        } else if (t === T.WATER) {
-          col = lerpC(C.W1, C.W2, n);
-          if (notNear(px, py, T.WATER, 3)) col = lerpC(col, C.WS, 0.7);
-          if (((px + py * 3) % 23 === 0) && h < 0.3) col = lerpC(col, [200, 230, 250], 0.4);
-        } else if (t === T.COBBLE) {
-          const row = Math.floor(py / 5);
-          const cx = Math.floor((px + (row % 2) * 3) / 6);
-          const mortar = py % 5 === 0 || (px + (row % 2) * 3) % 6 === 0;
-          col = mortar ? (winter ? [200, 205, 212] : [106, 101, 91]) : lerpC([149, 143, 132], [180, 174, 159], hash2(cx, row));
-          if (winter && !mortar && hash2(cx, row * 3) < 0.3) col = [236, 240, 246];
-        } else col = [255, 0, 255];
-        d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2]; d[i + 3] = 255;
+        const base = colorAt(t, px, py);
+        let altT = -1, altCol = null;
+        for (let sy = 0; sy < GS; sy++) for (let sx = 0; sx < GS; sx++) {
+          const qx = px * GS + sx, qy = py * GS + sy;
+          const t2 = type2[qy * W2 + qx];
+          let col = base;
+          if (t2 !== t) { if (t2 !== altT) { altT = t2; altCol = colorAt(t2, px, py); } col = altCol; }
+          col = detail(t2, col, qx, qy);
+          const i = ((r * GS + sy) * QW + (px - R0.x0) * GS + sx) * 4;
+          d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2]; d[i + 3] = 255;
+        }
       }
     }
-    ctx.putImageData(img, R0.x0, y0);
+    ctx.putImageData(img, (R0.x0 - org.x) * GS, (y0 - org.y) * GS);
     yield;
   }
-  // bridges
+  // bridges: planks with nail-heads and posts
   for (let y = 0; y < MAP_H; y++) for (let x = 0; x < MAP_W; x++) {
     if (World.tiles[tIdx(x, y)] !== T.BRIDGE || !hit(x * 16 - 4, y * 16 - 4, x * 16 + 20, y * 16 + 20)) continue;
-    const px = x * 16, py = y * 16;
-    ctx.fillStyle = '#8a6440'; ctx.fillRect(px, py - 2, 16, 20);
-    for (let k = 0; k < 20; k += 4) { ctx.fillStyle = '#6a4a2c'; ctx.fillRect(px, py - 2 + k, 16, 1); ctx.fillStyle = winter ? '#e8eef4' : '#a07a50'; ctx.fillRect(px + (hash2(x, k) * 10 | 0), py - 1 + k, 4, 1); }
+    const bx = (x * 16 - org.x) * GS, by = (y * 16 - org.y) * GS;
+    ctx.fillStyle = '#8a6440'; ctx.fillRect(bx, by - 4, 32, 40);
+    for (let k = 0; k < 40; k += 5) {
+      ctx.fillStyle = '#6a4a2c'; ctx.fillRect(bx, by - 4 + k, 32, 1);
+      ctx.fillStyle = winter ? '#e8eef4' : '#a07a50'; ctx.fillRect(bx + (hash2(x, k) * 22 | 0), by - 3 + k, 8, 1);
+      ctx.fillStyle = '#3a2a1a'; ctx.fillRect(bx + 2, by - 2 + k, 1, 1); ctx.fillRect(bx + 29, by - 2 + k, 1, 1);
+    }
     const left = tileAt(x - 1, y) !== T.BRIDGE, right = tileAt(x + 1, y) !== T.BRIDGE;
-    ctx.fillStyle = '#4a2e1a';
-    if (left) { ctx.fillRect(px - 1, py - 2, 3, 20); ctx.fillStyle = '#5a3a22'; ctx.fillRect(px - 3, py + 2, 3, 3); }
-    ctx.fillStyle = '#4a2e1a';
-    if (right) { ctx.fillRect(px + 14, py - 2, 3, 20); ctx.fillStyle = '#5a3a22'; ctx.fillRect(px + 16, py + 2, 3, 3); }
+    for (const [on, rx] of [[left, bx - 2], [right, bx + 28]]) {
+      if (!on) continue;
+      ctx.fillStyle = '#4a2e1a'; ctx.fillRect(rx, by - 4, 6, 40);
+      ctx.fillStyle = '#6a4a2c'; ctx.fillRect(rx + 1, by - 4, 1, 40);
+      ctx.fillStyle = '#5a3a22'; ctx.fillRect(rx + (rx < bx ? -4 : 6), by + 4, 4, 6); ctx.fillRect(rx + (rx < bx ? -4 : 6), by + 24, 4, 6);
+      if (winter) { ctx.fillStyle = '#f4f8ff'; ctx.fillRect(rx, by - 5, 6, 2); }
+    }
   }
   yield;
-  for (const h of World.homes) { const d = h.def; if (hit((d.cx - d.rx - 1) * 16, (d.cy - d.ry - 1) * 16, (d.cx + d.rx + 2) * 16, (d.cy + d.ry + 2) * 16)) paintMound(ctx, h, season); }
+  for (const h of World.homes) { const d = h.def; if (hit((d.cx - d.rx - 1) * 16, (d.cy - d.ry - 1) * 16, (d.cx + d.rx + 2) * 16, (d.cy + d.ry + 2) * 16)) paintMound(ctx, h, season, org); }
   if (season !== 'winter') {
     const patches = {};
     for (const f of World.flowers) {
       if (!hit(f.x - 10, f.y - 10, f.x + 10, f.y + 10)) continue;
       if (season === 'autumn' && f.ground && (f.seed % 3)) continue;
       const k = f.seed;
-      ctx.drawImage(patches[k] || (patches[k] = makeFlowerPatch(k)), f.x - 9, f.y - 10);
+      ctx.drawImage(hd(patches[k] || (patches[k] = makeFlowerPatch(k))), (f.x - 9 - org.x) * GS, (f.y - 10 - org.y) * GS);
     }
   }
 }
 
-// Paints the whole ground synchronously (used at start-up).
+// A quick flat sketch of the ground, tile by tile, shown for the moment it
+// takes to paint the real thing in the background (which then fades in).
+function quickGround(season) {
+  const [c, x] = makeCanvas(MAP_W * TILE * GS, MAP_H * TILE * GS);
+  const pal = GROUND_PAL[season], S = TILE * GS;
+  const col = { [T.LAWN]: pal.L2, [T.PATH]: pal.P1, [T.WATER]: pal.W1, [T.BRIDGE]: '#8a6440', [T.SOIL]: pal.S1, [T.WEED]: pal.S1, [T.FIELD]: pal.S2, [T.COBBLE]: '#958f84' };
+  x.fillStyle = pal.G1; x.fillRect(0, 0, c.width, c.height);
+  for (let ty = 0; ty < MAP_H; ty++) for (let tx = 0; tx < MAP_W; tx++) {
+    const k = col[World.tiles[tIdx(tx, ty)]];
+    if (k) { x.fillStyle = k; x.fillRect(tx * S, ty * S, S, S); }
+  }
+  World.ground = c; World.groundSeason = season;
+}
+// Shows the sketch and paints the real ground behind it.
+function paintGroundSoon(season) { quickGround(season); startSeasonPaint(season); World.paintJob.urgent = true; }
+
+// Paints the whole ground synchronously.
 function paintGround(season) {
-  const [c] = makeCanvas(MAP_W * TILE, MAP_H * TILE);
+  const [c] = makeCanvas(MAP_W * TILE * GS, MAP_H * TILE * GS);
   const g = paintGroundGen(season, c);
   while (!g.next().done) { /* paint every slice */ }
   World.ground = c;
@@ -829,8 +926,9 @@ function paintGround(season) {
 
 // Starts painting a season in the background; the frame loop calls stepPaint().
 function startSeasonPaint(season) {
-  const [c] = makeCanvas(MAP_W * TILE, MAP_H * TILE);
-  World.paintJob = { season, canvas: c, gen: paintGroundGen(season, c) };
+  const urgent = !!(World.paintJob && World.paintJob.urgent);
+  const [c] = makeCanvas(MAP_W * TILE * GS, MAP_H * TILE * GS);
+  World.paintJob = { season, canvas: c, gen: paintGroundGen(season, c), urgent };
 }
 function stepPaint(budgetMs = 6) {
   const job = World.paintJob;
@@ -838,7 +936,7 @@ function stepPaint(budgetMs = 6) {
   const t0 = performance.now();
   while (performance.now() - t0 < budgetMs) {
     if (job.gen.next().done) {
-      World.prevGround = World.ground; World.groundFade = 1;
+      World.prevGround = World.ground; World.groundFade = 1; World.groundFadeRate = job.urgent ? 3 : 0.5;
       World.ground = job.canvas; World.groundSeason = job.season; World.paintJob = null;
       return;
     }
@@ -852,13 +950,12 @@ function repaintRect(x, y, w, h) {
   w = Math.min(MAP_W * TILE - x, Math.ceil(w)); h = Math.min(MAP_H * TILE - y, Math.ceil(h));
   const M = 96;
   const rect = { x0: Math.max(0, x - M), y0: Math.max(0, y - M), x1: Math.min(MAP_W * TILE, x + w + M), y1: Math.min(MAP_H * TILE, y + h + M) };
-  computePixelTypes(World.seed, { x0: rect.x0, y0: rect.y0, x1: rect.x1, y1: rect.y1 });
-  if (!REPAINT_CANVAS) [REPAINT_CANVAS] = makeCanvas(MAP_W * TILE, MAP_H * TILE);
-  const g = paintGroundGen(World.groundSeason || 'summer', REPAINT_CANVAS, rect);
+  computePixelTypes(World.seed, rect);
+  const [c] = makeCanvas((rect.x1 - rect.x0) * GS, (rect.y1 - rect.y0) * GS);
+  const g = paintGroundGen(World.groundSeason || 'summer', c, rect, { x: rect.x0, y: rect.y0 });
   while (!g.next().done) { /* small patch: paint it all at once */ }
-  World.ground.getContext('2d').drawImage(REPAINT_CANVAS, x, y, w, h, x, y, w, h);
+  World.ground.getContext('2d').drawImage(c, (x - rect.x0) * GS, (y - rect.y0) * GS, w * GS, h * GS, x * GS, y * GS, w * GS, h * GS);
 }
-let REPAINT_CANVAS = null;
 
 const MOUND_PAL = {
   spring: ['#62a03e', '#2f5a26', '#a4d26c'],
@@ -866,12 +963,15 @@ const MOUND_PAL = {
   autumn: ['#7f8a3a', '#4a4a1e', '#b8b25a'],
   winter: ['#e2eaf0', '#94a6b8', '#ffffff'],
 };
-function paintMound(ctx, h, season = 'summer') {
-  const d = h.def;
+// A hobbit-hole's grassy mound and the stonework round its door, painted
+// into the ground at full detail.
+function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
+  const d = h.def, G = GS;
   const cx = (d.cx + 0.5) * 16, cy = (d.cy + 0.5) * 16;
   const rx = d.rx * 16 - 4, ry = d.ry * 16 - 8;
-  const x0 = Math.floor(cx - rx - 4), y0 = Math.floor(cy - ry - 4), w = Math.ceil(rx * 2 + 8), hh = Math.ceil(ry * 2 + 14);
-  const img = ctx.getImageData(x0, y0, w, hh);
+  const x0 = Math.floor((cx - rx - 4) * G), y0 = Math.floor((cy - ry - 4) * G), w = Math.ceil((rx * 2 + 8) * G), hh = Math.ceil((ry * 2 + 14) * G);
+  const ox = org.x * G, oy = org.y * G;
+  const img = ctx.getImageData(x0 - ox, y0 - oy, w, hh);
   const p = img.data;
   const [b0, d0, l0] = MOUND_PAL[season];
   const tint = (h.v && h.v.tint) || 0;
@@ -881,55 +981,74 @@ function paintMound(ctx, h, season = 'summer') {
   const winter = season === 'winter';
   const edge = (px) => 1 + (hash2(px >> 1, 77) - 0.5) * 0.05 + Math.sin(px * 0.35) * 0.012;
   for (let j = 0; j < hh; j++) for (let i = 0; i < w; i++) {
-    const px = x0 + i, py = y0 + j;
+    const qx = x0 + i, qy = y0 + j, px = qx / G, py = qy / G;
     const nx = (px - cx) / rx, ny = (py - cy) / ry;
     const dd = nx * nx + ny * ny;
     const k = (j * w + i) * 4;
-    const lim = edge(px);
+    const lim = edge(Math.floor(px));
     if (dd < lim) {
       let l = -nx * 0.3 - ny * 0.55 + (1 - dd) * 0.35 - 0.05;
       if (ny > 0.35) l -= (ny - 0.35) * 0.6;
-      if (dd > lim - 0.07) l += ny < -0.2 ? 0.25 : -0.35;
-      const hsh = hash2(px, py);
-      if (hsh < 0.07) l -= 0.18; else if (hsh > 0.93) l += 0.18;
-      if (!winter && ((px * 5 + py * 9) % 13 === 0) && hash2(px >> 2, py >> 2) < 0.5) l -= 0.12;
+      if (dd > lim - 0.05) l += ny < -0.2 ? 0.25 : -0.35;
+      const hsh = hash2(qx, qy);
+      if (hsh < 0.06) l -= 0.16; else if (hsh > 0.94) l += 0.16;
+      // tufts: short darker strokes
+      if (!winter && hash2(qx, qy >> 1) > 0.965) l -= 0.14;
       const t = clamp(l, -1, 1);
       const col = t < 0 ? [lerp(base[0], dark[0], -t), lerp(base[1], dark[1], -t), lerp(base[2], dark[2], -t)]
         : [lerp(base[0], light[0], t), lerp(base[1], light[1], t), lerp(base[2], light[2], t)];
       p[k] = col[0]; p[k + 1] = col[1]; p[k + 2] = col[2];
-      if (!winter && hsh > 0.995) { p[k] = 240; p[k + 1] = 220; p[k + 2] = 90; }
-      // a rooftop meadow of wildflowers on some holes
-      if (roofFlowers && ny < 0.1 && dd < 0.8 && hash2(px >> 3, py >> 3) > 0.55 && hash2(px, py) > 0.975) { p[k] = petal[0]; p[k + 1] = petal[1]; p[k + 2] = petal[2]; }
-      if (!winter && hsh > 0.9975) { p[k] = 245; p[k + 1] = 245; p[k + 2] = 245; }
+      if (!winter && hsh > 0.997) { p[k] = 240; p[k + 1] = 220; p[k + 2] = 90; }
+      if (roofFlowers && ny < 0.1 && dd < 0.8 && hash2(qx >> 4, qy >> 4) > 0.55 && hash2(qx, qy) > 0.982) {
+        p[k] = petal[0]; p[k + 1] = petal[1]; p[k + 2] = petal[2];
+        if (hash2(qx + 1, qy) > 0.5) { const k2 = k + w * 4; if (k2 < p.length) { p[k2] = 70; p[k2 + 1] = 120; p[k2 + 2] = 50; } }
+      }
+      if (!winter && hsh > 0.9985) { p[k] = 245; p[k + 1] = 245; p[k + 2] = 245; }
     } else {
       const sy = (py - cy - 7) / ry, sx2 = (px - cx - 3) / rx;
       if (py > cy - ry * 0.3 && sx2 * sx2 + sy * sy < 1) { p[k] *= 0.68; p[k + 1] *= 0.72; p[k + 2] *= 0.74; }
     }
   }
-  ctx.putImageData(img, x0, y0);
+  ctx.putImageData(img, x0 - ox, y0 - oy);
   if (!h.built) return;
-  // Earth/stone surround and doorstep
-  const r = h.doorR + 4;
-  const dx = h.doorX, dy = h.doorY - h.doorR - 1;
+  ctx.save(); ctx.translate(-ox, -oy);
+  // stone, timber or brick round the door, at full detail
   const frame = h.v ? h.v.frame : 0;
-  // stone, timber or brick around the door
-  const FR = [['#7a6a52', '#9a9080', '#b0a690'], ['#5a3a22', '#7a5030', '#8a6440'], ['#7a4a3a', '#a0583e', '#b86a4a']][frame];
+  const FR = [['#6a5a44', '#9a9080', '#b0a690'], ['#4a3020', '#7a5030', '#8a6440'], ['#6a3a2a', '#a0583e', '#b86a4a']][frame];
+  const r = (h.doorR + 4) * G, dx = h.doorX * G, dy = (h.doorY - h.doorR - 1) * G;
   disc(ctx, dx, dy, r, FR[0]);
-  const n = frame === 1 ? 7 : 14;
+  ctx.fillStyle = FR[0]; ctx.fillRect(dx - r, dy, r * 2 + 1, (h.doorR + 1) * G);
+  const n = frame === 1 ? 9 : frame === 2 ? 18 : 15;
   for (let a = 0; a < n; a++) {
     const ang = Math.PI + (a / (n - 1)) * Math.PI;
-    const sx = dx + Math.cos(ang) * (r - 1.5), sy = dy + Math.sin(ang) * (r - 1.5);
-    ctx.fillStyle = a % 2 ? FR[1] : FR[2]; ctx.fillRect(Math.round(sx) - (frame === 1 ? 2 : 1), Math.round(sy) - 1, frame === 1 ? 4 : 3, 3);
+    const sx = Math.round(dx + Math.cos(ang) * (r - 3.5)), sy = Math.round(dy + Math.sin(ang) * (r - 3.5));
+    const sw = frame === 1 ? 7 : frame === 2 ? 5 : 5, sh = frame === 1 ? 4 : frame === 2 ? 3 : 5;
+    ctx.fillStyle = a % 2 ? FR[1] : FR[2]; ctx.fillRect(sx - (sw >> 1), sy - (sh >> 1), sw, sh);
+    ctx.fillStyle = shade(FR[2], 0.18); ctx.fillRect(sx - (sw >> 1), sy - (sh >> 1), sw - 1, 1);
   }
-  if (winter) for (let a = 0; a < 14; a++) { const ang = Math.PI + (a / 13) * Math.PI; ctx.fillStyle = '#f4f8ff'; ctx.fillRect(Math.round(dx + Math.cos(ang) * (r + 0.5)) - 1, Math.round(dy + Math.sin(ang) * (r + 0.5)) - 1, 3, 2); }
-  ctx.fillStyle = '#7a6a52'; ctx.fillRect(dx - r, dy, r * 2 + 1, h.doorR + 1);
-  ctx.fillStyle = '#a89a80'; ctx.fillRect(dx - h.doorR - 3, h.doorY, h.doorR * 2 + 7, 3);
-  ctx.fillStyle = '#8a7c64'; ctx.fillRect(dx - h.doorR - 3, h.doorY + 2, h.doorR * 2 + 7, 1);
-  for (const w of h.windows) {
-    if (h.v && h.v.square) { ctx.fillStyle = '#6a5a42'; ctx.fillRect(w.x - 6, w.y - 6, 13, 13); ctx.fillStyle = FR[1]; ctx.fillRect(w.x - 5, w.y - 5, 11, 11); }
-    else { disc(ctx, w.x, w.y, 6, '#6a5a42'); disc(ctx, w.x, w.y, 5, frame === 2 ? '#a0583e' : '#8a6a42'); }
+  for (const side of [-1, 1]) for (let k = 0; k < 3; k++) {
+    const sx = dx + side * (r - 4) - 2, sy = dy + 2 + k * 6;
+    ctx.fillStyle = k % 2 ? FR[1] : FR[2]; ctx.fillRect(sx, sy, 5, 5); ctx.fillStyle = shade(FR[2], 0.18); ctx.fillRect(sx, sy, 4, 1);
   }
-  if (h.roofWin) { disc(ctx, h.roofWin.x, h.roofWin.y, 5, '#6a5a42'); }
+  if (winter) for (let a = 0; a < 20; a++) { const ang = Math.PI + (a / 19) * Math.PI; ctx.fillStyle = '#f4f8ff'; ctx.fillRect(Math.round(dx + Math.cos(ang) * (r + 1)) - 2, Math.round(dy + Math.sin(ang) * (r + 1)) - 2, 4, 3); }
+  // the doorstep
+  const sx0 = (h.doorX - h.doorR - 3) * G, sw = (h.doorR * 2 + 7) * G, sy0 = h.doorY * G;
+  ctx.fillStyle = '#a89a80'; ctx.fillRect(sx0, sy0, sw, 5);
+  ctx.fillStyle = '#c8bca4'; ctx.fillRect(sx0 + 1, sy0, sw - 2, 1);
+  ctx.fillStyle = '#7a6c54'; ctx.fillRect(sx0, sy0 + 5, sw, 1);
+  // window surrounds
+  for (const wdw of h.windows) {
+    const wx = wdw.x * G, wy = wdw.y * G;
+    if (h.v && h.v.square) {
+      ctx.fillStyle = '#5a4a34'; ctx.fillRect(wx - 13, wy - 13, 27, 27); ctx.fillStyle = FR[1]; ctx.fillRect(wx - 11, wy - 11, 23, 23);
+      ctx.fillStyle = shade(FR[1], 0.15); ctx.fillRect(wx - 11, wy - 11, 23, 1);
+    } else {
+      disc(ctx, wx, wy, 12, '#5a4a34'); disc(ctx, wx, wy, 11, frame === 2 ? '#a0583e' : '#8a6a42');
+      for (let a = 0; a < 10; a++) { const ang = (a / 10) * Math.PI * 2; ctx.fillStyle = a % 2 ? shade(FR[1], 0.1) : FR[2]; ctx.fillRect(Math.round(wx + Math.cos(ang) * 10) - 1, Math.round(wy + Math.sin(ang) * 10) - 1, 3, 3); }
+    }
+  }
+  if (h.roofWin) { disc(ctx, h.roofWin.x * G, h.roofWin.y * G, 10, '#5a4a34'); disc(ctx, h.roofWin.x * G, h.roofWin.y * G, 9, '#8a6a42'); }
+  ctx.restore();
 }
 
 // ---------------------------------------------------------------------------
@@ -1174,125 +1293,153 @@ function buildWorldSprites() {
   SPR.items = { cake: makeItem('cake'), ale: makeItem('ale'), leaf: makeItem('leaf'), remedy: makeItem('remedy'), book: makeItem('book') };
 }
 
+// The round door, windows, porch, lantern and chimneys of a hobbit-hole,
+// drawn every frame (they open, light up and catch the snow) in half-pixels.
 function drawDoor(ctx, h) {
-  const r = h.doorR, x = h.doorX, y = h.doorY - r - 1;
+  ctx.save(); ctx.scale(1 / RS, 1 / RS);
+  const K = RS, V = h.v || {};
+  const r = h.doorR * K, x = h.doorX * K, y = (h.doorY - h.doorR - 1) * K;
   const open = h.doorAnim > 0;
-  const V = h.v || {};
-  disc(ctx, x, y, r, '#3a2a1a');
+  const winter = World.season === 'winter';
+  const dc = h.doorColor, dDark = shade(dc, -0.25), dLite = shade(dc, 0.22);
+  const R = (x0, y0, w, hh, col) => { ctx.fillStyle = col; ctx.fillRect(x0, y0, w, hh); };
+  // the frame
+  disc(ctx, x, y, r + 1, '#2a1c12'); R(x - r - 1, y, (r + 1) * 2 + 1, r + 2, '#2a1c12');
   if (open) {
-    disc(ctx, x, y, r - 1, h.lit ? '#e8a84a' : '#1a120a');
-    ctx.fillStyle = h.lit ? '#e8a84a' : '#1a120a'; ctx.fillRect(x - r + 1, y, r * 2 - 1, r);
-    ctx.fillStyle = h.doorColor; ctx.fillRect(x - r + 1, y - r + 3, 3, r * 2 - 2);
+    const glow = h.lit ? '#e8a84a' : '#1a120a';
+    disc(ctx, x, y, r - 1, glow); R(x - r + 1, y, r * 2 - 1, r + 1, glow);
+    if (h.lit) { disc(ctx, x, y + 4, r - 5, '#f4c070'); R(x - 3, y - 2, 6, r + 2, '#f8d890'); }
+    // the door swung open against the frame
+    R(x - r + 1, y - r + 4, 5, r * 2 - 3, dc); R(x - r + 1, y - r + 4, 1, r * 2 - 3, dDark);
   } else {
-    disc(ctx, x, y, r - 1, h.doorColor);
-    ctx.fillStyle = h.doorColor; ctx.fillRect(x - r + 1, y, r * 2 - 1, r);
-    ctx.fillStyle = shade(h.doorColor, -0.2);
-    if (V.door === 1) {
-      // a split stable door
-      ctx.fillRect(x - r + 1, y + 1, r * 2 - 1, 1);
-      for (let k = -r + 3; k < r - 1; k += 4) ctx.fillRect(x + k, y - r + 3, 1, r * 2 - 3);
-    } else if (V.door === 2) {
-      // studded planks
-      for (let k = -r + 3; k < r - 1; k += 3) ctx.fillRect(x + k, y - r + 3, 1, r * 2 - 3);
-      ctx.fillStyle = '#2a2018';
-      for (const [sx, sy] of [[-3, -3], [3, -3], [-3, 3], [3, 3]]) ctx.fillRect(x + sx, y + sy, 1, 1);
-    } else for (let k = -r + 3; k < r - 1; k += 3) ctx.fillRect(x + k, y - r + 3, 1, r * 2 - 3);
-    disc(ctx, x - 2, y - 3, 1, shade(h.doorColor, 0.2));
-    // the knob sits in the middle, as it should
-    ctx.fillStyle = '#e8c860'; ctx.fillRect(x - 1, y, 3, 3); ctx.fillStyle = '#fff2a0'; ctx.fillRect(x - 1, y, 1, 1);
+    disc(ctx, x, y, r - 1, dc); R(x - r + 1, y, r * 2 - 1, r + 1, dc);
+    // planks
+    for (let k = -r + 3; k < r - 1; k += 3) R(x + k, y - r + 3, 1, r * 2 - 2, dDark);
+    if (V.door === 1) { R(x - r + 1, y + 1, r * 2 - 1, 2, dDark); R(x - r + 1, y, r * 2 - 1, 1, dLite); }
+    // iron hinges, studs on the studded door
+    R(x - r + 1, y - 6, 8, 2, '#3a3a40'); R(x - r + 1, y + 8, 8, 2, '#3a3a40'); R(x - r + 7, y - 7, 2, 4, '#3a3a40'); R(x - r + 7, y + 7, 2, 4, '#3a3a40');
+    if (V.door === 2) for (const [ax, ay] of [[-5, -6], [5, -6], [-5, 6], [5, 6], [0, -9], [0, 9]]) { R(x + ax, y + ay, 2, 2, '#2a2018'); R(x + ax, y + ay, 1, 1, '#6a6a70'); }
+    // a highlight round the top of the door
+    for (let a = 0; a < 10; a++) { const ang = Math.PI * 1.15 + (a / 9) * Math.PI * 0.5; R(Math.round(x + Math.cos(ang) * (r - 3)), Math.round(y + Math.sin(ang) * (r - 3)), 2, 1, dLite); }
+    // the brass knob, in the middle as it should be
+    disc(ctx, x, y + 1, 3, '#b8902a'); disc(ctx, x, y + 1, 2, '#e8c860'); R(x - 1, y, 1, 1, '#fff2a0');
   }
-  ctx.fillStyle = '#3a2a1a'; ctx.fillRect(x - r, y, 1, r); ctx.fillRect(x + r, y, 1, r);
   if (V.porch) {
-    // a little timber porch roof
-    ctx.fillStyle = '#5a3a22'; ctx.fillRect(x - r - 4, y - r - 4, r * 2 + 9, 3);
-    ctx.fillStyle = '#7a5030'; ctx.fillRect(x - r - 3, y - r - 5, r * 2 + 7, 1);
-    ctx.fillRect(x - r - 4, y - r - 1, 2, r * 2 + 1); ctx.fillRect(x + r + 3, y - r - 1, 2, r * 2 + 1);
-    if (World.season === 'winter') { ctx.fillStyle = '#f4f8ff'; ctx.fillRect(x - r - 4, y - r - 6, r * 2 + 9, 2); }
+    // a little timber porch with a shingled roof
+    const pw = r * 2 + 18, px0 = x - r - 9, py0 = y - r - 9;
+    R(px0, py0, pw, 6, '#5a3a22'); R(px0 + 1, py0 - 1, pw - 2, 2, '#7a5030');
+    for (let k = 0; k < pw; k += 4) R(px0 + k, py0 + 2, 3, 1, '#4a2e1a');
+    R(px0, py0 + 4, 4, r * 2 + 6, '#5a3a22'); R(px0 + 1, py0 + 4, 1, r * 2 + 6, '#7a5030');
+    R(px0 + pw - 4, py0 + 4, 4, r * 2 + 6, '#4a2e1a'); R(px0 + pw - 3, py0 + 4, 1, r * 2 + 6, '#6a4426');
+    if (winter) { R(px0 - 1, py0 - 3, pw + 2, 3, '#f4f8ff'); R(px0, py0 - 4, pw, 1, '#ffffff'); }
   }
   for (const w of h.windows) {
-    const glass = h.lit ? (h.neon ? '#8af4ff' : '#ffd77a') : (h.neon ? '#2a4a6a' : '#41556a'), shine = h.lit ? '#fff0b0' : '#5a7088';
+    const wx = w.x * K, wy = w.y * K;
+    const glass = h.lit ? (h.neon ? '#8af4ff' : '#ffd77a') : (h.neon ? '#2a4a6a' : '#41556a');
+    const shine = h.lit ? '#fff0b0' : '#6a84a0', frame = V.frameCol || '#4a2e1a';
     if (V.square) {
-      ctx.fillStyle = glass; ctx.fillRect(w.x - 4, w.y - 4, 9, 9);
-      ctx.fillStyle = shine; ctx.fillRect(w.x - 3, w.y - 3, 2, 2);
-      ctx.fillStyle = V.frameCol || '#4a2e1a'; ctx.fillRect(w.x, w.y - 4, 1, 9); ctx.fillRect(w.x - 4, w.y, 9, 1);
-      // shutters
-      ctx.fillStyle = h.doorColor; ctx.fillRect(w.x - 8, w.y - 4, 3, 9); ctx.fillRect(w.x + 6, w.y - 4, 3, 9);
+      R(wx - 9, wy - 9, 19, 19, frame); R(wx - 8, wy - 8, 17, 17, glass);
+      R(wx - 6, wy - 6, 3, 3, shine); R(wx - 7, wy - 7, 1, 1, shine);
+      R(wx, wy - 8, 1, 17, frame); R(wx - 8, wy, 17, 1, frame);
+      // shutters with planks
+      for (const sxo of [-16, 11]) { R(wx + sxo, wy - 9, 6, 19, dc); R(wx + sxo + 2, wy - 9, 1, 19, dDark); R(wx + sxo, wy - 9, 6, 1, dLite); R(wx + sxo + 1, wy - 3, 4, 1, dDark); R(wx + sxo + 1, wy + 3, 4, 1, dDark); }
     } else {
-      disc(ctx, w.x, w.y, 4, glass);
-      ctx.fillStyle = shine; ctx.fillRect(w.x - 2, w.y - 2, 2, 2);
-      ctx.fillStyle = V.frameCol || '#4a2e1a'; ctx.fillRect(w.x, w.y - 4, 1, 9); ctx.fillRect(w.x - 4, w.y, 9, 1);
+      disc(ctx, wx, wy, 9, frame); disc(ctx, wx, wy, 8, glass);
+      R(wx - 5, wy - 5, 3, 2, shine); R(wx - 5, wy - 3, 1, 1, shine);
+      R(wx, wy - 8, 1, 17, frame); R(wx - 8, wy, 17, 1, frame);
     }
-    if (V.boxes && World.season !== 'winter') {
-      ctx.fillStyle = '#6a4426'; ctx.fillRect(w.x - 6, w.y + 6, 13, 3);
-      for (let k = 0; k < 5; k++) { ctx.fillStyle = ['#e04a5a', '#f2d24a', '#fff', '#c070e0', '#e04a5a'][(k + h.id) % 5]; ctx.fillRect(w.x - 5 + k * 3, w.y + 4 + (k % 2), 2, 2); }
-      ctx.fillStyle = '#3a7a2a'; ctx.fillRect(w.x - 5, w.y + 5, 11, 1);
+    if (V.boxes && !winter) {
+      R(wx - 13, wy + 12, 27, 5, '#6a4426'); R(wx - 13, wy + 12, 27, 1, '#8a6440'); R(wx - 13, wy + 16, 27, 1, '#4a2e1a');
+      R(wx - 12, wy + 10, 25, 2, '#3a7a2a');
+      for (let k = 0; k < 9; k++) { R(wx - 12 + k * 3, wy + 8 + (k % 2), 2, 2, ['#e04a5a', '#f2d24a', '#ffffff', '#c070e0', '#f08a4a'][(k + h.id) % 5]); }
     }
   }
   if (h.roofWin) {
-    disc(ctx, h.roofWin.x, h.roofWin.y, 3, h.lit ? '#ffd77a' : '#41556a');
-    ctx.fillStyle = '#4a2e1a'; ctx.fillRect(h.roofWin.x, h.roofWin.y - 3, 1, 7);
+    const rx = h.roofWin.x * K, ry = h.roofWin.y * K;
+    disc(ctx, rx, ry, 7, '#4a2e1a'); disc(ctx, rx, ry, 6, h.lit ? '#ffd77a' : '#41556a');
+    R(rx, ry - 6, 1, 13, '#4a2e1a'); R(rx - 3, ry - 3, 2, 2, h.lit ? '#fff0b0' : '#6a84a0');
   }
   if (V.lantern) {
-    const lx = x + r + (V.porch ? 7 : 4), ly = y - 2;
-    ctx.fillStyle = '#2a2018'; ctx.fillRect(lx, ly - 4, 1, 3); ctx.fillRect(lx - 2, ly - 1, 5, 6);
-    ctx.fillStyle = Game.darkness > 0.1 ? '#ffd77a' : '#c8b890'; ctx.fillRect(lx - 1, ly, 3, 4);
+    const lx = x + r + (V.porch ? 14 : 8), ly = y - 4;
+    R(lx - 3, ly - 8, 6, 2, '#2a2018'); R(lx, ly - 8, 1, 3, '#2a2018');
+    R(lx - 4, ly - 4, 9, 12, '#2a2018'); R(lx - 3, ly - 3, 7, 10, Game.darkness > 0.1 ? '#ffd77a' : '#c8b890');
+    R(lx - 3, ly + 2, 7, 1, '#2a2018'); R(lx, ly - 3, 1, 10, '#2a2018');
+    if (Game.darkness > 0.1) R(lx - 2, ly - 2, 2, 3, '#fff4c0');
+    R(lx - 5, ly + 8, 11, 2, '#2a2018');
   }
-  // chimneys
+  // chimneys: brick, with a capstone
   for (const c of [h.chimney, h.chimney2]) {
     if (!c) continue;
-    ctx.fillStyle = '#7a6a5a'; ctx.fillRect(c.x - 3, c.y - 8, 7, 9);
-    ctx.fillStyle = '#9a8a7a'; ctx.fillRect(c.x - 3, c.y - 8, 2, 9);
-    ctx.fillStyle = '#4a3a2a'; ctx.fillRect(c.x - 4, c.y - 10, 9, 3);
-    if (World.season === 'winter') { ctx.fillStyle = '#f4f8ff'; ctx.fillRect(c.x - 4, c.y - 11, 9, 1); }
+    const cx = c.x * K, cy = c.y * K;
+    R(cx - 6, cy - 16, 14, 18, '#7a5a4a');
+    for (let row = 0; row < 6; row++) for (let col = 0; col < 3; col++) R(cx - 6 + col * 5 + (row % 2) * 2, cy - 16 + row * 3, 4, 2, row % 3 === 1 ? '#9a6a54' : '#8a5e4a');
+    R(cx - 6, cy - 16, 2, 18, '#6a4a3c');
+    R(cx - 8, cy - 20, 18, 5, '#4a3a2a'); R(cx - 8, cy - 20, 18, 1, '#6a5a4a');
+    if (winter) { R(cx - 8, cy - 22, 18, 2, '#f4f8ff'); R(cx - 7, cy - 23, 16, 1, '#ffffff'); }
   }
+  ctx.restore();
   if (h.neon) drawNeonHome(ctx, h);
 }
 
-// A site being dug: stakes, a dirt heap that grows as work progresses.
+// A site being dug: stakes, string, and a heap of earth that grows as work goes on.
 function drawSite(ctx, h) {
-  const p = h.buildProg || 0;
-  const x = h.doorX, y = h.doorY;
-  ctx.fillStyle = '#5a3a22';
-  const rr = Math.round(3 + p * 5);
+  ctx.save(); ctx.scale(1 / RS, 1 / RS);
+  const K = RS, p = h.buildProg || 0;
+  const x = h.doorX * K, y = h.doorY * K;
+  const rr = Math.round((3 + p * 5) * K);
   disc(ctx, x, y - rr, rr, '#3a2414');
-  if (p > 0.5) { disc(ctx, x, y - rr, Math.max(1, rr - 2), '#6a4426'); }
-  ctx.fillStyle = '#c9a46a';
-  for (const ox of [-14, 14]) { ctx.fillRect(x + ox, y - 10, 2, 12); ctx.fillStyle = '#f4efe2'; ctx.fillRect(x + ox - 1, y - 11, 4, 2); ctx.fillStyle = '#c9a46a'; }
+  disc(ctx, x, y - rr, Math.max(1, rr - 3), p > 0.5 ? '#6a4426' : '#4a2e1a');
+  for (let k = 0; k < 8; k++) { ctx.fillStyle = '#8a6440'; ctx.fillRect(x - rr + ((k * 7) % (rr * 2)), y - rr - 2 + ((k * 5) % rr), 2, 2); }
+  for (const ox of [-28, 28]) {
+    ctx.fillStyle = '#c9a46a'; ctx.fillRect(x + ox, y - 20, 3, 24); ctx.fillStyle = '#a07a50'; ctx.fillRect(x + ox + 2, y - 20, 1, 24);
+    ctx.fillStyle = '#f4efe2'; ctx.fillRect(x + ox - 1, y - 22, 5, 3);
+  }
+  ctx.fillStyle = 'rgba(244,239,226,0.8)'; ctx.fillRect(x - 27, y - 18, 56, 1);
+  ctx.restore();
 }
 
+// The wheel turns at double resolution: spokes, a rim, paddles that drip.
 function drawMillWheel(ctx, w = World.millWheel) {
-  const r = w.r;
-  ctx.fillStyle = '#4a2e1a';
+  ctx.save(); ctx.scale(1 / RS, 1 / RS);
+  const K = RS, r = w.r * K, cx = Math.round(w.x * K), cy = Math.round(w.y * K);
+  const R = (x, y, ww, hh, col) => { ctx.fillStyle = col; ctx.fillRect(x, y, ww, hh); };
+  // the rim
+  for (let k = 0; k < 64; k++) { const a = w.a + (k / 64) * Math.PI * 2; R(Math.round(cx + Math.cos(a) * (r - 4)) - 1, Math.round(cy + Math.sin(a) * (r - 4)) - 1, 3, 3, '#5a3a22'); }
   for (let k = 0; k < 8; k++) {
-    const a = w.a + (k / 8) * Math.PI * 2;
-    for (let s = 0; s < r; s += 1) ctx.fillRect(Math.round(w.x + Math.cos(a) * s), Math.round(w.y + Math.sin(a) * s), 2, 2);
-    ctx.fillStyle = '#7a5030';
-    ctx.fillRect(Math.round(w.x + Math.cos(a) * r) - 2, Math.round(w.y + Math.sin(a) * r) - 2, 5, 5);
-    ctx.fillStyle = '#4a2e1a';
+    const a = w.a + (k / 8) * Math.PI * 2, ca = Math.cos(a), sa = Math.sin(a);
+    for (let s2 = 0; s2 < r - 4; s2++) R(Math.round(cx + ca * s2) - 1, Math.round(cy + sa * s2) - 1, 3, 3, '#4a2e1a');
+    // a paddle, with a wet highlight
+    const px = Math.round(cx + ca * r), py = Math.round(cy + sa * r);
+    R(px - 4, py - 4, 9, 9, '#7a5030'); R(px - 4, py - 4, 9, 2, '#9a7048');
+    if (sa > 0.6) R(px - 1, py + 5, 2, 3, '#a8d8f0');
   }
-  ctx.fillStyle = '#2a1c12'; ctx.fillRect(w.x - 2, w.y - 2, 5, 5);
+  disc(ctx, cx, cy, 5, '#2a1c12'); disc(ctx, cx, cy, 2, '#6a6a70');
+  ctx.restore();
 }
 
 // Four lattice sails on the windmill's cap.
 function drawWindmillSails(ctx) {
   const w = World.windmill;
+  ctx.save(); ctx.scale(1 / RS, 1 / RS);
+  const K = RS;
   for (let k = 0; k < 4; k++) {
     const a = w.a + (k / 4) * Math.PI * 2;
     const ca = Math.cos(a), sa = Math.sin(a);
-    for (let s = 3; s < w.r; s++) {
-      const px = w.x + ca * s, py = w.y + sa * s * 0.9;
-      ctx.fillStyle = '#4a2e1a'; ctx.fillRect(Math.round(px), Math.round(py), 2, 2);
-      if (s > 7) {
-        // the cloth of the sail, to one side of the stock
-        for (let t = 1; t <= 9; t++) {
+    for (let s2 = 6; s2 < w.r * K; s2++) {
+      const px = w.x * K + ca * s2, py = w.y * K + sa * s2 * 0.9;
+      ctx.fillStyle = '#4a2e1a'; ctx.fillRect(Math.round(px) - 1, Math.round(py) - 1, 3, 3);
+      if (s2 > 14) {
+        // the cloth of the sail, laid over a lattice, to one side of the stock
+        for (let t = 2; t <= 18; t++) {
           const qx = px - sa * t, qy = py + ca * t * 0.9;
-          ctx.fillStyle = (s + t) % 4 === 0 ? '#8a6a4a' : '#efe6cf';
+          ctx.fillStyle = (s2 % 8 === 0 || t % 6 === 0) ? '#8a6a4a' : t > 16 ? '#d8cfb8' : '#efe6cf';
           ctx.fillRect(Math.round(qx), Math.round(qy), 1, 1);
         }
       }
     }
   }
-  disc(ctx, w.x, w.y, 3, '#3a2414');
+  disc(ctx, w.x * K, w.y * K, 6, '#3a2414'); disc(ctx, w.x * K, w.y * K, 2, '#7a5030');
+  ctx.restore();
 }
 
 function drawPartyLanterns(ctx, time, on) {
@@ -1304,17 +1451,18 @@ function drawPartyLanterns(ctx, time, on) {
     const n = 28;
     const sag = 8 + Math.hypot(p.x - top.x, p.y - top.y) * 0.08;
     ctx.fillStyle = 'rgba(42,28,18,0.75)';
-    for (let k = 1; k < n; k++) {
-      const t = k / n;
-      ctx.fillRect(Math.round(lerp(top.x, p.x, t)), Math.round(lerp(top.y, p.y, t) + Math.sin(t * Math.PI) * sag), 1, 1);
+    for (let k = 1; k < n * 3; k++) {
+      const t = k / (n * 3);
+      ctx.fillRect(Math.round(lerp(top.x, p.x, t) * RS) / RS, Math.round((lerp(top.y, p.y, t) + Math.sin(t * Math.PI) * sag) * RS) / RS, 0.5, 0.5);
     }
     for (let k = 3; k < n - 1; k += 4) {
       const t = k / n;
       const x = Math.round(lerp(top.x, p.x, t)), y = Math.round(lerp(top.y, p.y, t) + Math.sin(t * Math.PI) * sag) + 1;
       const col = cols[(i + k) % cols.length];
       ctx.fillStyle = on ? (Math.sin(time * 3 + i * 2 + k) > -0.85 ? col : shade(col, -0.3)) : shade(col, -0.45);
-      ctx.fillRect(x - 1, y, 3, 3);
-      if (on) { ctx.fillStyle = 'rgba(255,255,230,0.8)'; ctx.fillRect(x, y, 1, 1); }
+      ctx.fillRect(x - 1, y + 0.5, 3, 2.5); ctx.fillRect(x - 0.5, y, 2, 3.5);
+      ctx.fillStyle = 'rgba(42,28,18,0.8)'; ctx.fillRect(x, y - 0.5, 1, 0.5); ctx.fillRect(x - 0.5, y + 3.5, 2, 0.5);
+      if (on) { ctx.fillStyle = 'rgba(255,255,230,0.85)'; ctx.fillRect(x - 0.5, y + 1, 1, 1); }
     }
   }
 }
@@ -1323,10 +1471,11 @@ function drawBonfire(ctx, time, lit) {
   const { x, y } = World.bonfire;
   ctx.fillStyle = '#4a2e1a'; ctx.fillRect(x - 7, y - 2, 14, 3); ctx.fillStyle = '#6a4426'; ctx.fillRect(x - 5, y - 4, 10, 2);
   if (!lit) return;
-  for (let k = 0; k < 7; k++) {
-    const fx = x - 5 + k * 1.7, h = 6 + Math.abs(Math.sin(time * 9 + k * 1.3)) * 7;
-    ctx.fillStyle = k % 2 ? '#ff9a2a' : '#ffd34a';
-    ctx.fillRect(Math.round(fx), Math.round(y - 3 - h), 2, Math.round(h));
+  for (let k = 0; k < 14; k++) {
+    const fx = x - 5.5 + k * 0.85, h = 5 + Math.abs(Math.sin(time * 9 + k * 1.3)) * 8 * (1 - Math.abs(k - 6.5) / 9);
+    ctx.fillStyle = k % 3 === 0 ? '#e8602a' : k % 2 ? '#ff9a2a' : '#ffd34a';
+    ctx.fillRect(Math.round(fx * RS) / RS, Math.round((y - 3 - h) * RS) / RS, 1, Math.round(h * RS) / RS);
   }
-  ctx.fillStyle = '#fff2a0'; ctx.fillRect(x - 1, y - 8, 3, 4);
+  ctx.fillStyle = '#fff2a0'; ctx.fillRect(x - 1, y - 8, 2.5, 4);
+  for (let k = 0; k < 4; k++) { const ey = y - 12 - ((time * 12 + k * 5) % 16); ctx.fillStyle = 'rgba(255,200,90,0.8)'; ctx.fillRect(Math.round((x - 3 + k * 2 + Math.sin(time * 4 + k) * 2) * RS) / RS, Math.round(ey * RS) / RS, 0.5, 0.5); }
 }
