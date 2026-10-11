@@ -178,34 +178,51 @@ class Villager {
     const st = a.stages || (this.stage === 'baby' ? null : AWAKE);
     return st ? st.includes(this.stage) : false;
   }
-  score(a, h) {
-    if (a.queued || !this.canDo(a)) return -1;
-    if (a.job && a.job !== this.job && !(a.jobs && a.jobs.includes(this.job))) return -1;
-    if (a.avail && !a.avail(this, h)) return -1;
-    if (this.cool[a.id] && this.cool[a.id] > Game.time) return -1;
+  // How much this villager wants to do an action right now. Pass `ex` (an
+  // object) to have the score explained: why it's ruled out, or the relief it
+  // promises for each drive and every multiplier applied after (dev mode).
+  score(a, h, ex) {
+    const no = (why) => { if (ex) ex.blocked = why; return -1; };
+    if (a.queued) return no('only runs when queued');
+    if (!this.canDo(a)) return no(`not for a ${this.stage}`);
+    if (a.job && a.job !== this.job && !(a.jobs && a.jobs.includes(this.job))) return no(`needs a ${JOBS[a.job] ? JOBS[a.job].label.toLowerCase() : a.job}`);
+    if (a.avail && !a.avail(this, h)) return no('not possible now');
+    if (this.cool[a.id] && this.cool[a.id] > Game.time) return no(`cooling down, ${Math.ceil(this.cool[a.id] - Game.time)} min`);
     let s = 0;
-    for (const d in a.sat) { const red = -a.sat[d]; if (red > 0) s += Math.pow(this.drives[d], 1.5) * red; }
-    if (a.extra) s += a.extra(this, h);
-    s *= this.weights[a.id] * (this.genes.taste[a.id] || 1);
-    if (a.time) s *= a.time(h, this);
-    if (a.trait) s *= a.trait(this);
-    if (a.meal && isMealTime(h)) s *= 1.8;
-    if (a.outdoor && Game.raining) s *= 0.3;
-    if (a.outdoor && World.season === 'winter' && !a.job) s *= 0.6;
-    if (a.job && this.stage === 'elder' && a.job !== 'storyteller') s *= 0.5;
-    if (this.isSick() && a.id !== 'sleep' && a.id !== 'remedy_item') s *= 0.4;
-    if (this.stage === 'elder' && (a.id === 'party' || a.id === 'play')) s *= 0.7;
-    if (this.lastAction === a.id && a.id !== 'sleep' && !a.job) s *= 0.75;
+    if (ex) { ex.relief = []; ex.mul = []; }
+    for (const d in a.sat) {
+      const red = -a.sat[d];
+      if (red > 0) { const c = Math.pow(this.drives[d], 1.5) * red; s += c; if (ex && c > 0.001) ex.relief.push([d, c]); }
+    }
+    if (a.extra) { const e = a.extra(this, h); s += e; if (ex) ex.extra = e; }
+    if (ex) ex.base = s;
+    const mul = (name, f) => { if (f === 1) return; s *= f; if (ex) ex.mul.push([name, f]); };
+    mul('habit', this.weights[a.id]);
+    mul('instinct', this.genes.taste[a.id] || 1);
+    if (a.time) mul('time of day', a.time(h, this));
+    if (a.trait) mul('personality', a.trait(this));
+    if (a.meal && isMealTime(h)) mul('mealtime', 1.8);
+    if (a.outdoor && Game.raining) mul('rain', 0.3);
+    if (a.outdoor && World.season === 'winter' && !a.job) mul('winter', 0.6);
+    if (a.job && this.stage === 'elder' && a.job !== 'storyteller') mul('elderly', 0.5);
+    if (this.isSick() && a.id !== 'sleep' && a.id !== 'remedy_item') mul('poorly', 0.4);
+    if (this.stage === 'elder' && (a.id === 'party' || a.id === 'play')) mul('elderly', 0.7);
+    if (this.lastAction === a.id && a.id !== 'sleep' && !a.job) mul('did it last', 0.75);
     // once out at work, they tend to stay on for another stint rather than trudge home
-    if (a.job && this.lastJobAt && Game.time - this.lastJobAt < 40 && this.lastJob === a.id) s *= 2;
-    return s + Math.random() * 0.03;
+    if (a.job && this.lastJobAt && Game.time - this.lastJobAt < 40 && this.lastJob === a.id) mul('on a roll', 2);
+    const noise = Math.random() * 0.03;
+    if (ex) ex.noise = noise;
+    return s + noise;
   }
 
+  // Picks something to do: anything queued first, otherwise one of the three
+  // best-scoring actions, weighted by score squared. Each choice is kept, with
+  // its runners-up, for dev mode.
   think(h) {
     this.thinkDelay = 2;
     if (this.queue.length) {
       const q = this.queue.shift();
-      if (this.begin(q.a, h, q.extra)) return;
+      if (this.begin(q.a, h, q.extra)) { this.noteDecision(q.a.id, 'queued', []); return; }
     }
     const scored = [];
     for (const k in ACTIONS) {
@@ -214,15 +231,23 @@ class Villager {
     }
     scored.sort((a, b) => b[0] - a[0]);
     const top = scored.slice(0, 3);
+    const options = scored.slice(0, 5).map(([sc, a]) => [a.id, sc]);
     for (let attempt = 0; attempt < 3 && top.length; attempt++) {
       const total = top.reduce((t, x) => t + x[0] * x[0], 0);
       let r = Math.random() * total, chosen = top[0];
       for (const x of top) { r -= x[0] * x[0]; if (r <= 0) { chosen = x; break; } }
-      if (this.begin(chosen[1], h)) return;
+      if (this.begin(chosen[1], h)) { this.noteDecision(chosen[1].id, attempt ? `picked (try ${attempt + 1}, the first had nowhere to go)` : 'picked', options); return; }
       top.splice(top.indexOf(chosen), 1);
     }
-    if (this.stage === 'baby') this.begin(ACTIONS.cradle, h);
-    else this.begin(ACTIONS.stroll, h);
+    const fallback = this.stage === 'baby' ? ACTIONS.cradle : ACTIONS.stroll;
+    this.begin(fallback, h);
+    this.noteDecision(fallback.id, 'fallback: nothing else worked out', options);
+  }
+  noteDecision(id, how, options) {
+    const d = { t: Game.time, id, how, options };
+    (this.decisions || (this.decisions = [])).unshift(d);
+    if (this.decisions.length > 8) this.decisions.length = 8;
+    if (typeof devLog === 'function' && Game.selected === this) devLog('decide', `${this.first} chose ${id} (${how})${options.length ? ' over ' + options.filter((o) => o[0] !== id).slice(0, 3).map((o) => `${o[0]} ${o[1].toFixed(2)}`).join(', ') : ''}`);
   }
 
   begin(a, h, extra) {
@@ -549,7 +574,9 @@ class Villager {
     const speaker = R.chance(0.5) ? this : p, other = speaker === this ? p : this;
     const mode = task.data.quarrel ? 'quarrel' : task.data.court ? 'court' : null;
     other.pendingReply = null;
-    speaker.say(converse(speaker, other, mode));
+    const said = converse(speaker, other, mode);
+    speaker.say(said);
+    if (Game.selected === speaker || Game.selected === other) devLog('talk', `${speaker.first} to ${other.first}${mode ? ' (' + mode + ')' : ''}: "${said}"`);
     if (mode === 'quarrel') { FX.puff(speaker.x, speaker.y - 20); task.data.reply = { who: other, to: speaker, kind: 'quarrel' }; return; }
     if (mode === 'court' && R.chance(0.6)) FX.hearts((this.x + p.x) / 2, Math.min(this.y, p.y) - 18);
     if (other.pendingReply) task.data.reply = { who: other, to: speaker, kind: other.pendingReply };

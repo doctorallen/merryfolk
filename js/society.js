@@ -129,6 +129,7 @@ function assignJobs(announce = true) {
     }
     if (!best || (v.stage === 'elder' && best !== 'storyteller' && need(best) <= 0)) continue;
     v.job = best; counts[best]++;
+    devLog('jobs', `${v.first} took up ${best} (score ${Math.round(bs)}: fit ${Math.round(jobFit(v, best))}, ${counts[best]}/${targets[best]} now)`);
     if (announce) {
       const fam = v.parents.some((p) => { const pp = person(p); return pp && pp.job === best; });
       chronicle(`${v.name()} has taken up the ${JOBS[best].label.toLowerCase()}'s trade${fam ? ', just like their parent before them' : ''}.`, 'work');
@@ -145,6 +146,7 @@ function assignJobs(announce = true) {
     if (best && R.chance(essentialGap ? 0.8 : 0.35)) {
       chronicle(`${v.first} has hung up the ${JOBS[v.job].label.toLowerCase()}'s apron to become a ${JOBS[best].label.toLowerCase()}.`, 'work');
       v.remember(`Changed trade: ${JOBS[v.job].label} to ${JOBS[best].label}.`, 0);
+      devLog('jobs', `${v.first} switched ${v.job} → ${best} (${v.job} over-staffed, fit for ${best} ${Math.round(bs)})`);
       counts[v.job]--; counts[best]++; v.job = best;
     }
   }
@@ -161,6 +163,7 @@ function emptiestHome(exclude = -1) {
 }
 function moveHome(v, h) {
   if (v.homeId === h.id) return;
+  devLog('homes', `${v.first} moved from ${World.homes[v.homeId] ? World.homes[v.homeId].name : '?'} to ${h.name} (now ${residentsOf(h).length + 1} there)`);
   v.homeId = h.id;
   for (const b of Game.villagers) if (b.stage === 'baby' && b.parents.includes(v.id)) b.homeId = h.id;
 }
@@ -387,7 +390,7 @@ function dailySociety() {
       a.remember(`Parted ways with ${b.first}.`, -1); b.remember(`Parted ways with ${a.first}.`, -1);
       continue;
     }
-    if (l >= 0.6 && R.chance(0.6)) wed(a, b);
+    if (l >= 0.6) { const yes = R.chance(0.6); devLog('family', `${a.first} & ${b.first}: love ${l.toFixed(2)}, wedding roll (60%) → ${yes ? 'wed!' : 'not yet'}`); if (yes) wed(a, b); }
   }
 
   // expecting
@@ -403,7 +406,9 @@ function dailySociety() {
     const crowded = !World.lots.some((l) => l.kind === 'home' && l.state === 'planned') && housingNeed() > 1 ? 0.4 : 1;
     const mother = a.genes.sex === 'f' ? a : b, father = mother === a ? b : a;
     if (mother.genes.sex !== 'f' || father.genes.sex !== 'm') continue;
-    if (R.chance((0.35 * (a.mood() + b.mood()) / 2 + 0.12) * crowded)) {
+    const pBaby = (0.35 * (a.mood() + b.mood()) / 2 + 0.12) * crowded, baby = R.chance(pBaby);
+    devLog('family', `${mother.first} & ${father.first}: chance of a baby ${Math.round(pBaby * 100)}%${crowded < 1 ? ' (village crowded)' : ''}, ${kids}/${want} children → ${baby ? 'expecting!' : 'not this time'}`);
+    if (baby) {
       mother.expecting = { due: Game.day + 1, with: father.id };
       chronicle(`${mother.first} and ${father.first} are expecting a little one! The knitting needles are out.`, 'birth');
     }

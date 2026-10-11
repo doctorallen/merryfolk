@@ -162,6 +162,7 @@ function riftShy(a, b) {
   const [rift, hill] = a.isRiftborn() && !b.isRiftborn() ? [a, b] : b.isRiftborn() && !a.isRiftborn() ? [b, a] : [null, null];
   if (!rift || hill !== b) return false;
   if ((hill.rel[rift.id] || 0) > 0.3 || !R.chance(riftWary(hill) * 0.75)) return false;
+  devLog('rift', `${hill.first} shied away from ${rift.first} (wariness ${riftWary(hill).toFixed(2)})`);
   hill.say(R.pick(hill.isChild() ? RIFT_STARTLED_SAY.kid : RIFT_SHY_SAY), 3);
   rift.say(R.pick(RIFT_SHUNNED_SAY), 3);
   rift.cool.chat = Game.time + 25;
@@ -182,6 +183,7 @@ function riftMeeting(a, b) {
     const lead = a.task && a.task.data && a.task.data.leader ? a.task.data : null;
     if (lead) { lead.reply = { who: rift, to: hill, text: fillLine(rift, R.pick(RIFT_HELLO_BACK), { name: hill.first }) }; lead.talkT = 5; }
     hill.remember(`Met ${rift.first}, one of the rift-folk. ${bold > 0.55 ? 'Fascinating!' : 'Nicer than I expected.'}`, 1);
+    devLog('rift', `${hill.first} met ${rift.first} for the first time (boldness ${bold.toFixed(2)}, novelty ${nov.toFixed(2)})`);
     rift.remember(`${hill.first} came and said hello. Friendly lot, the hill-folk.`, 1);
     // the bold hit it off; the wary are polite but stiff
     hill.bond(rift, nov * (bold > 0.55 ? 0.16 : 0.05));
@@ -210,6 +212,7 @@ function openRift(byPlayer = false) {
   const crew = Math.max(0, Math.min(room - 1, food < pop * 0.4 ? 0 : lean ? 1 : R.weighted([[4, 1], [3, 2], [1, 3]])));
   const r = { x: spot.x, y: spot.y, born: Game.time, life: R.f(150, 260), a: 0, crew, sent: 0, nextOut: R.f(18, 30), seed: R.i(0, 9999), place: placeName(spot.x, spot.y) };
   World.rifts.push(r);
+  devLog('rift', `rift opened ${r.place}: crew ${crew} (food ${Math.round(food)} for ${pop} folk${lean ? ', lean or winter: small crew' : ''}${byPlayer ? ', opened by you' : ''})`);
   Game.stats.rifts = (Game.stats.rifts || 0) + 1;
   const first = Game.stats.rifts === 1;
   chronicle(first
@@ -261,13 +264,14 @@ function updateRifts(dtMin) {
   if (Game.time >= Game.riftNext) {
     if (Village.riftsOn && Game.villagers.length) openRift();
     Game.riftNext = Game.time + 1440 * R.f(1.6, 3.2);
+    devLog('rift', `next rift scheduled in ${((Game.riftNext - Game.time) / 60).toFixed(1)} h${Village.riftsOn ? '' : ' (rifts are switched off)'}`);
   }
   for (const r of World.rifts) {
     const age = Game.time - r.born;
     if (!r.closing) r.a = Math.min(1, r.a + dtMin / 20);
     r.nextOut -= dtMin;
     if (!r.closing && r.a >= 1 && r.sent < r.crew && r.nextOut <= 0) { if (!arriveFromRift(r)) r.crew = r.sent; r.nextOut = R.f(15, 35); }
-    if (!r.closing && age > r.life && r.sent >= r.crew) r.closing = true;
+    if (!r.closing && age > r.life && r.sent >= r.crew) { r.closing = true; devLog('rift', `rift ${r.place} closing after ${Math.round(age)} min`); }
     if (r.closing) {
       r.a -= dtMin / 15;
       if (r.a <= 0) {
@@ -297,6 +301,7 @@ function shiftWays(v, d) {
   if (t === before) return;
   if (t >= 2 && !v.visor && v.isGrown() && R.chance(0.35)) v.visor = true;
   v.refreshSprites();
+  devLog('rift', `${v.first}'s rift ways ${before} → ${t} (${v.tech.toFixed(2)})`);
   techMilestone(v, before, t);
 }
 
@@ -475,6 +480,7 @@ function openHomeRift() {
     const sp = rb.find((o) => o.id === v.spouse);
     const t = sp ? (ties(v) + ties(sp)) / 2 : ties(v);
     const pGo = clamp(0.85 - t * 0.32, 0.03, 0.9), go = R.chance(pGo);
+    devLog('rift', `${v.first}${sp ? ' & ' + sp.first : ''}: ties ${t.toFixed(2)} → ${Math.round(pGo * 100)}% chance of going home → ${go ? 'going' : 'staying'}`);
     decided.set(v.id, go); if (sp) decided.set(sp.id, go);
   }
   // little ones go where their parents go

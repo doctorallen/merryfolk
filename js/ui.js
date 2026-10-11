@@ -11,6 +11,7 @@ const $ = (id) => document.getElementById(id);
 // ---------------------------------------------------------------------------
 const QUIET_KINDS = ['info', 'harvest', 'work', 'learn', 'letter', 'quarrel', 'sick'];
 function chronicle(text, kind = 'info') {
+  devLog({ rift: 'rift', build: 'town', love: 'family', birth: 'family', work: 'jobs', party: 'party', adventure: 'travel', letter: 'travel', season: 'weather' }[kind] || 'story', text);
   Game.log.unshift({ day: Game.day, time: fmtTime(Game.time), text, kind });
   if (Game.log.length > 80) Game.log.length = 80;
   renderLog();
@@ -103,6 +104,7 @@ function buildUI() {
   $('btn-folk').addEventListener('click', () => { const r = $('roster'); r.hidden = !r.hidden; if (!r.hidden) renderRoster(); });
   $('btn-village').addEventListener('click', toggleVillage);
   $('btn-zoomin').addEventListener('click', () => zoomStep(1));
+  $('btn-dev').addEventListener('click', () => devToggle());
   $('btn-zoomout').addEventListener('click', () => zoomStep(-1));
   $('roster-close').addEventListener('click', () => { $('roster').hidden = true; });
   $('panel-close').addEventListener('click', () => selectVillager(null));

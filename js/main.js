@@ -256,6 +256,7 @@ function onHour(h) {
   const season = World.season;
   // weather, by season
   const w = Game.weather;
+  const logWeather = () => { if (Game.weather !== w) devLog('weather', `${w} → ${Game.weather}${Game.raining ? ` until ${fmtTime(Game.rainUntil)}` : ''}`); };
   if (w === 'rain' || w === 'storm' || w === 'snow') {
     if (Game.time >= Game.rainUntil) { Game.weather = 'cloudy'; Game.raining = false; }
   } else if (w === 'fog') {
@@ -276,6 +277,7 @@ function onHour(h) {
     if (season === 'autumn' && h === 5 && Math.random() < 0.4) Game.weather = 'fog';
     else if (Math.random() < 0.09) Game.weather = 'cloudy';
   }
+  logWeather();
   // evening hearths, parties and fireworks
   if (h === 19) lightHearths();
   if (h === 18 && !Game.party.on && !Game.raining) {
@@ -772,6 +774,7 @@ function renderOverlay() {
     octx.fillStyle = 'rgba(30,20,10,0.85)'; octx.fillRect(x, y, tw + 14, lines.length * 18 + 8);
     lines.forEach((l, i) => { octx.fillStyle = i === 0 ? '#ffe680' : '#fff6e0'; octx.fillText(l, x + 7, y + 13 + i * 18); });
   }
+  devOverlay(octx, z, cx, cy, W, H);
 }
 
 // ---------------------------------------------------------------------------
@@ -931,6 +934,7 @@ function setupInput() {
     if (k === '+' || k === '=') zoomStep(1);
     if (k === '-' || k === '_') zoomStep(-1);
     if (k === 'tab') { e.preventDefault(); cycleVillager(e.shiftKey ? -1 : 1); }
+    if (k === '`' || k === '~') devToggle();
   });
   window.addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
   window.addEventListener('blur', () => keys.clear());
@@ -1072,6 +1076,7 @@ function frame(now) {
     updateCamera(dtReal);
     render(fxDt, dtReal);
     renderOverlay();
+    devFrame(dtReal);
     hudT -= dtReal;
     if (hudT <= 0) { hudT = 0.25; updateHUD(); }
   } catch (e) {
@@ -1104,6 +1109,7 @@ function boot() {
   centerOn(PLAZA.cx * 16, (PLAZA.cy - 2) * 16);
   buildUI();
   setupInput();
+  devLoad();
   renderLog();
   updateSoundBtn();
   openIntro(true);

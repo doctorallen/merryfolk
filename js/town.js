@@ -377,6 +377,7 @@ function planTown() {
   const empty = built.filter((h) => residentsOf(h).length === 0).length;
   const homeProjects = P.filter((p) => p.kind === 'home').length;
   let want = housingNeed() + 1 + Math.floor(pop / 25) - empty - homeProjects;
+  devLog('town', `planning: ${pop} folk, housing need ${housingNeed()}, ${empty} empty, ${homeProjects} being dug → want ${Math.max(0, want)} more (up to ${maxProjects} projects, ${wrights} woodwrights)`);
   while (want > 0 && P.filter((p) => p.kind !== 'field' && p.kind !== 'well').length < maxProjects) {
     // the original knolls first, then the surveyed ones
     const site = World.homes.filter((h) => !h.built && !P.some((p) => p.homeId === h.id))

@@ -22,8 +22,19 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 | Village ledger | `V`: stores, trades, census, the departed, travellers |
 | Tools | `1`–`8`: hand, seed-cake, keg of ale, pipe-weed, remedy, storybook, flowers, fireworks |
 | Pause / speed | `Space`, or the 1× to 16× buttons |
+| Developer mode | `` ` `` (backtick), or the Dev button |
 
 The village saves to `localStorage` every in-game hour and when you leave the page. **?** → *Start a fresh village* resets it. One in-game day takes 8 real minutes at 1×, and each season lasts three days.
+
+## Developer mode
+
+Press `` ` `` (or the Dev button) to open a console drawer:
+
+- **Brain** shows the selected villager's drives, body chemistry, current task and path, and every action scored and explained: the relief it promises for each drive, then each multiplier (learned habit, inborn taste, time of day, personality, mealtime, rain, winter and so on), with each top-three option's chance of being picked. Actions that are ruled out are grouped by why. It also lists their recent decisions with the runners-up, learned habits, relationships and memories.
+- **Events** is a filterable log of what happens under the hood: decisions and conversations of the selected villager, trades taken up and changed, the chance of a baby for each couple each night, wedding rolls, moves between homes, town planning, rift scheduling and crew sizes, rift ways spreading, first meetings, the choice to go home, and the weather.
+- **World** summarises the clock, population, trades wanted against filled, the Common Store with yesterday's comings and goings, homes and building projects, rifts, and what everyone is doing.
+- **Tools** skip time (it runs the simulation for real), set the weather, start parties and fireworks, fill the stores, open rifts, push the way home along, and nudge the selected villager (hunger, sleepiness, loneliness, tipsiness, a cold, rift ways, age, education, or "choose again now").
+- **Map overlays** label each villager with their action and most pressing drive, draw where they're walking, and show the tile grid, unwalkable tiles and surveyed lots.
 
 ## What's going on under the hood
 
@@ -84,6 +95,7 @@ The village saves to `localStorage` every in-game hour and when you leave the pa
 | `js/actions.js` | The action catalogue: leisure, family, courtship, school and every trade |
 | `js/society.js` | The Common Store, trade assignment, courtship, births, homes, adventures, the archive |
 | `js/ui.js` | Toolbar, HUD, the five-tab inspector, the village ledger, family trees |
+| `js/dev.js` | Developer mode: decision explanations, the event log, world stats, tools and map overlays |
 | `js/main.js` | Game loop, seasons and weather, rendering, input, saving |
 
 ## Deployment

@@ -415,3 +415,56 @@ body.glitching .card { animation: rift-shake .42s steps(2) 1; }
   body.rift-mode .who h2, body.glitching .card { animation: none; }
 }
 
+/* ---------- developer mode: a dark console drawer ---------- */
+#dev {
+  --dv-bg: rgba(10, 14, 20, 0.94); --dv-line: #2a3644; --dv-fg: #d8e6f0; --dv-dim: #7f93a6; --dv-hi: #ffe14a; --dv-up: #8ae6a0; --dv-down: #ff9a8a; --dv-acc: #6ad0ff;
+  position: absolute; left: 10px; top: 76px; bottom: 10px; width: min(460px, calc(100vw - 20px)); z-index: 30;
+  display: flex; flex-direction: column; background: var(--dv-bg); color: var(--dv-fg); border: 1px solid var(--dv-line); border-radius: 6px;
+  font: 12px/1.45 "Share Tech Mono", ui-monospace, "SFMono-Regular", Menlo, monospace; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+body.dev-on #chronicle { visibility: hidden; }
+.dev-head { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-bottom: 1px solid var(--dv-line); }
+.dev-head b { color: var(--dv-hi); letter-spacing: 2px; }
+.dev-tabs { display: flex; gap: 2px; flex: 1; flex-wrap: wrap; }
+.dev-tabs button, .dchips button {
+  font: inherit; color: var(--dv-fg); background: #16202c; border: 1px solid var(--dv-line); border-radius: 3px; padding: 2px 8px; cursor: pointer;
+}
+.dev-tabs button.active, .dchips button.on { background: var(--dv-acc); color: #06121c; border-color: var(--dv-acc); }
+.dev-tabs button:hover, .dchips button:hover { border-color: var(--dv-acc); }
+.dev-tabs button:focus-visible, .dchips button:focus-visible, .dev-x:focus-visible { outline: 2px solid var(--dv-hi); outline-offset: 1px; }
+.dev-x { font-size: 18px; line-height: 1; background: none; border: 0; color: var(--dv-dim); cursor: pointer; padding: 0 4px; }
+.dev-overlays { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; padding: 4px 8px; border-bottom: 1px solid var(--dv-line); color: var(--dv-dim); }
+.dev-overlays label { display: inline-flex; gap: 4px; align-items: center; cursor: pointer; }
+.dev-overlays #dev-fps { margin-left: auto; font-variant-numeric: tabular-nums; }
+.dev-body { overflow-y: auto; padding: 6px 10px 12px; flex: 1; min-height: 0; }
+.dev-body h4 { margin: 4px 0 6px; font-size: 14px; color: var(--dv-hi); font-weight: 400; }
+.dev-body h5 { margin: 10px 0 4px; font-size: 11px; color: var(--dv-acc); text-transform: uppercase; letter-spacing: 1px; font-weight: 400; }
+.dev-body small { color: var(--dv-dim); font-size: 11px; text-transform: none; letter-spacing: 0; }
+.dev-body a { color: var(--dv-acc); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.dkv { margin: 1px 0; overflow-wrap: anywhere; }
+.dhint { color: var(--dv-dim); }
+.dt { color: var(--dv-dim); font-variant-numeric: tabular-nums; margin-right: 4px; }
+.up { color: var(--dv-up); } .down { color: var(--dv-down); }
+.dnum { text-align: right; font-variant-numeric: tabular-nums; }
+.dgrid2 { display: grid; grid-template-columns: 70px 1fr 40px; gap: 2px 8px; align-items: center; }
+.dbar { display: inline-block; width: 100%; min-width: 50px; height: 6px; background: #1c2836; border-radius: 2px; overflow: hidden; vertical-align: middle; }
+.dbar i { display: block; height: 100%; background: #5aa0c8; }
+.dbar i.warm { background: #e8b84a; } .dbar i.hot { background: #ff6a5a; }
+.dtab { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.dtab th { text-align: left; color: var(--dv-dim); font-weight: 400; border-bottom: 1px solid var(--dv-line); padding: 2px 4px; }
+.dtab td { padding: 2px 4px; border-bottom: 1px solid rgba(42, 54, 68, 0.5); vertical-align: top; }
+.dtab tr.cur td { background: rgba(255, 225, 74, 0.12); }
+.dtab td:last-child { overflow-wrap: anywhere; }
+.dev-body details { margin: 6px 0; } .dev-body summary { cursor: pointer; color: var(--dv-acc); }
+.dpick { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 2px 10px; }
+.dchips { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; align-items: center; }
+.dev-ev { padding: 2px 0; border-bottom: 1px solid rgba(42, 54, 68, 0.5); overflow-wrap: anywhere; }
+.dev-ev .dc { display: inline-block; min-width: 56px; color: var(--dv-acc); margin-right: 6px; }
+.dev-ev.c-rift .dc { color: #c88aff; } .dev-ev.c-family .dc { color: #ff9ac0; } .dev-ev.c-jobs .dc { color: #e8c86a; }
+.dev-ev.c-town .dc, .dev-ev.c-homes .dc { color: #c8a07a; } .dev-ev.c-weather .dc { color: #9ad0ff; } .dev-ev.c-decide .dc, .dev-ev.c-talk .dc { color: var(--dv-up); }
+#btn-dev.active { background: #16202c; color: #ffe14a; }
+@media (max-width: 720px) {
+  #dev { left: 0; right: 0; top: auto; bottom: 0; width: auto; height: 58vh; border-radius: 10px 10px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); background: #0a0e14; }
+  /* the Brain tab shows the selected villager, so the panel and toolbar step aside */
+  body.dev-on #panel, body.dev-on #bottom { display: none; }
+}
