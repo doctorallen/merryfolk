@@ -103,11 +103,12 @@ function makeSpot(x, y, facing, pose, kind) { return { x, y, facing, pose, kind,
 // ---------------------------------------------------------------------------
 const SEASON_CACHE = new Map();
 function seasonalImage(gen, season) {
-  const key = gen.type + ':' + gen.seed + ':' + (gen.kind || '') + ':' + season;
+  const key = gen.type + ':' + gen.seed + ':' + (gen.kind || '') + ':' + (gen.len || '') + (gen.dir || '') + ':' + season;
   if (!SEASON_CACHE.has(key)) {
     let img;
     if (gen.type === 'tree') img = makeTree(gen.seed, gen.kind, season);
     else if (gen.type === 'bush') img = makeBush(gen.seed, season);
+    else if (gen.type === 'hedge') img = makeHedge(gen.seed, season, gen.len || 1, gen.dir || 'h');
     SEASON_CACHE.set(key, img);
   }
   return SEASON_CACHE.get(key);
@@ -477,6 +478,7 @@ function buildWorld(seed) {
   };
   const treeAt = [];
   World.treeAt = treeAt;
+  plantHedges(rng, { addStatic, blk });
   plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt });
 
   // --- Weeping willows along the river and round the pond ---
@@ -533,6 +535,7 @@ function buildWorld(seed) {
   World.waterTiles = [];
   for (let y = 0; y < MAP_H; y++) for (let x = 0; x < MAP_W; x++) if (tiles[tIdx(x, y)] === T.WATER) World.waterTiles.push([x, y]);
 
+  keepReachable();
   computePixelTypes(seed);
 }
 

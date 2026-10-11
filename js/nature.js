@@ -337,3 +337,142 @@ function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt
     blk(x, y);
   }
 }
+
+// ---------------------------------------------------------------------------
+// Hedgerows: hawthorn hedges round the barley and leaf fields and along the
+// country lanes outside the village, with a gateway every few yards and an
+// oak or ash left to grow up out of the hedge as a "standard" now and then.
+// White with may blossom in spring, red with haws in autumn, bare in winter.
+// ---------------------------------------------------------------------------
+function makeHedge(seed, season = 'summer', len = 1, dir = 'h') {
+  const rng = mulberry32(seed + len * 101);
+  const W = dir === 'h' ? len * 16 + 2 : 18, H = dir === 'h' ? 15 : len * 16 + 6;
+  const [c, x] = makeCanvas(W, H);
+  const winter = season === 'winter', autumn = season === 'autumn', spring = season === 'spring';
+  const pal = winter ? ['#4a3a2a', '#5a4632', '#6a5440'] : autumn ? ['#3a4a1e', '#5a6a2a', '#7a7a3a'] : spring ? ['#2e5a24', '#447a30', '#62a040'] : ['#24461f', '#336128', '#467f34'];
+  const base = H - 3;
+  ellipseFill(x, W / 2, base, W / 2 - 1, 2, 'rgba(20,40,10,0.22)');
+  // one long, lumpy run of leaves (or a tall clipped block for the up-and-down stretches)
+  const top = 3;
+  x.fillStyle = pal[0]; x.fillRect(1, top + 4, W - 2, base - top - 4);
+  if (dir === 'h') for (let k = 1; k < W - 1; k += 3) { const r = 3 + (hash2(k, seed) * 1.6) | 0; disc(x, k, top + 4 + (k % 2), r, pal[0]); disc(x, k - 0.5, top + 3 + (k % 2), r - 1, pal[1]); }
+  else for (let k = top + 3; k < base - 2; k += 3) { for (const sx of [3, 9, 15]) { const r = 3 + (hash2(k, seed + sx) * 1.4) | 0; disc(x, sx, k, r, pal[0]); disc(x, sx - 0.5, k - 1, r - 1, pal[1]); } }
+  for (let k = 0; k < W * 0.9; k++) { x.fillStyle = k % 2 ? pal[2] : pal[0]; x.fillRect(1 + Math.floor(rng() * (W - 2)), top + 1 + Math.floor(rng() * (base - top - 2)), 1, 1); }
+  if (winter) { x.fillStyle = '#3a2a1a'; for (let k = 1; k < W - 1; k += 3) x.fillRect(k, top + (k % 2), 1, 4); }
+  const dots = (n, cols) => { for (let k = 0; k < n; k++) { x.fillStyle = cols[k % cols.length]; x.fillRect(1 + Math.floor(rng() * (W - 2)), top + 1 + Math.floor(rng() * (base - top - 4)), 1, 1); } };
+  if (spring) dots(Math.round(W * 0.9), ['#ffffff', '#f8eef0']);
+  if (autumn) dots(Math.round(W * 0.6), ['#c82a2a', '#a81a1a']);
+  const o = outlineCanvas(c, '#18301a');
+  return winter ? addSnow(o, 0, base, 2, seed) : o;
+}
+function plantHedges(rng, { addStatic, blk }) {
+  const tiles = World.tiles;
+  World.hedges = [];
+  // field edges are kept clear of building plots anyway, so hedges may go there
+  let fieldEdge = false;
+  const free = (x, y) => inMap(x, y) && tiles[tIdx(x, y)] === T.GRASS && (fieldEdge || !World.reserved[tIdx(x, y)]) && !World.block[tIdx(x, y)];
+  const nextToPath = (x, y) => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => [T.PATH, T.COBBLE, T.BRIDGE].includes(tiles[tIdx(x + dx, y + dy)]));
+  // lays one straight stretch: a gate every so often and wherever a lane meets
+  // it, a standard tree now and then, and the hedge between drawn in one piece
+  const run = (cells, dir) => {
+    let seg = [], n = 0;
+    const flush = () => {
+      if (!seg.length) return;
+      const seed = 700 + Math.floor(rng() * 12);
+      if (dir === 'h') {
+        const [x0, y] = seg[0], len = seg.length;
+        const s = addStatic(makeHedge(seed, 'summer', len, 'h'), x0 * 16 + len * 8, y * 16 + 14, { gen: { type: 'hedge', seed, len, dir: 'h' }, sway: 0.12 });
+        World.hedges.push({ cells: seg.slice(), s });
+      } else {
+        const [x, y0] = seg[0], len = seg.length;
+        const s = addStatic(makeHedge(seed, 'summer', len, 'v'), x * 16 + 8, (y0 + len - 1) * 16 + 16, { gen: { type: 'hedge', seed, len, dir: 'v' }, sway: 0.08 });
+        World.hedges.push({ cells: seg.slice(), s });
+      }
+      for (const [x, y] of seg) blk(x, y);
+      seg = [];
+    };
+    cells.forEach(([x, y], i) => {
+      n++;
+      if (!free(x, y) || nextToPath(x, y) || i % 8 === 4 || i % 8 === 5) { flush(); n = 0; return; }
+      if (n % 9 === 0 && rng() < 0.7) {
+        flush();
+        const kind = rng() < 0.6 ? 'oak' : 'birch', [s0, sn] = TREE_SEEDS[kind], seed = s0 + Math.floor(rng() * sn);
+        addStatic(makeTree(seed, kind), x * 16 + 8, (y + 1) * 16 - 2, { gen: { type: 'tree', seed, kind } });
+        (World.treeAt || []).push([x, y]); blk(x, y);
+        return;
+      }
+      seg.push([x, y]);
+    });
+    flush();
+  };
+  const ring = (r) => {
+    const top = [], bot = [], left = [], right = [];
+    for (let x = r.x0 - 1; x <= r.x1 + 1; x++) { top.push([x, r.y0 - 1]); bot.push([x, r.y1 + 1]); }
+    for (let y = r.y0; y <= r.y1; y++) { left.push([r.x0 - 1, y]); right.push([r.x1 + 1, y]); }
+    run(top, 'h'); run(bot, 'h'); run(left, 'v'); run(right, 'v');
+  };
+  fieldEdge = true;
+  for (const f of FIELDS) ring(f);
+  ring(WEED_FIELD);
+  fieldEdge = false;
+  // along the country lanes, well away from the village centre
+  for (const [w, ...pts] of ROADS) {
+    if (w < 0.85) continue;
+    for (let s = 0; s < pts.length - 1; s++) {
+      const [ax, ay] = pts[s], [bx, by] = pts[s + 1];
+      const len = Math.hypot(bx - ax, by - ay), nx = -(by - ay) / len, ny = (bx - ax) / len;
+      for (const side of [-1, 1]) {
+        const cells = [];
+        for (let t = 0; t <= len; t += 1) {
+          const px = ax + (bx - ax) * (t / len) + nx * side * (w + 1.2), py = ay + (by - ay) * (t / len) + ny * side * (w + 1.2);
+          const x = Math.round(px), y = Math.round(py);
+          if (Math.hypot(x - PLAZA.cx, y - PLAZA.cy) < 24 || (cells.length && cells[cells.length - 1][0] === x && cells[cells.length - 1][1] === y)) continue;
+          cells.push([x, y]);
+        }
+        if (rng() < 0.55) {
+          // break the line into straight stretches, each across or up-and-down
+          let part = [];
+          const go = () => { if (part.length > 1) run(part, part[0][1] === part[part.length - 1][1] ? 'h' : 'v'); part = []; };
+          for (const c of cells) { if (part.length && c[1] !== part[part.length - 1][1] && c[0] !== part[part.length - 1][0]) go(); part.push(c); }
+          go();
+        }
+      }
+    }
+  }
+}
+// Makes sure no hedge (or anything else) cuts anyone off from where they
+// need to go: if something important can't be reached from the village
+// square, the hedges nearest it are opened up.
+function keepReachable() {
+  const W = MAP_W, H = MAP_H;
+  const reach = () => {
+    const seen = new Uint8Array(W * H), q = [];
+    const s = nearestWalkable(PLAZA.cx, PLAZA.cy);
+    if (!s) return seen;
+    seen[tIdx(s[0], s[1])] = 1; q.push(s);
+    for (let k = 0; k < q.length; k++) {
+      const [x, y] = q[k];
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy; if (walkable(nx, ny) && !seen[tIdx(nx, ny)]) { seen[tIdx(nx, ny)] = 1; q.push([nx, ny]); } }
+    }
+    return seen;
+  };
+  const targets = [];
+  for (const h of World.homes) targets.push(h.stepTile);
+  for (const b of Object.values(World.buildings)) targets.push([Math.floor(b.stepX / 16), Math.floor(b.stepY / 16)]);
+  for (const f of World.fields) for (const p of f.plots) targets.push([p.tx, p.ty]);
+  for (const list of [World.woodSpots, World.mushrooms, World.wildHerbs]) for (const m of list) targets.push([m.tx, m.ty]);
+  for (const s of World.fishing.concat(World.benches)) targets.push([Math.floor(s.x / 16), Math.floor(s.y / 16)]);
+  for (let pass = 0; pass < 6; pass++) {
+    const seen = reach();
+    const lost = targets.filter(([x, y]) => inMap(x, y) && walkable(x, y) && !seen[tIdx(x, y)]);
+    if (!lost.length) return;
+    // open the hedges round each stranded place
+    for (const [x, y] of lost) {
+      for (const hd of World.hedges) {
+        if (hd.gone || !hd.cells.some(([hx, hy]) => Math.abs(hx - x) <= 4 + pass * 2 && Math.abs(hy - y) <= 4 + pass * 2)) continue;
+        hd.gone = true; hd.s.hidden = true; hd.s.seasons = [];
+        for (const [hx, hy] of hd.cells) World.block[tIdx(hx, hy)] = 0;
+      }
+    }
+  }
+}
