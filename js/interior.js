@@ -71,7 +71,7 @@ function interiorLayout(h) {
   let x = PAD;
   rooms.forEach((r, i) => {
     r.side = i < hallI ? -1 : i > hallI ? 1 : 0;
-    r.w = r.kind === 'hall' ? 62 : r.kind === 'parlour' ? (h.grand ? 176 : 136) : r.kind === 'kitchen' ? 96 + kitchenSeats(res) * 15 + 6
+    r.w = r.kind === 'hall' ? 62 : r.kind === 'parlour' ? (h.grand ? 176 : 136) : r.kind === 'kitchen' ? 96 + kitchenSeats(res) * 20 + 6
       : r.kind === 'pantry' ? 58 : r.kind === 'study' ? 90
       : Math.max(96, 30 + r.beds.reduce((s, b) => s + b.w, 0) + 14 * (r.beds.length - 1) + 26);
     r.x0 = x; r.x1 = x + r.w; x = r.x1 + WT;
@@ -158,9 +158,10 @@ function placeRoom(L, r) {
     L.spots.oven = { x: rangeX + 17, y: 104 };
     add({ t: 'dresser', x: r.x1 - 36 });
     const n = clamp(L.res.filter((v) => v.stage !== 'baby').length, 2, 4);
-    const tw = n * 15 + 6, tx = r.x0 + 50;
+    const tw = n * 20 + 6, tx = r.x0 + 50;
     const tbl = add({ t: 'table', x: tx, w: tw, n });
-    for (let i = 0; i < n; i++) seat({ kind: 'chair', x: tx + 10 + i * 15, y: 104, item: tbl, i });
+    // diners sit up behind the table, facing out, with their plates in front of them
+    for (let i = 0; i < n; i++) seat({ kind: 'chair', x: tx + 13 + i * 20, y: 90, item: tbl, i });
     if (r.win && !win(tx + tw / 2, 50)) r.win = false;
     if (!r.win) add({ t: 'rack', x: tx + tw / 2 });
     hot(rangeX, 70, rangeX + 34, 98, () => 'The kitchen range. ' + (Interior.baking ? 'Something is baking. It smells wonderful.' : 'Warm iron and a kettle.'));
@@ -460,7 +461,7 @@ function drawItem(L, it, part, t = 0) {
     case 'table': {
       const w = it.w;
       if (part === 'back') {
-        for (let i = 0; i < it.n; i++) { const cx = x + 10 + i * 15; IR(cx - 6, b - 28, 13, 3, p.m); IR(cx - 6, b - 28, 13, 1, p.h); for (let k = -5; k <= 5; k += 5) IR(cx + k, b - 25, 1, 10, p.d); }
+        for (let i = 0; i < it.n; i++) { const cx = x + 13 + i * 20; IR(cx - 6, b - 28, 13, 3, p.m); IR(cx - 6, b - 28, 13, 1, p.h); for (let k = -5; k <= 5; k += 5) IR(cx + k, b - 25, 1, 10, p.d); }
         return;
       }
       const cloth = L.neon ? '#2a1f44' : '#f4ead0', check = L.neon ? '#ff3aa8' : '#c84a3a';
@@ -471,7 +472,7 @@ function drawItem(L, it, part, t = 0) {
       for (let k = 1; k < w; k += 3) IP(x + k, b - 3, shade(cloth, -0.15));
       IR(x + 1, b - 3, 3, 3, p.d); IR(x + w - 4, b - 3, 3, 3, p.d);
       // plates, and a teapot in the middle
-      for (let i = 0; i < it.n; i++) { const cx = x + 10 + i * 15; IR(cx - 3, b - 18, 7, 1, '#f4f0e8'); if (Interior.eating && Interior.eating.has(i)) { IR(cx - 2, b - 20, 5, 2, Interior.eating.get(i)); } }
+      for (let i = 0; i < it.n; i++) { const cx = x + 13 + i * 20; IR(cx - 3, b - 18, 7, 1, '#f4f0e8'); if (Interior.eating && Interior.eating.has(i)) { IR(cx - 2, b - 20, 5, 2, Interior.eating.get(i)); } }
       const tx = x + Math.round(w / 2);
       IR(tx - 3, b - 23, 7, 5, L.neon ? '#3af0ff' : '#4a6aa8'); IR(tx - 2, b - 24, 5, 1, L.neon ? '#3af0ff' : '#4a6aa8'); IP(tx, b - 25, '#2a1c12'); IR(tx + 4, b - 22, 2, 1, '#4a6aa8');
       return;
@@ -781,9 +782,23 @@ function updateFolk(L, dt) {
       if (target.pose === 'work' && v.task && v.task.a.id === 'bake_home') Interior.baking = true;
     }
   }
-  for (const id of [...Interior.folk.keys()]) if (!seen.has(id)) Interior.folk.delete(id);
+  // whoever has just gone out walks across to the front door and out of it,
+  // rather than vanishing from where they stood
+  const leavers = [];
+  for (const id of [...Interior.folk.keys()]) {
+    if (seen.has(id)) continue;
+    const st = Interior.folk.get(id), v = byId.get(id);
+    if (!v || v.heldBy || v.carried || !L.door || Interior.justOpened) { Interior.folk.delete(id); continue; }
+    if (!st.leaving) { st.leaving = true; st.target = { x: L.door.x, y: 107, pose: 'leave' }; }
+    const dx = L.door.x - st.x;
+    if (Math.abs(dx) < 1.5) { Interior.folk.delete(id); continue; }
+    const m = Math.sign(dx) * Math.min(Math.abs(dx), dt * 30 * clamp(sp, 1, 3));
+    st.x += m; st.dist += Math.abs(m); st.walking = true; st.flip = dx < 0;
+    st.y += (107 - st.y) * Math.min(1, dt * 6);
+    leavers.push(v);
+  }
   Interior.justOpened = false;
-  return inside;
+  return inside.concat(leavers);
 }
 function randFloor(L) {
   const r = L.rooms[Math.floor(Math.random() * L.rooms.length)];
@@ -882,11 +897,17 @@ function drawFolk(L, folk, t) {
 }
 
 function drawPerson(L, v, st, t) {
-  const tg = st.target, spr = v.sprites;
-  let img, x, y, flip = false;
+  const tg = st.target;
+  // eyes shut asleep and dozing, and for a blink every few seconds
+  const asleep = tg.pose === 'bed' || tg.asleep || (tg.pose === 'cradle' && v.task && v.task.a.id === 'sleep');
+  const spr = asleep || (t + v.id * 0.37) % 4.1 < 0.13 ? shutSprites(v) : v.sprites;
+  let img, x, y, flip = false, bob = 0;
   const shiver = L.h.chilly && !(tg.pose === 'bed') ? Math.round(Math.sin(t * 40 + v.id)) * 0.5 : 0;
   if (st.walking) {
-    img = spr.side[Math.floor(st.dist / 5) % 2 ? 'walk1' : 'walk2']; flip = st.flip;
+    // stride, pass, stride, pass, rising a little as the feet pass
+    const ph = Math.floor(st.dist / 3.2) % 4;
+    img = spr.side[ph === 0 ? 'walk1' : ph === 2 ? 'walk2' : 'stand']; flip = st.flip;
+    if (ph % 2) bob = -1;
   } else if (tg.pose === 'bed' || tg.pose === 'cradle') {
     // just a head on the pillow (or over the cradle's side)
     const full = spr.down.stand, a = full.anchors || {};
@@ -906,14 +927,14 @@ function drawPerson(L, v, st, t) {
   } else if (tg.pose === 'crawl') {
     img = spr.down.stand;
   } else if (tg.pose === 'work') {
-    img = spr.up[Math.floor(t * 2.2 + v.id) % 2 ? 'stand' : 'walk1'];
+    img = spr.up[Math.floor(t * 2.2 + v.id) % 2 ? 'stand' : 'work'];
   } else {
     const face = tg.face || (st.browse ? 'up' : 'down');
     img = face === 'up' ? spr.up.stand : face === 'left' || face === 'right' ? spr.side.stand : spr.down.stand;
     flip = face === 'left';
   }
   x = Math.round(st.x - img.width / 2 + shiver);
-  y = Math.round((tg.pose === 'sit' && !st.walking ? tg.y - 2 : st.y) - img.height + 1);
+  y = Math.round((tg.pose === 'sit' && !st.walking ? tg.y - 2 : st.y) - img.height + 1) + bob;
   if (tg.pose === 'sit' && !st.walking && tg.seat && tg.seat.kind === 'arm') y -= 3;
   if (flip) { X.save(); X.translate(x + img.width, y); X.scale(-1, 1); X.drawImage(img, 0, 0); X.restore(); }
   else X.drawImage(img, x, y);

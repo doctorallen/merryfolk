@@ -339,11 +339,18 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
   let flip = v.facing === 'left';
   let pose = 'stand', yoff = 0, xoff = 0;
   switch (v.pose) {
-    case 'walk': pose = Math.floor(v.walkDist / 5) % 2 ? 'walk1' : 'walk2'; if (v.stage === 'baby') yoff = Math.floor(v.walkDist / 3) % 2 ? -1 : 0; break;
+    case 'walk': {
+      // a four-step cycle: stride, pass (rising a half-pixel), stride, pass
+      const ph = Math.floor(v.walkDist / 3.2) % 4;
+      pose = ph === 0 ? 'walk1' : ph === 2 ? 'walk2' : 'stand';
+      if (ph % 2) yoff = -0.5;
+      if (v.stage === 'baby') yoff = Math.floor(v.walkDist / 3) % 2 ? -1 : 0;
+      break;
+    }
     case 'sit': pose = 'sit'; break;
-    case 'work': pose = Math.floor(t * 2.2 + v.id) % 2 ? 'stand' : 'walk1'; break;
+    case 'work': pose = Math.floor(t * 2.2 + v.id) % 2 ? 'stand' : 'work'; break;
     case 'dance': {
-      pose = Math.floor(t * 6 + v.id) % 2 ? 'walk1' : 'walk2';
+      pose = ['walk1', 'reach', 'walk2', 'reach'][Math.floor(t * 6 + v.id) % 4];
       yoff = -Math.round(Math.abs(Math.sin(t * 6 + v.id)) * 3);
       const f = ['down', 'right', 'up', 'left'][Math.floor(t * 1.1 + v.id * 0.7) % 4];
       dir = f === 'left' || f === 'right' ? 'side' : f; flip = f === 'left';
@@ -352,7 +359,10 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
   }
   if (v.carried) { pose = Math.floor(t * 8) % 2 ? 'walk1' : 'walk2'; dir = 'down'; flip = false; yoff = Math.round(Math.sin(t * 5) * 1.5); }
   if (v.isTipsy() && v.pose === 'walk') xoff = Math.round(Math.sin(t * 3 + v.id) * 1.5);
-  const spr = v.sprites[dir][pose];
+  // eyes shut for a blink every few seconds, or while dozing
+  const dozing = v.task && v.task.phase === 'do' && v.task.a.zzz;
+  const shut = dir !== 'up' && (dozing || (tReal + v.id * 0.37) % 4.1 < 0.13);
+  const spr = (shut ? shutSprites(v) : v.sprites)[dir][pose];
   // sprites are double resolution: their world size is half their canvas size
   const w = spr.width / RS, h = spr.height / RS;
   const task = v.task;

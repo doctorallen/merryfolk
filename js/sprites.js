@@ -181,8 +181,13 @@ function folkFront(B, pose) {
   }
   // face
   rect(5, 6, 7, 6, 'd'); rect(12, 6, 14, 6, 'd');
-  rect(6, 7, 7, 9, 'e'); rect(12, 7, 13, 9, 'e'); put(7, 7, 'w'); put(13, 7, 'w');
-  if (B.female) { put(5, 7, 'e'); put(14, 7, 'e'); }
+  if (B.shut) {
+    // eyes closed: a curved lid and lashes
+    put(5, 8, 'd'); put(6, 9, 'd'); put(7, 9, 'd'); put(12, 9, 'd'); put(13, 9, 'd'); put(14, 8, 'd');
+  } else {
+    rect(6, 7, 7, 9, 'e'); rect(12, 7, 13, 9, 'e'); put(7, 7, 'w'); put(13, 7, 'w');
+    if (B.female) { put(5, 7, 'e'); put(14, 7, 'e'); }
+  }
   put(4, 10, 'r'); put(5, 10, 'r'); put(14, 10, 'r'); put(15, 10, 'r');
   if (B.ex.freckles) for (const [x, y] of [[4, 9], [6, 10], [13, 10], [15, 9]]) put(x, y, 'k');
   put(10, 9, 'N'); put(10, 10, 'N');
@@ -195,11 +200,11 @@ function folkFront(B, pose) {
     for (const ox of [5, 11]) { rect(ox, 6, ox + 3, 6, 'G'); rect(ox, 10, ox + 3, 10, 'G'); rect(ox, 6, ox, 10, 'G'); rect(ox + 3, 6, ox + 3, 10, 'G'); }
     rect(9, 8, 10, 8, 'G');
   }
-  if (B.ex.chrome) { rect(12, 7, 13, 9, 'g'); put(13, 7, 'w'); }
+  if (B.ex.chrome && !B.shut) { rect(12, 7, 13, 9, 'g'); put(13, 7, 'w'); }
   if (B.visor) { rect(3, 7, 16, 9, 'z'); rect(5, 7, 8, 7, 'Z'); put(17, 8, 'n'); }
   // body
   const top = B.top, bot = B.bot;
-  frontTorso(B, rect, put, top, bot, 5, 14);
+  const handR = frontTorso(B, rect, put, top, bot, 5, 14, pose);
   // legs
   const lt = bot + 1;
   if (sit) {
@@ -221,12 +226,39 @@ function folkFront(B, pose) {
       const fl = Math.round((lb - lt) * 0.9); rect(5 - fl, lb, 14 + fl, lb, 'u');
     }
   }
-  return { g, anchors: { mouth: [10.5, 11], handR: [16, bot], handL: [3.5, bot], chest: [9.5, top + 3] } };
+  return { g, anchors: { mouth: [10.5, 11], handR, handL: [3.5, bot], chest: [9.5, top + 3] } };
+}
+
+// Arms by pose, seen from the front or behind: they swing as folk walk (the
+// hand going forward rises a little), one comes up to work, and both go up to
+// dance. Returns where the right-hand side hand ends up.
+function folkArms(rect, top, bot, lx, rx, pose, lk, rk) {
+  const swing = { walk1: [-2, 1], walk2: [1, -2] }[pose] || [0, 0];
+  const arm = (x, dy, k, working) => {
+    const o = x > 9 ? 1 : -1; // which way is outward
+    if (pose === 'reach') {
+      // up and out, as in a jig
+      for (let j = 0; j <= 6; j++) rect(x + o * (j >> 1), top - j, x + 1 + o * (j >> 1), top - j, k);
+      rect(x + o * 4, top - 9, x + 1 + o * 4, top - 7, 's');
+      return [x + 0.5 + o * 4, top - 8];
+    }
+    if (pose === 'work' && working) {
+      // the working hand brought up in front
+      const hx = o > 0 ? x - 1 : x + 1;
+      rect(x, top, x + 1, top + 2, k); rect(hx, top + 3, hx + 1, top + 4, 's');
+      return [hx + 0.5, top + 4];
+    }
+    rect(x, top, x + 1, bot - 2 + dy, k);
+    rect(x, bot - 1 + dy, x + 1, bot + dy, 's');
+    return [x + 1, bot + dy];
+  };
+  arm(lx, swing[0], lk, false);
+  return arm(rx, swing[1], rk, true);
 }
 
 // The torso from the front: an open waistcoat over a shirt, or a closed
 // synth-weave jacket with a neon collar and zip for the thoroughly rift-minded.
-function frontTorso(B, rect, put, top, bot, x0, x1) {
+function frontTorso(B, rect, put, top, bot, x0, x1, pose) {
   const mid = 9;
   rect(x0 + 1, top, x1 - 1, bot, 'c'); rect(mid, top + 1, mid + 1, bot, 'C');
   rect(x0, top, mid - 1, bot, 'v'); rect(mid + 2, top, x1, bot, 'v'); rect(x1, top, x1, bot, 'V');
@@ -234,9 +266,7 @@ function frontTorso(B, rect, put, top, bot, x0, x1) {
   for (let k = 3; k < bot - top; k += 2) put(mid - 2, top + k, 'b');
   if (!B.child && !B.female) { put(mid + 3, top + 3, 'p'); put(mid + 4, top + 3, 'p'); put(mid + 3, top + 2, 'y'); put(mid + 2, top + 3, 'y'); }
   // sleeves and hands
-  rect(x0 - 2, top, x0 - 1, bot - 2, 'c'); rect(x0 - 2, top, x0 - 2, bot - 2, 'C');
-  rect(x1 + 1, top, x1 + 2, bot - 2, 'c'); rect(x1 + 2, top, x1 + 2, bot - 2, 'C');
-  rect(x0 - 2, bot - 1, x0 - 1, bot, 's'); rect(x1 + 1, bot - 1, x1 + 2, bot, 'S');
+  const handR = folkArms(rect, top, bot, x0 - 2, x1 + 1, pose, 'c', 'C');
   rect(x0, bot, x1, bot, 'l'); put(mid, bot, 'o'); put(mid + 1, bot, 'o');
   if (B.tier >= 1) rect(x0, bot, x1, bot, 'n');
   if (B.tier >= 2) {
@@ -244,6 +274,7 @@ function frontTorso(B, rect, put, top, bot, x0, x1) {
     rect(mid - 2, top, mid + 3, top, 'n'); put(mid - 3, top + 1, 'n'); put(mid + 4, top + 1, 'n');
     for (let y = top + 1; y < bot; y++) put(mid + (y % 2), y, 'n');
   }
+  return handR;
 }
 
 // ----- seen from behind -----
@@ -266,8 +297,7 @@ function folkBack(B, pose) {
   rect(8, 13, 11, 14, 'S');
   const top = B.top, bot = B.bot;
   rect(5, top, 14, bot, 'v'); rect(9, top + 1, 10, bot - 1, 'V'); rect(14, top, 14, bot, 'V');
-  rect(3, top, 4, bot - 2, 'c'); rect(15, top, 16, bot - 2, 'C');
-  rect(3, bot - 1, 4, bot, 's'); rect(15, bot - 1, 16, bot, 'S');
+  const handB = folkArms(rect, top, bot, 15, 3, pose, 'C', 'c');
   rect(5, bot, 14, bot, B.tier >= 1 ? 'n' : 'l');
   if (B.tier >= 2) { for (let y = top; y < bot; y++) put(9 + (y % 2), y, 'n'); rect(7, top, 12, top, 'n'); }
   if (B.style === 1 && !B.child) rect(5, top, 14, top + 2, 'h');
@@ -283,7 +313,7 @@ function folkBack(B, pose) {
     for (const [fx, dy] of feet) { rect(fx + 1, ank + dy, fx + 2, ank + dy, 'S'); rect(fx, ank + 1 + dy, fx + 3, ank + 2 + dy, 'f'); rect(fx, ank + 1 + dy, fx + 3, ank + 1 + dy, 'F'); }
     if (B.skirt) { for (let y = lt; y <= lb; y++) { const fl = Math.round((y - lt) * 0.9); rect(5 - fl, y, 14 + fl, y, 'v'); rect(13 + fl, y, 14 + fl, y, 'V'); } const fl = Math.round((lb - lt) * 0.9); rect(5 - fl, lb, 14 + fl, lb, 'u'); }
   }
-  return { g, anchors: { mouth: [10.5, 11], handR: [3.5, bot], handL: [16, bot], chest: [9.5, top + 3] } };
+  return { g, anchors: { mouth: [10.5, 11], handR: handB, handL: [16, bot], chest: [9.5, top + 3] } };
 }
 
 // ----- side on, facing right (flipped for left) -----
@@ -307,8 +337,11 @@ function folkSide(B, pose) {
   // ear, eye, nose and mouth
   put(9, 8, 's'); put(9, 9, 's'); put(8, 7, 's'); put(9, 7, 'r');
   rect(13, 6, 15, 6, 'd');
-  rect(14, 7, 14, 9, 'e'); put(15, 7, 'w'); put(15, 8, 'e');
-  if (B.female) put(15, 6, 'e');
+  if (B.shut) { put(14, 9, 'd'); put(15, 9, 'd'); if (B.female) put(16, 8, 'd'); }
+  else {
+    rect(14, 7, 14, 9, 'e'); put(15, 7, 'w'); put(15, 8, 'e');
+    if (B.female) put(15, 6, 'e');
+  }
   put(14, 10, 'r'); put(13, 10, 'r');
   if (B.ex.freckles) { put(13, 9, 'k'); put(15, 10, 'k'); }
   put(17, 9, 's'); put(17, 10, 'N'); put(16, 10, 'N');
@@ -318,7 +351,7 @@ function folkSide(B, pose) {
   else if (!B.child) rect(10, 9, 10, 11, 'H');
   if (B.elder && !B.female) rect(12, 12, 16, 13, 'h');
   if (B.specs) { rect(13, 6, 16, 6, 'G'); rect(13, 10, 16, 10, 'G'); rect(13, 6, 13, 10, 'G'); rect(16, 6, 16, 10, 'G'); rect(10, 8, 12, 8, 'G'); }
-  if (B.ex.chrome) { rect(14, 7, 14, 9, 'g'); put(15, 7, 'w'); put(15, 8, 'g'); }
+  if (B.ex.chrome && !B.shut) { rect(14, 7, 14, 9, 'g'); put(15, 7, 'w'); put(15, 8, 'g'); }
   if (B.visor) { rect(11, 7, 17, 9, 'z'); rect(13, 7, 15, 7, 'Z'); put(10, 8, 'n'); }
   // body: the waistcoat front faces right; one arm swings
   const top = B.top, bot = B.bot;
@@ -330,15 +363,28 @@ function folkSide(B, pose) {
   if (B.style === 1 && !B.child) rect(5, top, 7, top + 2, 'H');
   const swing = sit ? 0 : { stand: 0, walk1: 2, walk2: -2 }[pose] || 0;
   const ax = 9 + swing;
-  rect(ax, top + 1, ax + 2, bot - 2, 'c'); rect(ax, top + 1, ax, bot - 2, 'C');
-  rect(ax, bot - 1, ax + 2, bot, 's');
+  let hand = [ax + 1, bot];
+  if (pose === 'work') {
+    // forearm out in front, as if digging or reaching
+    rect(ax, top + 1, ax + 2, top + 3, 'c'); rect(ax, top + 1, ax, top + 3, 'C');
+    rect(ax + 2, top + 4, ax + 5, top + 5, 'c'); rect(ax + 6, top + 4, ax + 7, top + 5, 's');
+    hand = [ax + 7, top + 5];
+  } else if (pose === 'reach') {
+    // arm flung out in front, waving
+    rect(ax, top + 1, ax + 2, top + 2, 'c'); rect(ax + 2, top, ax + 6, top + 1, 'c'); rect(ax + 2, top + 1, ax + 6, top + 1, 'C');
+    rect(ax + 7, top - 2, ax + 8, top + 1, 's');
+    hand = [ax + 8, top - 1];
+  } else {
+    rect(ax, top + 1, ax + 2, bot - 2, 'c'); rect(ax, top + 1, ax, bot - 2, 'C');
+    rect(ax, bot - 1, ax + 2, bot, 's');
+  }
   const lt = bot + 1;
   if (sit) {
     rect(8, lt, 16, lt + 1, 't'); rect(8, lt + 1, 16, lt + 1, 'T');
     if (B.skirt) rect(7, lt, 17, lt + 1, 'v');
     rect(15, lt + 2, 16, lt + 3, 's');
     rect(14, lt + 4, 18, lt + 4, 'F'); rect(14, lt + 5, 18, lt + 5, 'f');
-    return { g, anchors: { mouth: [16, 11], handR: [ax + 1, bot], handL: [ax + 1, bot], chest: [11, top + 3] } };
+    return { g, anchors: { mouth: [16, 11], handR: hand, handL: hand, chest: [11, top + 3] } };
   }
   const lb = H - 4, ank = H - 3;
   const leg = (x0, dx, k) => { for (let y = lt; y <= lb; y++) { const o = Math.round(((y - lt) / Math.max(1, lb - lt)) * dx); rect(x0 + o, y, x0 + o + 2, y, k); } return x0 + dx; };
@@ -351,7 +397,7 @@ function folkSide(B, pose) {
     rect(fx, ank + 1 + dy, fx + 5, ank + 1 + dy, 'F'); rect(fx, ank + 2 + dy, fx + 5, ank + 2 + dy, 'f');
   }
   if (B.skirt) { for (let y = lt; y <= lb; y++) { const fl = Math.round((y - lt) * 0.7); rect(7 - fl, y, 13 + fl, y, 'v'); put(7 - fl, y, 'V'); } rect(7 - Math.round((lb - lt) * 0.7), lb, 13 + Math.round((lb - lt) * 0.7), lb, 'u'); }
-  return { g, anchors: { mouth: [16, 11], handR: [ax + 1, bot], handL: [ax + 1, bot], chest: [11, top + 3] } };
+  return { g, anchors: { mouth: [16, 11], handR: hand, handL: hand, chest: [11, top + 3] } };
 }
 
 // ----- a swaddled baby: a round face peeking out of a blanket -----
@@ -369,7 +415,8 @@ function folkBaby(B, view) {
   }
   if (view !== 'up') {
     rect(ox + 5, 0, ox + 10, 1, 'h'); put(ox + 7, 2, 'h'); put(ox + 8, 2, 'j');
-    rect(ox + 5, 5, ox + 5, 6, 'e'); rect(ox + 10, 5, ox + 10, 6, 'e'); put(ox + 5, 5, 'w');
+    if (B.shut) { put(ox + 4, 6, 'd'); put(ox + 5, 6, 'd'); put(ox + 10, 6, 'd'); put(ox + 11, 6, 'd'); }
+    else { rect(ox + 5, 5, ox + 5, 6, 'e'); rect(ox + 10, 5, ox + 10, 6, 'e'); put(ox + 5, 5, 'w'); }
     put(ox + 3, 7, 'r'); put(ox + 12, 7, 'r'); put(ox + 7, 8, 'm'); put(ox + 8, 8, 'm');
     rect(ox + 3, 10, ox + 12, 10, 'C');
   } else rect(ox + 3, 1, ox + 12, 6, 'h');
@@ -407,26 +454,31 @@ function folkCanvas(grid, pal) {
   return c;
 }
 
-function buildVillagerSprites(genes, stage, look = {}) {
+function buildVillagerSprites(genes, stage, look = {}, shut = false) {
   const pal = villagerPalette(genes, stage, look);
   const B = folkBody(genes, stage, look);
+  B.shut = shut;
   const out = { down: {}, up: {}, side: {} };
   const make = (r) => { const c = folkCanvas(r.g, pal); c.anchors = r.anchors; return c; };
   if (stage === 'baby') {
     const ex = expressed(genes);
     pal.c = mix(ex.vest, '#fff8e8', 0.65); pal.C = mix(ex.vest, '#fff8e8', 0.3);
     const f = make(folkBaby(B, 'down')), b = make(folkBaby(B, 'up'));
-    for (const pose of ['stand', 'walk1', 'walk2', 'sit']) { out.down[pose] = f; out.up[pose] = b; out.side[pose] = f; }
+    for (const pose of ['stand', 'walk1', 'walk2', 'sit', 'work', 'reach']) { out.down[pose] = f; out.up[pose] = b; out.side[pose] = f; }
     out.held = folkCanvas(folkBundle(), pal);
     return out;
   }
-  for (const pose of ['stand', 'walk1', 'walk2', 'sit']) {
+  for (const pose of ['stand', 'walk1', 'walk2', 'sit', 'work', 'reach']) {
     out.down[pose] = make(folkFront(B, pose));
     out.up[pose] = make(folkBack(B, pose));
     out.side[pose] = make(folkSide(B, pose));
   }
   return out;
 }
+
+// The same villager with their eyes shut, made the first time it's needed
+// (blinking, dozing and asleep in bed).
+function shutSprites(v) { return v.sprites.shut || (v.sprites.shut = buildVillagerSprites(v.genes, v.stage, v.look(), true)); }
 
 // Large portrait for the inspector panel.
 function drawPortrait(canvas, genes, stage, sepia, look) {
