@@ -477,33 +477,7 @@ function buildWorld(seed) {
   };
   const treeAt = [];
   World.treeAt = treeAt;
-  for (let y = 0; y < MAP_H; y++) for (let x = 0; x < MAP_W; x++) {
-    if (tiles[tIdx(x, y)] !== T.GRASS || World.reserved[tIdx(x, y)]) continue;
-    const forest = x >= 112 ? 0.5 : 0;
-    const border = y <= 3 || y >= MAP_H - 3 || x <= 1 || x >= MAP_W - 2;
-    const n = noise(x * 0.11, y * 0.11);
-    let p = border ? (y <= 3 ? 0.6 : 0.42) : forest ? 0.32 + (x - 112) * 0.02 : n > 0.66 ? 0.2 : 0.008;
-    if (!border && !forest && nearNonGrass(x, y, 1)) p *= 0.15;
-    if (nearRoad(x, y, 1)) p = 0;
-    if (treeAt.some(([tx, ty]) => Math.abs(tx - x) < 2 && Math.abs(ty - y) < 2)) p *= 0.12;
-    if (rng() < p) {
-      let kind;
-      const r2 = rng();
-      // conifers thicken towards the edges; young trees, birches and poplars in the copses
-      if (y <= 4 || x >= 116 || y >= MAP_H - 4) kind = r2 < 0.28 ? 'pine' : r2 < 0.45 ? 'fir' : r2 < 0.8 ? 'oak' : r2 < 0.92 ? 'birch' : 'sapling';
-      else kind = r2 < 0.46 ? 'oak' : r2 < 0.64 ? 'birch' : r2 < 0.72 ? 'poplar' : r2 < 0.84 ? 'sapling' : r2 < 0.92 ? 'pine' : 'fir';
-      const [s0, sn] = TREE_SEEDS[kind];
-      const tseed = s0 + Math.floor(rng() * sn);
-      addStatic(makeTree(tseed, kind), x * 16 + 8 + Math.round((rng() - 0.5) * 4), (y + 1) * 16 - 2, { gen: { type: 'tree', seed: tseed, kind } });
-      blk(x, y); treeAt.push([x, y]);
-      if (!border && !forest && walkable(x, y + 1) && tiles[tIdx(x, y + 1)] === T.GRASS && World.shade.length < 22 && rng() < 0.6)
-        World.shade.push(makeSpot(x * 16 + 8, (y + 1) * 16 + 10, 'down', 'sit', 'shade'));
-    } else if (rng() < (border || forest ? 0.08 : 0.03) && !nearNonGrass(x, y, 0)) {
-      const bs = 500 + Math.floor(rng() * 70);
-      addStatic(makeBush(bs), x * 16 + 8, y * 16 + 14, { gen: { type: 'bush', seed: bs } });
-      blk(x, y);
-    }
-  }
+  plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt });
 
   // --- Weeping willows along the river and round the pond ---
   for (let y = 2; y < MAP_H - 2; y++) for (let x = 2; x < MAP_W - 2; x++) {

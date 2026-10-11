@@ -234,3 +234,106 @@ function plantWildflowers(rng) {
     }
   }
 }
+
+// ---------------------------------------------------------------------------
+// Woods by suitability. Woodland grows where nobody has cleared it: on the
+// steep, thin-soiled banks and wet clay that nobody farms, thick along the
+// edges of the valley and in the eastern forest, and thinning out towards
+// the lanes, fields and homes. Trees are spaced by their size (a big oak
+// keeps the ground round it to itself) and each kind grows where it suits:
+// oaks on deep loam and clay, birches and pines on thin dry soil and the
+// heights, poplars on the damp flood ground, saplings springing up at the
+// woods' edge. Then bushes gather at the edges by kind: gorse and heather on
+// the dry banks, ferns and holly in the shade, brambles and thorn along the
+// margins.
+// ---------------------------------------------------------------------------
+function plantWoods(rng, { addStatic, blk, nearRoad, nearNonGrass, noise, treeAt }) {
+  const W = MAP_W, H = MAP_H, tiles = World.tiles;
+  // how far every tile is from where folk live and work
+  const settled = new Float32Array(W * H).fill(99), q = [];
+  for (let i = 0; i < W * H; i++) {
+    const t = tiles[i];
+    if ((t !== T.GRASS && t !== T.WATER) || World.reserved[i]) { settled[i] = 0; q.push(i); }
+  }
+  for (let k = 0; k < q.length; k++) {
+    const i = q[k], x = i % W, y = (i / W) | 0;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = x + dx, ny = y + dy;
+      if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+      const n = ny * W + nx;
+      if (settled[i] + 1 < settled[n]) { settled[n] = settled[i] + 1; q.push(n); }
+    }
+  }
+  World.land.settled = settled;
+  // the chance of woodland on each tile
+  const potential = (x, y) => {
+    const i = y * W + x;
+    const border = y <= 3 || y >= H - 3 || x <= 1 || x >= W - 2;
+    if (border) return y <= 3 ? 0.65 : 0.45;
+    if (x >= 112) return 0.35 + (x - 112) * 0.02;
+    const soil = World.land.soil[i], slope = slopeN(x, y), moist = World.land.moist[i];
+    let p = soil === SOIL.THIN ? 0.28 + slope * 0.12 : soil === SOIL.CLAY ? 0.26 : soil === SOIL.ALLUVIUM ? 0.05 : 0.04;
+    if (moist > 0.85) p *= 0.4;
+    p += Math.max(0, noise(x * 0.11, y * 0.11) - 0.6) * 0.8;
+    // cleared round the village, with a ragged edge
+    const d = settled[i];
+    p *= clamp((d - 1.5 + (noise(x * 0.3, y * 0.3) - 0.5) * 3) / 6, 0, 1);
+    return p;
+  };
+  // which kind of tree suits a tile
+  const kindFor = (x, y) => {
+    const i = y * W + x, soil = World.land.soil[i], h = World.land.h[i], moist = World.land.moist[i], d = settled[i];
+    const edge = y <= 4 || x >= 116 || y >= H - 4;
+    const w = {
+      oak: soil === SOIL.LOAM ? 1 : soil === SOIL.CLAY ? 0.9 : soil === SOIL.ALLUVIUM ? 0.5 : 0.15,
+      birch: soil === SOIL.THIN ? 0.9 : 0.25 + (d < 5 ? 0.3 : 0),
+      pine: (soil === SOIL.THIN && h > 0.5 ? 0.8 : 0.05) + (edge ? 0.5 : 0),
+      fir: (h > 0.6 ? 0.5 : 0.04) + (edge ? 0.35 : 0),
+      poplar: moist > 0.5 && soil !== SOIL.THIN ? 0.6 : 0.03,
+      sapling: d < 5 ? 0.45 : 0.12,
+    };
+    const tot = Object.values(w).reduce((a, b) => a + b, 0);
+    let r = rng() * tot;
+    for (const k in w) { r -= w[k]; if (r <= 0) return k; }
+    return 'oak';
+  };
+  const RADIUS = { oak: 2.1, birch: 1.4, pine: 1.6, fir: 1.4, poplar: 1.3, sapling: 1.0 };
+  const placed = []; // [x, y, radius]
+  const order = [];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) order.push([x, y]);
+  for (let k = order.length - 1; k > 0; k--) { const j = Math.floor(rng() * (k + 1)); [order[k], order[j]] = [order[j], order[k]]; }
+  const grid = new Map();
+  const near = (x, y, r) => { for (let j = Math.floor(y - 3); j <= y + 3; j++) for (let i = Math.floor(x - 3); i <= x + 3; i++) { const o = grid.get(i + ',' + j); if (o && Math.hypot(o[0] - x, o[1] - y) < Math.max(r, o[2]) * 0.85) return true; } return false; };
+  for (const [x, y] of order) {
+    if (tiles[tIdx(x, y)] !== T.GRASS || World.reserved[tIdx(x, y)] || World.block[tIdx(x, y)] || nearRoad(x, y, 1)) continue;
+    const p = potential(x, y);
+    if (p <= 0 || rng() > p * 2.2) continue;
+    const kind = kindFor(x, y), r = RADIUS[kind];
+    if (near(x, y, r)) continue;
+    const [s0, sn] = TREE_SEEDS[kind];
+    const tseed = s0 + Math.floor(rng() * sn);
+    addStatic(makeTree(tseed, kind), x * 16 + 8 + Math.round((rng() - 0.5) * 4), (y + 1) * 16 - 2, { gen: { type: 'tree', seed: tseed, kind } });
+    blk(x, y); treeAt.push([x, y]); grid.set(x + ',' + y, [x, y, r]);
+    const border = y <= 3 || y >= H - 3 || x <= 1 || x >= W - 2 || x >= 112;
+    if (!border && walkable(x, y + 1) && tiles[tIdx(x, y + 1)] === T.GRASS && World.shade.length < 22 && rng() < 0.6) World.shade.push(makeSpot(x * 16 + 8, (y + 1) * 16 + 10, 'down', 'sit', 'shade'));
+  }
+  // bushes: thick along the edges of the woods, scattered elsewhere, by kind
+  const treeSet = new Set(treeAt.map(([x, y]) => x + ',' + y));
+  for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+    if (tiles[tIdx(x, y)] !== T.GRASS || World.reserved[tIdx(x, y)] || World.block[tIdx(x, y)] || nearRoad(x, y, 0) || nearNonGrass(x, y, 0)) continue;
+    let trees = 0;
+    for (let j = -2; j <= 2; j++) for (let i = -2; i <= 2; i++) if (treeSet.has((x + i) + ',' + (y + j))) trees++;
+    const edge = trees >= 1 && trees <= 4, deep = trees > 4;
+    if (rng() > (edge ? 0.16 : deep ? 0.05 : 0.008)) continue;
+    const i = y * W + x, soil = World.land.soil[i], sun = World.land.sun[i], moist = World.land.moist[i];
+    // round, bramble, thorn, gorse, fern, holly, heather
+    let kind;
+    if (soil === SOIL.THIN && sun > 0.55) kind = rng() < 0.6 ? 3 : 6;
+    else if (deep || moist > 0.6) kind = rng() < 0.55 ? 4 : 5;
+    else if (edge) kind = [1, 2, 1, 0, 2][Math.floor(rng() * 5)];
+    else kind = rng() < 0.6 ? 0 : 2;
+    const bs = 500 + kind + 7 * Math.floor(rng() * 10);
+    addStatic(makeBush(bs), x * 16 + 8, y * 16 + 14, { gen: { type: 'bush', seed: bs } });
+    blk(x, y);
+  }
+}
