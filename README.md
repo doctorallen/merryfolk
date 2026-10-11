@@ -212,6 +212,15 @@ At the turn of every season the Almanac opens with a report on the season just g
 
 Then the Steward's clerk gives advice on what to see to next: winter's coming and the jars per head are low, spirits dipped, the village ate more than it made, timber's short, notes are waiting on the board, or a Moot is ready to be called. The last report stays on the Census tab.
 
+### Lore: what the village learns
+
+Every hour of reading by the fire, every letter written, every lesson at the story circle adds a little **lore** (the more schooled the reader, the more). On the **Lore** page of the Charter you choose what the village studies next, and each discovery changes how the village works for good:
+- **Old knowledge:** crop rotation (+15% growth), smoking and salting (40% less spoilage), herb lore (twice the remedies), bee-keeping (+50% honey), hedge-laying (lovelier hedgerows), dry-stone walling (faster terracing, floods take half the crops).
+- **Craft knowledge** (needs two from the row above): mill gears (+25% flour, bigger flour store), brewing lore (+25% ale), cold frames (gardens grow through winter), wells and pumps (wider watering in droughts), master masons (+30% building).
+- **Deep knowledge:** the Weather Almanack (two days' warning of hazards, gentler droughts and blights), the Lending Library (+50% lore), rift-and-hill engineering (an easier Hearthlink).
+
+Progress on a study you switch away from is kept.
+
 ### The market and the caravans
 
 On Trewsday (market day) a trader's wagon rolls up the West Road and stands in the square from eight till five. Once Thistledown is a Market Town, traders come on Mersday too. Each trader is different:
@@ -314,6 +323,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/charter.js` | Charters (goals with rewards), renown, coin, and the eras with their Moots and unlocks |
 | `js/illness.js` | Flu (laid up abed), sprained ankles, and friends bringing soup |
 | `js/almanac.js` | The seasonal Almanac report: population, contentment, food, coin, renown, stories and advice |
+| `js/lore.js` | Lore points from reading and lessons, and the three-tier tree of discoveries the player chooses |
 | `js/petitions.js` | Petitions from the village's interests (choices with trade-offs) and their standing with the Steward |
 | `js/production.js` | Player-laid fields, orchards, woodlots and hives; soil-based crop yields; the minimap |
 | `js/economy.js` | The Economy board, chain bottlenecks, building-works priority, hunger slowing work, and unhappy folk moving to Bree |
