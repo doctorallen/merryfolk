@@ -97,7 +97,7 @@ function save() {
       archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
       homes: World.homes.map((h) => ({ built: h.built, buildProg: h.buildProg, pantry: h.pantry, chilly: h.chilly, neon: !!h.neon, plots: h.plots.map((p) => [p.stage, p.prog]), crafts: h.crafts, collection: h.collection })),
-      rifts: World.rifts, scars: World.riftScars, riftNext: Game.riftNext, riftsOn: Village.riftsOn, wayHome: Village.wayHome || 0, wayHomeTries: Village.wayHomeTries || 0,
+      rifts: World.rifts, scars: World.riftScars, riftNext: Game.riftNext, riftsOn: Village.riftsOn, wayHome: Village.wayHome || 0, wayHomeTries: Village.wayHomeTries || 0, riftPower: Village.riftPower || null,
       allot: World.allotments.map((a) => a.plots.map((p) => p.stage)), pens: World.pens.map((p) => p.tend),
       weed: World.weed.map((w) => w.stage), fields: World.fields.map((f) => f.plots.map((p) => p.stage)), herbs: World.herbBeds.map((p) => p.stage),
       orchard: World.orchard.map((t) => t.apples), hives: World.hives.map((h) => h.honey), eggs: World.eggs,
@@ -152,6 +152,7 @@ function load() {
   Game.riftNext = data.riftNext || Game.time + R.f(400, 1200);
   Village.riftsOn = data.riftsOn ?? true;
   Village.wayHome = data.wayHome || 0; Village.wayHomeTries = data.wayHomeTries || 0;
+  Village.riftPower = data.riftPower || { water: 0, wind: 0, sun: 0 };
   Game.villagers = data.villagers.map((o) => new Villager(o));
   // villagers from before they had a sex: make sure couples can still start a family
   for (const v of Game.villagers) {
@@ -190,6 +191,7 @@ function simulate(dt) {
 
   updateWorld(dt, Game.raining, World.season, Game.hour);
   updateRifts(dt);
+  riftPowerTick(dt);
   for (const v of Game.villagers) v.update(dt, Game.hour);
   const gone = Game.villagers.filter((v) => v.gone);
   if (gone.length) {

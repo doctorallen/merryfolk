@@ -441,6 +441,7 @@ function dailySociety() {
   assignJobs(true);
   settleHomes(false);
   newcomersDaily();
+  riftHabsDaily();
   planTown();
 
   // departures: last adventures for the old, short trips for the bold

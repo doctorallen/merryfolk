@@ -62,6 +62,7 @@ class Villager {
     this.born = o.born ?? 0;
     this.expecting = o.expecting ?? null;
     this.lastFood = o.lastFood ?? null;
+    this.battery = o.battery ?? null;
     this.newcomer = o.newcomer ?? null; this.lodgeDay = o.lodgeDay ?? null; this.refusedDay = o.refusedDay ?? null;
     this.hobbies = o.hobbies ?? null; this.hobbySkill = o.hobbySkill ?? {}; this.hobbyMat = o.hobbyMat ?? {}; this.birds = o.birds ?? 0;
     this.inside = null; this.task = null; this.path = null; this.pathI = 0; this.queue = [];
@@ -708,7 +709,7 @@ class Villager {
       foodLike: this.foodLike, rel: this.rel, love: this.love, skills: this.skills, edu: Math.round(this.edu * 1000) / 1000, eduFrom: this.eduFrom,
       tech: Math.round(this.tech * 1000) / 1000, visor: this.visor, lost: Math.round(this.lost * 1000) / 1000, memories: this.memories, job: this.job,
       playerJob: this.playerJob, wary: this.wary, pouch: this.pouch, stats: this.stats, born: this.born, expecting: this.expecting, lastFood: this.lastFood,
-      newcomer: this.newcomer, lodgeDay: this.lodgeDay, refusedDay: this.refusedDay,
+      battery: this.battery, newcomer: this.newcomer, lodgeDay: this.lodgeDay, refusedDay: this.refusedDay,
       hobbies: this.hobbies, hobbySkill: this.hobbySkill, hobbyMat: this.hobbyMat, birds: this.birds,
     };
   }

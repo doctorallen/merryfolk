@@ -97,6 +97,12 @@ function lodgingAnswer(v, inn) {
   return yes;
 }
 function roughSpot(v) {
+  // the rift-folk sleep at their camp by the scar
+  if (v.isRiftborn()) {
+    ensureRiftCamp(v);
+    const cp = riftCampSpot();
+    if (cp) { const t = randomNearby(v, 1.2, cp.x, cp.y + 10); if (t) return { ...t, facing: 'down' }; }
+  }
   const s = World.riftScars.length && v.isRiftborn() && R.chance(0.4) ? R.pick(World.riftScars) : null;
   if (s) return randomNearby(v, 1.5, s.x, s.y + 8);
   const shade = World.shade.length ? World.shade.slice().sort((a, b) => dist(a.x, a.y, v.x, v.y) - dist(b.x, b.y, v.x, v.y))[Math.floor(Math.random() * 3)] : null;

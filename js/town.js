@@ -435,12 +435,15 @@ function workProject(v, p) {
   let step = K.rate;
   if (K.scrap) { if ((Village.stores.scrap || 0) < K.scrap) return; Village.use('scrap', K.scrap); }
   if (rift) { if ((Village.stores.scrap || 0) < 1) return; Village.use('scrap', 1); }
+  // the rift-folk's buildings are small and mostly salvage, so they go up quicker
+  const quick = rift || p.hab ? 2.5 : 1;
   if (K.wood) {
     const wood = Math.min(K.wood, buildWood());
     if (wood <= 0) return;
     Village.use('wood', wood);
     step = K.rate * wood;
   }
+  step *= quick;
   const skill = p.kind === 'field' ? 'farming' : p.kind === 'retrofit' || (v.job === 'tinker' && rift) ? 'tinkering' : 'woodcraft';
   const before = p.prog;
   p.prog = Math.min(1, p.prog + step * v.skillMul(skill));
@@ -453,8 +456,13 @@ function workProject(v, p) {
   if (p.kind === 'home') {
     const h = World.homes[p.homeId];
     if (p.lot != null) finishLot(World.lots[p.lot]); else completeHome(h);
-    if ((p.tinkered || 0) >= 0.5) h.neon = true;
-    chronicle(`A brand-new hobbit-hole, ${h.name}, is finished! The round door is painted${h.neon ? ', the tinkers have wired in a neon arch' : ''} and the kettle's on.`, 'build');
+    if ((p.tinkered || 0) >= 0.5 || p.hab) h.neon = true;
+    if (p.hab) {
+      // the rift-folk built it for themselves, and move straight in
+      const movers = Game.villagers.filter((o) => o.isRiftborn() && o.isGrown() && !o.leaving && homeless(o)).slice(0, HOME_CAP(h));
+      for (const o of movers) { moveHome(o, h); o.remember(`Moved into ${h.name}, the home we built ourselves.`, 3); }
+      chronicle(`The rift-folk have finished ${h.name}, a home of their own: a proper hobbit-hole, but humming with power from ${POWER_WORD[['water', 'wind', 'sun'].find((k) => riftPower()[k] >= 1) || 'water']}.${movers.length ? ' ' + movers.map((o) => o.first).join(' and ') + ' moved in at once.' : ''}`, 'rift');
+    } else chronicle(`A brand-new hobbit-hole, ${h.name}, is finished! The round door is painted${h.neon ? ', the tinkers have wired in a neon arch' : ''} and the kettle's on.`, 'build');
     v.remember(`Finished building ${h.name}.`, 2);
     Game.schedulePartyTonight('house-warming');
     Village.wantHomes = Math.max(0, Village.wantHomes - 1);

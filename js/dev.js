@@ -220,8 +220,15 @@ function devTools() {
 }
 
 function devAdvance(minutes) {
+  // note what things looked like, so the skip can say what changed
+  const before = { log: Game.log.length, pop: Game.villagers.length, built: World.lots.filter((l) => l.state === 'built').length + World.homes.filter((h) => h.built).length, proj: Village.projects.map((p) => p.prog) };
   let left = minutes;
   while (left > 0) { const s = Math.min(0.5, left); simulate(s); left -= s; }
+  const built = World.lots.filter((l) => l.state === 'built').length + World.homes.filter((h) => h.built).length;
+  const prog = Village.projects.map((p) => `${projectLabel(p)} ${Math.round(p.prog * 100)}%`).join(', ');
+  devLog('story', `dev: skipped ${minutes >= 1440 ? (minutes / 1440).toFixed(1) + ' days' : Math.round(minutes) + ' min'}: ${Game.log.length - before.log} chronicle entries, ${Game.villagers.length - before.pop >= 0 ? '+' : ''}${Game.villagers.length - before.pop} folk, ${built - before.built} new buildings${prog ? '; under way: ' + prog : ''}`);
+  if (typeof toast === 'function') toast(`Skipped ahead to day ${Game.day}, ${fmtTime(Game.time)}`);
+  renderPanel && Game.selected && renderPanel(true);
 }
 function devAct(act) {
   const v = Game.selected;

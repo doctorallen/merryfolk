@@ -247,8 +247,9 @@ function arriveFromRift(r) {
   v.drives.bored = 0;
   v.lost = 1;
   v.remember('Stepped through a rift into a green, quiet world with no signal at all. Where am I?', -1);
-  // a stranger: no home, no trade, nobody they know
+  // a stranger: no home, no trade, nobody they know, but a bag of spare parts
   startNewcomer(v);
+  Village.produce('scrap', R.i(2, 4));
   Game.villagers.push(v);
   // the rift-born stick together; hill-folk are wary but kindly
   for (const o of Game.villagers) if (o !== v) { const k = o.isRiftborn() ? 0.45 : 0.05; o.rel[v.id] = k; v.rel[o.id] = k; }
