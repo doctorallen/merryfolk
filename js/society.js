@@ -379,8 +379,8 @@ function dailySociety() {
     if (!babies.length) continue;
     const names = babies.map((b) => b.first).join(' and ');
     const look = describeLikeness(babies[0], v, other);
-    const kind = n === 2 ? (babies[0].genes.sex === babies[1].genes.sex ? (babies[0].genes.sex === 'f' ? 'Twin girls' : 'Twin boys') : 'Twins, a girl and a boy') : babies[0].genes.sex === 'f' ? 'A baby girl' : 'A baby boy';
-    chronicle(`${kind}, ${names}, ${n === 2 ? 'have' : 'has'} arrived at ${v.home().name}! Proud parents: ${v.first} & ${other.first}.${look ? ' ' + look : ''}`, 'birth');
+    const kind = babies.length === 2 ? (babies[0].genes.sex === babies[1].genes.sex ? (babies[0].genes.sex === 'f' ? 'Twin girls' : 'Twin boys') : 'Twins, a girl and a boy') : babies[0].genes.sex === 'f' ? 'A baby girl' : 'A baby boy';
+    chronicle(`${kind}, ${names}, ${babies.length === 2 ? 'have' : 'has'} arrived at ${v.home().name}! Proud parents: ${v.first} & ${other.first}.${look ? ' ' + look : ''}`, 'birth');
     for (const b of babies) if (b.genes.mutations.length) chronicle(`${b.first} seems to have been born with ${b.genes.mutations[0]}. A curious thing.`, 'learn');
   }
 
