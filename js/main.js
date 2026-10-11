@@ -798,8 +798,8 @@ function renderOverlay() {
   const items = [];
   for (const v of Game.villagers) {
     if (v.inside || !v.bubble) continue;
-    const sx = (v.x - cx) * z;
-    const sy = ((v._top ?? v.y - 16) - cy) * z - (Game.selected === v || v.iconT > 0 || v.isSick() ? 14 * z : 4);
+    const [sx, hy] = headScreen(v, cx, cy, z);
+    const sy = hy - (Game.selected === v || v.iconT > 0 || v.isSick() ? liftScreen(14, z) : 4);
     if (sx < -100 || sx > W + 100 || sy < -40 || sy > H + 40) continue;
     const think = v.bubble.think, to = v.bubble.to;
     octx.font = think ? 'italic 600 15px "Alegreya Sans", system-ui, sans-serif' : '600 14px "Pixelify Sans", ui-monospace, monospace';
@@ -882,7 +882,7 @@ function renderOverlay() {
   octx.font = '600 12px "Pixelify Sans", ui-monospace, monospace';
   for (const an of World.animals.concat((Game.pets || []).filter((pt) => !pt.inside))) {
     if (!an.say) continue;
-    const sx = (an.x - cx) * z, sy = (an.y - cy - 16) * z;
+    const [sx, gy] = groundScreen(an.x, an.y, cx, cy, z), sy = gy - liftScreen(16, z);
     if (sx < -60 || sx > W + 60 || sy < -30 || sy > H + 30) continue;
     const tw = octx.measureText(an.say.text).width;
     octx.globalAlpha = Math.min(1, an.say.t * 2);
@@ -895,7 +895,7 @@ function renderOverlay() {
   if (Game.selected) tags.add(Game.selected);
   for (const v of tags) {
     if (v.inside) continue;
-    const sx = (v.x - cx) * z, sy = (v.y - cy) * z + 10;
+    const [sx, gy] = groundScreen(v.x, v.y, cx, cy, z), sy = gy + 10;
     octx.font = '600 13px "Pixelify Sans", ui-monospace, monospace';
     const label = v.first + (v.stage === 'baby' ? ' (baby)' : v.isChild() ? ' (little one)' : v.job ? ' · ' + JOBS[v.job].label : '');
     const tw = octx.measureText(label).width;
@@ -958,6 +958,15 @@ function setZoom(z, anchorX, anchorY) {
 }
 
 function centerOn(x, y) { Game.cam.x = x - Game.cam.w / 2; Game.cam.y = y - Game.cam.h / 2; clampCam(); }
+// Dragging the view: where the camera was when the drag began, and moving it by
+// a screen offset. The isometric view (iso.js) replaces these.
+function camGrab() { return [Game.cam.x, Game.cam.y]; }
+function camDrag(x0, y0, dx, dy) { Game.cam.x = x0 - dx / Game.zoom; Game.cam.y = y0 - dy / Game.zoom; clampCam(); }
+// Where a villager's head, and a spot on the ground, land on the overlay, and
+// how far a height in world pixels reaches up the screen.
+function headScreen(v, cx, cy, z) { return [(v.x - cx) * z, ((v._top ?? v.y - 16) - cy) * z]; }
+function groundScreen(x, y, cx, cy, z) { return [(x - cx) * z, (y - cy) * z]; }
+function liftScreen(px, z) { return px * z; }
 function screenToWorld(sx, sy) { return [Game.cam.x + sx / Game.zoom, Game.cam.y + sy / Game.zoom]; }
 
 // The villager under a point. A fingertip is much bigger than a mouse pointer,
@@ -1007,7 +1016,7 @@ function setupInput() {
     }
     pointer.down = true; pointer.moved = false; pointer.sx = e.clientX; pointer.sy = e.clientY;
     pointer.touch = e.pointerType === 'touch';
-    pointer.camX = Game.cam.x; pointer.camY = Game.cam.y;
+    [pointer.camX, pointer.camY] = camGrab();
     const [wx, wy] = screenToWorld(e.clientX, e.clientY);
     pointer.cand = Game.tool === 'hand' ? villagerAt(wx, wy) : null;
     view.setPointerCapture(e.pointerId);
@@ -1029,7 +1038,7 @@ function setupInput() {
       if (Game.carrying) {
         const [wx, wy] = screenToWorld(e.clientX, e.clientY);
         Game.carrying.x = wx; Game.carrying.y = wy + 8;
-      } else if (pointer.moved) { Game.cam.x = pointer.camX - dx / Game.zoom; Game.cam.y = pointer.camY - dy / Game.zoom; clampCam(); }
+      } else if (pointer.moved) camDrag(pointer.camX, pointer.camY, dx, dy);
     }
     updateHover();
   });
