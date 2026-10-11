@@ -792,7 +792,7 @@ function renderOverlay() {
     if (v.bubble.seq == null) v.bubble.seq = ++BUBBLE_SEQ;
     const lines = v.bubble.lines;
     const tw = Math.max(...lines.map((l) => octx.measureText(l).width));
-    const bw = tw + 16, bh = 8 + lines.length * 17, bx = Math.round(sx - bw / 2), by = Math.round(sy - bh - (think ? 14 : 8));
+    const bw = tw + 16, bh = 8 + lines.length * 17, bx = Math.round(clamp(sx - bw / 2, 4, W - bw - 4)), by = Math.round(sy - bh - (think ? 14 : 8));
     items.push({ v, sx, think, to, lines, bw, bh, bx, by, by0: by, top: to && !think ? 15 : 2 });
   }
   items.sort((p, q) => p.v.bubble.seq - q.v.bubble.seq);
