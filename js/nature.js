@@ -415,6 +415,7 @@ function plantNature(rng, addStatic, blk) {
   }
   // A few rocks break the river's surface here and there, clear of the
   // bridges and the mill wheels (only in the valleys made since).
+  World.riverRocks = [];
   if (World.gen && (World.gen.layout === 'valley' || gen('relief') > 0)) {
     const nearWheel = (x, y) => (World.millWheels || []).some((w) => Math.abs(w.x / 16 - x) < 5 && Math.abs(w.y / 16 - y) < 4);
     for (let y = 2; y < MAP_H - 2; y++) for (let x = 2; x < MAP_W - 2; x++) {
@@ -422,8 +423,10 @@ function plantNature(rng, addStatic, blk) {
       let ok = true;
       for (let j = -2; j <= 2 && ok; j++) for (let i = -3; i <= 3; i++) if (tiles[tIdx(x + i, y + j)] === T.BRIDGE) { ok = false; break; }
       if (!ok || nearWheel(x, y)) continue;
-      const size = rng() < 0.3 ? 2 : 1;
-      addStatic(makeRock(Math.floor(rng() * 9999), size), x * 16 + 8 + Math.round((rng() - 0.5) * 6), y * 16 + 11, { sortBias: -4, snow: false }).rock = size + 1;
+      const size = rng() < 0.3 ? 2 : 1, rx = x * 16 + 8 + Math.round((rng() - 0.5) * 6), ry = y * 16 + 11;
+      const st = addStatic(makeRock(Math.floor(rng() * 9999), size), rx, ry, { sortBias: -4, snow: false });
+      st.rock = size + 1; st.sink = 0.5 + rng() * 0.25; // most of it is under the water
+      World.riverRocks.push({ x: rx, y: ry, w: st.img.width, h: st.img.height, st });
     }
   }
   // Along the cliffs: scree and fallen stones at the foot of the rock, and

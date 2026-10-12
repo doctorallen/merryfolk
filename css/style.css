@@ -1,3 +1,6 @@
+/* Pixelify Sans draws 2 and 5 almost alike, so those two digits alone come from Silkscreen */
+@font-face { font-family: 'Pixel Digits'; font-style: normal; font-weight: 400; font-display: swap; src: url(https://fonts.gstatic.com/s/silkscreen/v6/m8JXjfVPf62XiF7kO-i9YLNla0GA1dM.woff2) format('woff2'); unicode-range: U+0032, U+0035; }
+@font-face { font-family: 'Pixel Digits'; font-style: normal; font-weight: 600 700; font-display: swap; src: url(https://fonts.gstatic.com/s/silkscreen/v6/m8JUjfVPf62XiF7kO-i9aAhAfmyi2PmeBvY.woff2) format('woff2'); unicode-range: U+0032, U+0035; }
 /* Merryfolk: parchment-and-ink interface over a pixel village.
    Layout: full-bleed canvas; floating parchment cards pinned to the corners. */
 :root {
@@ -13,7 +16,7 @@
   --berry: #a23b2a;
   --dusk: #1d2a17;
   --shadow: rgba(42, 28, 18, 0.35);
-  --font-ui: "Pixelify Sans", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-ui: "Pixel Digits", "Pixelify Sans", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --font-body: "Alegreya Sans", "Gill Sans", "Trebuchet MS", system-ui, sans-serif;
   color-scheme: light;
 }

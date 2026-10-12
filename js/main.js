@@ -752,6 +752,17 @@ function render(dtReal, dtWall = dtReal) {
     Ground.trim();
   }
   drawWater(ctx, cr);
+  // the river runs round the rocks that stand in it: foam piling up on the
+  // upstream side, a wake of ripples trailing away downstream
+  for (const rk of World.riverRocks || []) {
+    if (rk.x < cx - 40 || rk.x > cx + cam.w + 40 || rk.y < cy - 20 || rk.y > cy + cam.h + 20) continue;
+    const hw = rk.w / 2, wy = rk.y - rk.h * (1 - rk.st.sink) * 0.5, ph = tReal * 4 + rk.x * 0.3;
+    ctx.fillStyle = 'rgba(230,242,250,0.85)';
+    for (let k = 0; k < 4; k++) { const t = (ph + k * 1.6) % 6.4; ctx.fillRect(Math.round(rk.x - hw - 1 - t * 0.6), Math.round(wy - 2 + Math.sin(ph * 1.7 + k) * 1.5), 2, 1); }
+    ctx.fillStyle = 'rgba(214,232,244,0.7)';
+    for (let k = 0; k < 3; k++) { const t = (ph * 1.3 + k * 2.1) % 6.4; ctx.fillRect(Math.round(rk.x + hw - 2 + t * 2.2), Math.round(wy - 1 + (k - 1) * 2 + Math.sin(ph + k * 2) * 1), 3, 1); }
+    ctx.fillStyle = 'rgba(240,248,255,0.9)'; ctx.fillRect(Math.round(rk.x - hw), Math.round(wy - 1), rk.w, 1);
+  }
   for (const h of World.homes) {
     if (h.doorX < cx - 120 || h.doorX > cx + cam.w + 120 || h.doorY < cy - 40 || h.doorY > cy + cam.h + 120) continue;
     if (h.built) drawDoor(ctx, h);
@@ -801,7 +812,12 @@ function render(dtReal, dtWall = dtReal) {
     else if (d.s) {
       const im = d.s.useAlt && d.s.alt ? d.s.alt : d.s.img;
       if (d.s.sway) blitSway(ctx, im, d.s.x - d.s.ox, d.s.y - d.s.oy, swayAmp(d.s));
-      else blit(ctx, im, d.s.x - d.s.ox, d.s.y - d.s.oy);
+      else if (d.s.sink) {
+        // a rock in the river shows only its top above the water
+        const h = im.height / (im.hd ? RS : 1), top = d.s.y - d.s.oy;
+        ctx.save(); ctx.beginPath(); ctx.rect(d.s.x - d.s.ox - 1, top - 1, d.s.w + 2, h * (1 - d.s.sink) + 1); ctx.clip();
+        blit(ctx, im, d.s.x - d.s.ox, d.s.y - d.s.oy); ctx.restore();
+      } else blit(ctx, im, d.s.x - d.s.ox, d.s.y - d.s.oy);
     }
     else if (d.g) drawTuft(ctx, d.g);
     else if (d.wheel) drawMillWheel(ctx, d.wheel);

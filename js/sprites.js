@@ -743,7 +743,14 @@ function makeBareTree(seed, kind, big, sh = treeShape(seed, kind)) {
   return addSnow(outlineCanvas(c, kind === 'birch' ? '#4a463c' : '#22160c', 160), 0, base - 4, 1, seed);
 }
 
+const TREE_MEMO = new Map();
 function makeTree(seed, kind, season = 'summer') {
+  const key = seed + '|' + kind + '|' + season;
+  let c = TREE_MEMO.get(key);
+  if (!c) { c = makeTreeRaw(seed, kind, season); TREE_MEMO.set(key, c); }
+  return c;
+}
+function makeTreeRaw(seed, kind, season = 'summer') {
   const big = kind === 'big';
   const sh = treeShape(seed, kind);
   if (season === 'winter' && !EVERGREEN.includes(kind)) return makeBareTree(seed, kind, big, sh);
@@ -899,7 +906,14 @@ function paintCrown(ctx, W, H, blobs, pal, cx, cy, Rx, Ry, seed) {
 // leafy round bushes, brambles with blackberries, hawthorn and wild rose,
 // gorse in yellow bloom, fern clumps, holly with red winter berries, heather.
 const BUSH_KINDS = ['round', 'bramble', 'thorn', 'gorse', 'fern', 'holly', 'heather'];
+const BUSH_MEMO = new Map();
 function makeBush(seed, season = 'summer') {
+  const key = seed + '|' + season;
+  let c = BUSH_MEMO.get(key);
+  if (!c) { c = makeBushRaw(seed, season); BUSH_MEMO.set(key, c); }
+  return c;
+}
+function makeBushRaw(seed, season = 'summer') {
   const rng = mulberry32(seed);
   const kind = BUSH_KINDS[seed % BUSH_KINDS.length];
   const sz = 0.75 + mulberry32(seed * 7 + 1)() * 0.6;
