@@ -82,8 +82,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!Game.almanac) Game.almanac = almanacSnapshot();
     return r;
   };
-  const nv = newVillage;
-  newVillage = function () { const r = nv(); Game.almanac = almanacSnapshot(); return r; };
+  addHook('afterNewVillage', () => { Game.almanac = almanacSnapshot(); });
   // the last report is kept on the Census tab
   const vc = villageCensus;
   villageCensus = function () {

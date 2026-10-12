@@ -17,8 +17,7 @@ function serviceSpotAt(tx, ty) {
     return '';
   };
   // a villager who hasn't got anywhere for two hours gives up and thinks again
-  const upd = Villager.prototype.update;
-  Villager.prototype.update = function (dt, h) {
+  patch(Villager.prototype, 'update', (upd) => function (dt, h) {
     const t = this.task;
     if (t && t.phase === 'go' && !this.inside && !this.carried && !this.leaving) {
       const moved = this._stuckAt ? dist(this.x, this.y, this._stuckAt[0], this._stuckAt[1]) : 99;
@@ -33,7 +32,7 @@ function serviceSpotAt(tx, ty) {
       }
     } else this._stuckT = 0;
     return upd.call(this, dt, h);
-  };
+  }, 'fixes2');
 }
 
 // --- The Buildings tool can site a public building (scrub is cleared as it goes up) ---
@@ -118,9 +117,7 @@ function nextPublicWork() {
   }
 }
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     const z = hazardActive();
     if (z && z.k === 'drought' && h === 15 && World.watered) {
       let lost = 0;
@@ -130,8 +127,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // lore: study the next thing rather than nothing
     const Lr = lore();
     if (!Lr.study) { const k = Object.keys(LORE).filter(loreOpen).sort((a, b) => LORE[a].cost - LORE[b].cost)[0]; if (k) { Lr.study = k; Lr.prog = (Lr.saved && Lr.saved[k]) || 0; if (Lr.known.length) chronicle(`The village's readers have turned to ${LORE[k].name.toLowerCase()} next (change it on the Lore page).`, 'learn'); } }
-    return r;
-  };
+  });
   // the workforce: + and − change the plan by one; say so when nobody can be spared
   const hook = hookStewardUI;
   hookStewardUI = function (body) {

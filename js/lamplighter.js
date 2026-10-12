@@ -74,10 +74,8 @@ ACTION_NAMES.work_lamps = 'Lighting the lamps';
 // On their rounds they walk briskly, and when it's time for the round they
 // put down whatever they were at.
 {
-  const walk = Villager.prototype.walk;
-  Villager.prototype.walk = function (dt, boost = 1) { return walk.call(this, dt, this.task && this.task.a.id === 'work_lamps' ? boost * 1.8 : boost); };
-  const update = Villager.prototype.update;
-  Villager.prototype.update = function (dt, h) {
+  patch(Villager.prototype, 'walk', (walk) => function (dt, boost = 1) { return walk.call(this, dt, this.task && this.task.a.id === 'work_lamps' ? boost * 1.8 : boost); }, 'lamplighter');
+  patch(Villager.prototype, 'update', (update) => function (dt, h) {
     if (this.job === 'lamplighter' && !this.leaving && !this.carried) {
       this._lampT = (this._lampT ?? 0) - dt;
       if (this._lampT <= 0) {
@@ -111,7 +109,7 @@ ACTION_NAMES.work_lamps = 'Lighting the lamps';
       }
     }
     return update.call(this, dt, h);
-  };
+  }, 'lamplighter');
 }
 
 // Lamplighters for the village, as soon as there are lamps to light.

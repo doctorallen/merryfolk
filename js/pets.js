@@ -270,12 +270,9 @@ HABIT_KEYS.push('pet_pet');
   updateRabbits = function (dtMin, season, hour) { ur(dtMin, season, hour); updatePets(dtMin, hour); };
 }
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) { const r = oh(h); if (h === 10) petsDaily(); return r; };
-  const nv = newVillage;
-  newVillage = function () {
-    Game.pets = []; Game.petSeq = 0;
-    const r = nv();
+  addHook('onHour', (h) => { if (h === 10) petsDaily(); });
+  addHook('newVillage', () => { Game.pets = []; Game.petSeq = 0; });
+  addHook('afterNewVillage', () => {
     // a couple of the founding households already have one
     const homes = World.homes.filter((h) => h.built && residentsOf(h).length);
     for (const h of homes.sort(() => Math.random() - 0.5).slice(0, 3)) {
@@ -283,6 +280,5 @@ window.addEventListener('DOMContentLoaded', () => {
       const res = residentsOf(h);
       petsList().push({ id: ++Game.petSeq, kind, coat, name: freePetName(kind), homeId: h.id, x: h.stepX + R.f(-20, 20), y: h.stepY + 10, face: 1, state: 'sit', t: 5, inside: false, since: 1, owner: kind === 'dog' ? (res.find((v) => v.isGrown()) || {}).id ?? null : null });
     }
-    return r;
-  };
+  });
 });

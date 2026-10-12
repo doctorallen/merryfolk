@@ -69,8 +69,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // the same stock line isn't heard all over the village within a few hours
 {
-  const say = Villager.prototype.say;
-  Villager.prototype.say = function (text, dur, opts = {}) {
+  patch(Villager.prototype, 'say', (say) => function (text, dur, opts = {}) {
     if (text && !opts.to && text.length >= 14) {
       const seen = Game._lines || (Game._lines = new Map());
       const last = seen.get(text);
@@ -79,5 +78,5 @@ window.addEventListener('DOMContentLoaded', () => {
       if (seen.size > 600) { for (const [k, t] of seen) if (Game.time - t > 240) seen.delete(k); }
     }
     return say.call(this, text, dur, opts);
-  };
+  }, 'surface');
 }

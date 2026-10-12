@@ -99,10 +99,8 @@ function dinnerTalk() {
 window.addEventListener('DOMContentLoaded', () => {
   const ch = chronicle;
   chronicle = function (text, kind = 'info') { const r = ch(text, kind); addNews(text, kind); return r; };
-  const oh = onHour;
-  onHour = function (h) { const r = oh(h); if (h >= 8 && h <= 23) talkTick(h); if (h === 19 || h === 8) dinnerTalk(); return r; };
-  const nv = newVillage;
-  newVillage = function () { Game.news = []; Game.newsSeq = 0; return nv(); };
+  addHook('onHour', (h) => { if (h >= 8 && h <= 23) talkTick(h); if (h === 19 || h === 8) dinnerTalk(); });
+  addHook('newVillage', () => { Game.news = []; Game.newsSeq = 0; });
   // the talk of the village, on the Census tab
   const vc = villageCensus;
   villageCensus = function () {

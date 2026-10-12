@@ -188,9 +188,7 @@ function hazardPill() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     if (h === 9) planHazard();
     const z = hazard();
     if (z) {
@@ -198,8 +196,7 @@ window.addEventListener('DOMContentLoaded', () => {
       else if (z.state === 'on' && Game.day >= z.end && h >= 6) endHazard();
       else if (z.state === 'on' && z.k === 'drought') { Game.weather = 'clear'; Game.raining = false; if (h === 14) for (const v of Game.villagers) if (!v.inside && v.isGrown() && R.chance(0.3)) feel(v, 'parched'); }
     }
-    return r;
-  };
+  });
   const ro = renderOverlay;
   renderOverlay = function () { ro(); drawHazard(); };
   const hud = updateHUD;
@@ -218,6 +215,5 @@ window.addEventListener('DOMContentLoaded', () => {
   };
   const hook = hookStewardUI;
   hookStewardUI = function (body) { const b = body.querySelector('#st-sulphur'); if (b) b.addEventListener('click', () => { buySulphur(); renderVillage(); }); return hook(body); };
-  const nv = newVillage;
-  newVillage = function () { Game.hazard = null; Game.hazardSeasonDone = -1; return nv(); };
+  addHook('newVillage', () => { Game.hazard = null; Game.hazardSeasonDone = -1; });
 });

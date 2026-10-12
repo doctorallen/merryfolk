@@ -78,14 +78,11 @@ function winterReckoning() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     if (h === 6) openJars();
     if (h === 7 && dayOfSeason(Game.day) === 1 && World.season === 'autumn') chronicle('Autumn, and the putting-by has begun: every kitchen smells of jam and vinegar.', 'season');
     if (h === 8 && dayOfSeason(Game.day) === 1 && World.season === 'winter') winterReckoning();
-    return r;
-  };
+  });
   // the jars on the top shelf of the pantry
   const dp = drawPantry;
   drawPantry = function (L, it) {

@@ -111,8 +111,7 @@ function playScene(S, a, b) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) { const r = oh(h); if (R.chance(0.5)) tryScene(h); return r; };
+  addHook('onHour', (h) => { if (R.chance(0.5)) tryScene(h); });
   // chronicle lines with a place: click to go there
   const rl = renderLog;
   renderLog = function () {
@@ -122,6 +121,5 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!shown) return;
     ol.querySelectorAll('li').forEach((li, i) => { const e = shown[i]; if (e && e.at) { li.classList.add('goto'); li.title = 'Click to see where'; li.addEventListener('click', () => { Game.follow = false; centerOn(e.at[0], e.at[1] - 10); }); } });
   };
-  const nv = newVillage;
-  newVillage = function () { Game.scenesSeen = []; Game.sceneOn = false; return nv(); };
+  addHook('newVillage', () => { Game.scenesSeen = []; Game.sceneOn = false; });
 });

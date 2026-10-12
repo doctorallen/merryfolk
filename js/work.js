@@ -345,8 +345,7 @@ Village.innkeeperOn = function () { return Game.villagers.some((v) => v.task && 
 // --- hooking it all in ------------------------------------------------------
 {
   // a stint at a trade is a round of its jobs, begun one after the other
-  const begin = Villager.prototype.begin;
-  Villager.prototype.begin = function (a, h, extra) {
+  patch(Villager.prototype, 'begin', (begin) => function (a, h, extra) {
     if (ROUNDS[a.id] && !(extra && extra.round) && this.isGrown() && !this._arms) {
       const round = planRound(this, a.id, h);
       if (round.length) {
@@ -364,10 +363,9 @@ Village.innkeeperOn = function () { return Game.villagers.some((v) => v.task && 
     if (ok && this.task) this.task.began = Game.time;
     if (ok && extra && extra.round && this.task) { this.task.round = extra.main || this.task.round || MAIN_WORK[this.job]; if (extra.dur) this.task.t = extra.dur * R.f(0.85, 1.15); }
     return ok;
-  };
+  }, 'work');
   // during their hours the trade pulls, and the rest has to wait unless a need presses
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s <= 0 || !this.job) return s;
     const shift = onShift(this, h);
@@ -381,7 +379,7 @@ Village.innkeeperOn = function () { return Game.villagers.some((v) => v.task && 
       mul('working hours', pressing ? 0.8 : a.id === 'chat' ? 0.55 : 0.35);
     }
     return s;
-  };
+  }, 'work');
   // what's made in a stint is scaled, so a full working day gives about what the old odd hours did
   const produce = Village.produce;
   Village.produce = function (res, n, priv) { return produce.call(this, res, Village._yield ? Math.max(1, Math.round(n * Village._yield)) : n, priv); };
@@ -406,8 +404,7 @@ Village.innkeeperOn = function () { return Game.villagers.some((v) => v.task && 
   const dd = ACTIONS.deliver.done;
   ACTIONS.deliver.done = function (v, task) { const c = task.data.cargo; if (c && c.move) return; return dd.call(this, v, task); };
   // when the working day starts, whatever leisure is in hand is put down (after a decent interval) and the trade taken up
-  const update = Villager.prototype.update;
-  Villager.prototype.update = function (dt, h) {
+  patch(Villager.prototype, 'update', (update) => function (dt, h) {
     if (this.job && this.task && !this.carried && !this.leaving) {
       this._shiftT = (this._shiftT ?? 0) - dt;
       if (this._shiftT <= 0) {
@@ -421,18 +418,16 @@ Village.innkeeperOn = function () { return Game.villagers.some((v) => v.task && 
       }
     }
     return update.call(this, dt, h);
-  };
-  const walk = Villager.prototype.walk;
-  Villager.prototype.walk = function (dt, boost = 1) { return walk.call(this, dt, this.task && SERVING.has(this.task.a.id) ? boost * 1.6 : boost); };
-  const finish = Villager.prototype.finish;
-  Villager.prototype.finish = function () {
+  }, 'work');
+  patch(Villager.prototype, 'walk', (walk) => function (dt, boost = 1) { return walk.call(this, dt, this.task && SERVING.has(this.task.a.id) ? boost * 1.6 : boost); }, 'work');
+  patch(Villager.prototype, 'finish', (finish) => function () {
     const t = this.task;
     if (t && t.round) { this._lastSub = t.a.id; if (t.a.say && R.chance(0.25)) this.say(R.pick(t.a.say), 2.2); this.lastJobAt = Game.time; this.lastJob = t.round; }
     const r = finish.call(this);
     // the round is over: carry what it gathered
     if (t && t.round && !this.queue.some((q) => q.extra && q.extra.round)) flushStash(this);
     return r;
-  };
+  }, 'work');
   // the Steward wants a second pair of hands at the inn once the village is big
   const jt = jobTargets;
   jobTargets = function () { const t = jt(); const adults = Game.villagers.filter((v) => v.isGrown() && !v.leaving).length; if (adults >= 18 && !(Game.jobPlan && typeof Game.jobPlan.innkeeper === 'number')) t.innkeeper = 2; return t; };

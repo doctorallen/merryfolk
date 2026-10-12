@@ -39,13 +39,8 @@ const aAn = (s) => (/^(one|uni|use|eu)/i.test(s) ? 'a ' : /^[aeiou]/i.test(s) ? 
 }
 window.addEventListener('DOMContentLoaded', () => {
   // every hole starts with a few
-  const nv = newVillage;
-  newVillage = function () {
-    Game.mathoms = []; Game.mathomSeq = 0;
-    const r = nv();
-    for (const h of World.homes) if (h.built) for (let i = R.i(1, 3); i > 0; i--) newMathom(h);
-    return r;
-  };
+  addHook('newVillage', () => { Game.mathoms = []; Game.mathomSeq = 0; });
+  addHook('afterNewVillage', () => { for (const h of World.homes) if (h.built) for (let i = R.i(1, 3); i > 0; i--) newMathom(h); });
   // adventurers come home with oddments
   const rt = returnFromTrip;
   returnFromTrip = function (entry) {

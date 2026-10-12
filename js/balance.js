@@ -104,11 +104,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     return r;
   };
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     if (Game.fairDay === Game.day && h === 9 && !caravan()) arriveCaravan();
     if (Game.fairDay === Game.day && h === 14) holdContests('Great Fair');
-    return r;
-  };
+  });
 });

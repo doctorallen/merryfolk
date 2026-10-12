@@ -39,8 +39,7 @@ function dayWords(day) {
 
 // The calendar leans everyone's choices a little.
 {
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s <= 0) return s;
     const mul = (name, f) => { s *= f; if (ex) ex.mul.push([name, f]); };
@@ -54,7 +53,7 @@ function dayWords(day) {
     if (isSingNight(day) && h >= 18.5 && h < 23.5 && this.isGrown() && (a.id === 'ale' || a.id === 'eat_inn')) mul('sing-song night', 1.8);
     if (birthdayToday(this) && (a.id === 'eat_inn' || a.id === 'tea' || a.id === 'party')) mul('birthday', 1.4);
     return s;
-  };
+  }, 'calendar');
 }
 
 // What a birthday present might be.
@@ -128,9 +127,7 @@ function calendarMorning() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     if (h === 7) calendarMorning();
     // the sing-song: the innkeeper strikes up and the taproom joins in
     if (isSingNight(Game.day) && h >= 19 && h <= 22) {
@@ -138,15 +135,13 @@ window.addEventListener('DOMContentLoaded', () => {
       const there = inn ? Game.villagers.filter((v) => v.inside === inn && v.isGrown()) : [];
       if (there.length >= 2) { for (const v of there) feel(v, 'singsong'); if (h === 20 && Interior.home !== inn) devLog('story', `Sing-song at the Tipsy Badger: ${there.length} voices`); }
     }
-    return r;
-  };
+  });
 });
 MOODLETS.singsong = ['Sang along at the Badger', 0.08, 600, ['Oh, the hey diddle diddle...', 'My throat\'s hoarse from all that singing.']];
 MOODLETS.market = ['Market day bustle', 0.04, 300, ['You see everyone on market day.']];
 {
-  const finish = Villager.prototype.finish;
-  Villager.prototype.finish = function () {
+  patch(Villager.prototype, 'finish', (finish) => function () {
     if (this.task && this.task.a.id === 'market' && isMarketDay(Game.day)) feel(this, 'market');
     return finish.call(this);
-  };
+  }, 'calendar');
 }

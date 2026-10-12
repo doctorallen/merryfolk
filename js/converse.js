@@ -584,8 +584,7 @@ function nextTurn(conv) {
 
 // --- running it on the two who are talking -------------------------------------------------
 {
-  const chatTick = Villager.prototype.chatTick;
-  Villager.prototype.chatTick = function (task, dt) {
+  patch(Villager.prototype, 'chatTick', (chatTick) => function (task, dt) {
     const p = task.partner;
     if (!task.data.leader) return;
     // toddlers, and newcomers asking their questions, keep the old exchange
@@ -630,7 +629,7 @@ function nextTurn(conv) {
       const end = (v) => { if (v.task && v.task.a.id === 'chat') v.task.t = Math.min(v.task.t, left ? 1 : 3); };
       end(this); end(p);
     }
-  };
+  }, 'converse');
 }
 
 // --- table talk: everyone at the table takes a turn ------------------------------------------
@@ -776,8 +775,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     return r;
   };
-  const nv = newVillage;
-  newVillage = function () { Game.rounds = []; return nv(); };
+  addHook('newVillage', () => { Game.rounds = []; });
   // the old hourly room talk is covered by the rounds now
   roomTalk = function () {};
 });

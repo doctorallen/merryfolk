@@ -165,13 +165,11 @@ function drawAppealAndPins() {
 window.addEventListener('DOMContentLoaded', () => {
   const ro = renderOverlay;
   renderOverlay = function () { ro(); drawAppealAndPins(); };
-  const oh = onHour;
-  onHour = function (h) { const r = oh(h); if (h === 10 && R.chance(0.7)) postRequest(); checkRequests(); return r; };
+  addHook('onHour', (h) => { if (h === 10 && R.chance(0.7)) postRequest(); checkRequests(); });
   // a finished plan changes the view
   const cp = completePlan;
   completePlan = function (p, by, quiet) { const r = cp(p, by, quiet); World.appeal = null; if (!quiet) checkRequests(); return r; };
-  const nv = newVillage;
-  newVillage = function () { Game.requests = []; Game.reqSeq = 0; return nv(); };
+  addHook('newVillage', () => { Game.requests = []; Game.reqSeq = 0; });
   // requests in the build bar, and the appeal toggle
   const rb = renderBuildBar;
   renderBuildBar = function () {

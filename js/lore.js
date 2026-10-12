@@ -61,8 +61,7 @@ function applyLore() {
 
 // where lore comes from
 {
-  const fin = Villager.prototype.finish;
-  Villager.prototype.finish = function () {
+  patch(Villager.prototype, 'finish', (fin) => function () {
     const t = this.task;
     if (t) {
       const id = t.a.id, e = this.edu || 0;
@@ -70,9 +69,8 @@ function applyLore() {
       if (n) addLore(n);
     }
     return fin.call(this);
-  };
-  const tch = Villager.prototype.teach;
-  Villager.prototype.teach = function () { addLore(0.5); return tch.call(this); };
+  }, 'lore');
+  patch(Villager.prototype, 'teach', (tch) => function () { addLore(0.5); return tch.call(this); }, 'lore');
 }
 
 // what it changes
@@ -148,8 +146,7 @@ window.addEventListener('DOMContentLoaded', () => {
     body.insertAdjacentHTML('beforeend', loreHTML());
     body.querySelectorAll('[data-study]').forEach((b) => b.addEventListener('click', () => { const Lr = lore(); if (Lr.study && Lr.prog > 0 && Lr.study !== b.dataset.study) toast('Progress on the old study is kept for when you come back to it.', 'info'); Lr.saved = Lr.saved || {}; if (Lr.study) Lr.saved[Lr.study] = Lr.prog; Lr.study = b.dataset.study; Lr.prog = Lr.saved[Lr.study] || 0; renderVillage(); }));
   };
-  const nv = newVillage;
-  newVillage = function () { Game.lore = null; applyLore(); return nv(); };
+  addHook('newVillage', () => { Game.lore = null; applyLore(); });
 });
 function loreHTML() {
   const Lr = lore();

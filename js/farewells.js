@@ -193,16 +193,12 @@ function farewellDeparture(f) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     for (const f of (Game.farewells || []).slice()) {
       if (f.day > Game.day) continue;
       if (h === 9) farewellGathering(f);
       else if (h >= 10) farewellDeparture(f);
     }
-    return r;
-  };
-  const nv = newVillage;
-  newVillage = function () { Game.memorials = []; Game.farewells = []; return nv(); };
+  });
+  addHook('newVillage', () => { Game.memorials = []; Game.farewells = []; });
 });

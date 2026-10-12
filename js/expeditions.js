@@ -78,17 +78,14 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     return pr.call(this, res, n, priv);
   };
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     if (h === 14) {
       if (hasFind('quarry')) Village.produce('stone', Game.villagers.filter((v) => v.job === 'woodwright').length);
       if (hasFind('clay')) Village.produce('clay', 2);
       if (hasFind('bees') && World.season !== 'winter') Village.produce('honey', 1);
     }
     if (hasFind('hamlet') && weekday(Game.day) === 'Hevensday' && h === 8 && !caravan()) arriveCaravan();
-    return r;
-  };
+  });
   // peat burns before timber in the cold months
   const lh = lightHearths;
   lightHearths = function () {
@@ -116,8 +113,7 @@ window.addEventListener('DOMContentLoaded', () => {
   };
   const rv = renderVillage;
   renderVillage = function () { rv(); if (Game.villageTab === 'charter') $('village-body').querySelectorAll('[data-exped]').forEach((b) => b.addEventListener('click', () => { sendExpedition(b.dataset.exped); renderVillage(); })); };
-  const nv = newVillage;
-  newVillage = function () { Game.exped = null; return nv(); };
+  addHook('newVillage', () => { Game.exped = null; });
 });
 // after loading, the finds' goods exist again
 function restoreFinds() { for (const k of Object.values(expeditions().found)) FINDS[k].apply(false); }

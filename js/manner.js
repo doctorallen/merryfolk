@@ -55,9 +55,8 @@ window.addEventListener('DOMContentLoaded', () => {
     };
   }
   // musings aloud take their manner too
-  const chatter = Villager.prototype.chatter;
-  Villager.prototype.chatter = function () {
+  patch(Villager.prototype, 'chatter', (chatter) => function () {
     chatter.call(this);
     if (this.bubble && this.bubble.think && this.isGrown()) this.bubble.text = applyManner(this.bubble.text, this);
-  };
+  }, 'manner');
 });

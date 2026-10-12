@@ -146,16 +146,13 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     return rv();
   };
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     Game.contentStreak = contentment() >= 60 ? (Game.contentStreak || 0) + 1 : 0;
     chartersTick();
     if (eraReady(era() + 1) && Game.mootNote !== era()) { Game.mootNote = era(); chronicle(`Everything's in place for Thistledown to become a ${ERAS[era() + 1].name}. Call a Moot from the Charter tab of the village ledger!`, 'party'); }
-    return r;
-  };
-  const nv = newVillage;
-  newVillage = function () { Game.era = 0; Game.renown = 0; Game.coin = 20; Game.charters = []; Game.chartersDone = 0; Game.contentStreak = 0; Game.mootNote = -1; const r = nv(); chartersTick(); return r; };
+  });
+  addHook('newVillage', () => { Game.era = 0; Game.renown = 0; Game.coin = 20; Game.charters = []; Game.chartersDone = 0; Game.contentStreak = 0; Game.mootNote = -1; });
+  addHook('afterNewVillage', () => { chartersTick(); });
   // locked build tools
   const rb = renderBuildBar;
   renderBuildBar = function () {

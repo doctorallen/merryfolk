@@ -51,11 +51,9 @@ function addSentiment(v, o, tag, why, days = 6) {
     if (o) addSentiment(v, o, m[0], m[1]);
   };
   // the cure, nursing: grateful to the nurse
-  const cure = Villager.prototype.cure;
-  Villager.prototype.cure = function (by, nurse) { const sick = this.isSick(); const r = cure.call(this, by, nurse); if (sick && nurse) addSentiment(this, nurse, 'grateful', 'nursed me when I was poorly', 8); return r; };
+  patch(Villager.prototype, 'cure', (cure) => function (by, nurse) { const sick = this.isSick(); const r = cure.call(this, by, nurse); if (sick && nurse) addSentiment(this, nurse, 'grateful', 'nursed me when I was poorly', 8); return r; }, 'hearts');
   // sentiments warm or cool a friendship, and shared likes help
-  const bond = Villager.prototype.bond;
-  Villager.prototype.bond = function (o, amt) {
+  patch(Villager.prototype, 'bond', (bond) => function (o, amt) {
     let k = 1;
     if (amt > 0) {
       const sh = sharedLikes(this, o);
@@ -64,7 +62,7 @@ function addSentiment(v, o, tag, why, days = 6) {
       for (const s of sentimentsOf(this, o)) k += SENT[s.tag][1] * 0.15;
     }
     return bond.call(this, o, amt * Math.max(0.2, k));
-  };
+  }, 'hearts');
 }
 // A sentiment comes out when they meet.
 const SENT_LINES = {
@@ -112,8 +110,7 @@ MOODLETS.disliked = ['Had to put up with {x}', -0.05, 180, ['I can\'t abide {x}.
     if (Game.weather === 'clear' && !v.inside && Game.hour > 9 && Game.hour < 18 && likes(v, 'sunshine')) out.push(['Basking in the sunshine', 0.04]);
     return out;
   };
-  const fin = Villager.prototype.finish;
-  Villager.prototype.finish = function () {
+  patch(Villager.prototype, 'finish', (fin) => function () {
     const t = this.task;
     if (t && this.stage !== 'baby') {
       const id = t.a.id;
@@ -124,7 +121,7 @@ MOODLETS.disliked = ['Had to put up with {x}', -0.05, 180, ['I can\'t abide {x}.
       if (id === 'party' && likes(this, 'music')) feel(this, 'liked', 'the fiddling');
     }
     return fin.call(this);
-  };
+  }, 'hearts');
 }
 
 // --- Rivals and contests ------------------------------------------------------------------
@@ -171,12 +168,11 @@ function holdContests(occasion) {
 MOODLETS.won = ['Won {x}!', 0.14, 1440, ['Did you see? I won {x}!']];
 // rivals passing in the lane
 {
-  const ch = Villager.prototype.chatter;
-  Villager.prototype.chatter = function () {
+  patch(Villager.prototype, 'chatter', (ch) => function () {
     const r = rivalOf(this);
     if (r && !r.inside && !this.inside && dist(r.x, r.y, this.x, this.y) < 70 && R.chance(0.5)) { this.say(R.pick([`Hmph. ${r.first}.`, `${r.first} thinks ${r.pron.they}'s so clever.`, `Just you wait, ${r.first}.`]), undefined, { think: true }); return; }
     return ch.call(this);
-  };
+  }, 'hearts');
 }
 
 // --- Inspirations and sulks ------------------------------------------------------------------
@@ -234,8 +230,7 @@ function moodSwingsHourly() {
 }
 // a sulk shapes what they'll do; a friend's visit, a letter or a pat ends it
 {
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s <= 0 || !this.sulk) return s;
     const k = this.sulk.k;
@@ -244,7 +239,7 @@ function moodSwingsHourly() {
     if (k === 'comfort') mul('comfort-eating', a.id === 'eat_home' ? 3 : 1);
     if (k === 'huffy') mul('a huffy walk', a.id === 'stroll' ? 3 : 0.6);
     return s;
-  };
+  }, 'hearts');
   const f = feel;
   feel = function (v, key, x = '', mins) {
     f(v, key, x, mins);
@@ -277,15 +272,11 @@ function maybeMasterpiece(v) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     moodSwingsHourly();
     if (h === 6) pickRivals();
     // contests: at the autumn fair (the harvest festival), and on market days in summer
     if (h === 15 && ((World.season === 'autumn' && dayOfSeason(Game.day) === 2) || (World.season === 'summer' && isMarketDay(Game.day)))) holdContests(World.season === 'autumn' ? 'Harvest Fair' : 'market-day show');
-    return r;
-  };
-  const nv = newVillage;
-  newVillage = function () { Game.masterpieces = []; Game.lastInspired = -9; return nv(); };
+  });
+  addHook('newVillage', () => { Game.masterpieces = []; Game.lastInspired = -9; });
 });

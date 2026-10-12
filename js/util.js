@@ -99,6 +99,30 @@ function makeNoise(seed) {
 // while a sprite is built or a chunk of ground painted costs nothing much.
 // With `draw` set it lives on the graphics card instead, for images that are
 // drawn to the screen every frame (see gpuCopy).
+// ---------------------------------------------------------------------------
+// Hooks. A feature file that wants a turn when the hour strikes or a new
+// village is founded registers a function here rather than wrapping the
+// global; main.js runs each list in the order the files were loaded.
+//   beforeHour(h)     just before the hour's own work (weather, hearths)
+//   onHour(h)         after it, before the hourly save
+//   newVillage()      at the start of founding, for resetting state
+//   afterNewVillage() once the founding families are in
+// Chains that transform a value (score, finish, stewardHTML…) still wrap, but
+// through patch(), which records them so the dev drawer can show the chain.
+// ---------------------------------------------------------------------------
+const Hooks = { beforeHour: [], onHour: [], newVillage: [], afterNewVillage: [] };
+function addHook(name, fn) { if (!Hooks[name]) throw new Error('no such hook: ' + name); Hooks[name].push(fn); }
+function runHooks(name, ...args) { for (const fn of Hooks[name]) fn(...args); }
+/** @type {{ key: string, label: string, immediate: boolean }[]} */
+const PATCHES = [];
+// Wraps obj[key] with make(original) and notes it. `immediate` says it ran as
+// the script loaded (before the DOM was ready) rather than from a load handler.
+function patch(obj, key, make, label = '') {
+  const orig = obj[key];
+  obj[key] = make(orig);
+  PATCHES.push({ key, label, immediate: document.readyState === 'loading' });
+}
+
 /** @returns {[HTMLCanvasElement, CanvasRenderingContext2D]} */
 function makeCanvas(w, h, draw = false) {
   const c = document.createElement('canvas');

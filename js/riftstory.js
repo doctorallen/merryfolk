@@ -222,8 +222,7 @@ function tradition(k) { const c = story().customs[k]; return !!(c && c.tradition
   const rw = riftWary;
   riftWary = function (v) { return rw(v) * (story().wary || 1); };
   // a rift-hill friendship chat sometimes swaps a custom, or turns up a clue
-  const fin = Villager.prototype.finish;
-  Villager.prototype.finish = function () {
+  patch(Villager.prototype, 'finish', (fin) => function () {
     const t = this.task;
     if (t && t.a.id === 'chat' && t.partner && !t.data.quarrel && this.isRiftborn() !== t.partner.isRiftborn() && (this.rel[t.partner.id] || 0) > 0.35) {
       if (R.chance(0.25)) teachCustom(this, t.partner);
@@ -232,14 +231,13 @@ function tradition(k) { const c = story().customs[k]; return !!(c && c.tradition
     }
     if (t && (t.a.id === 'scavenge' || t.a.id === 'work_salvage') && R.chance(0.12)) findFragment('coin', this);
     return fin.call(this);
-  };
+  }, 'riftstory');
   // the tradition of second breakfast etc. in what folk say
-  const ch = Villager.prototype.chatter;
-  Villager.prototype.chatter = function () {
+  patch(Villager.prototype, 'chatter', (ch) => function () {
     const ts = Object.keys(CUSTOMS).filter((k) => tradition(k) && story().customs[k].knowers.includes(this.id));
     if (ts.length && this.stage !== 'baby' && R.chance(0.12)) { this.say(CUSTOMS[R.pick(ts)].line, undefined, { think: true }); return; }
     return ch.call(this);
-  };
+  }, 'riftstory');
 }
 
 // --- The First Moot, and the Long Dim: the Steward decides -------------------------------------
@@ -400,14 +398,10 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     return rv();
   };
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     storyTick(); cluesHourly(h); customsTick();
     if (h === 7) { arcsDaily(); hearthlinkDaily(); }
     if (h === 17) suppersDaily();
-    return r;
-  };
-  const nv = newVillage;
-  newVillage = function () { Game.riftStory = null; return nv(); };
+  });
+  addHook('newVillage', () => { Game.riftStory = null; });
 });

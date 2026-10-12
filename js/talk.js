@@ -515,8 +515,7 @@ function roomTalk(h) {
   };
 
   // what they've heard leans their choices
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s <= 0) return s;
     const mul = (name, f) => { s *= f; if (ex) ex.mul.push([name, f]); };
@@ -524,7 +523,7 @@ function roomTalk(h) {
     if (a.hobby && curiousAbout(this, a.hobby) && !hobbiesOf(this).includes(a.hobby)) mul('keen to try it', 2.2);
     if (a.id === 'lesson') mul('apprenticed', 1.6);
     return s;
-  };
+  }, 'talk');
 
   // which hobby their latest piece came from, for bragging about
   const mp = madePiece;
@@ -547,8 +546,7 @@ function roomTalk(h) {
   };
 
   // what they did, how it went, and what they'll say about it
-  const fin = Villager.prototype.finish;
-  Villager.prototype.finish = function () {
+  patch(Villager.prototype, 'finish', (fin) => function () {
     const t = this.task;
     if (t && this.stage !== 'baby') {
       const id = t.a.id;
@@ -589,7 +587,7 @@ function roomTalk(h) {
       }
     }
     return fin.call(this);
-  };
+  }, 'talk');
 
   // apprentices and the trades: a master's training counts when trades are handed out
   const jf = jobFit;
@@ -672,16 +670,12 @@ function apprenticeHtml(v) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     if (h >= 10 && !innSpecial()) pickSpecial(); // the day's dish goes up mid-morning, and stays up
     if (h === 7) { checkApprenticeships(); seekMasters(); }
     if (h >= 7 && h <= 23) roomTalk(h);
-    return r;
-  };
-  const nv = newVillage;
-  newVillage = function () { Game.innSpecial = null; return nv(); };
+  });
+  addHook('newVillage', () => { Game.innSpecial = null; });
   const pm = panelMind;
   panelMind = function (v) {
     const h = pm(v), w = wordOfMouthHtml(v);

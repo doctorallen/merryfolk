@@ -64,15 +64,13 @@ function valueAccord(a, b) {
   return f;
 }
 {
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s <= 0 || this.stage === 'baby') return s;
     for (const k of valuesOf(this)) if (VALUES[k].acts.includes(a.id)) { s *= TUNE.values.pull; if (ex) ex.mul.push(['holds ' + VALUES[k].label.toLowerCase() + ' dear', TUNE.values.pull]); break; }
     return s;
-  };
-  const bond = Villager.prototype.bond;
-  Villager.prototype.bond = function (o, amt) { return bond.call(this, o, amt > 0 ? amt * valueAccord(this, o) : amt); };
+  }, 'values');
+  patch(Villager.prototype, 'bond', (bond) => function (o, amt) { return bond.call(this, o, amt > 0 ? amt * valueAccord(this, o) : amt); }, 'values');
   // the Steward's answers please or vex those whose values they touch
   window.addEventListener('DOMContentLoaded', () => {
     if (typeof answerPetition !== 'function') return;

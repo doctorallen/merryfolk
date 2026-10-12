@@ -31,11 +31,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (w.last) { const f = (Game.farewells || []).find((x) => x.id === v.id || x.comp === v.id); if (f) (f.granted || (f.granted = [])).push(w.k === 'pint' ? 'one more pint at the Badger' : `a last natter with ${w.x}`); }
     return r;
   };
-  const oh = onHour;
-  onHour = function (h) {
-    for (const f of Game.farewells || []) if (!f.wished) setLastWishes(f);
-    return oh(h);
-  };
+  addHook('beforeHour', (h) => { for (const f of Game.farewells || []) if (!f.wished) setLastWishes(f); });
   const fd = farewellDeparture;
   farewellDeparture = function (f) {
     const v = personById(f.id);

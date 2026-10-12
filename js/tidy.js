@@ -41,9 +41,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (DIGEST.test(text) && (Game.hour < 6 || Game.hour >= 23)) { (Game.digest || (Game.digest = [])).push(text.replace(/ There'll be a party tonight\.?/, '').replace(/, and getting into everything\./, '.').replace(/ is getting on a bit, and/, '')); return; }
     return ch(text, kind);
   };
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     if (h === 7 && Game.digest && Game.digest.length) {
       const d = Game.digest; Game.digest = [];
       const of = d.filter((t) => /come of age/.test(t)).map((t) => t.replace(/ has come of age!.*/, ''));
@@ -56,6 +54,5 @@ window.addEventListener('DOMContentLoaded', () => {
       if (grey.length) bits.push(`${list(grey)} ${grey.length > 1 ? 'have' : 'has'} gone a little grey`);
       if (bits.length) chronicle(`Growing up and growing old: ${bits.join('; ')}.`, of.length ? 'party' : 'birth');
     }
-    return r;
-  };
+  });
 });

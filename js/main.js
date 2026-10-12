@@ -29,6 +29,7 @@ let tReal = 0;
 // Setup
 // ---------------------------------------------------------------------------
 function newVillage() {
+  runHooks('newVillage'); // every feature resets its own state first
   Game.villagers = []; Game.archive = {}; Game.away = []; Game.census = [];
   World.rifts = []; World.riftScars = [];
   // the first rift tears open on the second evening
@@ -85,6 +86,7 @@ function newVillage() {
   World.items = [];
   Game.census.push({ day: 0, pop: vs.length, mood: 0.7, food: Village.foodTotal(), kids: vs.filter((v) => !v.isGrown()).length });
   chronicle('A fine spring morning in Thistledown. The kettles are on and the second breakfast is nearly ready.', 'info');
+  runHooks('afterNewVillage'); // and the features that want the founding families in place
 }
 
 // ---------------------------------------------------------------------------
@@ -263,6 +265,7 @@ function checkSeason(announce) {
 }
 
 function onHour(h) {
+  runHooks('beforeHour', h);
   const season = World.season;
   // weather, by season
   const w = Game.weather;
@@ -297,6 +300,8 @@ function onHour(h) {
   if (h === 22 && Game.party.on && !Game.raining) fireworkShow(PARTY.danceX * 16 + 8, (PARTY.danceY - 3) * 16, Game.party.reason === 'midsummer' ? 18 : 9);
   if (h === 23 && Game.party.on && Game.party.reason === 'midsummer') fireworkShow(PARTY.danceX * 16 + 8, (PARTY.danceY - 3) * 16, 14);
   if (h === 0) Game.party.planned = null;
+  // every feature's hourly turn, in the order the files were loaded, then the save
+  runHooks('onHour', h);
   save();
 }
 

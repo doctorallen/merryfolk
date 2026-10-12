@@ -73,6 +73,5 @@ window.addEventListener('DOMContentLoaded', () => {
   // on the Charter
   const ch = charterHTML;
   charterHTML = function () { const t = Game.traditions || []; const all = Object.values(TRADITIONS).flat(); return ch() + (t.length ? `<h3>Thistledown's traditions</h3><div class="likes">${t.map((k) => { const o = all.find((x) => x.k === k); return o ? `<div><b>${escapeHtml(o.name)}.</b> ${escapeHtml(o.desc)}</div>` : ''; }).join('')}</div>` : ''); };
-  const nv = newVillage;
-  newVillage = function () { Game.traditions = []; return nv(); };
+  addHook('newVillage', () => { Game.traditions = []; });
 });

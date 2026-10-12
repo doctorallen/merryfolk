@@ -115,8 +115,7 @@ function moodTick(v, dt) {
 
 // When something's on their mind, it comes out when they muse aloud.
 {
-  const chatter = Villager.prototype.chatter;
-  Villager.prototype.chatter = function () {
+  patch(Villager.prototype, 'chatter', (chatter) => function () {
     if (this.isGrown() || this.isChild()) {
       const strong = feelingsOf(this).filter((f) => f[3] && Math.abs(f[1]) >= 0.07);
       if (strong.length && R.chance(0.3)) {
@@ -125,7 +124,7 @@ function moodTick(v, dt) {
       }
     }
     chatter.call(this);
-  };
+  }, 'moodlets');
 }
 
 // --- What brings feelings on ------------------------------------------------
@@ -141,8 +140,7 @@ function moodTick(v, dt) {
   const pat = Villager.prototype.pat, tut = Villager.prototype.tut;
   Villager.prototype.pat = function () { feel(this, 'patted'); unfeel(this, 'tutted'); return pat.call(this); };
   Villager.prototype.tut = function () { feel(this, 'tutted'); unfeel(this, 'patted'); return tut.call(this); };
-  const finish = Villager.prototype.finish;
-  Villager.prototype.finish = function () {
+  patch(Villager.prototype, 'finish', (finish) => function () {
     const task = this.task;
     if (task) {
       const id = task.a.id;
@@ -155,7 +153,7 @@ function moodTick(v, dt) {
       }
     }
     return finish.call(this);
-  };
+  }, 'moodlets');
   const w = wed;
   wed = function (a, b) {
     w(a, b);

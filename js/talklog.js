@@ -97,12 +97,10 @@ window.addEventListener('DOMContentLoaded', () => {
     renderTalkLog(ol);
   };
   // every line said to the other half of a natter goes on the thread
-  const say = Villager.prototype.say;
-  Villager.prototype.say = function (text, dur, opts = {}) {
+  patch(Villager.prototype, 'say', (say) => function (text, dur, opts = {}) {
     const to = opts.to;
     if (text && to && this.task && this.task.a.id === 'chat' && this.task.partner === to && to.task && to.task.a.id === 'chat' && to.task.partner === this) logTalkLine(this, to, text);
     return say.call(this, text, dur, opts);
-  };
-  const nv = newVillage;
-  newVillage = function () { Game.talks = []; Game.talkSeq = 0; Game.talkOpen = {}; return nv(); };
+  }, 'talklog');
+  addHook('newVillage', () => { Game.talks = []; Game.talkSeq = 0; Game.talkOpen = {}; });
 });

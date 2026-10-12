@@ -237,6 +237,5 @@ window.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', measureHud);
   if (window.ResizeObserver) { const ro = new ResizeObserver(measureHud); ro.observe($('topbar')); ro.observe($('bottom')); }
   setTimeout(measureHud, 50);
-  const nv = newVillage;
-  newVillage = function () { Game.tut = { step: 0, saw: {}, off: false }; Game.objHidden = false; return nv(); };
+  addHook('newVillage', () => { Game.tut = { step: 0, saw: {}, off: false }; Game.objHidden = false; });
 });

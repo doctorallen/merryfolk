@@ -270,13 +270,12 @@ function wishesHourly(h) {
     // a squabble leaves a wish to make it up
     if (v && key === 'quarrel' && R.chance(0.6) && v.isGrown()) addWish(v, 'make_up', { x });
   };
-  const finish = Villager.prototype.finish;
-  Villager.prototype.finish = function () {
+  patch(Villager.prototype, 'finish', (finish) => function () {
     const id = this.task && this.task.a.id;
     const r = finish.call(this);
     if (id) wishEvent(this, 'act:' + id);
     return r;
-  };
+  }, 'wishes');
   // fireworks and the hour are main.js's, which loads last: hook them just before it boots
   window.addEventListener('DOMContentLoaded', () => {
     const fw = fireworkShow;
@@ -284,12 +283,10 @@ function wishesHourly(h) {
       fw(x, y, n);
       for (const v of Game.villagers) if (!(v.task && v.task.a.id === 'sleep' && v.task.phase === 'do')) wishEvent(v, 'fireworks');
     };
-    const oh = onHour;
-    onHour = function (h) { wishesHourly(h); return oh(h); };
+    addHook('beforeHour', (h) => { wishesHourly(h); });
   });
   // a wish leans them towards what would grant it
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s > 0 && this.wishes && this.wishes.length) {
       for (const w of this.wishes) {
@@ -299,12 +296,11 @@ function wishesHourly(h) {
       }
     }
     return s;
-  };
+  }, 'wishes');
   // and it's on their mind when they muse aloud
-  const chatter = Villager.prototype.chatter;
-  Villager.prototype.chatter = function () {
+  patch(Villager.prototype, 'chatter', (chatter) => function () {
     const ws = (this.wishes || []).filter((w) => WISHES[w.k] && WISHES[w.k].say);
     if (ws.length && R.chance(0.22)) { const w = R.pick(ws); this.say(R.pick(WISHES[w.k].say).replace(/\{x\}/g, w.x || ''), undefined, { think: true }); return; }
     chatter.call(this);
-  };
+  }, 'wishes');
 }

@@ -66,12 +66,11 @@ function projectsHTML() {
 
 // --- Shortages bite ------------------------------------------------------------------
 {
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s > 0 && a.job && this.drives.hunger > 0.75) { s *= 0.55; if (ex) ex.mul.push(['too hungry to work', 0.55]); }
     return s;
-  };
+  }, 'economy');
   // famished hands get less done
   const wp = workProject;
   workProject = function (v, p) { if (v.drives.hunger > 0.8 && R.chance(0.4)) return; return wp(v, p); };
@@ -125,8 +124,7 @@ window.addEventListener('DOMContentLoaded', () => {
     body.querySelectorAll('a[data-v]').forEach((a) => a.addEventListener('click', () => { const o = Game.villagers.find((x) => x.id === +a.dataset.v); if (o) { $('village').hidden = true; selectVillager(o); focusVillager(o); } }));
     return hook(body);
   };
-  const oh = onHour;
-  onHour = function (h) { const r = oh(h); if (h === 6) leaversDaily(); return r; };
+  addHook('onHour', (h) => { if (h === 6) leaversDaily(); });
 });
 
 // --- The Steward's orders: things coin can buy at any time -------------------

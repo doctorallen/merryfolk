@@ -63,8 +63,7 @@ function setPolicy(k, v) {
 
 // --- The working week --------------------------------------------------------
 {
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s <= 0 || !a.job || NEVER_REST.has(a.id)) return s;
     const w = policy('week'), day = weekday(Game.day);
@@ -72,7 +71,7 @@ function setPolicy(k, v) {
     if (w === 'easy' && day === 'Sunday') mul('Steward\'s day off', 0.3);
     if (w === 'busy') mul(isRestDay(Game.day) ? 'no day of rest' : 'a busy week', isRestDay(Game.day) ? 3.3 : 1.15);
     return s;
-  };
+  }, 'steward');
   const sf = stateFeelings;
   stateFeelings = function (v) {
     const out = sf(v);
@@ -214,10 +213,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     return rv();
   };
-  const oh = onHour;
-  onHour = function (h) { const r = oh(h); if (h === 9) migrationDaily(); return r; };
-  const nv = newVillage;
-  newVillage = function () { Game.policy = {}; Game.jobPlan = {}; Game.contentLog = []; return nv(); };
+  addHook('onHour', (h) => { if (h === 9) migrationDaily(); });
+  addHook('newVillage', () => { Game.policy = {}; Game.jobPlan = {}; Game.contentLog = []; });
   // the meter in the top bar opens the desk
   $('hud-content').addEventListener('click', () => { Game.villageTab = 'steward'; $('village').hidden = false; renderVillage(); });
   const hud = updateHUD;

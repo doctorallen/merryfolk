@@ -166,13 +166,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     return rv();
   };
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     if (h === 8 && caravanDue(Game.day) && !caravan()) arriveCaravan();
     if (h >= 17 && caravan()) leaveCaravan();
-    return r;
-  };
-  const nv = newVillage;
-  newVillage = function () { Game.caravan = null; Game.masonsUntil = 0; World.wagonStatic = null; return nv(); };
+  });
+  addHook('newVillage', () => { Game.caravan = null; Game.masonsUntil = 0; World.wagonStatic = null; });
 });

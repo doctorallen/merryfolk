@@ -258,6 +258,5 @@ window.addEventListener('DOMContentLoaded', () => {
     if (Game.started) { Game._gatherT = (Game._gatherT || 0) + dtMin; if (Game._gatherT >= 20) { Game._gatherT = 0; tryGather(hour); } }
     return r;
   };
-  const nv = newVillage;
-  newVillage = function () { Game.gatherings = []; Game.lastGather = null; return nv(); };
+  addHook('newVillage', () => { Game.gatherings = []; Game.lastGather = null; });
 });

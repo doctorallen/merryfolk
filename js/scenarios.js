@@ -30,16 +30,13 @@ window.addEventListener('DOMContentLoaded', () => {
     row.querySelectorAll('[data-scen]').forEach((b) => b.addEventListener('click', () => { c.scenario = b.dataset.scen; Object.assign(c, SCENARIOS[c.scenario].gen || {}); renderWorldSetup(); }));
   };
   // starting conditions
-  const nv = newVillage;
-  newVillage = function () {
-    const r = nv();
+  addHook('afterNewVillage', () => {
     const k = scenario();
     Game.scenarioDone = false;
     if (k === 'winter') { for (const f of ['bread', 'veg', 'fish', 'apple', 'pie', 'cake', 'egg', 'cheese']) Village.stores[f] = Math.floor((Village.stores[f] || 0) * 0.6); }
     if (k === 'hard') { for (const f in Village.stores) Village.stores[f] = Math.floor((Village.stores[f] || 0) * 0.4); Game.coin = 0; for (const v of Game.villagers) if (v.stage !== 'baby') feel(v, 'hard_times'); }
     if (k !== 'open') setTimeout(() => chronicle(`Scenario: ${SCENARIOS[k].name}. ${SCENARIOS[k].desc}`, 'season'), 200);
-    return r;
-  };
+  });
   // harsher seasons
   const ph = planHazard;
   planHazard = function () {
@@ -57,16 +54,13 @@ window.addEventListener('DOMContentLoaded', () => {
     return ph();
   };
   // the goal
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     const S = SCENARIOS[scenario()];
     if (S && S.goal && !Game.scenarioDone) {
       if (S.goal()) { Game.scenarioDone = 'won'; Game.renown = (Game.renown || 0) + 50; chronicle(`🏆 Scenario complete: ${S.name}! ${S.goalText}: done. The whole Shire is talking about Thistledown. (+50 renown)`, 'party'); toast(`Scenario complete: ${S.name}!`, 'party'); for (const v of Game.villagers) if (v.stage !== 'baby') feel(v, 'era', 'village to be proud of'); }
       else if (S.by && yearOf(Game.day) >= S.by) { Game.scenarioDone = 'missed'; chronicle(`The scenario's goal (${S.goalText.toLowerCase()}) slipped by. No matter: Thistledown goes on, and so do you.`, 'info'); }
     }
-    return r;
-  };
+  });
   // shown on the Charter
   const ch = charterHTML;
   charterHTML = function () {

@@ -547,8 +547,7 @@ window.addEventListener('DOMContentLoaded', () => {
   $('btn-build').addEventListener('click', () => setBuildMode(!Build.on));
   const ro = renderOverlay;
   renderOverlay = function () { ro(); drawBuildOverlay(); };
-  const nv = newVillage;
-  newVillage = function () { Game.plans = []; Game.planDone = []; Game.terra = []; Game.playerLots = []; Game.lotMoves = {}; Game.planSeq = 0; return nv(); };
+  addHook('newVillage', () => { Game.plans = []; Game.planDone = []; Game.terra = []; Game.playerLots = []; Game.lotMoves = {}; Game.planSeq = 0; });
   // the terrain you shaped is part of the lie of the land
   const gp = gatherPads;
   gatherPads = function () {

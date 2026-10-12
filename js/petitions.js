@@ -112,8 +112,7 @@ const PETITIONS = [
 ];
 // the effects that need a hook
 {
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s <= 0) return s;
     const mul = (n, f) => { s *= f; if (ex) ex.mul.push([n, f]); };
@@ -123,7 +122,7 @@ const PETITIONS = [
     }
     if (Game.schoolUntil >= Game.day && a.id === 'school') mul('longer lessons', 1.8);
     return s;
-  };
+  }, 'petitions');
   // harvest helpers: everyone may work the fields that day
   for (const k of ['work_farm', 'work_allot']) if (ACTIONS[k]) { const av = ACTIONS[k].avail; ACTIONS[k].jobs = (ACTIONS[k].jobs || []).concat(Object.keys(JOBS)); ACTIONS[k].avail = function (v, h) { if (v.job !== 'farmer' && Game.harvestDay !== Game.day) return false; return av ? av(v, h) : true; }; }
   const wp = workProject;
@@ -199,8 +198,7 @@ function petitionTick() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) { const r = oh(h); if (h === 10 || h === 15) petitionDue(); petitionTick(); return r; };
+  addHook('onHour', (h) => { if (h === 10 || h === 15) petitionDue(); petitionTick(); });
   $('hud-petition').addEventListener('click', () => queueMoot(openPetition));
   const hud = updateHUD;
   updateHUD = function () { hud(); const el = $('hud-petition'); el.hidden = !Game.petition; };
@@ -216,8 +214,7 @@ window.addEventListener('DOMContentLoaded', () => {
   };
   const hook = hookStewardUI;
   hookStewardUI = function (body) { const b = body.querySelector('#st-petition'); if (b) b.addEventListener('click', () => { $('village').hidden = true; openPetition(); }); return hook(body); };
-  const nv = newVillage;
-  newVillage = function () { Game.factions = {}; Game.petition = null; Game.petitionsSeen = []; Game.lastPetitionDay = 0; Game.highdayDance = false; Game.swing = false; Game.neonSquare = false; Game.breePact = false; return nv(); };
+  addHook('newVillage', () => { Game.factions = {}; Game.petition = null; Game.petitionsSeen = []; Game.lastPetitionDay = 0; Game.highdayDance = false; Game.swing = false; Game.neonSquare = false; Game.breePact = false; });
 });
 
 // --- What the petitions leave on the map ---------------------------------------
@@ -254,8 +251,6 @@ ACTIONS.swing = {
 };
 ACTION_NAMES.swing = 'Swinging';
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) { const r = oh(h); if (Game.swing && !World.swingSpot) placeSwing(); return r; };
-  const nv = newVillage;
-  newVillage = function () { World.swingSpot = null; return nv(); };
+  addHook('onHour', (h) => { if (Game.swing && !World.swingSpot) placeSwing(); });
+  addHook('newVillage', () => { World.swingSpot = null; });
 });

@@ -20,8 +20,7 @@ function sprained(v) { return !!(v.illness && v.illness.kind === 'sprain' && Gam
 
 {
   // a cold in the cold months may turn to flu
-  const cc = Villager.prototype.catchCold;
-  Villager.prototype.catchCold = function (from) {
+  patch(Villager.prototype, 'catchCold', (cc) => function (from) {
     const before = this.chem.germs;
     cc.call(this, from);
     if (before > 0 || this.chem.germs <= 0) return;
@@ -32,10 +31,9 @@ function sprained(v) { return !!(v.illness && v.illness.kind === 'sprain' && Gam
       feel(this, 'laid_up');
       chronicle(`${this.name()} is laid up in bed with the flu. A visit and a pot of soup would cheer ${this.pron.them} up.`, 'sick');
     }
-  };
+  }, 'illness');
   // the flu keeps germs high and the patient abed; a sprain slows them down
-  const upd = Villager.prototype.update;
-  Villager.prototype.update = function (dt, h) {
+  patch(Villager.prototype, 'update', (upd) => function (dt, h) {
     if (this.illness && Game.time >= this.illness.until) {
       const k = this.illness.kind; this.illness = null;
       if (k === 'flu') { unfeel(this, 'laid_up'); this.remember('Got over the flu at last.', 1); if (R.chance(0.5)) chronicle(`${this.first} is up and about again after the flu.`, 'sick'); }
@@ -43,21 +41,18 @@ function sprained(v) { return !!(v.illness && v.illness.kind === 'sprain' && Gam
     }
     if (hasFlu(this)) { this.chem.germs = Math.max(this.chem.germs, 0.5); this.drives.tired = Math.max(this.drives.tired, 0.55); }
     return upd.call(this, dt, h);
-  };
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  }, 'illness');
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s <= 0) return s;
     const mul = (n, f) => { s *= f; if (ex) ex.mul.push([n, f]); };
     if (hasFlu(this)) mul('laid up with flu', a.id === 'sleep' || a.id === 'eat_home' || a.id === 'remedy_item' ? 2 : 0.05);
     else if (sprained(this) && (a.job || ['play', 'chase', 'party', 'stroll'].includes(a.id))) mul('a sprained ankle', 0.3);
     return s;
-  };
-  const walk = Villager.prototype.walk;
-  Villager.prototype.walk = function (dt, boost = 1) { return walk.call(this, dt, sprained(this) ? boost * 0.5 : boost); };
+  }, 'illness');
+  patch(Villager.prototype, 'walk', (walk) => function (dt, boost = 1) { return walk.call(this, dt, sprained(this) ? boost * 0.5 : boost); }, 'illness');
   // a tumble, now and then
-  const fin = Villager.prototype.finish;
-  Villager.prototype.finish = function () {
+  patch(Villager.prototype, 'finish', (fin) => function () {
     const t = this.task;
     if (t && !this.illness && this.stage !== 'baby' && (t.a.id === 'chase' || (t.a.job && t.a.pose === 'work')) && R.chance(t.a.id === 'chase' ? 0.04 : 0.006)) {
       this.illness = { kind: 'sprain', until: Game.time + 1440 };
@@ -66,10 +61,9 @@ function sprained(v) { return !!(v.illness && v.illness.kind === 'sprain' && Gam
       chronicle(`${this.first} has sprained an ankle ${t.a.id === 'chase' ? 'chasing a rabbit' : 'at work'} and is hobbling about.`, 'sick');
     }
     return fin.call(this);
-  };
+  }, 'illness');
   // being laid up shows in the panel
-  const act = Villager.prototype.activity;
-  Villager.prototype.activity = function () { return hasFlu(this) && this.task && this.task.a.id === 'sleep' ? 'Laid up in bed with the flu' : act.call(this); };
+  patch(Villager.prototype, 'activity', (act) => function () { return hasFlu(this) && this.task && this.task.a.id === 'sleep' ? 'Laid up in bed with the flu' : act.call(this); }, 'illness');
 }
 
 // Friends come round with soup.
@@ -96,8 +90,7 @@ function soupRounds() {
   }
 }
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) { const r = oh(h); if (h === 11 || h === 17) soupRounds(); return r; };
+  addHook('onHour', (h) => { if (h === 11 || h === 17) soupRounds(); });
   // the panel's health chips know about flu and sprains
   const hc = healthChips;
   healthChips = function (v) {

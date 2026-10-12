@@ -62,8 +62,7 @@ const nearbyFolk = (v, r) => { let n = 0; for (const o of Game.villagers) if (o 
 const sickAbout = () => Game.villagers.filter((o) => o.isSick()).length;
 
 {
-  const update = Villager.prototype.update;
-  Villager.prototype.update = function (dt, h) {
+  patch(Villager.prototype, 'update', (update) => function (dt, h) {
     update.call(this, dt, h);
     if (this.stage === 'baby' || this.leaving || this.carried) return;
     const d = this.drives, g = this.genes, rate = dt / 60, T = TUNE;
@@ -102,7 +101,7 @@ const sickAbout = () => Game.villagers.filter((o) => o.isSick()).length;
       if (Game.time > this.tantrum.until) { this.tantrum = null; this.say(R.pick(['*sniff* ...Okay.', '...I\'m better now.', 'Can I have a biscuit?']), 2.5); }
       else if (!this.bubble && R.chance(dt * 0.2)) this.say(R.pick(['I don\'t WANT to!', 'Waaah!', '*stamps feet*', 'It\'s not FAIR!', 'NO!', '*sobs*']), 2.2);
     }
-  };
+  }, 'minds');
 }
 
 // The hole they live in colours every day, and the memories they carry too.
@@ -132,13 +131,12 @@ function memoryLift(v) {
   return v._memLift;
 }
 {
-  const remember = Villager.prototype.remember;
-  Villager.prototype.remember = function (text, valence = 0, weight) {
+  patch(Villager.prototype, 'remember', (remember) => function (text, valence = 0, weight) {
     remember.call(this, text, valence);
     const m = this.memories[0];
     if (m && m.t === text) m.w = weight ?? Math.abs(valence);
     this._memAt = null;
-  };
+  }, 'minds');
 }
 // A strong memory from a while back, fit for "Do you remember…"
 function reminiscence(v) {
@@ -190,8 +188,7 @@ const DREAM_NUDGE = {
   belong: (v, a) => ['chat', 'eat_inn', 'gather', 'party', 'ale'].includes(a.id),
 };
 {
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s <= 0) return s;
     const mul = (n, f) => { if (f === 1) return; s *= f; if (ex) ex.mul.push([n, f]); };
@@ -211,10 +208,9 @@ const DREAM_NUDGE = {
     // a tantrum: nothing much appeals but going home
     if (this.tantrum) mul('in a tantrum', HOME_ACTS.has(a.id) ? 1.5 : 0.4);
     return s;
-  };
+  }, 'minds');
   // tolerance grows with each go at a pastime, and wears off hour by hour
-  const finish = Villager.prototype.finish;
-  Villager.prototype.finish = function () {
+  patch(Villager.prototype, 'finish', (finish) => function () {
     const a = this.task && this.task.a;
     finish.call(this);
     if (!a) return;
@@ -222,19 +218,16 @@ const DREAM_NUDGE = {
     if (kind) { this.tol = this.tol || {}; this.tol[kind] = Math.min(1, (this.tol[kind] || 0) + TUNE.variety.gain); }
     const pr = purposeRelief(this, a);
     if (pr) this.drives.industry = Math.max(0, this.drives.industry - pr);
-  };
+  }, 'minds');
 }
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) {
-    const r = oh(h);
+  addHook('onHour', (h) => {
     for (const v of Game.villagers) {
       if (v.tol) for (const k in v.tol) { v.tol[k] = Math.max(0, v.tol[k] - TUNE.variety.decayPerHour); if (v.tol[k] <= 0) delete v.tol[k]; }
       tantrumHourly(v);
     }
     traditionsHourly();
-    return r;
-  };
+  });
 });
 
 // --- breaks ---------------------------------------------------------------------
@@ -260,8 +253,7 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 });
 {
-  const score = Villager.prototype.score;
-  Villager.prototype.score = function (a, h, ex) {
+  patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s <= 0 || !this.sulk) return s;
     const k = this.sulk.k, mul = (n, f) => { s *= f; if (ex) ex.mul.push([n, f]); };
@@ -269,7 +261,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (k === 'wander') mul('wandering', a.id === 'stroll' ? 3 : HOME_ACTS.has(a.id) ? 0.5 : 0.8);
     if (k === 'sharp') mul('a sharp mood', a.id === 'chat' ? 0.5 : 1);
     return s;
-  };
+  }, 'minds');
 }
 function tantrumHourly(v) {
   if (!v.isChild() || v.leaving) return;
@@ -286,8 +278,7 @@ function tantrumHourly(v) {
 }
 // a pat or a kind word ends a tantrum early
 {
-  const pat = Villager.prototype.pat;
-  Villager.prototype.pat = function () { if (this.tantrum) { this.tantrum = null; this.say(R.pick(['*hic* ...okay.', 'Sorry.']), 2.5); } return pat.call(this); };
+  patch(Villager.prototype, 'pat', (pat) => function () { if (this.tantrum) { this.tantrum = null; this.say(R.pick(['*hic* ...okay.', 'Sorry.']), 2.5); } return pat.call(this); }, 'minds');
 }
 
 // --- the Steward's choices and the village's traditions touch what folk hold dear ---

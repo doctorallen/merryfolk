@@ -103,8 +103,6 @@ function postDaily() {
   for (const l of mailbag()) { const r = Game.villagers.find((o) => o.id === l.to); if (r) l.home = r.homeId; }
 }
 window.addEventListener('DOMContentLoaded', () => {
-  const oh = onHour;
-  onHour = function (h) { const r = oh(h); if (h === 8) postDaily(); return r; };
-  const nv = newVillage;
-  newVillage = function () { Game.mailbag = []; return nv(); };
+  addHook('onHour', (h) => { if (h === 8) postDaily(); });
+  addHook('newVillage', () => { Game.mailbag = []; });
 });
