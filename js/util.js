@@ -7,6 +7,11 @@ const TILE = 16;
 // The game draws everything at double resolution: two canvas pixels to every
 // world pixel. Game logic, positions and the map all stay in world pixels.
 const RS = 2;
+// villagers alone are drawn finer still: four canvas pixels to a world pixel
+const FOLK_RES = 4;
+// at this zoom a quarter-pixel is half a screen pixel and the finer detail
+// can't show, so the half-pixel copy of each villager sprite is drawn instead
+const FOLK_LO_ZOOMS = new Set([2]);
 const GS = 2; // the painted ground, likewise
 // The map's size in tiles; the classic valley is 128×96. Changed only before
 // a world is built, through setMapSize (world.js).

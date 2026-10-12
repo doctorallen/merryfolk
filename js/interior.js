@@ -851,7 +851,7 @@ function portraitSprite(a) {
   let s = Interior.portraits.get(a.id);
   if (s === undefined) {
     try {
-      const sp = buildVillagerSprites(a.genes, a.stage === 'baby' ? 'child' : a.stage, a.look || {}).down.stand;
+      const hi = buildVillagerSprites(a.genes, a.stage === 'baby' ? 'child' : a.stage, a.look || {}).down.stand, sp = hi.lo || hi;
       if (a.archived) {
         const [c, cx] = makeCanvas(sp.width, sp.height);
         cx.drawImage(sp, 0, 0);
@@ -1060,6 +1060,7 @@ function drawPerson(L, v, st, t) {
   const asleep = tg.pose === 'bed' || tg.asleep || (tg.pose === 'cradle' && v.task && v.task.a.id === 'sleep');
   const spr = asleep || (t + v.id * 0.37) % 4.1 < 0.13 ? shutSprites(v) : v.sprites;
   let img, x, y, flip = false, bob = 0;
+  // indoors is drawn in half-pixels, so the half-resolution copies are used
   const shiver = L.h.chilly && !(tg.pose === 'bed') ? Math.round(Math.sin(t * 40 + v.id)) * 0.5 : 0;
   if (st.walking) {
     // stride, pass, stride, pass, rising a little as the feet pass
@@ -1068,7 +1069,7 @@ function drawPerson(L, v, st, t) {
     if (ph % 2) bob = -1;
   } else if (tg.pose === 'bed' || tg.pose === 'cradle') {
     // just a head on the pillow (or over the cradle's side)
-    const full = spr.down.stand, a = full.anchors || {};
+    const full = spr.down.stand.lo || spr.down.stand, a = full.anchors || {};
     const ch = Math.round((a.mouth ? a.mouth[1] : 10) + 4);
     const hx = Math.round(st.x - full.width / 2), hy = tg.pose === 'bed' ? WALL_B - 18 - ch + 3 : WALL_B - 16 - ch + 4 + (Interior.rocking.has(tg.bed) ? 0 : 0);
     const rock = tg.pose === 'cradle' ? Math.round(Math.sin(t * 2.5) * 1.5) : 0;
@@ -1091,6 +1092,7 @@ function drawPerson(L, v, st, t) {
     img = face === 'up' ? spr.up.stand : face === 'left' || face === 'right' ? spr.side.stand : spr.down.stand;
     flip = face === 'left';
   }
+  img = img.lo || img;
   x = Math.round(st.x - img.width / 2 + shiver);
   y = Math.round((tg.pose === 'sit' && !st.walking ? tg.y - 2 : st.y) - img.height + 1) + bob;
   if (tg.pose === 'sit' && !st.walking && tg.seat && tg.seat.kind === 'arm') y -= 3;

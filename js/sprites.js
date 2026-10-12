@@ -39,7 +39,9 @@ function scale2x(src) {
 // Draws any sprite at its world size: native double-resolution art as it is,
 // world-resolution art through the upscaler.
 function blit(ctx, img, x, y, flip = false) {
-  const lw = img.hd ? img.width / RS : img.width, lh = img.hd ? img.height / RS : img.height;
+  if (img.lo && typeof Game !== 'undefined' && FOLK_LO_ZOOMS.has(Game.zoom)) img = img.lo;
+  const res = img.res || (img.hd ? RS : 1);
+  const lw = img.width / res, lh = img.height / res;
   const src = img.hd ? img : hd(img);
   if (flip) { ctx.save(); ctx.translate(x + lw, y); ctx.scale(-1, 1); ctx.drawImage(src, 0, 0, lw, lh); ctx.restore(); }
   else ctx.drawImage(src, x, y, lw, lh);
@@ -69,6 +71,8 @@ function villagerPalette(genes, stage, look = {}) {
     c: ex.shirt, C: shade(ex.shirt, -0.14), b: '#e8c860', y: '#e8c860', l: '#4a2e1a', o: '#e8c860',
     t: ex.legs, T: shade(ex.legs, -0.25), f: shade(skin, -0.06), F: shade(ex.hair, -0.12), R: mix(ex.vest, '#ff5a7a', 0.6),
     n: ex.neon, z: mix(ex.neon, '#101018', 0.35), Z: '#e8ffff', g: '#6af8ff', G: '#8a7a5a',
+    // the finer grid's own: pupils, and the glint on a button
+    E: shade(ex.eyes, -0.5), B: shade('#e8c860', 0.4),
   };
   const tier = look.tier || 0;
   // folk taking up rift ways wear neon trim; the thoroughly rift-minded go about in synth-weave
@@ -428,21 +432,136 @@ function folkBundle() {
   return g;
 }
 
-// Turns a grid into a double-resolution canvas with a single half-pixel outline.
-function folkCanvas(grid, pal) {
+// Turns a grid into a canvas, every cell one pixel, ringed by an outline
+// `pad` pixels thick in a darkened shade of what it borders. `res` is how many
+// of its pixels make a world pixel.
+function gridCanvas(grid, pal, pad, res) {
+  const H = grid.length, W = grid[0].length, CW = W + pad * 2, CH = H + pad * 2;
+  const [c, x] = makeCanvas(CW, CH);
+  const img = x.createImageData(CW, CH), d = img.data;
+  const rgb = {};
+  for (const k in pal) rgb[k] = hexToRgb(pal[k]);
+  // what each pixel is: 0 nothing, 1 art, 2 outline
+  const kind = new Uint8Array(CW * CH);
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
+    const col = grid[j][i] !== '.' && rgb[grid[j][i]];
+    if (!col) continue;
+    const q = (j + pad) * CW + i + pad;
+    d[q * 4] = col[0]; d[q * 4 + 1] = col[1]; d[q * 4 + 2] = col[2]; d[q * 4 + 3] = 255; kind[q] = 1;
+  }
+  // the outline, a ring at a time: each ring takes a darkened shade of the
+  // art it borders, or the colour of the ring inside it
+  for (let k = 0; k < pad; k++) {
+    const marks = [];
+    for (let q = 0; q < CW * CH; q++) {
+      if (kind[q]) continue;
+      const i = q % CW, j = (q / CW) | 0;
+      let r = 0, g = 0, b = 0, n = 0;
+      for (const o of [q - 1, q + 1, q - CW, q + CW]) {
+        if (o < 0 || o >= CW * CH || (o === q - 1 && i === 0) || (o === q + 1 && i === CW - 1)) continue;
+        if (kind[o] === 1) { r += d[o * 4] * OUTLINE_DARK; g += d[o * 4 + 1] * OUTLINE_DARK; b += d[o * 4 + 2] * OUTLINE_DARK; n++; }
+        else if (kind[o] === 2 && k) { r += d[o * 4]; g += d[o * 4 + 1]; b += d[o * 4 + 2]; n++; }
+      }
+      if (n) marks.push(q, r / n, g / n, b / n);
+      if (j < 0) break;
+    }
+    for (let m = 0; m < marks.length; m += 4) { const q = marks[m]; d[q * 4] = marks[m + 1]; d[q * 4 + 1] = marks[m + 2]; d[q * 4 + 2] = marks[m + 3]; d[q * 4 + 3] = 255; kind[q] = 2; }
+  }
+  x.putImageData(img, 0, 0);
+  c.hd = true; c.res = res;
+  return c;
+}
+// Keys that are areas of colour, which the finer grid rounds at their edges;
+// the rest (eyes, buttons, chain, specs) are detail and stay put.
+const FOLK_SMOOTH = new Set(['.', 's', 'S', 'h', 'H', 'j', 'v', 'V', 'u', 'c', 'C', 't', 'T', 'f', 'F', 'z']);
+// The grid drawn twice as fine: each cell becomes four, and at every corner
+// where two like neighbours meet across a different cell the corner is cut
+// or filled, so curves come out round instead of stepped.
+function fineGrid(grid) {
   const H = grid.length, W = grid[0].length;
-  const [c, x] = makeCanvas(W + 2, H + 2);
-  const solid = (i, j) => j >= 0 && j < H && i >= 0 && i < W && grid[j][i] !== '.' && pal[grid[j][i]];
-  for (let j = -1; j <= H; j++) for (let i = -1; i <= W; i++) {
-    if (solid(i, j)) { x.fillStyle = pal[grid[j][i]]; x.fillRect(i + 1, j + 1, 1, 1); }
-    else {
-      // the outline takes a darkened shade of what it borders, as everything else's does
-      let r = 0, gg = 0, b = 0, n = 0;
-      for (const [a, e] of [[i - 1, j], [i + 1, j], [i, j - 1], [i, j + 1]]) if (solid(a, e)) { const [cr, cg, cb] = hexToRgb(pal[grid[e][a]]); r += cr; gg += cg; b += cb; n++; }
-      if (n) { x.fillStyle = rgbToHex((r / n) * OUTLINE_DARK, (gg / n) * OUTLINE_DARK, (b / n) * OUTLINE_DARK); x.fillRect(i + 1, j + 1, 1, 1); }
+  const at = (x, y) => (y >= 0 && y < H && x >= 0 && x < W ? grid[y][x] : '.');
+  const F = Array.from({ length: H * 2 }, () => Array(W * 2).fill('.'));
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const P = grid[y][x], A = at(x, y - 1), B = at(x + 1, y), C = at(x - 1, y), D = at(x, y + 1);
+    const ok = (k) => FOLK_SMOOTH.has(P) && FOLK_SMOOTH.has(k);
+    F[y * 2][x * 2] = C === A && C !== D && A !== B && ok(A) ? A : P;
+    F[y * 2][x * 2 + 1] = A === B && A !== C && B !== D && ok(B) ? B : P;
+    F[y * 2 + 1][x * 2] = D === C && D !== A && C !== B && ok(D) ? D : P;
+    F[y * 2 + 1][x * 2 + 1] = B === D && B !== A && D !== C && ok(B) ? B : P;
+  }
+  return F;
+}
+// The finer features drawn on the fine grid: pupils and a glint in the eyes,
+// arched brows, a thinner nose and smile, strands in the hair, a glint on each
+// button, a thin watch chain and spectacle rims, toes and tufts on the feet.
+function refineFolk(F, grid, o) {
+  const H = F.length, W = F[0].length, B = o.B, view = o.view;
+  const get = (x, y) => (y >= 0 && y < H && x >= 0 && x < W ? F[y][x] : '.');
+  const put = (x, y, k) => { if (y >= 0 && y < H && x >= 0 && x < W) F[y][x] = k; };
+  const under = (x, y, k) => { if (get(x, y) === k) put(x, y, 's'); };
+  const coarse = (x, y) => (y >= 0 && y < grid.length && x >= 0 && x < grid[0].length ? grid[y][x] : '.');
+  const eyes = !B.shut && !(B.ex && B.ex.chrome) && !B.visor;
+  if (view === 'down' && !B.baby) {
+    if (eyes) for (const ex of [6, 12]) {
+      const fx = ex * 2;
+      for (let y = 14; y <= 19; y++) for (let x = fx; x <= fx + 3; x++) if (get(x, y) === 'w') put(x, y, 'e');
+      put(fx + 1, 16, 'E'); put(fx + 2, 16, 'E'); put(fx + 1, 17, 'E'); put(fx + 2, 17, 'E'); put(fx + 1, 18, 'E'); put(fx + 2, 18, 'E');
+      put(fx + 3, 14, 'w'); put(fx + 3, 15, 'w'); put(fx + 2, 14, 'w');
+    }
+    // brows: one strand thick, arched up at the outer end
+    for (const [x0, inner] of [[10, 15], [24, 24]]) {
+      for (let x = x0; x <= x0 + 5; x++) { under(x, 13, 'd'); if (x !== inner) put(x, 12, 'd'); }
+      put(inner, 13, 'd'); put(inner, 12, 's');
+    }
+    // the nose: a thin line with its lit side
+    for (let y = 18; y <= 21; y++) if (get(21, y) === 'N') put(21, y, 'S');
+    // the mouth: a thin smile with its corners turned up
+    for (let x = 14; x <= 25; x++) under(x, 23, 'm');
+    for (const [x, y] of [[14, 20], [15, 20], [24, 20], [25, 20]]) under(x, y, 'm');
+    for (const [x, y] of [[15, 21], [24, 21]]) if (get(x, y) === 's') put(x, y, 'm');
+  }
+  if (view === 'side' && !B.baby) {
+    if (eyes) {
+      for (let y = 14; y <= 19; y++) for (let x = 28; x <= 31; x++) if (get(x, y) === 'w') put(x, y, 'e');
+      put(29, 16, 'E'); put(30, 16, 'E'); put(29, 17, 'E'); put(30, 17, 'E'); put(31, 14, 'w'); put(30, 14, 'w');
+    }
+    for (let x = 26; x <= 31; x++) under(x, 13, 'd');
+    for (let x = 28; x <= 33; x++) under(x, 23, 'm');
+  }
+  // hair: strands of highlight and shadow running through it
+  if (!B.baby) for (let y = 0; y < Math.min(H, 34); y++) for (let x = 0; x < W; x++) {
+    const k = get(x, y);
+    if (k === 'h' && (x * 3 + y * 2 + (B.style || 0) * 5) % 11 === 0 && get(x, y - 1) !== '.') put(x, y, 'j');
+    else if (k === 'h' && (x * 3 + y * 2 + 5) % 11 === 0 && get(x, y + 1) === 'h') put(x, y, 'H');
+    else if (k === 'j' && (x + y) % 2 === 1 && get(x + 1, y) === 'j') put(x, y, 'h');
+  }
+  // buttons glint; the watch chain is a thin diagonal; spectacle rims are thin
+  for (let y = 0; y < grid.length; y++) for (let x = 0; x < grid[0].length; x++) {
+    const k = coarse(x, y), fx = x * 2, fy = y * 2;
+    if (k === 'b') put(fx, fy, 'B');
+    else if (k === 'y') { const bg = coarse(x, y - 1) === 'v' || coarse(x + 1, y) === 'v' ? 'v' : 'c'; put(fx, fy, bg); put(fx + 1, fy + 1, bg); }
+    else if (k === 'G') {
+      const horiz = coarse(x - 1, y) === 'G' || coarse(x + 1, y) === 'G', vert = coarse(x, y - 1) === 'G' || coarse(x, y + 1) === 'G';
+      const keep = (dx, dy) => (horiz && dy === 0) || (vert && dx === 0);
+      for (const [dx, dy] of [[1, 0], [0, 1], [1, 1]]) if (!keep(dx, dy) && get(fx + dx, fy + dy) === 'G') put(fx + dx, fy + dy, 's');
     }
   }
-  c.hd = true;
+  // feet: toes along the bottom edge, tufts of hair over the top
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const k = get(x, y);
+    if (k === 'f' && get(x, y + 1) === '.' && x % 3 === 1) put(x, y, 'S');
+    if (k === 'F' && x % 4 === 1 && (get(x, y - 1) === '.' || get(x, y - 1) === 's' || get(x, y - 1) === 'S' || get(x, y - 1) === 't' || get(x, y - 1) === 'T')) put(x, y - 1, 'F');
+  }
+  return F;
+}
+// A villager sprite at quadruple resolution (FOLK_RES pixels to a world
+// pixel): the grid drawn twice as fine with its curves rounded and its finer
+// features added, ringed by an outline half a world pixel thick. It carries a
+// half-resolution copy (`lo`), the grid as it is, for the zooms where
+// quarter-pixels wouldn't land on whole screen pixels.
+function folkCanvas(grid, pal, o = {}) {
+  const c = gridCanvas(refineFolk(fineGrid(grid), grid, o), pal, 2, FOLK_RES);
+  c.lo = gridCanvas(grid, pal, 1, RS);
   return c;
 }
 
@@ -451,19 +570,20 @@ function buildVillagerSprites(genes, stage, look = {}, shut = false) {
   const B = folkBody(genes, stage, look);
   B.shut = shut;
   const out = { down: {}, up: {}, side: {} };
-  const make = (r) => { const c = folkCanvas(r.g, pal); c.anchors = r.anchors; return c; };
+  const make = (r, view) => { const c = folkCanvas(r.g, pal, { B, view }); c.anchors = r.anchors; c.lo.anchors = r.anchors; return c; };
   if (stage === 'baby') {
     const ex = expressed(genes);
     pal.c = mix(ex.vest, '#fff8e8', 0.65); pal.C = mix(ex.vest, '#fff8e8', 0.3);
-    const f = make(folkBaby(B, 'down')), b = make(folkBaby(B, 'up'));
+    B.baby = true;
+    const f = make(folkBaby(B, 'down'), 'down'), b = make(folkBaby(B, 'up'), 'up');
     for (const pose of ['stand', 'walk1', 'walk2', 'sit', 'sitg', 'work', 'reach']) { out.down[pose] = f; out.up[pose] = b; out.side[pose] = f; }
-    out.held = folkCanvas(folkBundle(), pal);
+    out.held = folkCanvas(folkBundle(), pal, { B, view: 'held' });
     return out;
   }
   for (const pose of ['stand', 'walk1', 'walk2', 'sit', 'sitg', 'work', 'reach']) {
-    out.down[pose] = make(folkFront(B, pose));
-    out.up[pose] = make(folkBack(B, pose));
-    out.side[pose] = make(folkSide(B, pose));
+    out.down[pose] = make(folkFront(B, pose), 'down');
+    out.up[pose] = make(folkBack(B, pose), 'up');
+    out.side[pose] = make(folkSide(B, pose), 'side');
   }
   return out;
 }

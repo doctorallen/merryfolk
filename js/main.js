@@ -412,8 +412,8 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
   const groundSit = pose === 'sit' && (!spotKind || spotKind === 'fish' || spotKind === 'shade' || spotKind === 'storyseat' || spotKind === 'story');
   // on the ground they sit cross-legged, or with their legs out, rather than as if on a chair
   const spr = (shut ? shutSprites(v) : v.sprites)[dir][groundSit ? 'sitg' : pose];
-  // sprites are double resolution: their world size is half their canvas size
-  const w = spr.width / RS, h = spr.height / RS;
+  // sprites are drawn finer than the world: their world size is a fraction of their canvas size
+  const w = spr.width / (spr.res || RS), h = spr.height / (spr.res || RS);
   const vx = v.x + ox + xoff, vy = v.y + oy;
   const bottom = pose === 'sit' && !groundSit ? vy - 2 : vy;
   const half = (n) => Math.round(n * RS) / RS;
@@ -440,8 +440,8 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
   if (!prop && v.stage === 'elder' && dir !== 'up' && pose !== 'sit') prop = 'stick';
   if (v.leaving && lantern !== 'hand') prop = 'stick';
   if (v.stage === 'baby' || v.carried) prop = null;
-  // Props are drawn in the sprite's own half-pixels, mirrored with it.
-  const SW = spr.width, SH = spr.height;
+  // Props are drawn in half-pixels over the sprite, mirrored with it.
+  const SW = spr.width / ((spr.res || RS) / RS), SH = spr.height / ((spr.res || RS) / RS);
   const Q = (rx, ry, pw, ph, col) => {
     ctx.fillStyle = col;
     const x = flip ? SW - rx - pw : rx;
@@ -560,8 +560,9 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
       const b = personById(id), bs = b && b.sprites.held;
       if (!bs) return;
       const [cx0, cy0] = an.chest || [9.5, 18];
-      const bx = Math.round(cx0) + 1 - (bs.width >> 1) + (dir === 'side' ? 2 : k * 5 - (v.holding.length - 1) * 2), by = cy0 - 2 - k * 3;
-      blit(ctx, bs, sx + (flip ? SW - bx - bs.width : bx) / RS, sy + by / RS, flip);
+      const bw = bs.width / ((bs.res || RS) / RS);
+      const bx = Math.round(cx0) + 1 - (bw >> 1) + (dir === 'side' ? 2 : k * 5 - (v.holding.length - 1) * 2), by = cy0 - 2 - k * 3;
+      blit(ctx, bs, sx + (flip ? SW - bx - bw : bx) / RS, sy + by / RS, flip);
       b._top = sy; b._sx = sx;
     });
   }
