@@ -821,7 +821,7 @@ function render(dtReal, dtWall = dtReal) {
         blit(ctx, im, d.s.x - d.s.ox, d.s.y - d.s.oy); ctx.restore();
       } else blit(ctx, im, d.s.x - d.s.ox, d.s.y - d.s.oy);
     }
-    else if (d.g) drawTuft(ctx, d.g);
+    else if (d.g) { if (!Dev.hide.grass) drawTuft(ctx, d.g); }
     else if (d.wheel) drawMillWheel(ctx, d.wheel);
     else if (d.sails) drawWindmillSails(ctx);
     else if (d.rift) drawRift(ctx, d.rift, tReal);
@@ -842,13 +842,12 @@ function render(dtReal, dtWall = dtReal) {
   if (sky.dusk > 0.01) { ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = `rgb(255,${Math.round(255 - 50 * sky.dusk)},${Math.round(255 - 95 * sky.dusk)})`; ctx.fillRect(cx, cy, cam.w, cam.h); ctx.globalCompositeOperation = 'source-over'; }
   if (Game.raining) { ctx.fillStyle = 'rgba(70,90,110,0.12)'; ctx.fillRect(cx, cy, cam.w, cam.h); }
   if (winter) { ctx.fillStyle = 'rgba(160,190,230,0.06)'; ctx.fillRect(cx, cy, cam.w, cam.h); }
-  Light.render(ctx, cr, sky.dark, winter ? '14,22,54' : '12,18,46', collectLights());
+  if (!Dev.hide.light) Light.render(ctx, cr, sky.dark, winter ? '14,22,54' : '12,18,46', collectLights());
   FX.draw(ctx, true);
   drawRiftEmissive(ctx, cr);
   FX.drawFireflies(ctx, Game, cr, []);
   FX.drawFog(ctx, Game, cr);
-  FX.drawFalling(ctx, Game, cr, dtReal);
-  FX.drawRain(ctx, Game, cr, dtReal);
+  if (!Dev.hide.weather) { FX.drawFalling(ctx, Game, cr, dtReal); FX.drawRain(ctx, Game, cr, dtReal); }
   FX.drawLightning(ctx, Game, cr, dtReal);
 
   // carried villager floats above everything
@@ -1326,16 +1325,19 @@ function frame(now) {
   try {
     const speed = SPEEDS[Game.speedIdx];
     Game.minPerSec = GAME_MIN_PER_SEC * Math.max(speed, 0.0001);
+    const t0 = performance.now();
     if (speed > 0 && Game.started && !Game.introOpen) {
       let dt = dtReal * GAME_MIN_PER_SEC * speed;
       while (dt > 0) { const s = Math.min(dt, 0.5); simulate(s); dt -= s; }
     }
+    const t1 = performance.now();
     // paint faster while the intro card is up and nobody's looking at the ground
     // bare ground in sight gets most of a frame's worth of painting; otherwise a little goes to the chunks just off screen
     const bare = World.paintJob && Game.cam && Ground.over(Game.cam.x, Game.cam.y, Game.cam.x + Game.cam.w, Game.cam.y + Game.cam.h, false).some((ch) => !ch.painted);
     // and when the camera hasn't moved for a while, only a sliver goes to the chunks off screen
     if (Game.cam && (Game.cam.x !== Game._pcx || Game.cam.y !== Game._pcy)) { Game._pcx = Game.cam.x; Game._pcy = Game.cam.y; Game._camMoved = tReal; }
     stepPaint(Game.introOpen || (World.paintJob && World.paintJob.urgent) ? 28 : bare ? 16 : tReal - (Game._camMoved || 0) < 1 ? 6 : 2);
+    const t2 = performance.now();
     const fxDt = speed > 0 ? dtReal : 0;
     emitSmoke(speed > 0 ? dtReal : 0);
     emitRiftFx(dtReal);
@@ -1344,6 +1346,9 @@ function frame(now) {
     updateWind(dtReal);
     render(fxDt, dtReal);
     renderOverlay();
+    // how the frame's time was spent, smoothed, for the dev drawer
+    const t3 = performance.now(), T = Dev.timing;
+    T.sim += (t1 - t0 - T.sim) * 0.1; T.paint += (t2 - t1 - T.paint) * 0.1; T.render += (t3 - t2 - T.render) * 0.1;
     devFrame(dtReal);
     interiorFrame(dtReal);
     hudT -= dtReal;

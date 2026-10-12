@@ -532,6 +532,8 @@ body.dev-on #chronicle { visibility: hidden; }
   font: inherit; color: var(--dv-fg); background: #16202c; border: 1px solid var(--dv-line); border-radius: 3px; padding: 2px 8px; cursor: pointer;
 }
 .dev-tabs button.active, .dchips button.on { background: var(--dv-acc); color: #06121c; border-color: var(--dv-acc); }
+.dchips input[type=number], .dchips select { width: 4.5em; font: inherit; font-size: 12px; padding: 1px 4px; background: #0b1620; color: inherit; border: 1px solid #2a3a48; border-radius: 3px; }
+.dchips select { width: auto; }
 .dev-tabs button:hover, .dchips button:hover { border-color: var(--dv-acc); }
 .dev-tabs button:focus-visible, .dchips button:focus-visible, .dev-x:focus-visible { outline: 2px solid var(--dv-hi); outline-offset: 1px; }
 .dev-x { font-size: 18px; line-height: 1; background: none; border: 0; color: var(--dv-dim); cursor: pointer; padding: 0 4px; }
