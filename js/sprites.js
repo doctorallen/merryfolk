@@ -409,7 +409,7 @@ function folkQFront(B, pose) {
   // hair: the fringe, and the whole back of the head on the left
   for (let y = 0; y < 15; y++) for (let x = 0; x < FOLK_W; x++) {
     if (!inHead(x, y)) continue;
-    const fringe = y <= 4 || (y === 5 && ![9, 10, 13, 14].includes(x));
+    const fringe = y <= 4 || (y === 5 && ![8, 9, 12, 13].includes(x));
     const back = (x <= 6 && y <= 11) || (x <= 7 && y <= 9);
     if (fringe || back) put(x, y, x >= 15 ? 'H' : 'h');
   }
@@ -433,30 +433,34 @@ function folkQFront(B, pose) {
     for (let x = 0; x < FOLK_W; x++) if ('hHj'.includes(get(x, 0))) put(x, 0, '.');
     for (const x of [5, 8, 11, 14, 16]) { put(x, 0, 'h'); put(x, 1, 'h'); }
   }
-  // the ear, where the hair meets the cheek
-  put(6, 7, 's'); put(6, 8, 's'); put(5, 6, 's'); put(6, 9, 's');
-  // face: the near eye by the middle, the far eye narrow at the edge, the nose on the turn beside it
-  rect(8, 6, 10, 6, 'd'); rect(13, 6, 14, 6, 'd');
+  // the ear, where the back of the hair meets the cheek
+  put(6, 7, 's'); put(6, 8, 's'); put(5, 6, 's'); put(6, 9, 's'); put(7, 8, 'S');
+  // the face, turned towards the right: the far eye a single narrow column
+  // just in from the ear, the near eye full size over on the right, the nose
+  // on the turn between them (closer to the far eye), the mouth offset to the
+  // near side under it, and a blush on the near cheek alone
+  rect(8, 6, 8, 6, 'd'); rect(12, 6, 14, 6, 'd');
   if (B.shut) {
-    put(8, 8, 'd'); put(9, 9, 'd'); put(10, 9, 'd'); put(13, 9, 'd'); put(14, 8, 'd');
+    put(8, 9, 'd'); put(12, 8, 'd'); put(13, 9, 'd'); put(14, 8, 'd');
   } else {
-    rect(9, 7, 10, 9, 'e'); put(10, 7, 'w'); rect(13, 7, 13, 9, 'e'); put(13, 7, 'w');
-    if (B.female) { put(8, 7, 'e'); put(14, 7, 'e'); }
+    rect(8, 7, 8, 9, 'e'); put(8, 7, 'w'); rect(12, 7, 13, 9, 'e'); put(13, 7, 'w');
+    if (B.female) put(14, 7, 'e');
   }
-  put(7, 10, 'r'); put(8, 10, 'r'); put(14, 10, 'r');
-  if (B.ex.freckles) for (const [x, y] of [[8, 9], [9, 10], [12, 10]]) put(x, y, 'k');
-  put(15, 9, 'N'); put(15, 10, 'N'); put(16, 10, 'N');
-  rect(11, 11, 14, 11, 'm'); put(10, 10, 'm'); put(15, 11, 'm');
-  rect(10, 14, 13, 14, 'S');
+  put(15, 9, 'r'); put(15, 10, 'r');
+  if (B.ex.freckles) for (const [x, y] of [[9, 10], [14, 10], [15, 8]]) put(x, y, 'k');
+  put(10, 9, 'N'); put(10, 10, 'N');
+  rect(11, 11, 13, 11, 'm'); put(14, 10, 'm');
+  rect(10, 14, 14, 14, 'S');
   if (B.female) { rect(14, 1, 16, 2, 'R'); put(17, 2, 'R'); }
-  if (B.elder && !B.female) { rect(9, 12, 15, 13, 'h'); rect(11, 11, 14, 11, 'm'); }
+  if (B.elder && !B.female) { rect(8, 12, 15, 13, 'h'); put(16, 12, 'h'); rect(11, 11, 13, 11, 'm'); }
   if (B.specs) {
-    rect(8, 6, 11, 6, 'G'); rect(8, 10, 11, 10, 'G'); rect(8, 6, 8, 10, 'G'); rect(11, 6, 11, 10, 'G');
-    rect(13, 6, 15, 6, 'G'); rect(13, 10, 15, 10, 'G'); rect(13, 6, 13, 10, 'G'); rect(15, 6, 15, 10, 'G');
-    put(12, 8, 'G');
+    // the far lens narrow, the near one full, the bridge over the nose
+    rect(7, 6, 9, 6, 'G'); rect(7, 10, 9, 10, 'G'); rect(7, 6, 7, 10, 'G'); rect(9, 6, 9, 10, 'G');
+    rect(11, 6, 14, 6, 'G'); rect(11, 10, 14, 10, 'G'); rect(11, 6, 11, 10, 'G'); rect(14, 6, 14, 10, 'G');
+    put(10, 8, 'G');
   }
-  if (B.ex.chrome && !B.shut) { rect(13, 7, 13, 9, 'g'); put(13, 7, 'w'); }
-  if (B.visor) { rect(5, 7, 16, 9, 'z'); rect(8, 7, 11, 7, 'Z'); put(17, 8, 'n'); }
+  if (B.ex.chrome && !B.shut) { rect(12, 7, 13, 9, 'g'); put(13, 7, 'w'); }
+  if (B.visor) { rect(5, 7, 16, 9, 'z'); rect(11, 7, 14, 7, 'Z'); put(17, 8, 'n'); }
   // body: a narrow torso with the near shoulder forward on the right, the
   // waistcoat's opening over to the right; the far arm a sliver behind on the left
   const top = B.top, bot = B.bot, x0 = 6, x1 = 12;
@@ -714,21 +718,22 @@ function refineFolk(F, grid, o) {
   }
   if (view === 'qdown' && !B.baby) {
     if (eyes) {
-      // the near eye gets its pupil and glint; the far, narrowed one a pupil
-      for (let y = 14; y <= 19; y++) for (let x = 18; x <= 21; x++) if (get(x, y) === 'w') put(x, y, 'e');
-      put(19, 16, 'E'); put(20, 16, 'E'); put(19, 17, 'E'); put(20, 17, 'E'); put(19, 18, 'E'); put(20, 18, 'E'); put(21, 14, 'w'); put(21, 15, 'w'); put(20, 14, 'w');
-      for (let y = 14; y <= 19; y++) for (let x = 26; x <= 27; x++) if (get(x, y) === 'w') put(x, y, 'e');
-      put(26, 16, 'E'); put(27, 16, 'E'); put(26, 17, 'E'); put(27, 17, 'E'); put(27, 14, 'w');
+      // the near eye (right) gets its pupil and glint as the front view does; the far, narrowed one a pupil and a glint
+      for (let y = 14; y <= 19; y++) for (let x = 24; x <= 27; x++) if (get(x, y) === 'w') put(x, y, 'e');
+      put(25, 16, 'E'); put(26, 16, 'E'); put(25, 17, 'E'); put(26, 17, 'E'); put(25, 18, 'E'); put(26, 18, 'E'); put(27, 14, 'w'); put(27, 15, 'w'); put(26, 14, 'w');
+      for (let y = 14; y <= 19; y++) for (let x = 16; x <= 17; x++) if (get(x, y) === 'w') put(x, y, 'e');
+      put(16, 16, 'E'); put(17, 16, 'E'); put(16, 17, 'E'); put(17, 17, 'E'); put(17, 14, 'w');
     }
-    // brows: the near one arched, the far one a short stroke
-    for (let x = 16; x <= 21; x++) { under(x, 13, 'd'); if (x !== 21) put(x, 12, 'd'); }
-    for (let x = 26; x <= 29; x++) under(x, 13, 'd');
-    // the nose on the turn, lit on its near side
-    for (let y = 18; y <= 21; y++) if (get(30, y) === 'N') put(30, y, 'S');
+    // brows: the near one arched up at its outer end, the far one a short stroke
+    for (let x = 24; x <= 29; x++) { under(x, 13, 'd'); if (x !== 24) put(x, 12, 'd'); }
+    put(24, 13, 'd'); put(24, 12, 's');
+    for (let x = 16; x <= 17; x++) under(x, 13, 'd');
+    // the nose on the turn, lit on its left
+    for (let y = 18; y <= 21; y++) if (get(20, y) === 'N') put(20, y, 'S');
     // the smile, thin, its near corner turned up
-    for (let x = 22; x <= 29; x++) under(x, 23, 'm');
-    for (const [x, y] of [[20, 20], [21, 20]]) under(x, y, 'm');
-    for (const [x, y] of [[30, 22], [31, 22]]) under(x, y, 'm');
+    for (let x = 22; x <= 27; x++) under(x, 23, 'm');
+    for (const [x, y] of [[28, 20], [29, 20]]) under(x, y, 'm');
+    for (const [x, y] of [[28, 21]]) if (get(x, y) === 's') put(x, y, 'm');
   }
   if (view === 'side' && !B.baby) {
     if (eyes) {
