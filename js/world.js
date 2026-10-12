@@ -19,6 +19,7 @@ const isRoadTile = (t) => t === T.PATH || t === T.COBBLE || t === T.BRIDGE;
 let HOME_DEFS, ROADS, RIVER_Y, POND, PARTY, PLAZA, INN_RECT, WEED_FIELD, FIELDS, STORY, WEST_EXIT;
 const HOME_SUFFIX = ['End', 'Burrow', 'Hole', 'Hollow', 'Nook', 'Delving', 'Bank', 'Under-hill', 'Smial', 'Cosy', 'Rise', 'Dell'];
 
+/** @type {WorldState} */
 const World = {
   tiles: new Uint8Array(MAP_W * MAP_H),
   block: new Uint8Array(MAP_W * MAP_H),

@@ -1,3 +1,4 @@
+// @ts-check
 'use strict';
 // ---------------------------------------------------------------------------
 // The dials of the villagers' minds, all in one place. Nothing here is saved

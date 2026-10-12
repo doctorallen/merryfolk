@@ -1,3 +1,4 @@
+// @ts-check
 'use strict';
 // ---------------------------------------------------------------------------
 // Cliffs. Out in the wilder parts of the valley, well away from anything

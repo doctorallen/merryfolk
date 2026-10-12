@@ -1,3 +1,4 @@
+// @ts-check
 'use strict';
 // ---------------------------------------------------------------------------
 // The lie of the village: where the river runs, the square, the inn and the
@@ -236,7 +237,8 @@ function planValley(seed, W = MAP_W, H = MAP_H) {
       if (!free(x0 - 6, y0 - 2, x1 + 2, y1 + 1, 1)) continue;
       mcands.push([mx, top, s]);
     }
-    const score1 = ([mx, top, s]) => s + Math.abs(dist(mx, top, PX, PY) - 24) * 0.03 + r() * 0.05;
+    /** @param {number[]} c */
+    const score1 = (c) => { const [mx, top, s] = c; return s + Math.abs(dist(mx, top, PX, PY) - 24) * 0.03 + r() * 0.05; };
     mcands.sort((a, b) => score1(a) - score1(b));
     for (const [mx, top] of mcands) {
       if (L.mills.length >= 2) break;
@@ -248,6 +250,7 @@ function planValley(seed, W = MAP_W, H = MAP_H) {
     L.anchors.dynamoX = L.mills[0] + flip * 12;
   }
   // a building of w×3 tiles whose door should sit near (ax, ay), its bottom row at ay
+  /** @param {(x0: number, y0: number, x1: number, y1: number) => number} [score] */
   const house = (w, ax, ay, radius, score = () => 0) => {
     const cands = [];
     for (let dy = -radius; dy <= radius; dy++) for (let dx = -radius; dx <= radius; dx++) cands.push([ax + dx - (w >> 1), ay + dy - 2]);
@@ -461,6 +464,7 @@ function planValley(seed, W = MAP_W, H = MAP_H) {
   const [b2n, b2s] = bridgeAt(L.bridges[1]);
   join(b2n, 0.9); addRoad(0.9, [b2n, b2s]); join(b2s, 0.9);
   // every building, field, knoll and the rest, nearest the square first
+  /** @type {[number[], number][]} */
   const steps = [];
   for (const k in L.buildings) { const b = L.buildings[k]; steps.push([[Math.round((b.x0 + b.x1) / 2), b.y1 + 2], 0.85]); }
   steps.push([[Math.round((L.inn.x0 + L.inn.x1) / 2), L.inn.y1 + 7], 0.9]);

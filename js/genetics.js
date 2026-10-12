@@ -1,3 +1,4 @@
+// @ts-check
 'use strict';
 // ---------------------------------------------------------------------------
 // Genetics. Every villager carries a genome:

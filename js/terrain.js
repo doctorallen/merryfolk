@@ -1,3 +1,4 @@
+// @ts-check
 'use strict';
 // ---------------------------------------------------------------------------
 // The lie of the land, tile by tile, so that things grow and lie where they

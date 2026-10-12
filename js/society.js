@@ -21,6 +21,7 @@ const SMOKED = ['fish', 'bread', 'mush'];
 const STORE_CAP = { scrap: 80, cheese: 50, wool: 60, grain: 320, flour: 60, bread: 80, pie: 40, cake: 40, veg: 120, fish: 50, mush: 40, apple: 80, egg: 40, honey: 30, stew: 40, ale: 90, leaf: 60, wood: 120, herbs: 30, remedy: 15 };
 const HOME_CAP = (h) => (h.grand ? 6 : 4);
 
+/** @type {VillageState} */
 const Village = {
   stores: {}, today: { made: {}, used: {} }, yesterday: { made: {}, used: {} }, projects: [], wantHomes: 0,
 

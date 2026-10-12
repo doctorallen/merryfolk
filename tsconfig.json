@@ -1,0 +1,16 @@
+{
+  "// about": "Type checking only: the game ships as plain scripts with no build. tsc reads every js/*.js as one global program (they are classic scripts sharing one scope), so it can catch undefined globals, wrong arities and typos across files. Files opt in to checking with a `// @ts-check` line at the top. Run `npx tsc -p .` (also part of `npm test`).",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "target": "es2022",
+    "lib": ["dom", "es2022"],
+    "module": "none",
+    "types": [],
+    "skipLibCheck": true
+  },
+  "include": ["js/**/*.js", "types/*.d.ts"]
+}

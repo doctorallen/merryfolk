@@ -1,3 +1,4 @@
+// @ts-check
 'use strict';
 // ---------------------------------------------------------------------------
 // Small helpers shared by every module.
@@ -98,6 +99,7 @@ function makeNoise(seed) {
 // while a sprite is built or a chunk of ground painted costs nothing much.
 // With `draw` set it lives on the graphics card instead, for images that are
 // drawn to the screen every frame (see gpuCopy).
+/** @returns {[HTMLCanvasElement, CanvasRenderingContext2D]} */
 function makeCanvas(w, h, draw = false) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
@@ -214,6 +216,7 @@ function sexFromName(name) {
 // He / she, him / her, his / her.
 const PRON = { f: { they: 'she', them: 'her', their: 'her', They: 'She', lad: 'lass' }, m: { they: 'he', them: 'him', their: 'his', They: 'He', lad: 'lad' } };
 
+/** @type {[number, string][]} */
 const MEALS = [
   [5.0, 'Before Breakfast'], [7.0, 'Breakfast'], [9.0, 'Second Breakfast'], [11.0, 'Elevenses'], [13.0, 'Luncheon'],
   [15.5, 'Afternoon Tea'], [18.0, 'Dinner'], [20.5, 'Supper'], [22.5, 'Bedtime'],

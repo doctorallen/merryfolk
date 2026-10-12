@@ -9,6 +9,7 @@ const SAVE_KEY = 'thistledown-save-v2';
 const GAME_MIN_PER_SEC = 3; // at 1x speed: one day takes eight real minutes
 const SPEEDS = [0, 1, 2, 4, 8, 16];
 
+/** @type {GameState} */
 const Game = {
   time: 8 * 60 + 20, day: 1, hour: 8.33, speedIdx: 1, minPerSec: GAME_MIN_PER_SEC,
   villagers: [], archive: {}, away: [], census: [], stats: {},
