@@ -65,6 +65,7 @@ const WARM = { spouse: 1, sweetheart: 1, kin: 0.8, close: 0.9, friend: 0.6, acqu
 const weatherWord = () => (Game.weather === 'storm' ? 'this storm' : Game.raining ? 'this rain' : Game.weather === 'snow' ? 'the snow' : Game.weather === 'fog' ? 'this fog' : Game.weather === 'cloudy' ? 'this grey sky' : 'this sunshine');
 function kidsOf(v) { return Game.villagers.filter((o) => o.parents.includes(v.id) && !o.leaving); }
 function fillTalk(text, s, l, ctx = {}) {
+  if (!text) return null; // a pool run dry: the caller skips the turn
   const kid = kidsOf(s)[0], sp = s.spouse ? personById(s.spouse) : null, hob = typeof hobbiesOf === 'function' && hobbyAge(s) ? hobbiesOf(s)[0] : null;
   return text
     .replace(/\{name\}/g, l ? l.first : 'friend').replace(/\{me\}/g, s.first)
@@ -704,6 +705,8 @@ function roundTick() {
     if (r.step >= 5 && folk.length >= 2 && r.turns < 9 && R.chance(0.75)) {
       // another topic while they're still sat there
       const nexts = ['day', 'news', 'food', 'song', 'tale'].filter((t) => t !== r.topic && (t !== 'food' || (r.dish && r.dish !== 'ale')) && (t !== 'song' || (r.b === World.inn && folk.length >= 3)) && (t !== 'tale' || folk.some((v) => v.stage === 'elder')) && t !== 'news');
+      // nothing left worth saying: the round is over
+      if (!nexts.length) { r.step = 5; r.next = Game.time; continue; }
       r.topic = R.pick(nexts); r.step = 0; r.said = new Set(); r.next = Game.time + R.f(2, 4);
       continue;
     }
@@ -722,7 +725,7 @@ function roundTick() {
       const left = folk.filter((v) => v.id !== r.opener && !r.said.has(v.id));
       if (!left.length) { r.step = 2; r.next = Game.time; continue; }
       who = left[0]; r.said.add(who.id);
-      text = fillTalk(pickUnused(replyPool(TABLE_REPLY[r.topic], who, r.temper[who.id]) || TABLE_REPLY[r.topic].cheerful, r.used) || 'Mm.', who, personById(r.opener) || folk[0], ctx);
+      text = fillTalk(pickUnused(replyPool(TABLE_REPLY[r.topic], who, r.temper[who.id]) || (TABLE_REPLY[r.topic] || {}).cheerful || [], r.used) || 'Mm.', who, personById(r.opener) || folk[0], ctx);
       if (left.length > 1) r.step = 0.5; // stay on the replies
     } else if (r.step === 2) {
       who = personById(r.opener) || folk[0];
