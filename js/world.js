@@ -1611,7 +1611,11 @@ function updateWorld(dtMin, raining, season, hour) {
   for (const hv of World.hives) if (hv.honey < 4 && honeyRate) { hv.grow = (hv.grow || 0) + dtMin * honeyRate; if (hv.grow >= 1) { hv.grow = 0; hv.honey++; } }
   // hens wander about the yard, and lay by day
   updateAnimals(dtMin);
+  // hens go in to roost at dusk and come out again in the morning
+  const roost = typeof beastsNight === 'function' && beastsNight(hour);
   for (const hn of World.hens) {
+    if (roost) { if (!hn.in) { hn.in = true; hn.x = hn.hx; hn.y = hn.hy - 6; } continue; }
+    if (hn.in) { hn.in = false; hn.x = hn.hx + R.f(-20, 20); hn.y = hn.hy + R.f(0, 12); hn.t = 0; }
     hn.t -= dtMin;
     if (hn.t <= 0) { hn.a = Math.atan2(hn.hy - hn.y + R.f(-30, 30), hn.hx - hn.x + R.f(-50, 50)); hn.t = R.f(4, 14); hn.peck = R.chance(0.4) ? R.f(2, 5) : 0; }
     if (hn.peck > 0) { hn.peck -= dtMin; continue; }

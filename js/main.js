@@ -797,7 +797,7 @@ function render(dtReal, dtWall = dtReal) {
     list.push({ y: an.y, img: spr, x: Math.round(an.x) - (spr.width >> 1), iy: Math.round(an.y) - spr.height + 2, flip: Math.cos(an.a) < 0 });
   }
   for (const al of World.allotments) for (const p of al.plots) if (inView(p.x, p.y)) list.push({ y: p.y, img: SPR.crops[p.crop][p.stage], x: p.x - 7, iy: p.y - 12 });
-  for (const hn of World.hens) if (inView(hn.x, hn.y)) list.push({ y: hn.y, img: SPR.hen[hn.peck > 0 ? Math.floor(tReal * 4) % 2 : 0], x: Math.round(hn.x) - 4, iy: Math.round(hn.y) - 8, flip: Math.cos(hn.a) < 0 });
+  for (const hn of World.hens) if (!hn.in && inView(hn.x, hn.y)) list.push({ y: hn.y, img: SPR.hen[hn.peck > 0 ? Math.floor(tReal * 4) % 2 : 0], x: Math.round(hn.x) - 4, iy: Math.round(hn.y) - 8, flip: Math.cos(hn.a) < 0 });
   for (const c of World.crows) if (c.state === 'peck' && inView(c.x, c.y)) list.push({ y: c.y, img: SPR.crow[1], x: Math.round(c.x) - 3, iy: Math.round(c.y) - 5 });
   for (const mw of World.millWheels) if (inView(mw.x, mw.y)) list.push({ y: mw.y + 12, wheel: mw });
   if (World.windmill && inView(World.windmill.x, World.windmill.sortY)) list.push({ y: World.windmill.sortY + 1, sails: true });

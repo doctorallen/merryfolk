@@ -58,6 +58,8 @@ function planFarmland() {
     blk(r.x0 + 1, r.y0 + 1);
     if (def.kind !== 'pig') { add(makeHay(), (r.x1 - 1) * 16, (r.y0 + 1) * 16 + 12); blk(r.x1 - 1, r.y0 + 1); }
     else { add(makeShelter(), (r.x1 - 1.5) * 16, (r.y0 + 2) * 16 + 4); blk(r.x1 - 2, r.y0 + 1); blk(r.x1 - 1, r.y0 + 1); }
+    // where they bed down for the night: by the hay, or in the sty's shelter
+    pen.bed = { x: (r.x1 - 1.5) * 16, y: (r.y0 + 2.6) * 16 };
     World.pens.push(pen);
     for (let i = 0; i < def.count; i++) {
       World.animals.push({
@@ -105,9 +107,26 @@ function planFarmland() {
 }
 
 // Animals mill about inside their pens, grazing and nosing about.
+// Night for the beasts: a little after sunset until a little before sunrise.
+function beastsNight(hour = Game.hour) {
+  const [rise, set] = DAYLIGHT[World.season] || DAYLIGHT.summer;
+  return hour > set + 0.3 || hour < rise - 0.4;
+}
 function updateAnimals(dtMin) {
+  const night = beastsNight();
   for (const an of World.animals) {
     const p = an.pen, info = ANIMAL_INFO[an.kind];
+    // at dusk they make for the hay or the shelter and settle there till morning
+    if (night) {
+      const bed = p.bed || { x: (p.x1 - 1.5) * 16, y: (p.y0 + 2.6) * 16 };
+      const tx = bed.x + Math.sin(an.x * 7 + an.y) * 14, ty = bed.y + Math.cos(an.x + an.y * 3) * 7;
+      const d = Math.hypot(tx - an.x, ty - an.y);
+      if (d > 4 && !an.asleep) { an.a = Math.atan2(ty - an.y, tx - an.x); const nx = an.x + Math.cos(an.a) * dtMin * info.speed, ny = an.y + Math.sin(an.a) * dtMin * info.speed * 0.6; if (nx > (p.x0 + 1.3) * 16 && nx < (p.x1 - 0.3) * 16 && ny > (p.y0 + 1.6) * 16 && ny < (p.y1 + 0.6) * 16) { an.x = nx; an.y = ny; } else an.asleep = true; }
+      else an.asleep = true;
+      an.graze = 1; an.say = null;
+      continue;
+    }
+    if (an.asleep) { an.asleep = false; an.t = Math.random() * 6; }
     an.t -= dtMin;
     if (an.t <= 0) {
       an.graze = Math.random() < 0.55 ? 4 + Math.random() * 12 : 0;
