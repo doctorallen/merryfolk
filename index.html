@@ -197,11 +197,19 @@
   </div>
 </div>
 
+<!-- Every file is a classic script sharing one global scope, so the order
+     matters: util.js first, main.js last, and each file after the ones it
+     builds on. Later files add to earlier ones through addHook and patch
+     (util.js). test/check.sh confirms every file is listed here. -->
+
+<!-- Foundations: helpers, the mind's dials, pixel art, genomes -->
 <script src="js/version.js"></script>
 <script src="js/util.js"></script>
 <script src="js/tuning.js"></script>
 <script src="js/sprites.js"></script>
 <script src="js/genetics.js"></script>
+
+<!-- The valley: map, terrain, village layout, nature, weather, light, sound -->
 <script src="js/world.js"></script>
 <script src="js/terrain.js"></script>
 <script src="js/cliffs.js"></script>
@@ -209,6 +217,8 @@
 <script src="js/nature.js"></script>
 <script src="js/fx.js"></script>
 <script src="js/audio.js"></script>
+
+<!-- The folk: minds, the action catalogue, family, hobbies, village society, the town, the rifts -->
 <script src="js/education.js"></script>
 <script src="js/villager.js"></script>
 <script src="js/actions.js"></script>
@@ -216,10 +226,12 @@
 <script src="js/hobbies.js"></script>
 <script src="js/newcomers.js"></script>
 <script src="js/society.js"></script>
-  <script src="js/town.js"></script>
-  <script src="js/farm.js"></script>
-  <script src="js/rift.js"></script>
-  <script src="js/riftpower.js"></script>
+<script src="js/town.js"></script>
+<script src="js/farm.js"></script>
+<script src="js/rift.js"></script>
+<script src="js/riftpower.js"></script>
+
+<!-- Features, each adding to the files above (in the order they were written) -->
 <script src="js/moodlets.js"></script>
 <script src="js/lamplighter.js"></script>
 <script src="js/wishes.js"></script>
@@ -262,12 +274,18 @@
 <script src="js/minds.js"></script>
 <script src="js/values.js"></script>
 <script src="js/manner.js"></script>
+
+<!-- Fixes and rebalancing from the playtests, patching whatever came before -->
 <script src="js/fixes2.js"></script>
+
+<!-- The interface: toolbar and panels, the setup screen, the dev drawer, the cutaways -->
 <script src="js/ui.js"></script>
 <script src="js/worldgen_ui.js"></script>
 <script src="js/dev.js"></script>
 <script src="js/interior.js"></script>
 <script src="js/interior_buildings.js"></script>
+
+<!-- Last: the rounds of work, saving and loading, and the game loop -->
 <script src="js/work.js"></script>
 <script src="js/save.js"></script>
 <script src="js/main.js"></script>

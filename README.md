@@ -441,6 +441,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/values.js` | What each hobbit holds dear, inherited, bending choices, friendships and feelings about the Steward's decisions |
 | `js/manner.js` | A manner of speaking from a strong trait |
 | `js/talk.js` | Word of mouth: messages with intents (recommendations, warnings, the inn's dish of the day, cheering up, tips, hobby sparks), and masters and apprentices |
+| `js/talklog.js` | The Talk tab of the Chronicle: every natter kept as a thread, line by line |
 | `js/converse.js` | A proper natter: topics, tempers, how long two folk talk and how it ends; the rounds at table |
 | `js/gatherings.js` | Getting together: skittles, stone-skimming, the gossip by the well, sunsets, tag, and a third joining a natter |
 | `js/post.js` | Letters: written at home, sent from the road, carried round by the postie |
@@ -467,16 +468,22 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/newcomers.js` | Newcomers: asking around, learning the landmarks, lodging at the inn or sleeping rough, being taken in, finding their feet |
 | `js/riftpower.js` | Rift power: batteries, studying water, wind and sun, the rift camp, the dynamo and wind spinner, rift-built homes |
 | `js/actions.js` | The action catalogue: leisure, family, courtship, school and every trade |
+| `js/work.js` | Work as rounds of small jobs (sowing, hoeing, sweeping, serving), meals served at the inn, and the trade's pull in working hours |
 | `js/society.js` | The Common Store, trade assignment, courtship, births, homes, adventures, the archive |
 | `js/ui.js` | Toolbar, HUD, the five-tab inspector, the village ledger, family trees |
 | `js/interior.js` | Hobbit-hole interiors: room layout from the household, furniture, larder, lighting and folk inside |
 | `js/interior_buildings.js` | Cutaways of every other building: the shell, the furniture of each trade, stock on the shelves, where folk stand |
 | `js/dev.js` | Developer mode: decision explanations, the event log, world stats, tools and map overlays |
-| `js/main.js` | Game loop, seasons and weather, rendering, input, saving |
+| `js/fixes2.js` | Fixes and rebalancing from the second strategy playtest, patching the files before it |
+| `js/save.js` | Saving and loading: the table of Game fields (`GAME_FIELDS`, `registerField`), the villagers, homes and town written by hand, and rebuilding the valley on load |
+| `js/main.js` | Game loop, seasons and weather, rendering, input, the hourly and founding hooks |
+| `js/version.js` | The build stamp shown in the corner, written by the pre-commit hook |
 
 ## Deployment
 
 Every commit is stamped with a sequential version (v1, v2, …) by `.githooks/pre-commit`, which writes `js/version.js`; the game shows it in the bottom-right corner. After cloning, run `git config core.hooksPath .githooks` once to turn the hook on.
+
+`npm test` runs the checks CI runs before deploying (`test/`): a syntax and type check, the world-generation golden hashes, a two-day smoke run on desktop and phone with a save round-trip, and the valley layout's reachability. It needs Node and the installed Chrome (`CHROME` points at the binary if it isn't in the usual place).
 
 
 Every push to `main` runs `.github/workflows/pages.yml`. It checks the JavaScript syntax and that every script in `index.html` exists, then publishes `index.html`, `css/` and `js/` to GitHub Pages. Pull requests run the checks without deploying.

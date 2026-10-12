@@ -7,33 +7,29 @@ You are a QA engineer playtesting **Merryfolk**, a cosy village-life sim that ru
 
 ## The project
 
-- Repo: `/Users/david/projects/hobbiton`. It's plain JavaScript with no build step and no test suite. `index.html` loads `css/style.css` and the `js/*.js` files in order.
+- Repo: `/Users/david/projects/hobbiton`. It's plain JavaScript with no build step. `index.html` loads `css/style.css` and the `js/*.js` files in order. `npm test` runs the test suite in `test/` (syntax and type check, world-generation golden hashes, a two-day smoke run with a save round-trip, valley reachability); run it before and after your fixes.
 - `README.md` describes every feature in detail. Read it first; it's your test plan. Check the file table at its end to see which module owns what.
-- Modules extend each other by wrapping globals. A global function gets reassigned, e.g. `converse = function (...) { ... }`, inside a `DOMContentLoaded` handler. Methods get wrapped through `Villager.prototype`. A bug can therefore sit in any wrapper in the chain, so grep across every file that reassigns a function, not just the file that first defines it.
-- State lives in the globals `Game` (time, villagers, pets, plans, coin and so on) and `World` (tiles, homes, buildings, lamps and so on). Save and load are `save()` and `load()` in `js/main.js`. They use localStorage, and every field is listed explicitly: the Game fields in main.js, the villager fields in the `Villager` constructor and `serialize()` in `js/villager.js`. A new field that's missing from that list is a classic bug.
+- Modules extend each other through `addHook` (the hourly and founding hooks) and `patch` (wrapping a method, listed in `PATCHES` and in the dev drawer's Tools tab), both in `js/util.js`; a few global functions are still reassigned outright, e.g. `converse = function (...) { ... }`. A bug can therefore sit in any wrapper in the chain, so grep across every file that patches or reassigns a function, not just the file that first defines it.
+- State lives in the globals `Game` (time, villagers, pets, plans, coin and so on) and `World` (tiles, homes, buildings, lamps and so on). Save and load are `save()` and `load()` in `js/save.js`. They use localStorage, and every field is listed explicitly: the Game fields in the `GAME_FIELDS` table (features add theirs with `registerField`), the villager fields in the `Villager` constructor and `serialize()` in `js/villager.js`. A new field that's missing from those is a classic bug.
 - Villagers pick actions through a utility "brain": `ACTIONS[k]` gives the relief per drive, with an `extra` term and multipliers. Actions added late need `ACTIONS[k].id = k` set by hand, and a missing id gives NaN scores.
 
 ## How to play it headlessly
 
-Use puppeteer-core with the installed Chrome. Work in a scratch directory, never inside the repo. If `require('puppeteer-core')` fails, run `npm i puppeteer-core` in your scratch directory. A copy may already exist at `/private/tmp/claude-501/-Users-david-hobbiton/dadf2d65-59d1-48b1-8861-748dfca7f631/scratchpad/node_modules`, which you can symlink.
+Use puppeteer-core with the installed Chrome. `npm ci` in the repo installs it, and `test/lib.js` does the setting up: `launch()` starts Chrome (`CHROME` overrides the path), and `openGame(browser, { width, height, mobile })` opens a fresh game, clears the old save, waits for the village, and collects every page error and console error on `errors`. Write your own scripts in a scratch directory (or `test/out/`, which is gitignored), never anywhere that would be committed:
 
 ```js
-const puppeteer = require('puppeteer-core');
+const { launch, openGame } = require('/Users/david/projects/hobbiton/test/lib.js');
 (async () => {
-  const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: 'new', args: ['--allow-file-access-from-files'] });
-  const p = await b.newPage();
-  const errs = []; p.on('pageerror', (e) => errs.push(e.message + ' ' + (e.stack || '').split('\n')[1]));
-  p.on('console', (m) => { if (m.type() === 'error') errs.push('console: ' + m.text()); });
-  // phone: await p.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
-  await p.goto('file:///Users/david/projects/hobbiton/index.html');
-  await p.evaluate(() => { try { localStorage.clear(); } catch (e) {} }); await p.reload();
-  await p.waitForFunction(() => typeof Game !== 'undefined' && Game.villagers.length > 0, { timeout: 20000 });
+  const b = await launch();
+  const { page: p, errors } = await openGame(b, { width: 1280, height: 800 });   // phone: { width: 390, height: 844, mobile: true }
   await p.evaluate(() => startGame(false)); await new Promise((r) => setTimeout(r, 800));
   const r = await p.evaluate(() => { for (let i = 0; i < 2 * 1440; i++) simulate(0.5); return { day: Game.day, folk: Game.villagers.length }; });
-  console.log(JSON.stringify(r), errs);
+  console.log(JSON.stringify(r), errors);
   await b.close();
 })();
 ```
+
+`test/smoke.js` is a worked example of a longer run with invariants checked as it goes, and `test/golden.js` of reading the generated world.
 
 - `simulate(0.5)` advances the game half a minute and is deterministic apart from `Math.random`. 2880 calls make one game day. For long runs, simulate inside `p.evaluate` in chunks and check invariants as you go.
 - For UI testing, click the real DOM (`p.click`, `p.touchscreen.tap`) and take screenshots with `p.screenshot({ path })`. Then look at the screenshots with the Read tool. Visual bugs only show up that way: overlaps, clipping, text running out of its box, elements off-screen on phones.
