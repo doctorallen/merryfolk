@@ -34,12 +34,14 @@ function petSprites(kind, coat) {
       down2: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.cecwcec.', '.cccpccc.', '..ccccc..', '.ccccccc.', '.ccccccc.', '..cc.cc..'],
       up1: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.ccccccc.', '.ccccccc.', '..ccdcc..', '.cccdccc.', '.cccdccc.', '.c.c.c.c.'],
       up2: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.ccccccc.', '.ccccccc.', '..ccdcc..', '.ccdcccc.', '.cccdccc.', '..cc.cc..'],
-      // coming towards you and to the right: the face turned, tail curling out behind on the left
-      qdown1: ['...d...d..', '...dc.cd..', 'd..cccccc.', '.d.cecwce.', '..dcccpcc.', '...ccccc..', '..ccccccc.', '..ccccccc.', '..c.c.cc..'],
-      qdown2: ['...d...d..', '...dc.cd..', 'd..cccccc.', '.d.cecwce.', '..dcccpcc.', '...ccccc..', '..ccccccc.', '..ccccccc.', '...cc.c.c.'],
-      // going away and to the right: the back of the head, one ear, tail up on the left
-      qup1: ['...d...d..', '...dc.cd..', 'd..cccccc.', '.d.cccccc.', '..dcccccc.', '...ccdcc..', '..cccdccc.', '..ccccccc.', '..c.c.cc..'],
-      qup2: ['...d...d..', '...dc.cd..', 'd..cccccc.', '.d.cccccc.', '..dcccccc.', '...ccdcc..', '..ccdcccc.', '..ccccccc.', '...cc.c.c.'],
+      // coming towards you and to the right: the near ear big, the far one small, the
+      // eyes and muzzle over to the right, the tail curling out behind on the left
+      qdown1: ['..dd...d..', '..dcc.cd..', '..ccccccc.', '..ccecwce.', '..cccccpc.', 'd..ccccc..', '.dccccccc.', '.dccccccc.', '..c.c.cc..'],
+      qdown2: ['..dd...d..', '..dcc.cd..', '..ccccccc.', '..ccecwce.', '..cccccpc.', 'd..ccccc..', '.dccccccc.', '.dccccccc.', '...cc.c.c.'],
+      // going away and to the right: the back of the head with the near ear, the stripe
+      // down the spine a little right of centre, the tail up on the left
+      qup1: ['..dd...d..', '..dcc.cd..', '..ccccccc.', '..ccccccc.', '..cccccc..', 'd.ccdccc..', '.dcccdccc.', '..ccccccc.', '..c.c.cc..'],
+      qup2: ['..dd...d..', '..dcc.cd..', '..ccccccc.', '..ccccccc.', '..cccccc..', 'd.ccdccc..', '.dccdcccc.', '..ccccccc.', '...cc.c.c.'],
     };
   } else {
     frames = {
@@ -51,12 +53,13 @@ function petSprites(kind, coat) {
       down2: ['..d.....d..', '.dcccccccd.', '.dcecccecd.', '..ccccccc..', '...ccecc...', '..ccccccc..', '.ccccccccc.', '.ccccccccc.', '..cc.c.cc..'],
       up1: ['..d.....d..', '.dcccccccd.', '.dcccccccd.', '..ccccccc..', '..ccccccc..', '..cccdccc..', '.ccccdcccc.', '.ccccccccc.', '.cc.ccc.cc.'],
       up2: ['..d.....d..', '.dcccccccd.', '.dcccccccd.', '..ccccccc..', '..ccccccc..', '..cccdccc..', '.cccdccccc.', '.ccccccccc.', '..cc.c.cc..'],
-      // coming towards you and to the right: the muzzle turned, the tail out behind on the left
-      qdown1: ['....dd.....d', '...dcccccccd', 'dd.dcecccece', '..ddcccccccp', '....ccccecc.', '....ccccccc.', '...ccccccccc', '...ccccccccc', '...cc.ccc.cc'],
-      qdown2: ['....dd.....d', '...dcccccccd', 'dd.dcecccece', '..ddcccccccp', '....ccccecc.', '....ccccccc.', '...ccccccccc', '...ccccccccc', '....cc.c.cc.'],
-      // going away and to the right: the back of the head, one ear, the tail up on the left
-      qup1: ['....dd.....d', '...dcccccccd', 'dd.dccccccc.', '..ddccccccc.', '....ccccccc.', '....cccdccc.', '...ccccdcccc', '...ccccccccc', '...cc.ccc.cc'],
-      qup2: ['....dd.....d', '...dcccccccd', 'dd.dccccccc.', '..ddccccccc.', '....ccccccc.', '....cccdccc.', '...cccdccccc', '...ccccccccc', '....cc.c.cc.'],
+      // coming towards you and to the right: the near ear hanging big, the far one small,
+      // the eyes over to the right and the muzzle on the turn, the tail out behind on the left
+      qdown1: ['...dd.....d.', '..ddccccccd.', '..dccceccec.', '...cccccccce', '....ccccccp.', 'd...ccccccc.', '.dccccccccc.', '..ccccccccc.', '..cc.ccc.cc.'],
+      qdown2: ['...dd.....d.', '..ddccccccd.', '..dccceccec.', '...cccccccce', '....ccccccp.', 'd...ccccccc.', '.dccccccccc.', '..ccccccccc.', '...cc.c.cc..'],
+      // going away and to the right: the back of the head with the near ear, the tail up on the left
+      qup1: ['...dd.....d.', '..ddccccccd.', '..dcccccccc.', '...ccccccc..', '....ccccccc.', 'd...cccdccc.', '.dccccdcccc.', '..ccccccccc.', '..cc.ccc.cc.'],
+      qup2: ['...dd.....d.', '..ddccccccd.', '..dcccccccc.', '...ccccccc..', '....ccccccc.', 'd...cccdccc.', '.dcccdccccc.', '..ccccccccc.', '...cc.c.cc..'],
     };
   }
   const out = {};
