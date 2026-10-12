@@ -93,8 +93,9 @@ const GEN_OPTIONS = {
   rocks: { label: 'Rocks', opts: [['few', 'Few', 0.45], ['some', 'Some', 1], ['many', 'Many', 1.9]] },
   cliffs: { label: 'Cliffs', opts: [['none', 'None', 0], ['some', 'Some', 1], ['many', 'Many', 1.7]] },
   relief: { label: 'Relief', opts: [['smooth', 'Smooth', 0], ['broken', 'Broken', 1], ['rugged', 'Rugged', 1.6]] },
+  layout: { label: 'The valley', opts: [['classic', 'Thistledown', 0], ['valley', 'A new valley', 1]] },
 };
-function defaultGen(seed = 1337) { return { seed, hills: 'rolling', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some', cliffs: 'some', relief: 'broken' }; }
+function defaultGen(seed = 1337) { return { seed, hills: 'rolling', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some', cliffs: 'some', relief: 'broken', layout: 'classic' }; }
 // The number behind a setting, e.g. gen('woods') → 1.6 for thick woodland.
 function gen(key) {
   const g = World.gen || defaultGen(), o = GEN_OPTIONS[key].opts.find((x) => x[0] === g[key]);
@@ -106,10 +107,12 @@ function buildWorld(cfg) { for (const _ of buildWorldSteps(cfg)); }
 // setup screen can show it taking shape.
 function* buildWorldSteps(cfg) {
   // villages from before there were cliffs keep their valley as it was
-  World.gen = typeof cfg === 'object' ? { ...defaultGen(), cliffs: 'none', relief: 'smooth', ...cfg } : defaultGen(cfg);
+  World.gen = typeof cfg === 'object' ? { ...defaultGen(), cliffs: 'none', relief: 'smooth', layout: 'classic', ...cfg } : defaultGen(cfg);
   const seed = World.gen.seed;
   World.seed = seed;
-  applyLayout(World.gen.plan || CLASSIC_LAYOUT);
+  // a new valley is planned from its seed once, and the plan kept with the village
+  if (World.gen.layout === 'valley' && !World.gen.plan) World.gen.plan = planValley(seed);
+  applyLayout(World.gen.layout === 'valley' && World.gen.plan ? World.gen.plan : CLASSIC_LAYOUT);
   World.land = null; World.grass = []; World.statics = []; World.flowers = []; World.pads = null; World.padNear = null; World._nh = null; World.cliffMask = null; World.cliff = null;
   const rng = mulberry32(seed);
   const tiles = World.tiles;
@@ -273,7 +276,7 @@ function* buildWorldSteps(cfg) {
     b.stepX = b.left + 34; b.stepY = b.bottom + 10;
   }
   // a second watermill upstream, on the west reach of the river
-  {
+  if (World.L.mills[1] != null) {
     const mx = World.L.mills[1];
     let top = 99; for (let y = World.L.millScanFrom ?? 30; y < MAP_H; y++) if (tileAt(mx, y) === T.WATER) { top = y; break; }
     const millImg = makeMill();
@@ -1470,7 +1473,8 @@ function updateWorld(dtMin, raining, season, hour) {
     const nx = d.x + Math.cos(d.a) * dtMin * 1.2, ny = d.y + Math.sin(d.a) * dtMin * 0.6;
     const tx = Math.floor(nx / 16), ty = Math.floor((ny + 4) / 16);
     if (tileAt(tx, ty) === T.WATER && tileAt(Math.floor((nx + 6) / 16), ty) === T.WATER && tileAt(Math.floor((nx - 6) / 16), ty) === T.WATER) { d.x = nx; d.y = ny; }
-    else d.a += Math.PI * 0.7;
+    // bumped the bank: turn back towards the middle of the pond, rather than nosing at it until the next whim
+    else { d.a = Math.atan2(POND.cy * 16 - d.y, POND.cx * 16 - d.x) + (Math.random() - 0.5) * 1.2; d.t = 6 + Math.random() * 10; }
   }
   updateRabbits(dtMin, season, hour);
   updateCrows(dtMin, season, hour);

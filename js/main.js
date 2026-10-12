@@ -92,7 +92,7 @@ function newVillage() {
 function save() {
   try {
     const data = {
-      v: 2, world: World.gen, farewells: Game.farewells || [], memorials: Game.memorials || [], mathoms: Game.mathoms || [], mathomSeq: Game.mathomSeq || 0, mailbag: Game.mailbag || [], pets: (Game.pets || []).map((pt) => ({ ...pt, say: null, tx: null, route: null })), petSeq: Game.petSeq || 0, plans: (Game.plans || []).map((pl) => ({ ...pl, workers: 0 })), planDone: Game.planDone || [], terra: Game.terra || [], playerLots: Game.playerLots || [], voidLots: Game.voidLots || [], lotMoves: Game.lotMoves || {}, planSeq: Game.planSeq || 0, policy: Game.policy || {}, jobPlan: Game.jobPlan || {}, contentLog: Game.contentLog || [], era: Game.era || 0, renown: Game.renown || 0, coin: Game.coin ?? 20, charters: Game.charters || [], chartersDone: Game.chartersDone || 0, contentStreak: Game.contentStreak || 0, swapDay: Game.swapDay ?? -1, mootNote: Game.mootNote ?? -1, statues: Game.statues || {}, caravan: Game.caravan || null, lastTrader: Game.lastTrader || null, masonsUntil: Game.masonsUntil || 0, requests: Game.requests || [], reqSeq: Game.reqSeq || 0, riftStory: Game.riftStory || null, masterpieces: Game.masterpieces || [], lastInspired: Game.lastInspired ?? -9, almanac: Game.almanac || null, lastAlmanac: Game.lastAlmanac || null, hazard: Game.hazard || null, hazardSeasonDone: Game.hazardSeasonDone ?? -1, tut: Game.tut || { step: 3, saw: {}, off: false }, objHidden: !!Game.objHidden, lore: Game.lore || null, scenesSeen: Game.scenesSeen || [], scenarioDone: Game.scenarioDone || false, exped: Game.exped || null, innSpecial: Game.innSpecial || null, traditions: Game.traditions || [], pet: { factions: Game.factions || {}, petition: Game.petition || null, seen: Game.petitionsSeen || [], last: Game.lastPetitionDay || 0, highdayDance: !!Game.highdayDance, swing: !!Game.swing, neonSquare: !!Game.neonSquare, breePact: !!Game.breePact, quietUntil: Game.quietUntil || 0, harvestDay: Game.harvestDay ?? null, schoolUntil: Game.schoolUntil ?? null, brewContest: Game.brewContest ?? null }, news: Game.news || [], newsSeq: Game.newsSeq || 0, lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
+      v: 2, world: JSON.parse(JSON.stringify(World.gen, (k, v) => (k[0] === '_' ? undefined : v))), farewells: Game.farewells || [], memorials: Game.memorials || [], mathoms: Game.mathoms || [], mathomSeq: Game.mathomSeq || 0, mailbag: Game.mailbag || [], pets: (Game.pets || []).map((pt) => ({ ...pt, say: null, tx: null, route: null })), petSeq: Game.petSeq || 0, plans: (Game.plans || []).map((pl) => ({ ...pl, workers: 0 })), planDone: Game.planDone || [], terra: Game.terra || [], playerLots: Game.playerLots || [], voidLots: Game.voidLots || [], lotMoves: Game.lotMoves || {}, planSeq: Game.planSeq || 0, policy: Game.policy || {}, jobPlan: Game.jobPlan || {}, contentLog: Game.contentLog || [], era: Game.era || 0, renown: Game.renown || 0, coin: Game.coin ?? 20, charters: Game.charters || [], chartersDone: Game.chartersDone || 0, contentStreak: Game.contentStreak || 0, swapDay: Game.swapDay ?? -1, mootNote: Game.mootNote ?? -1, statues: Game.statues || {}, caravan: Game.caravan || null, lastTrader: Game.lastTrader || null, masonsUntil: Game.masonsUntil || 0, requests: Game.requests || [], reqSeq: Game.reqSeq || 0, riftStory: Game.riftStory || null, masterpieces: Game.masterpieces || [], lastInspired: Game.lastInspired ?? -9, almanac: Game.almanac || null, lastAlmanac: Game.lastAlmanac || null, hazard: Game.hazard || null, hazardSeasonDone: Game.hazardSeasonDone ?? -1, tut: Game.tut || { step: 3, saw: {}, off: false }, objHidden: !!Game.objHidden, lore: Game.lore || null, scenesSeen: Game.scenesSeen || [], scenarioDone: Game.scenarioDone || false, exped: Game.exped || null, innSpecial: Game.innSpecial || null, traditions: Game.traditions || [], pet: { factions: Game.factions || {}, petition: Game.petition || null, seen: Game.petitionsSeen || [], last: Game.lastPetitionDay || 0, highdayDance: !!Game.highdayDance, swing: !!Game.swing, neonSquare: !!Game.neonSquare, breePact: !!Game.breePact, quietUntil: Game.quietUntil || 0, harvestDay: Game.harvestDay ?? null, schoolUntil: Game.schoolUntil ?? null, brewContest: Game.brewContest ?? null }, news: Game.news || [], newsSeq: Game.newsSeq || 0, lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
       villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
       archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
@@ -367,13 +367,14 @@ function lanternLight(v, where) {
   return where === 'hand' ? { x: v.x + side * 3, y: v.y - 5 } : { x: v.x + side * 8, y: v.y - 2 };
 }
 // A little oil lantern, drawn in half-pixels from the ring at its top.
-function drawLantern(ctx, x, y, t, id) {
+function drawLantern(ctx, x, y, t, id, rift = false) {
   const P = (dx, dy, w, h, col) => { ctx.fillStyle = col; ctx.fillRect(x + dx / RS, y + dy / RS, w / RS, h / RS); };
   const flick = Math.sin(t * 9 + id * 1.7) > 0.6;
   P(0, 0, 1, 2, '#3a2a1a');
   P(-2, 2, 5, 1, '#2a1c12'); P(-1, 1, 3, 1, '#2a1c12');
   P(-2, 3, 5, 6, '#2a1c12');
-  P(-1, 3, 3, 5, flick ? '#ffc850' : '#ffd860'); P(0, 4, 1, 3, '#fff6c8');
+  // rift-folk carry a violet rift-glass lantern
+  P(-1, 3, 3, 5, rift ? (flick ? '#a060ff' : '#b878ff') : flick ? '#ffc850' : '#ffd860'); P(0, 4, 1, 3, rift ? '#e8d0ff' : '#fff6c8');
   P(-2, 9, 5, 1, '#2a1c12');
 }
 
@@ -543,13 +544,13 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
       }
       case 'lantern': {
         const ph = Math.floor(v.walkDist / 3.2) % 4, sw = v.pose !== 'walk' ? 0 : ph === 0 ? -1 : ph === 2 ? 1 : 0;
-        drawLantern(ctx, sx + (flip ? SW - HR[0] - 1 - sw : HR[0] + sw) / RS, sy + HR[1] / RS, t, v.id);
+        drawLantern(ctx, sx + (flip ? SW - HR[0] - 1 - sw : HR[0] + sw) / RS, sy + HR[1] / RS, t, v.id, v.tech >= 0.5);
         break;
       }
       case 'gadget': { const [x, y] = [HR[0] - 3, HR[1] - 4]; Q(x, y, 7, 5, '#2a2a32'); Q(x + 1, y + 1, 5, 2, Math.sin(t * 4 + v.id) > -0.3 ? expressed(v.genes).neon : '#1a4a50'); Q(x + 2, y + 4, 3, 1, '#4a4a52'); break; }
     }
   };
-  if (lantern === 'ground') drawLantern(ctx, Math.round(vx) + (v.facing === 'left' ? -8 : 8), Math.round(vy) - 4.5, t, v.id);
+  if (lantern === 'ground') drawLantern(ctx, Math.round(vx) + (v.facing === 'left' ? -8 : 8), Math.round(vy) - 4.5, t, v.id, v.tech >= 0.5);
   if (dir === 'up') drawProp();
   blit(ctx, spr, sx, sy, flip);
   if (dir !== 'up') drawProp();
@@ -636,6 +637,14 @@ function emitSmoke(dt) {
   }
 }
 
+// How a flame is burning this instant, 0.7–1.1: a slow waver and a quick one,
+// settled by a random throw a few times a second, and a brief gutter now and then.
+function flicker(i) {
+  const h = hash2(Math.floor(tReal * 6) + i * 31, i * 7 + 3), h2 = hash2(Math.floor(tReal * 1.5) + i * 17, i);
+  const slow = Math.sin(tReal * 1.3 + i) * 0.03, quick = Math.sin(tReal * 11 + i * 2.1) * 0.02 * h;
+  return 0.92 + slow + quick + (h - 0.5) * 0.08 - (h2 < 0.06 ? 0.15 : 0);
+}
+
 function collectLights() {
   const L = [];
   const dk = Game.darkness;
@@ -660,15 +669,16 @@ function collectLights() {
   }
   riftLights(L);
   // only the lamps the lamplighter has lit, brightening as the wick takes
-  World.lamps.forEach((l, i) => { if (l.lit) L.push({ x: l.x, y: l.y + 6, r: 80 * (0.96 + Math.sin(tReal * 7 + i) * 0.04) * Math.min(1, 0.4 + (Game.time - l.litAt) / 8), a: 0.97 * Math.min(1, 0.3 + (Game.time - l.litAt) / 6), warm: true, glow: 1.8 }); });
+  // a flame flickers at random: the pool keeps its size, and the glow in it wavers a little, with the odd gutter
+  World.lamps.forEach((l, i) => { if (l.lit) L.push({ x: l.x, y: l.y + 6, r: 80 * Math.min(1, 0.4 + (Game.time - l.litAt) / 8), a: 0.97 * Math.min(1, 0.3 + (Game.time - l.litAt) / 6), warm: true, glow: 1.8 * flicker(i) }); });
   if (Game.party.on) {
     for (const p of World.partyPoles) L.push({ x: p.x, y: p.y + 8, r: 42, a: 0.85, col: '#ffcf70' });
     L.push({ x: PARTY.danceX * 16 + 8, y: PARTY.danceY * 16, r: 90, a: 0.9, col: '#ffcf70' });
-    if (World.season === 'winter') L.push({ x: World.bonfire.x, y: World.bonfire.y - 8, r: 110 * (0.95 + Math.sin(tReal * 9) * 0.05), a: 0.95, col: '#ff9a3a' });
+    if (World.season === 'winter') L.push({ x: World.bonfire.x, y: World.bonfire.y - 8, r: 110, a: 0.95, col: '#ff9a3a', glow: 1.2 * flicker(99) });
   }
   for (const v of Game.villagers) {
     const lan = lanternFor(v);
-    if (lan) { const p = lanternLight(v, lan); L.push({ x: p.x, y: p.y, r: 32 * (0.95 + Math.sin(tReal * 9 + v.id * 1.7) * 0.05), a: 0.85, warm: true }); }
+    if (lan) { const p = lanternLight(v, lan), rift = v.tech >= 0.5; L.push({ x: p.x, y: p.y, r: 32, a: 0.85 * (0.9 + 0.1 * flicker(v.id + 7)), warm: !rift, col: rift ? '#b070ff' : undefined, glow: rift ? 2 : 1, tint: rift ? 0.5 : 0 }); }
     if (v.inside || !v.task || v.task.phase !== 'do') continue;
     if (v.task.a.prop === 'pipe') L.push({ x: v.x + (v.facing === 'left' ? -4 : 4), y: v.y - 13, r: 10, a: 0.55, col: '#ff8a3a' });
   }

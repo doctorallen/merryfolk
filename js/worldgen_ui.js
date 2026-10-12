@@ -23,7 +23,7 @@ function openWorldSetup() {
   const el = $('worldgen');
   el.hidden = false;
   Game.introOpen = true;
-  GenUI.cfg = { ...defaultGen(Math.floor(Math.random() * 99999)) };
+  GenUI.cfg = { ...defaultGen(Math.floor(Math.random() * 99999)), layout: 'valley' };
   $('wg-setup').hidden = false; $('wg-watch').hidden = true;
   renderWorldSetup();
 }
