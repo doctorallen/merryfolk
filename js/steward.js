@@ -184,7 +184,8 @@ function stewardHTML() {
   const t = jobTargets(), counts = jobCounts();
   for (const j of Object.keys(JOBS)) {
     const planned = typeof jobPlan()[j] === 'number';
-    h += `<div class="st-job">${iconHTML(JOBS[j].icon)}<span>${JOBS[j].label}</span><span class="st-n">${counts[j] || 0}<small>/${t[j] ?? 0}</small></span><button data-job="${j}" data-d="-1" aria-label="Fewer ${JOBS[j].label}s">−</button><button data-job="${j}" data-d="1" aria-label="More ${JOBS[j].label}s">+</button><button data-job="${j}" data-d="auto" class="st-auto" title="Let the village decide" style="visibility:${planned ? 'visible' : 'hidden'}">auto</button></div>`;
+    const gap = (t[j] ?? 0) > 0 && (counts[j] || 0) === 0;
+    h += `<div class="st-job${gap ? ' gap' : ''}" ${gap ? 'title="Nobody has this trade: the work waits"' : ''}>${iconHTML(JOBS[j].icon)}<span>${JOBS[j].label}${gap ? ' <em class="st-gap">nobody</em>' : ''}</span><span class="st-n">${counts[j] || 0}<small>/${t[j] ?? 0}</small></span><button data-job="${j}" data-d="-1" aria-label="Fewer ${JOBS[j].label}s">−</button><button data-job="${j}" data-d="1" aria-label="More ${JOBS[j].label}s">+</button><button data-job="${j}" data-d="auto" class="st-auto" title="Let the village decide" style="visibility:${planned ? 'visible' : 'hidden'}">auto</button></div>`;
   }
   h += '</div><div class="sub">Numbers are hands now / hands wanted. Set a trade yourself with − and +; "auto" hands it back to the village. Changes are made at once, and folk who are moved on look for other work.</div>';
   return h;

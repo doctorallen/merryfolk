@@ -514,6 +514,9 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
         break;
       }
       case 'sack': { const x = dir === 'up' ? 4 : 12; Q(x, HR[1] - 13, 10, 12, '#e8dcc0'); Q(x + 7, HR[1] - 12, 3, 11, '#c8bca0'); Q(x + 3, HR[1] - 15, 4, 2, '#a08a60'); Q(x + 4, HR[1] - 13, 2, 1, '#7a6a48'); break; }
+      case 'bucket': if (dir !== 'up') { const [x, y] = [HR[0] - 2, HR[1] - 1]; Q(x, y, 6, 5, '#7a7a84'); Q(x, y, 6, 1, '#a0a0aa'); Q(x + 1, y + 1, 4, 3, '#4a6a8a'); Q(x + 1, y - 2, 1, 2, '#5a5a62'); Q(x + 4, y - 2, 1, 2, '#5a5a62'); Q(x + 1, y - 3, 4, 1, '#5a5a62'); } break;
+      case 'broom': { const x = HR[0] + 1; Q(x, 2, 2, SH - 8, '#9a7a52'); Q(x, 2, 1, SH - 8, '#b89a66'); Q(x - 3, SH - 8, 8, 2, '#c8a858'); Q(x - 4, SH - 6, 10, 4, '#d8b860'); Q(x - 4, SH - 3, 10, 1, '#a8883a'); break; }
+      case 'brush': if (dir !== 'up') { const [x, y] = [HR[0] - 1, HR[1] - 2]; Q(x, y, 6, 2, '#6a4a2a'); Q(x, y + 2, 6, 2, '#d8c8a0'); } break;
       case 'basket': if (dir !== 'up') { const [x, y] = [HR[0] - 3, HR[1] - 2]; Q(x, y, 9, 6, '#8a6440'); Q(x, y + 2, 9, 1, '#6a4a2a'); Q(x + 1, y - 4, 1, 4, '#6a4a2a'); Q(x + 7, y - 4, 1, 4, '#6a4a2a'); Q(x + 2, y - 5, 5, 1, '#6a4a2a'); Q(x + 1, y - 1, 2, 2, '#d83a2a'); Q(x + 4, y - 1, 2, 2, '#c8925a'); Q(x + 6, y - 1, 2, 2, '#7cc05a'); } break;
       case 'rod': {
         const bob = Math.round(Math.sin(t * 2 + v.id) * 2), [x, y] = HR;

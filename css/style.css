@@ -840,3 +840,7 @@ body:has(#village:not([hidden])) #errand { display: none; }
 @media (max-width: 760px) { #topbar .controls { flex-wrap: nowrap; overflow-x: auto; max-width: calc(100vw - 20px); scrollbar-width: none; } #topbar .controls::-webkit-scrollbar { display: none; } }
 /* the scrolling row clips anything absolutely placed inside it, so on phones the settings menu floats free, placed under the button when opened */
 @media (max-width: 760px) { .gear-menu { position: fixed; right: auto; z-index: 30; } }
+
+/* a trade with nobody in it */
+.st-job.gap .st-n { color: #a0321e; }
+.st-gap { font-style: normal; font-size: 11px; color: #a0321e; margin-left: 4px; }
