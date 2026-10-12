@@ -5,7 +5,6 @@
 // ---------------------------------------------------------------------------
 
 const SEED = 1337;
-const SAVE_KEY = 'thistledown-save-v2';
 const GAME_MIN_PER_SEC = 3; // at 1x speed: one day takes eight real minutes
 const SPEEDS = [0, 1, 2, 4, 8, 16];
 
@@ -89,101 +88,6 @@ function newVillage() {
   runHooks('afterNewVillage'); // and the features that want the founding families in place
 }
 
-// ---------------------------------------------------------------------------
-// Saving
-// ---------------------------------------------------------------------------
-function save() {
-  try {
-    const data = {
-      v: 2, world: JSON.parse(JSON.stringify(World.gen, (k, v) => (k[0] === '_' ? undefined : v))), farewells: Game.farewells || [], memorials: Game.memorials || [], mathoms: Game.mathoms || [], mathomSeq: Game.mathomSeq || 0, mailbag: Game.mailbag || [], pets: (Game.pets || []).map((pt) => ({ ...pt, say: null, tx: null, route: null })), petSeq: Game.petSeq || 0, plans: (Game.plans || []).map((pl) => ({ ...pl, workers: 0 })), planDone: Game.planDone || [], terra: Game.terra || [], playerLots: Game.playerLots || [], voidLots: Game.voidLots || [], lotMoves: Game.lotMoves || {}, planSeq: Game.planSeq || 0, policy: Game.policy || {}, jobPlan: Game.jobPlan || {}, contentLog: Game.contentLog || [], era: Game.era || 0, renown: Game.renown || 0, coin: Game.coin ?? 20, charters: Game.charters || [], chartersDone: Game.chartersDone || 0, contentStreak: Game.contentStreak || 0, swapDay: Game.swapDay ?? -1, mootNote: Game.mootNote ?? -1, statues: Game.statues || {}, caravan: Game.caravan || null, lastTrader: Game.lastTrader || null, masonsUntil: Game.masonsUntil || 0, requests: Game.requests || [], reqSeq: Game.reqSeq || 0, riftStory: Game.riftStory || null, masterpieces: Game.masterpieces || [], lastInspired: Game.lastInspired ?? -9, almanac: Game.almanac || null, lastAlmanac: Game.lastAlmanac || null, hazard: Game.hazard || null, hazardSeasonDone: Game.hazardSeasonDone ?? -1, tut: Game.tut || { step: 3, saw: {}, off: false }, objHidden: !!Game.objHidden, lore: Game.lore || null, scenesSeen: Game.scenesSeen || [], scenarioDone: Game.scenarioDone || false, exped: Game.exped || null, innSpecial: Game.innSpecial || null, traditions: Game.traditions || [], pet: { factions: Game.factions || {}, petition: Game.petition || null, seen: Game.petitionsSeen || [], last: Game.lastPetitionDay || 0, highdayDance: !!Game.highdayDance, swing: !!Game.swing, neonSquare: !!Game.neonSquare, breePact: !!Game.breePact, quietUntil: Game.quietUntil || 0, harvestDay: Game.harvestDay ?? null, schoolUntil: Game.schoolUntil ?? null, brewContest: Game.brewContest ?? null }, news: Game.news || [], newsSeq: Game.newsSeq || 0, talks: Game.talks || [], talkSeq: Game.talkSeq || 0, lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
-      villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
-      archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
-      stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
-      homes: World.homes.map((h) => ({ built: h.built, buildProg: h.buildProg, pantry: h.pantry, chilly: h.chilly, neon: !!h.neon, plots: h.plots.map((p) => [p.stage, p.prog]), crafts: h.crafts, collection: h.collection, jars: h.jars || {} })),
-      rifts: World.rifts, scars: World.riftScars, riftNext: Game.riftNext, riftsOn: Village.riftsOn, wayHome: Village.wayHome || 0, wayHomeTries: Village.wayHomeTries || 0, riftPower: Village.riftPower || null,
-      allot: World.allotments.map((a) => a.plots.map((p) => p.stage)), pens: World.pens.map((p) => p.tend),
-      weed: World.weed.map((w) => w.stage), fields: World.fields.map((f) => f.plots.map((p) => p.stage)), herbs: World.herbBeds.map((p) => p.stage),
-      orchard: World.orchard.map((t) => t.apples), hives: World.hives.map((h) => h.honey), eggs: World.eggs,
-      woods: World.woodSpots.map((s) => s.stock), mush: World.mushrooms.map((m) => m.amount),
-      planted: Game.planted, log: Game.log.slice(0, 40),
-      items: World.items.map((i) => ({ kind: i.kind, x: i.x, y: i.y, uses: i.uses })),
-    };
-    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-  } catch (e) { /* storage unavailable: the village simply won't persist */ }
-}
-
-function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
-
-function load() {
-  let data;
-  try { data = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { return false; }
-  if (!data || data.v !== 2 || !data.villagers || !data.villagers.length) return false;
-  Game.time = data.time; NEXT_ID = data.nextId || 1;
-  (data.lamps || []).forEach((on, i) => { const l = World.lamps[i]; if (l) { l.lit = !!on; l.litAt = Game.time - 60; l.st.useAlt = l.lit; } });
-  Game.weather = data.weather || 'clear'; Game.raining = Game.weather === 'rain' || Game.weather === 'storm'; Game.rainUntil = data.rainUntil || 0;
-  Game.party = Object.assign({ on: false, until: 0, planned: null, reason: '' }, data.party || {});
-  Game.farewells = data.farewells || []; Game.memorials = data.memorials || []; Game.mathoms = data.mathoms || []; Game.mathomSeq = data.mathomSeq || 0; Game.mailbag = data.mailbag || []; Game.pets = data.pets || []; Game.petSeq = data.petSeq || 0; Game.news = data.news || []; Game.newsSeq = data.newsSeq || 0; Game.talks = data.talks || []; Game.talkSeq = data.talkSeq || 0; placeMemorialStones();
-  Game.archive = data.archive || {}; Game.away = data.away || []; Game.stats = data.stats || {}; Game.census = data.census || []; Game.lastTraveller = data.lastTraveller ?? -9;
-  Village.reset();
-  Object.assign(Village.stores, data.stores || {});
-  Village.wantHomes = data.wantHomes || 0;
-  Game.plans = data.plans || []; Game.planDone = data.planDone || []; Game.terra = data.terra || []; Game.playerLots = data.playerLots || []; Game.voidLots = data.voidLots || []; Game.lotMoves = data.lotMoves || {}; Game.planSeq = data.planSeq || 0; Game.policy = data.policy || {}; Game.jobPlan = data.jobPlan || {}; Game.contentLog = data.contentLog || []; Game.era = data.era || 0; Game.renown = data.renown || 0; Game.coin = data.coin ?? 20; Game.charters = data.charters || []; Game.chartersDone = data.chartersDone || 0; Game.contentStreak = data.contentStreak || 0; Game.swapDay = data.swapDay ?? -1; Game.mootNote = data.mootNote ?? -1; Game.statues = data.statues || {}; Game.caravan = data.caravan || null; Game.lastTrader = data.lastTrader || null; Game.masonsUntil = data.masonsUntil || 0; Game.requests = data.requests || []; Game.reqSeq = data.reqSeq || 0; Game.riftStory = data.riftStory || null; Game.masterpieces = data.masterpieces || []; Game.lastInspired = data.lastInspired ?? -9; Game.almanac = data.almanac || null; Game.lastAlmanac = data.lastAlmanac || null; Game.hazard = data.hazard || null; Game.hazardSeasonDone = data.hazardSeasonDone ?? -1; Game.tut = data.tut || { step: 2, saw: {}, off: false }; Game.objHidden = !!data.objHidden; Game.lore = data.lore || null; Game.scenesSeen = data.scenesSeen || []; Game.scenarioDone = data.scenarioDone || false; Game.exped = data.exped || null; Game.innSpecial = data.innSpecial || null; Game.traditions = data.traditions || []; restoreFinds(); applyLore(); { const P = data.pet || {}; Game.factions = P.factions || {}; Game.petition = P.petition || null; Game.petitionsSeen = P.seen || []; Game.lastPetitionDay = P.last || 0; Game.highdayDance = !!P.highdayDance; Game.swing = !!P.swing; Game.neonSquare = !!P.neonSquare; Game.breePact = !!P.breePact; Game.quietUntil = P.quietUntil || 0; Game.harvestDay = P.harvestDay ?? null; Game.schoolUntil = P.schoolUntil ?? null; Game.brewContest = P.brewContest ?? null; } restoreHazard(); World.wagonStatic = null; showCaravan(!!Game.caravan);
-  replayBuilds();
-  loadTown(data.town);
-  // older saves kept a single building project
-  if (data.project && !data.town) Village.projects = [{ kind: 'home', homeId: data.project.homeId, prog: data.project.prog || 0 }];
-  Game.day = Math.floor(Game.time / 1440) + 1;
-  const season = seasonKey(Game.day);
-  (data.homes || []).forEach((h, i) => {
-    const home = World.homes[i]; if (!home) return;
-    if (h.built && !home.built) { home.built = true; furnishHome(home); addHomeFlowers(home); }
-    home.buildProg = h.buildProg || 0;
-    home.pantry = Object.assign(emptyPantry(), h.pantry || {}); home.chilly = !!h.chilly; home.neon = !!h.neon;
-    home.crafts = h.crafts || {}; home.collection = h.collection || {}; home.jars = h.jars || {};
-    (h.plots || []).forEach(([s, p], j) => { if (home.plots[j]) { home.plots[j].stage = s; home.plots[j].prog = p; } });
-  });
-  Village.projects = Village.projects.filter((p) => p.kind !== 'home' || (World.homes[p.homeId] && !World.homes[p.homeId].built));
-  for (const p of Village.projects) if (p.kind === 'home') { const sh = World.homes[p.homeId]; if (sh.siteStatic) sh.siteStatic.hidden = false; }
-  (data.weed || []).forEach((s, i) => { if (World.weed[i]) World.weed[i].stage = s; });
-  (data.allot || []).forEach((a, i) => a.forEach((s, j) => { if (World.allotments[i] && World.allotments[i].plots[j]) World.allotments[i].plots[j].stage = s; }));
-  (data.pens || []).forEach((t, i) => { if (World.pens[i]) World.pens[i].tend = t; });
-  Village.woollens = (season === 'autumn' || season === 'winter') && (Village.stores.wool || 0) > 0;
-  (data.fields || []).forEach((f, i) => f.forEach((s, j) => { if (World.fields[i] && World.fields[i].plots[j]) World.fields[i].plots[j].stage = s; }));
-  (data.herbs || []).forEach((s, i) => { if (World.herbBeds[i]) World.herbBeds[i].stage = s; });
-  (data.orchard || []).forEach((n, i) => { if (World.orchard[i]) World.orchard[i].apples = n; });
-  (data.hives || []).forEach((n, i) => { if (World.hives[i]) World.hives[i].honey = n; });
-  (data.woods || []).forEach((n, i) => { if (World.woodSpots[i]) World.woodSpots[i].stock = n; });
-  (data.mush || []).forEach((n, i) => { if (World.mushrooms[i]) World.mushrooms[i].amount = n; });
-  World.eggs = data.eggs || 0;
-  World.rifts = data.rifts || []; World.riftScars = data.scars || [];
-  Game.riftNext = data.riftNext || Game.time + R.f(400, 1200);
-  Village.riftsOn = data.riftsOn ?? true;
-  Village.wayHome = data.wayHome || 0; Village.wayHomeTries = data.wayHomeTries || 0;
-  Village.riftPower = data.riftPower || { water: 0, wind: 0, sun: 0 };
-  Game.villagers = data.villagers.map((o) => new Villager(o));
-  // villagers from before they had a sex: make sure couples can still start a family
-  for (const v of Game.villagers) {
-    const sp = v.spouse != null && Game.villagers.find((o) => o.id === v.spouse);
-    if (sp && sp.genes.sex === v.genes.sex && v.id < sp.id && !(data.villagers.find((o) => o.id === sp.id).genes || {}).sex) { sp.genes.sex = v.genes.sex === 'f' ? 'm' : 'f'; sp.refreshSprites(); }
-  }
-  data.villagers.forEach((o, i) => {
-    const v = Game.villagers[i];
-    if (o.inside) {
-      const b = o.inside[0] === 'h' ? World.homes[+o.inside.slice(1)] : World.buildings[o.inside.slice(1)];
-      if (b) v.enterBuilding(b);
-    }
-    // a baby who was out in someone's arms is back in the cradle
-    if (v.stage === 'baby' && !v.inside) v.enterBuilding(v.home());
-    const t = nearestWalkable(Math.floor(v.x / 16), Math.floor((v.y - 2) / 16));
-    if (t && !walkable(Math.floor(v.x / 16), Math.floor((v.y - 2) / 16))) { v.x = t[0] * 16 + 8; v.y = t[1] * 16 + 12; }
-  });
-  Game.planted = data.planted || [];
-  for (const f of Game.planted) World.flowers.push({ x: f.x, y: f.y, seed: f.seed });
-  Game.log = data.log || [];
-  World.items = (data.items || []).map((i) => ({ ...i, claims: 0 }));
-  World.season = season;
-  return true;
-}
 
 // ---------------------------------------------------------------------------
 // Simulation
