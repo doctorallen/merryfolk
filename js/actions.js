@@ -1058,11 +1058,24 @@ const ACTIONS = {
   },
   work_story: {
     label: 'Telling stories beneath the old oak', icon: 'book', sat: { industry: -0.45, lonely: -0.5, bored: -0.4 }, dur: 100, pose: 'sit', prop: 'book', job: 'storyteller', skill: 'lore',
-    avail: () => Game.villagers.some((o) => o.isChild()),
+    // only worth it with little ones old enough to come to the oak
+    avail: () => Game.villagers.some((o) => o.isChild() && kidBand(o) !== 'toddler' && !o.leaving),
     time: (h) => (h >= 13 && h < 18 ? 2 : h >= 9.5 && h < 12 ? 1.2 : 0.01) * (Game.raining ? 0.3 : 1),
     extra: () => 0.35,
     target: () => (World.storyteller.occ ? null : { spot: World.storyteller }),
+    label2: (v) => (v.task && v.task.phase === 'do' && !v.task.data.heard ? 'Waiting beneath the old oak for the little ones' : 'Telling stories beneath the old oak'),
     tick: (v, task, dt) => {
+      // tales are told to listeners: with none sat in the circle the storyteller
+      // reads to themself, and if nobody has come within the half hour gives it up
+      const heard = Game.villagers.some((o) => o.task && o.task.a.id === 'school' && o.task.phase === 'do' && !o.inside && dist(o.x, o.y, v.x, v.y) < 80);
+      const coming = heard || Game.villagers.some((o) => o.task && (o.task.a.id === 'school' || (o.task.a.id === 'drop_off' && o.task.data.plan && o.task.data.plan.dest === 'school')));
+      task.data.idle = coming ? 0 : (task.data.idle || 0) + dt;
+      task.data.heard = heard;
+      if (task.data.idle > 30) { task.t = Math.min(task.t, 1); return; }
+      if (!heard) {
+        if (!task.data.called) { task.data.called = true; v.say(R.pick(['Story time! Gather round, little ones!', 'Who wants a tale? Come and sit!', 'Under the oak, everyone! Story time!'])); }
+        return;
+      }
       if (Math.random() < dt * 0.04) v.say(R.pick(v.edu >= 0.6 ? STORY_FINE : STORY_PLAIN));
       // passers-by pick up a little of the tale too
       if (Math.random() < dt * 0.1) for (const o of Game.villagers) if (o !== v && !o.inside && o.task && o.task.a.id !== 'school' && dist(o.x, o.y, v.x, v.y) < 80) learn(o, 0.004, 'school');
