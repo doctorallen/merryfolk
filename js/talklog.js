@@ -7,7 +7,7 @@
 // supper table or the taproom, and the storyteller's tales, aren't threaded.
 // ---------------------------------------------------------------------------
 
-const TALK_THREADS_MAX = 40, TALK_LINES_MAX = 12;
+const TALK_THREADS_MAX = 40, TALK_LINES_MAX = 16;
 function talksList() { return Game.talks || (Game.talks = []); }
 
 // Where two folk are standing, for the thread's heading.
@@ -43,6 +43,22 @@ function logTalkLine(s, l, text) {
   if (th.lines.length < TALK_LINES_MAX) th.lines.push({ v: s.id, t: text });
   if (Game.logFilter === 'talk') renderLog();
 }
+// A thread for a table or a gathering: three or more, each named.
+function talkGroupThread(folk, where) {
+  const T = talksList();
+  const th = { id: (Game.talkSeq = (Game.talkSeq || 0) + 1), day: Game.day, time: fmtTime(Game.time), ids: folk.map((v) => v.id), names: Object.fromEntries(folk.map((v) => [v.id, v.first])), where, lines: [], last: Game.time };
+  T.unshift(th);
+  if (T.length > TALK_THREADS_MAX) T.length = TALK_THREADS_MAX;
+  return th;
+}
+function logGroupLine(th, who, text) {
+  if (!th || !talksList().includes(th)) return;
+  th.last = Game.time;
+  if (!th.ids.includes(who.id)) { th.ids.push(who.id); th.names[who.id] = who.first; }
+  if (text && th.lines.length < TALK_LINES_MAX + 8) th.lines.push({ v: who.id, t: text });
+  if (Game.logFilter === 'talk') renderLog();
+}
+const listNames = (names) => names.join(', ').replace(/, ([^,]*)$/, ' and $1');
 
 function renderTalkLog(ol) {
   const T = talksList();
@@ -51,9 +67,12 @@ function renderTalkLog(ol) {
     const li = document.createElement('li'); li.className = 'talk-thread';
     const open = !!(Game.talkOpen && Game.talkOpen[th.id]), long = th.lines.length > 4;
     const lines = long && !open ? th.lines.slice(0, 3) : th.lines;
-    const name = (id) => `<a data-v="${id}">${escapeHtml(id === th.a ? th.an : th.bn)}</a>`;
-    li.innerHTML = `<time>Day ${th.day}, ${th.time} · ${name(th.a)} and ${name(th.b)}, ${escapeHtml(th.where)}</time>`
-      + lines.map((ln) => `<div class="talk-line ${ln.v === th.a ? 'a' : 'b'}"><b>${name(ln.v)}</b><span>${escapeHtml(ln.t)}</span></div>`).join('')
+    const group = !!th.ids;
+    const name = (id) => `<a data-v="${id}">${escapeHtml(group ? th.names[id] || '?' : id === th.a ? th.an : th.bn)}</a>`;
+    const side = (id) => (group ? 'abcde'[Math.max(0, th.ids.indexOf(id)) % 5] : id === th.a ? 'a' : 'b');
+    const head = group ? `${listNames(th.ids.map(name))}, ${escapeHtml(th.where)}` : `${name(th.a)} and ${name(th.b)}, ${escapeHtml(th.where)}`;
+    li.innerHTML = `<time>Day ${th.day}, ${th.time} · ${head}</time>`
+      + lines.map((ln) => `<div class="talk-line ${side(ln.v)}"><b>${name(ln.v)}</b><span>${escapeHtml(ln.t)}</span></div>`).join('')
       + (long ? `<button class="talk-more" data-talk="${th.id}">${open ? 'Fold it away' : `${th.lines.length - 3} more…`}</button>` : '');
     ol.appendChild(li);
   }

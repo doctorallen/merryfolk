@@ -508,7 +508,7 @@ const ACTIONS = {
   },
   chat: {
     label: 'Having a natter', icon: 'chat', sat: { lonely: -0.6, bored: -0.2 }, dur: 25, pose: 'stand', social: true, pair: true,
-    extra: () => 0.02,
+    extra: () => 0.035,
     time: (h) => (isNight(h) ? 0.2 : 1),
     trait: (v) => 0.4 + v.genes.sociability * 0.9,
     target: (v) => {
