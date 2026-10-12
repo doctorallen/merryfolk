@@ -824,7 +824,7 @@ body.rift-mode .talk-line.d { background: #2a2a1f; color: #ffe8a0; }
   .gear-menu { left: 0; right: auto; }
   #errand { top: auto !important; bottom: calc(var(--hud-bottom) + 44px); z-index: 9; }
   body.has-sel #errand { bottom: calc(58vh + 16px); }
-  body.errand-on #objectives { display: none; }
+  body.errand-on:not(.phone) #objectives { display: none; }
   #roster { left: 10px; right: 10px; width: auto; }
   #toasts .toast { font-size: 13px; padding: 5px 10px; }
 }
@@ -844,3 +844,77 @@ body:has(#village:not([hidden])) #errand { display: none; }
 /* a trade with nobody in it */
 .st-job.gap .st-n { color: #a0321e; }
 .st-gap { font-style: normal; font-size: 11px; color: #a0321e; margin-left: 4px; }
+/* ---------- phones (round 3): the interface keeps out of the valley's way ---------- */
+/* body.phone is set by resize() when the window is narrower than 760px or shorter than 500px */
+body.zoom-1 #view { image-rendering: auto; }
+#btn-speed { display: none; }
+body.phone #btn-speed { display: inline-block; min-width: 44px; }
+body.phone #btn-speed.paused { background: var(--moss); color: var(--parch); }
+body.phone .speed { display: none; }
+body.phone #btn-zoomin, body.phone #btn-zoomout { display: inline-block; }
+body.phone #topbar { left: 6px; right: 6px; top: calc(6px + env(safe-area-inset-top, 0px)); gap: 6px; flex-direction: column; align-items: stretch; }
+body.phone .brand-card { padding: 3px 6px; gap: 4px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+body.phone .brand-card::-webkit-scrollbar { display: none; }
+body.phone .brand-card .brand, body.phone #hud-meal, body.phone #hud-weather { display: none; }
+body.phone.landscape #topbar { flex-direction: row; align-items: flex-start; }
+body.phone.landscape .brand-card { flex: 0 1 auto; }
+body.phone.landscape .controls { flex: 0 0 auto; }
+body.phone .clock { gap: 4px; font-size: 12px; flex-wrap: nowrap; white-space: nowrap; }
+body.phone .clock .time { font-size: 15px; min-width: 0; }
+body.phone .clock .pill, body.phone .pill.coin, body.phone .pill.era, body.phone .pill.content, body.phone .pill.hazard { min-height: 30px; min-width: 0; padding: 1px 7px; font-size: 12px; }
+body.phone .controls { padding: 3px 4px; gap: 3px; flex-wrap: nowrap; overflow-x: auto; max-width: 100%; justify-content: space-between; }
+body.phone .controls button { min-height: 36px; min-width: 36px; padding: 2px 6px; font-size: 13px; }
+body.phone .controls .pop, body.phone [data-speed] { display: none; }
+/* the charters card is a chip until it's tapped */
+body.phone #objectives { width: auto; right: auto; left: 6px; padding: 0; gap: 0; }
+body.phone #objectives.folded .obj, body.phone #objectives.folded .obj-x { display: none; }
+body.phone #objectives .obj-head { padding: 6px 10px; min-height: 36px; font-size: 13px; gap: 6px; }
+body.phone #objectives.folded .obj-head::before { content: "★ "; }
+body.phone #objectives.folded .obj-head .sub { display: none; }
+body.phone #objectives:not(.folded) { padding: 6px 8px 8px; gap: 5px; right: 6px; z-index: 10; }
+/* the chronicle is a chip too, and opens as a sheet over the valley */
+body.phone #chronicle { left: 6px; right: auto; bottom: calc(6px + env(safe-area-inset-bottom, 0px)); width: auto; max-height: none; z-index: 5; }
+body.phone #chronicle.collapsed { max-height: 44px; }
+body.phone #chronicle.collapsed .log-head { padding: 6px 10px; min-height: 36px; font-size: 13px; }
+body.phone #chronicle.collapsed .log-head span:first-child::before { content: "📜 "; }
+body.phone #chronicle:not(.collapsed) { position: fixed; left: 0; right: 0; bottom: 0; width: 100%; max-height: min(62vh, 100% - var(--hud-top)); border-radius: 8px 8px 0 0; z-index: 20; padding-bottom: env(safe-area-inset-bottom, 0px); }
+body.phone #chronicle:not(.collapsed) .log-head { min-height: 44px; }
+/* the toolbar shows the tool in hand; a tap opens it out */
+body.phone #bottom { left: auto; right: 6px; transform: none; bottom: calc(6px + env(safe-area-inset-bottom, 0px)); max-width: calc(100vw - 12px); align-items: flex-end; z-index: 13; }
+body.phone #toolbar { padding: 3px; gap: 3px; }
+body.phone #toolbar.folded .tool:not(.active) { display: none; }
+body.phone #toolbar .tool { min-width: 50px; font-size: 10px; padding: 2px 3px; }
+body.phone #toolbar.folded .tool.active::after { content: "▴"; position: absolute; top: 1px; right: 3px; font-size: 10px; color: var(--ink-3); }
+body.phone #toolbar:not(.folded) { max-width: calc(100vw - 12px); overflow-x: auto; }
+/* the errand card sits low and small */
+body.phone #errand { top: auto !important; bottom: calc(var(--hud-bottom) + 48px) !important; left: 6px; right: auto; transform: none; width: min(360px, calc(100vw - 92px)); max-width: none; padding: 6px 8px; font-size: 13px; z-index: 9; }
+body.phone #errand span { font-size: 13px; }
+body.phone #errand b { font-size: 11px; }
+body.phone.building #errand { display: none; }
+body.phone #errand .err-skip { min-height: 32px; font-size: 12px; padding: 2px 8px; }
+body.phone.has-sel #errand { bottom: calc(60vh + 12px) !important; }
+body.phone #toasts { top: var(--hud-top); width: calc(100vw - 24px); }
+body.phone #toasts .toast { font-size: 13px; padding: 5px 10px; }
+/* the villager sheet */
+body.phone #panel { left: 6px; right: 6px; width: auto; top: auto !important; bottom: calc(6px + env(safe-area-inset-bottom, 0px)); max-height: 60vh; padding: 8px 10px 8px; z-index: 11; }
+body.phone .panel-head { grid-template-columns: 44px 1fr auto; gap: 8px; }
+body.phone #portrait { width: 44px; height: 59px; }
+body.phone .who h2 { font-size: 16px; }
+body.phone #panel .tabs button { min-height: 34px; }
+body.phone #panel .actions button { min-height: 36px; }
+body.phone #roster { left: 6px; right: 6px; width: auto; max-height: calc(100% - var(--hud-top) - 60px); }
+body.phone .modal-card { width: 100%; height: calc(100% - 12px); max-height: none; padding: 10px 12px 12px; border-radius: 6px; }
+body.phone .modal { padding: 6px; }
+body.phone .modal-card .tabs { overflow-x: auto; overflow-y: visible; flex-wrap: nowrap; scrollbar-width: none; padding-top: 4px; min-height: 44px; align-items: flex-end; }
+body.phone .modal-card .tabs button { flex: 0 0 auto; min-height: 36px; }
+body.phone #interior { left: 6px; right: 6px; top: var(--hud-top) !important; max-height: calc(100% - var(--hud-top) - 70px); padding: 8px; z-index: 12; }
+body.phone #minimap { display: none; }
+/* the ledger and the other sheets have the floor while they're open */
+body.phone:has(.modal:not([hidden])) #bottom, body.phone:has(#roster:not([hidden])) #bottom, body.phone:has(#interior:not([hidden])) #bottom { display: none; }
+body.phone .gear-menu { position: fixed; right: 6px; left: auto; z-index: 30; }
+/* short landscape screens: the villager sheet stands to the right and the cards squeeze */
+body.phone.landscape #panel { left: auto; right: 6px; width: min(46vw, 360px); top: var(--hud-top) !important; bottom: 6px; max-height: none; }
+body.phone.landscape.has-sel #errand { bottom: calc(var(--hud-bottom) + 48px) !important; }
+body.phone.landscape #chronicle:not(.collapsed) { left: auto; right: 0; width: min(60vw, 420px); max-height: calc(100% - var(--hud-top)); border-radius: 8px 0 0 0; }
+body.phone.landscape #roster { left: 6px; right: auto; width: 300px; }
+body.phone.landscape #interior { left: 6px; right: 6px; }

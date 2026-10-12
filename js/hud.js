@@ -198,7 +198,42 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   };
   // the chronicle starts folded on small screens
-  if (window.innerWidth < 760) $('chronicle').classList.add('collapsed');
+  if (window.innerWidth < 760 || window.innerHeight < 500) $('chronicle').classList.add('collapsed');
+  // --- phones: one speed button that cycles, a folded toolbar, folded charters, short labels ---
+  const phone = () => document.body.classList.contains('phone');
+  const SPEED_CYCLE = [1, 2, 3, 0], speedLabel = { 0: '❚❚', 1: '1×', 2: '2×', 3: '4×', 4: '8×', 5: '16×' };
+  const sc = $('btn-speed');
+  if (sc) {
+    sc.hidden = false;
+    sc.addEventListener('click', () => { const i = SPEED_CYCLE.indexOf(Game.speedIdx); setSpeed(SPEED_CYCLE[(i + 1) % SPEED_CYCLE.length]); });
+    const ss = setSpeed;
+    setSpeed = function (i) { const r = ss(i); sc.textContent = speedLabel[i] || '1×'; sc.classList.toggle('paused', i === 0); return r; };
+    sc.textContent = speedLabel[Game.speedIdx] || '1×';
+  }
+  // the toolbar shows only the tool in hand; a tap opens it out, picking a tool folds it again
+  const bar = $('toolbar');
+  bar.classList.add('folded');
+  // a tap on the folded bar opens it (and goes no further); a tap on a tool in the open bar picks it, then the bar folds
+  bar.addEventListener('pointerdown', (e) => { if (phone() && bar.classList.contains('folded')) { bar.classList.remove('folded'); bar._opening = true; } });
+  bar.addEventListener('click', (e) => {
+    if (!phone()) return;
+    if (bar._opening) { bar._opening = false; e.stopPropagation(); e.preventDefault(); return; }
+    if (e.target.closest('.tool')) setTimeout(() => bar.classList.add('folded'), 0);
+  }, true);
+  document.addEventListener('click', (e) => { if (phone() && !e.target.closest('#toolbar')) bar.classList.add('folded'); });
+  // the charters card is a chip until it's tapped
+  const obj = $('objectives');
+  obj.classList.add('folded');
+  obj.addEventListener('click', (e) => {
+    if (!phone() || !e.target.closest('.obj-head')) return;
+    if (obj.classList.contains('folded')) { obj.classList.remove('folded'); e.stopPropagation(); }
+  }, true);
+  document.addEventListener('click', (e) => { if (phone() && !e.target.closest('#objectives')) obj.classList.add('folded'); });
+  // the date reads "Day 3" on a phone, with the rest in its tooltip
+  const hud2 = updateHUD;
+  updateHUD = function () { hud2(); if (phone()) $('hud-day').textContent = `Day ${Game.day}`; };
+  // the body class is set by resize(); make sure it's there before the first frame is laid out
+  markScreen();
   window.addEventListener('resize', measureHud);
   if (window.ResizeObserver) { const ro = new ResizeObserver(measureHud); ro.observe($('topbar')); ro.observe($('bottom')); }
   setTimeout(measureHud, 50);
