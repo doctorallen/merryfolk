@@ -596,6 +596,7 @@ function collectLights() {
     L.push({ x: b.left + b.w / 2, y: b.bottom - 24, r: 44, a: 0.8, warm: true });
   }
   riftLights(L);
+  for (const o of Visitors) if (!o.hidden && o.lights) o.lights(L);
   // only the lamps the lamplighter has lit, brightening as the wick takes
   // a flame flickers at random: the pool keeps its size, and the glow in it wavers a little, with the odd gutter
   World.lamps.forEach((l, i) => { if (l.lit) L.push({ x: l.x, y: l.y + 6, r: 80 * Math.min(1, 0.4 + (Game.time - l.litAt) / 8), a: 0.97 * Math.min(1, 0.3 + (Game.time - l.litAt) / 6), warm: true, glow: 1.8 * flicker(i) }); });
@@ -718,6 +719,7 @@ function render(dtReal, dtWall = dtReal) {
   }
   for (const it of World.items) if (inView(it.x, it.y)) list.push({ y: it.y, img: SPR.items[it.kind], x: it.x - Math.floor(SPR.items[it.kind].width / 2), iy: it.y - SPR.items[it.kind].height + 2 });
   for (const v of Game.villagers) if (!v.inside && !v.carried && !v.heldBy && inView(v.x, v.y)) list.push({ y: v.y, v });
+  for (const o of Visitors) if (!o.hidden && inView(o.x, o.y)) list.push({ y: o.y, o });
   for (const pt of Game.pets || []) if (!pt.inside && inView(pt.x, pt.y)) { const im = petFrame(pt); list.push({ y: pt.y, img: im, x: Math.round(pt.x) - (im.width >> 1), iy: Math.round(pt.y) - im.height + 2, flip: pt.face < 0 }); }
   for (const r of World.rabbits) if (inView(r.x, r.y)) list.push({ y: r.y, img: SPR.rabbit[r.moving && Math.floor(r.hop * 2) % 2 ? 1 : 0], x: Math.round(r.x) - 5, iy: Math.round(r.y) - 9, flip: r.face < 0 });
   for (const an of World.animals) if (inView(an.x, an.y)) {
@@ -754,6 +756,7 @@ function render(dtReal, dtWall = dtReal) {
     else if (d.sails) drawWindmillSails(ctx);
     else if (d.rift) drawRift(ctx, d.rift, tReal);
     else if (d.lot) drawLotSite(ctx, d.lot, d.prog);
+    else if (d.o) d.o.draw(ctx);
     else blit(ctx, d.img, d.x, d.iy, !!d.flip);
   }
   if (winter) drawBonfire(ctx, tReal, Game.party.on);
@@ -841,8 +844,8 @@ function renderOverlay() {
   // measure every bubble first, then lay them out so none sits on another:
   // older ones keep their place and newer ones stack above whatever they'd cover
   const items = [];
-  for (const v of Game.villagers) {
-    if (v.inside || !v.bubble) continue;
+  for (const v of Game.villagers.concat(Visitors)) {
+    if (v.inside || !v.bubble || v.hidden) continue;
     const sx = (v.x - cx) * z;
     const sy = ((v._top ?? v.y - 16) - cy) * z - (Game.selected === v || v.iconT > 0 || v.isSick() ? 14 * z : 4);
     if (sx < -100 || sx > W + 100 || sy < -40 || sy > H + 40) continue;

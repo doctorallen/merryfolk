@@ -17,7 +17,7 @@ function gatheringsList() { return Game.gatherings || (Game.gatherings = []); }
 function gatheringOf(v) { const id = v.task && v.task.a.id === 'gather' && v.task.data.g; return id ? gatheringsList().find((g) => g.id === id) : null; }
 const TIED_JOBS = new Set(['innkeeper', 'lamplighter', 'nanny', 'herder', 'postie']);
 const freeToGather = (v) => !v.inside && !v.leaving && !(v.job && TIED_JOBS.has(v.job) && Game.hour >= 7 && Game.hour < 21) && !v.carried && !v.heldBy && v.stage !== 'baby' && !needsMinder(v) && !v.sulk && !v.isSick() && v.mood() > 0.3 && v.drives.hunger < 0.7 && v.drives.tired < 0.7
-  && !(v.task && (v.task.a.job || v.task.chatLock || ['sleep', 'deliver', 'work_lamps', 'scene', 'see_off', 'gather', 'gift', 'eat_inn', 'ale', 'party', 'school', 'cradle', 'tend_baby', 'nurse', 'build', 'drop_off', 'collect_child', 'fetch_child', 'lesson'].includes(v.task.a.id)));
+  && !(v.task && (v.task.a.job || v.task.chatLock || ['sleep', 'deliver', 'work_lamps', 'scene', 'see_off', 'gather', 'gift', 'eat_inn', 'ale', 'party', 'school', 'cradle', 'tend_baby', 'nurse', 'build', 'drop_off', 'collect_child', 'fetch_child', 'lesson', 'wizard_tale'].includes(v.task.a.id)));
 // a walkable spot near a point, in tiles
 function groundNear(tx, ty) { const t = nearestWalkable(Math.round(tx), Math.round(ty)); return t ? { x: t[0] * 16 + 8, y: t[1] * 16 + 12 } : null; }
 // a patch of open grass near a point: a tile with grass all round it

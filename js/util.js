@@ -123,6 +123,12 @@ const Hooks = { beforeHour: [], onHour: [], newVillage: [], afterNewVillage: [] 
 function addHook(name, fn) { if (!Hooks[name]) throw new Error('no such hook: ' + name); Hooks[name].push(fn); }
 function runHooks(name, ...args) { for (const fn of Hooks[name]) fn(...args); }
 /** @type {{ key: string, label: string, immediate: boolean }[]} */
+// Figures from beyond the village (a visiting wizard, say) who walk the
+// valley and are drawn and speak like the folk without being villagers. Each
+// has x, y and draw(ctx), and may have hidden, lights(list) and, to speak, a
+// bubble with first, inside, iconT, _top, isGrown() and isSick() as folk do.
+const Visitors = [];
+
 const PATCHES = [];
 // Wraps obj[key] with make(original) and notes it. `immediate` says it ran as
 // the script loaded (before the DOM was ready) rather than from a load handler.

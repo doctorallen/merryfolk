@@ -59,6 +59,7 @@ For visual changes, look at the screenshots, and compare against a `git archive 
     - 0–7: grass and reeds
     - from `WILD_V` (100): the wild plants
     - from `TALL_V` (300): the tall grass
+- **Visitors.** Figures from beyond the village who aren't villagers (the wizard) go in `Visitors` (`util.js`): `render()` y-sorts and draws them, collects their lights, and gives them speech bubbles like the folk.
 - **Draw order.** Everything standing is y-sorted in `render()`, so tall grass in front of a villager covers them. Statics and grass come from `Scene` buckets (8×8 tiles) under the camera, not a scan of the whole map; the buckets rebuild when a list's length changes and once a second.
 - **Light.** Night light is stepped pools (`Light.render`, `fx.js`), and the house interiors (`interior.js`) do the same. Avoid smooth gradients in world art.
 - **Trees and bushes.** These are built procedurally per seed (`makeTree`, `makeBush`) and placed by habitat (`nature.js`: `plantWoods`, `plantNature`, `plantWildflowers`, `plantHill`) using soil, moisture, shade and settlement data from `terrain.js`.
