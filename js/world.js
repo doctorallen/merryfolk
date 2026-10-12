@@ -1180,15 +1180,21 @@ const DITHER_STEP = 14;
 // longest, so a big valley never holds more than a score of them. A change
 // of season repaints each chunk as it is seen, fading from the old one.
 // ---------------------------------------------------------------------------
-const CHUNK_T = 32, CHUNK_PX = CHUNK_T * TILE, CHUNK_MAX = 20;
+const CHUNK_T = 16, CHUNK_PX = CHUNK_T * TILE, CHUNK_MAX = 80;
 // A flat sketch of the tiles in a rectangle, for the moment before the real painting.
 function sketchGround(x, season, r) {
-  const pal = GROUND_PAL[season], S = TILE * GS;
-  const col = { [T.LAWN]: pal.L2, [T.PATH]: pal.P1, [T.WATER]: pal.W1, [T.BRIDGE]: '#8a6440', [T.SOIL]: pal.S1, [T.WEED]: pal.S1, [T.FIELD]: pal.S2, [T.COBBLE]: '#958f84' };
+  const pal = GROUND_PAL[season], S = TILE * GS, Q = 4 * GS;
+  const col = { [T.LAWN]: [pal.L2, pal.L2], [T.PATH]: [pal.P1, pal.P2], [T.WATER]: [pal.W1, pal.WS], [T.BRIDGE]: ['#8a6440', '#8a6440'], [T.SOIL]: [pal.S1, pal.S2], [T.WEED]: [pal.S1, pal.S1], [T.FIELD]: [pal.S2, pal.S1], [T.COBBLE]: ['#958f84', '#a8a296'] };
+  const grass = [pal.G1, mix(pal.G1, pal.G2, 0.4), mix(pal.G1, pal.G2, 0.7)];
   x.fillStyle = pal.G1; x.fillRect(0, 0, (r.x1 - r.x0) * GS, (r.y1 - r.y0) * GS);
+  // a mottle of four blocks to the tile, so the sketch reads as ground until the painting lands
   for (let ty = r.y0 >> 4; ty < (r.y1 + 15) >> 4; ty++) for (let tx = r.x0 >> 4; tx < (r.x1 + 15) >> 4; tx++) {
     const k = col[World.tiles[tIdx(tx, ty)]];
-    if (k) { x.fillStyle = k; x.fillRect(tx * S - r.x0 * GS, ty * S - r.y0 * GS, S, S); }
+    for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) {
+      const hsh = hash2(tx * 4 + i, ty * 4 + j);
+      x.fillStyle = k ? k[hsh < 0.3 ? 1 : 0] : grass[hsh < 0.55 ? 0 : hsh < 0.85 ? 1 : 2];
+      x.fillRect(tx * S + i * Q - r.x0 * GS, ty * S + j * Q - r.y0 * GS, Q, Q);
+    }
   }
 }
 const Ground = {
@@ -1208,6 +1214,8 @@ const Ground = {
       sketchGround(x, this.season, r);
       ch = { cx, cy, r, c, season: this.season, painted: false, prev: null, fade: 0, fadeRate: 3, gen: null, next: null, used: 0 };
       this.chunks.set(k, ch);
+      // a chunk seen for the first time wants painting, so the frame loop is told there's work
+      if (!World.paintJob) World.paintJob = { season: this.season, urgent: false };
     }
     if (touch) ch.used = ++this.stamp;
     return ch;
@@ -1227,7 +1235,7 @@ const Ground = {
     const cam = Game.cam, mx = cam.x + cam.w / 2, my = cam.y + cam.h / 2;
     const t0 = performance.now();
     // whatever is on screen, or a chunk's width off it, gets a chunk, so it is painted before it is drawn
-    this.over(cam.x - CHUNK_PX, cam.y - CHUNK_PX, cam.x + cam.w + CHUNK_PX, cam.y + cam.h + CHUNK_PX, false);
+    this.over(cam.x - CHUNK_PX * 1.5, cam.y - CHUNK_PX * 1.5, cam.x + cam.w + CHUNK_PX * 1.5, cam.y + cam.h + CHUNK_PX * 1.5, false);
     const todo = [...this.chunks.values()].filter((ch) => this.wants(ch));
     if (!todo.length) { this.urgent = false; World.paintJob = null; return; }
     const d = (ch) => Math.hypot((ch.r.x0 + ch.r.x1) / 2 - mx, (ch.r.y0 + ch.r.y1) / 2 - my);

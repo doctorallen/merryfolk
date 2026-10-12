@@ -1323,7 +1323,9 @@ function frame(now) {
       while (dt > 0) { const s = Math.min(dt, 0.5); simulate(s); dt -= s; }
     }
     // paint faster while the intro card is up and nobody's looking at the ground
-    stepPaint(Game.introOpen || (World.paintJob && World.paintJob.urgent) ? 28 : 6);
+    // bare ground in sight gets most of a frame's worth of painting; otherwise a little goes to the chunks just off screen
+    const bare = World.paintJob && Game.cam && Ground.over(Game.cam.x, Game.cam.y, Game.cam.x + Game.cam.w, Game.cam.y + Game.cam.h, false).some((ch) => !ch.painted);
+    stepPaint(Game.introOpen || (World.paintJob && World.paintJob.urgent) ? 28 : bare ? 16 : 6);
     const fxDt = speed > 0 ? dtReal : 0;
     emitSmoke(speed > 0 ? dtReal : 0);
     emitRiftFx(dtReal);
