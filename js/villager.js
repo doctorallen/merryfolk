@@ -716,21 +716,34 @@ class Villager {
         if (this.pathI >= this.path.length) { this.path = null; }
       } else {
         this.x += (dx / d) * step; this.y += (dy / d) * step; this.walkDist += step;
-        // one of eight facings from the way they've been going over the last
-        // yard or so (the path itself zigzags tile by tile), and a new one only
-        // once they've been heading well into its sector for a few steps
-        const k = Math.min(1, step / 40);
-        this._mvx = (this._mvx || 0) * (1 - k) + (dx / d) * k; this._mvy = (this._mvy || 0) * (1 - k) + (dy / d) * k;
-        const want = facingOf(this._mvx, this._mvy);
+        // one of eight facings from the way they're heading: towards the point
+        // a stride or so ahead along the path, so a single corner-cut tile
+        // doesn't swing them about, and they turn as they round a corner
+        // rather than a yard after it; a new facing only once that heading
+        // is well into its sector, so they don't flicker on the boundary
+        const [ax, ay] = this.pathAhead(14);
+        const want = facingOf(ax, ay);
         if (want !== this.facing) {
-          const cur = FACINGS.indexOf(this.facing), ang = Math.atan2(this._mvy, this._mvx);
+          const cur = FACINGS.indexOf(this.facing), ang = Math.atan2(ay, ax);
           let off = cur < 0 ? 9 : Math.abs(ang - cur * Math.PI / 4); if (off > Math.PI) off = Math.PI * 2 - off;
-          if (off >= Math.PI / 6) { this._faceT = (this._faceT || 0) + step; if (this._faceT >= 6) { this.facing = want; this._faceT = 0; } }
-          else this._faceT = 0;
-        } else this._faceT = 0;
+          if (off >= Math.PI / 6) this.facing = want;
+        }
         step = 0;
       }
     }
+  }
+
+  // The way from here to the point `len` pixels further along the path, as a
+  // direction vector (to the path's end if it is nearer than that).
+  pathAhead(len) {
+    let x = this.x, y = this.y, left = len;
+    for (let i = this.pathI; this.path && i < this.path.length; i++) {
+      const [tx, ty] = this.path[i];
+      const d = Math.hypot(tx - x, ty - y);
+      if (d >= left) { x += ((tx - x) / d) * left; y += ((ty - y) / d) * left; left = 0; break; }
+      x = tx; y = ty; left -= d;
+    }
+    return [x - this.x, y - this.y];
   }
 
   serialize() {
