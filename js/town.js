@@ -8,7 +8,6 @@
 // ---------------------------------------------------------------------------
 
 const HOME_LOTS_MAX = 34;
-let TOWN_CENTRE = { x: 62, y: 46 };
 
 // Public buildings, opened in order once the village is big enough.
 const CIVIC_DEFS = [

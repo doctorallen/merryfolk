@@ -10,6 +10,9 @@
 // game reads (PLAZA, PARTY, ROADS and so on) from whichever is in use.
 // ---------------------------------------------------------------------------
 
+// The heart of the village, set by applyLayout (used by town.js and others).
+let TOWN_CENTRE = { x: 62, y: 46 };
+
 const CLASSIC_LAYOUT = {
   w: 128, h: 96,
   // the river: y = base + meanders (see makeRiverY), calming near calmX
@@ -202,7 +205,6 @@ function planValley(seed, W = MAP_W, H = MAP_H) {
     }
     return out;
   };
-  const dist = (ax, ay, bx, by) => Math.hypot(ax - bx, ay - by);
 
   // --- the square: gentle ground on the north bank, a little way up from the water ---
   {

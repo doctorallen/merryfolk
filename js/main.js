@@ -533,7 +533,6 @@ function drawWater(ctx, cam) {
   }
 }
 
-function drawFlipped(ctx, img, x, y, flip) { blit(ctx, img, x, y, flip); }
 
 // Chimney smoke, emitted in real time for the chimneys on screen.
 function emitSmoke(dt) {
@@ -1244,10 +1243,10 @@ function updateCamera(dt) {
 // ---------------------------------------------------------------------------
 // Main loop
 // ---------------------------------------------------------------------------
-let last = performance.now(), hudT = 0;
+let lastFrameAt = performance.now(), hudT = 0;
 function frame(now) {
-  const dtReal = Math.min(0.1, (now - last) / 1000);
-  last = now;
+  const dtReal = Math.min(0.1, (now - lastFrameAt) / 1000);
+  lastFrameAt = now;
   // the valley is being made afresh on the setup screen: nothing to run or draw yet
   if (Game.generating) { requestAnimationFrame(frame); return; }
   tReal += dtReal;

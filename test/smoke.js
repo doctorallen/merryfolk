@@ -59,7 +59,10 @@ function shapeDifference(a, b, at = 'save') {
   // what matters is loss: a list that shrinks or a key that vanishes across
   // the reload; a default filled in by load(), or a line logged by it, is fine
   if (Array.isArray(a)) {
-    if (b.length < a.length) return `${at}: ${a.length} items before the reload, ${b.length} after`;
+    // a top-level list (folk, homes, talks…) may not shrink; lists inside a record (a villager's
+    // wishes, say) are pruned legitimately as they're loaded, so only their items' shapes count
+    if (b.length < a.length && !at.includes('.') && !at.includes('[')) return `${at}: ${a.length} items before the reload, ${b.length} after`;
+    if (b.length < a.length) a = a.slice(0, b.length);
     // a list the load added to (a thread logged as folk are put outside) may have grown at either end
     const off = b.length - a.length;
     let d = null;

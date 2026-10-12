@@ -1,5 +1,7 @@
 // @ts-check
 'use strict';
+// An element by id; used by the interface files and by anything that toasts.
+const $ = (id) => document.getElementById(id);
 // ---------------------------------------------------------------------------
 // Small helpers shared by every module.
 // ---------------------------------------------------------------------------

@@ -4,7 +4,6 @@
 // ledger, family trees, posting villagers, the chronicle and the intro card.
 // ---------------------------------------------------------------------------
 
-const $ = (id) => document.getElementById(id);
 
 // ---------------------------------------------------------------------------
 // Chronicle and toasts

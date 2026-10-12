@@ -1,3 +1,4 @@
+'use strict';
 // Interiors: click a hobbit-hole to look inside. A cutaway of the smial,
 // seen from deep in the hill looking out toward the round front door, drawn
 // live in the same half-pixels as the folk themselves. The rooms are built
@@ -20,8 +21,8 @@ const JOB_PROPS = {
   brewer: 'tankard', baker: 'pin', miller: 'sack', innkeeper: 'keys', postie: 'satchel',
 };
 
-let X = null; // the context being drawn into
-const IR = (x, y, w, h, c) => { X.fillStyle = c; X.fillRect(Math.round(x), Math.round(y), w, h); };
+let IX = null; // the context being drawn into
+const IR = (x, y, w, h, c) => { IX.fillStyle = c; IX.fillRect(Math.round(x), Math.round(y), w, h); };
 const IP = (x, y, c) => IR(x, y, 1, 1, c);
 
 // ---------------------------------------------------------------------------
@@ -298,7 +299,7 @@ function portraitsFor(L) {
 // ---------------------------------------------------------------------------
 function paintStatic(L) {
   const [c, ctx] = makeCanvas(L.IW, IH);
-  X = ctx;
+  IX = ctx;
   const { IW, h } = L;
   const winter = World.season === 'winter';
   if (L.building) paintShell(L);
@@ -317,7 +318,7 @@ function paintStatic(L) {
   const sr = mulberry32(h.id * 31 + 5);
   for (let k = 0; k < IW / 14; k++) {
     const x = Math.floor(sr() * IW), y = FLOOR_B + 4 + Math.floor(sr() * 10);
-    if (sr() < 0.6) { ellipseFill(X, x, y, 3, 2, '#7a6a5a'); IP(x - 1, y - 1, '#9a8a78'); } else { for (let i = 0; i < 6; i++) IP(x + i, y + ((i * 7) % 3) - 1, '#4a3220'); }
+    if (sr() < 0.6) { ellipseFill(IX, x, y, 3, 2, '#7a6a5a'); IP(x - 1, y - 1, '#9a8a78'); } else { for (let i = 0; i < 6; i++) IP(x + i, y + ((i * 7) % 3) - 1, '#4a3220'); }
   }
   for (let k = 0; k < IW / 30; k++) { const x = Math.floor(sr() * IW), y0 = L.crust(x) + 4; for (let i = 0; i < 5 + sr() * 7; i++) IP(x + ((i * 3) % 2), y0 + i, '#4a3220'); }
   if (L.neon) for (let x = 0; x < IW; x++) { IP(x, FLOOR_B + 6, x % 9 < 6 ? '#1a2a3a' : '#0d1a26'); if (x % 37 === 0) IP(x, FLOOR_B + 6, '#3af0ff'); }
@@ -348,25 +349,25 @@ function paintStatic(L) {
   for (const w of L.wins) {
     const fc = L.neon ? '#3af0ff' : (h.v && h.v.frameCol) || '#4a2e1a';
     if (w.sq) { IR(w.x - 11, w.y - 11, 23, 23, fc); IR(w.x - 12, w.y + 12, 25, 3, L.pal.l); }
-    else { disc(X, w.x, w.y, 11, fc); IR(w.x - 12, w.y + 10, 25, 3, L.pal.l); }
+    else { disc(IX, w.x, w.y, 11, fc); IR(w.x - 12, w.y + 10, 25, 3, L.pal.l); }
     IR(w.x - 12, w.y + 13, 25, 1, L.pal.d);
     // a pot plant on the sill
     if (!(h.v && h.v.boxes === false)) { IR(w.x + 5, w.y + 6, 5, 4, '#a85a3a'); IP(w.x + 6, w.y + 3, '#3f6b2f'); IP(w.x + 7, w.y + 2, '#5c8f3e'); IP(w.x + 8, w.y + 4, '#3f6b2f'); IP(w.x + 7, w.y + 1, L.neon ? '#ff3aa8' : '#e04a5a'); }
-    X.globalCompositeOperation = 'destination-out';
-    if (w.sq) IR(w.x - 9, w.y - 9, 19, 19, '#000'); else disc(X, w.x, w.y, 9, '#000');
-    X.globalCompositeOperation = 'source-over';
+    IX.globalCompositeOperation = 'destination-out';
+    if (w.sq) IR(w.x - 9, w.y - 9, 19, 19, '#000'); else disc(IX, w.x, w.y, 9, '#000');
+    IX.globalCompositeOperation = 'source-over';
     IR(w.x, w.y - 9, 1, 19, fc); IR(w.x - 9, w.y, 19, 1, fc);
   }
   // the front door's frame (the door itself swings, so it's drawn live)
   if (L.door) {
     const d = L.door;
-    disc(X, d.x, d.y, d.r + 3, L.pal.d); IR(d.x - d.r - 3, d.y, (d.r + 3) * 2 + 1, WALL_B - d.y, L.pal.d);
-    disc(X, d.x, d.y, d.r + 2, L.pal.l); IR(d.x - d.r - 2, d.y, (d.r + 2) * 2 + 1, WALL_B - d.y, L.pal.l);
-    X.globalCompositeOperation = 'destination-out';
-    disc(X, d.x, d.y, d.r, '#000'); IR(d.x - d.r, d.y, d.r * 2 + 1, WALL_B - d.y, '#000');
-    X.globalCompositeOperation = 'source-over';
+    disc(IX, d.x, d.y, d.r + 3, L.pal.d); IR(d.x - d.r - 3, d.y, (d.r + 3) * 2 + 1, WALL_B - d.y, L.pal.d);
+    disc(IX, d.x, d.y, d.r + 2, L.pal.l); IR(d.x - d.r - 2, d.y, (d.r + 2) * 2 + 1, WALL_B - d.y, L.pal.l);
+    IX.globalCompositeOperation = 'destination-out';
+    disc(IX, d.x, d.y, d.r, '#000'); IR(d.x - d.r, d.y, d.r * 2 + 1, WALL_B - d.y, '#000');
+    IX.globalCompositeOperation = 'source-over';
   }
-  for (const it of L.items) { X.save(); X.clip(it.room.path); drawItem(L, it, 'back'); X.restore(); }
+  for (const it of L.items) { IX.save(); IX.clip(it.room.path); drawItem(L, it, 'back'); IX.restore(); }
   // the cut edge of each room: a timber rib round the arch
   for (const r of L.rooms) for (let x = r.x0 - 2; x < r.x1 + 2; x++) {
     const xx = clamp(x, r.x0, r.x1 - 1), t = L.top(r, xx);
@@ -422,13 +423,13 @@ function drawItem(L, it, part, t = 0) {
       for (let y = CEIL + 2; y < b - 44; y += 5) for (let k = 0; k < 4; k++) { const bx = x - 14 + k * 8 + (Math.floor(y / 5) % 2) * 4; IR(bx, y, Math.max(0, Math.min(6, x + 15 - bx)), 1, st[2]); }
       // painting or screen over the mantel
       if (L.neon) { IR(x - 10, 38, 21, 13, '#07080e'); IR(x - 9, 39, 19, 11, '#0d2a3a'); for (let y = 40; y < 50; y += 2) IR(x - 8, y, 17, 1, '#155a6a'); }
-      else { IR(x - 10, 38, 21, 13, '#b8902a'); IR(x - 9, 39, 19, 11, '#9fd4f2'); IR(x - 9, 45, 19, 5, '#5c8f3e'); ellipseFill(X, x - 3, 46, 6, 3, '#7ab04c'); disc(X, x + 4, 42, 1, '#fff2a0'); }
+      else { IR(x - 10, 38, 21, 13, '#b8902a'); IR(x - 9, 39, 19, 11, '#9fd4f2'); IR(x - 9, 45, 19, 5, '#5c8f3e'); ellipseFill(IX, x - 3, 46, 6, 3, '#7ab04c'); disc(IX, x + 4, 42, 1, '#fff2a0'); }
       // surround and mantel
       IR(x - 22, b - 44, 45, 44, st[2]); IR(x - 21, b - 43, 43, 43, st[0]);
       for (let y = b - 40; y < b; y += 6) for (let k = 0; k < 5; k++) { const bx = x - 21 + k * 10 + (Math.floor(y / 6) % 2) * 5; IR(bx, y, Math.max(0, Math.min(8, x + 22 - bx)), 1, st[1]); }
       IR(x - 25, b - 46, 51, 4, p.m); IR(x - 25, b - 46, 51, 1, p.h); IR(x - 25, b - 43, 51, 1, p.d);
       // mantel things: a clock, candlesticks, a pipe
-      IR(x - 4, b - 54, 9, 8, p.d); disc(X, x, b - 51, 3, '#f4f0e0'); IP(x, b - 52, '#2a1c12'); IP(x + 1, b - 51, '#2a1c12');
+      IR(x - 4, b - 54, 9, 8, p.d); disc(IX, x, b - 51, 3, '#f4f0e0'); IP(x, b - 52, '#2a1c12'); IP(x + 1, b - 51, '#2a1c12');
       IR(x - 19, b - 52, 2, 6, '#e8e0c8'); IR(x + 18, b - 52, 2, 6, '#e8e0c8'); IR(x - 20, b - 47, 4, 1, '#b8902a'); IR(x + 17, b - 47, 4, 1, '#b8902a');
       IR(x + 9, b - 48, 5, 2, '#5a3a22'); IP(x + 13, b - 49, '#5a3a22');
       // the firebox
@@ -452,7 +453,7 @@ function drawItem(L, it, part, t = 0) {
     case 'rug': {
       if (part !== 'back') return;
       const w = it.w, cols = L.neon ? ['#2a1f44', '#ff3aa8', '#3af0ff'] : ['#8a3a2a', '#c9a227', '#3f6b2f'];
-      ellipseFill(X, x, 106, w / 2, 4, cols[0]); ellipseFill(X, x, 106, w / 2 - 3, 3, cols[1]); ellipseFill(X, x, 106, w / 2 - 6, 2, cols[0]); IR(x - w / 4, 106, w / 2, 1, cols[2]);
+      ellipseFill(IX, x, 106, w / 2, 4, cols[0]); ellipseFill(IX, x, 106, w / 2 - 3, 3, cols[1]); ellipseFill(IX, x, 106, w / 2 - 6, 2, cols[0]); IR(x - w / 4, 106, w / 2, 1, cols[2]);
       return;
     }
     case 'books': {
@@ -489,9 +490,9 @@ function drawItem(L, it, part, t = 0) {
       IR(x - 6, y - 7, 13, 15, a.archived ? '#d8c8a0' : '#9fc4d8');
       const spr = portraitSprite(a);
       if (spr) {
-        X.save(); X.beginPath(); X.rect(x - 6, y - 7, 13, 15); X.clip();
-        X.drawImage(spr, Math.round(x - spr.width / 2 + 0.5), y - 5);
-        X.restore();
+        IX.save(); IX.beginPath(); IX.rect(x - 6, y - 7, 13, 15); IX.clip();
+        IX.drawImage(spr, Math.round(x - spr.width / 2 + 0.5), y - 5);
+        IX.restore();
       }
       IP(x, y - 11, '#5a3a22'); IP(x - 1, y - 10, '#5a3a22'); IP(x + 1, y - 10, '#5a3a22');
       return;
@@ -517,7 +518,7 @@ function drawItem(L, it, part, t = 0) {
       for (let s = 0; s < 2; s++) {
         const sy = top + 11 + s * 12;
         IR(x + 1, sy, 28, 2, p.l);
-        for (let k = 0; k < 4; k++) { disc(X, x + 5 + k * 7, sy - 4, 3, L.neon ? '#2a2f4e' : '#f4f0e8'); disc(X, x + 5 + k * 7, sy - 4, 1, L.neon ? '#3af0ff' : ['#4a6aa8', '#a84a4a'][(k + s) % 2]); }
+        for (let k = 0; k < 4; k++) { disc(IX, x + 5 + k * 7, sy - 4, 3, L.neon ? '#2a2f4e' : '#f4f0e8'); disc(IX, x + 5 + k * 7, sy - 4, 1, L.neon ? '#3af0ff' : ['#4a6aa8', '#a84a4a'][(k + s) % 2]); }
       }
       IR(x - 1, top + 25, 32, 3, p.l); IR(x - 1, top + 25, 32, 1, p.h);
       IR(x + 1, top + 28, 13, 19, p.m); IR(x + 16, top + 28, 13, 19, p.m); IP(x + 12, top + 37, '#b8902a'); IP(x + 17, top + 37, '#b8902a');
@@ -549,7 +550,7 @@ function drawItem(L, it, part, t = 0) {
       IR(x - 18, y, 37, 2, p.d);
       IR(x - 14, CEIL, 1, 10, '#2a2a30'); IR(x + 14, CEIL, 1, 10, '#2a2a30');
       const pots = [['#8a5a3a', 5], ['#6a6a74', 4], ['#b87a3a', 6], ['#6a6a74', 3]];
-      pots.forEach(([c, r], i) => { const px = x - 13 + i * 9; IR(px, y + 2, 1, 2, '#2a2a30'); disc(X, px, y + 4 + r, r, c); IR(px - r, y + 4, r * 2 + 1, r, c); });
+      pots.forEach(([c, r], i) => { const px = x - 13 + i * 9; IR(px, y + 2, 1, 2, '#2a2a30'); disc(IX, px, y + 4 + r, r, c); IR(px - r, y + 4, r * 2 + 1, r, c); });
       for (let k = 0; k < 3; k++) { IR(x + 22 + k * 3, y - 2, 1, 8, '#5a7a3a'); IP(x + 22 + k * 3, y + 6, '#7a9a4a'); }
       return;
     }
@@ -576,7 +577,7 @@ function drawItem(L, it, part, t = 0) {
     case 'clock': {
       if (part !== 'back') return;
       IR(x, b - 52, 12, 52, p.d); IR(x + 1, b - 51, 10, 50, p.m);
-      disc(X, x + 6, b - 45, 4, '#f4f0e0'); IP(x + 6, b - 47, '#2a1c12'); IP(x + 6, b - 46, '#2a1c12'); IP(x + 7, b - 45, '#2a1c12');
+      disc(IX, x + 6, b - 45, 4, '#f4f0e0'); IP(x + 6, b - 47, '#2a1c12'); IP(x + 6, b - 46, '#2a1c12'); IP(x + 7, b - 45, '#2a1c12');
       IR(x + 2, b - 38, 8, 26, '#2a1c12');
       IR(x - 1, b - 53, 14, 2, p.l);
       return;
@@ -601,7 +602,7 @@ function drawItem(L, it, part, t = 0) {
       if (part === 'back') {
         IR(x, top, w, hbH, p.d); IR(x + 1, top + 1, w - 2, hbH - 1, p.m);
         IR(x + 1, top + 1, w - 2, 1, p.h);
-        disc(X, x + w / 2, top + 7, 4, p.l); disc(X, x + w / 2, top + 7, 2, p.m);
+        disc(IX, x + w / 2, top + 7, 4, p.l); disc(IX, x + w / 2, top + 7, 2, p.m);
         IR(x - 1, top - 2, 3, hbH + 8, p.d); IR(x + w - 2, top - 2, 3, hbH + 8, p.d); IP(x, top - 3, p.h); IP(x + w - 1, top - 3, p.h);
         // pillows
         const n = bd.kind === 'double' ? 2 : 1;
@@ -650,7 +651,7 @@ function drawItem(L, it, part, t = 0) {
       // a toy chest, a wooden horse and a ball
       IR(x, b - 12, 18, 12, p.d); IR(x + 1, b - 11, 16, 10, p.l); IR(x, b - 14, 18, 3, p.m); IP(x + 9, b - 9, '#b8902a');
       IR(x + 3, b - 22, 9, 4, '#c9a46a'); IR(x + 10, b - 26, 4, 6, '#c9a46a'); IP(x + 12, b - 25, '#2a1c12'); IR(x + 4, b - 18, 1, 4, '#8a6440'); IR(x + 10, b - 18, 1, 4, '#8a6440');
-      disc(X, x + 25, b + 4, 3, '#e04a5a'); IP(x + 24, b + 3, '#f8a0a0');
+      disc(IX, x + 25, b + 4, 3, '#e04a5a'); IP(x + 24, b + 3, '#f8a0a0');
       return;
     }
     case 'stand': {
@@ -670,7 +671,7 @@ function drawItem(L, it, part, t = 0) {
         for (let k = 0; k < 3; k++) IR(x + 19, b - 20 - k * 2, 7, 2, ['#8a3a2a', '#3a5a3a', '#4a4a7a'][k]);
       } else if (it.t === 'bench') {
         IR(x + 4, b - 22, 6, 4, '#4a4a54'); IR(x + 5, b - 24, 4, 2, '#6a6a74');
-        disc(X, x + 18, b - 21, 3, '#b8902a'); disc(X, x + 18, b - 21, 1, '#6a5a20'); disc(X, x + 25, b - 20, 2, '#a8a8b0');
+        disc(IX, x + 18, b - 21, 3, '#b8902a'); disc(IX, x + 18, b - 21, 1, '#6a5a20'); disc(IX, x + 25, b - 20, 2, '#a8a8b0');
         IR(x + 4, b - 46, 34, 20, p.d); IR(x + 5, b - 45, 32, 18, '#8a6a48');
         for (let yy = 0; yy < 18; yy += 3) for (let xx = 0; xx < 32; xx += 3) IP(x + 6 + xx, b - 44 + yy, '#5a4a30');
         IR(x + 8, b - 43, 1, 10, '#a8a8b0'); IR(x + 7, b - 43, 3, 2, '#6a6a74');
@@ -758,7 +759,7 @@ function drawItem(L, it, part, t = 0) {
         for (let j = 0; j < n; j++) { IR(x + 3 + j * 3, sy + 1, 2, 3, j % 2 ? c1 : c2); }
       });
       // the glass, catching the light
-      X.globalAlpha = 0.1; IR(x + 2, b - 52, w - 4, 46, '#e8f4ff'); X.globalAlpha = 1;
+      IX.globalAlpha = 0.1; IR(x + 2, b - 52, w - 4, 46, '#e8f4ff'); IX.globalAlpha = 1;
       for (let k = 0; k < 10; k++) IP(x + 5 + k, b - 50 + k, 'rgba(255,255,255,0.5)');
       IR(x + w / 2 - 1, b - 52, 1, 46, p.d); IR(x, b - 6, w, 6, p.m); IP(x + w / 2 + 2, b - 30, '#b8902a');
       return;
@@ -784,7 +785,7 @@ function drawItem(L, it, part, t = 0) {
     case 'yarn': {
       if (part !== 'back') return;
       IR(x, b - 6, 10, 6, '#b88a4a'); IR(x, b - 6, 10, 1, '#d8aa6a');
-      disc(X, x + 3, b - 7, 2, '#c84a6a'); disc(X, x + 7, b - 8, 2, '#5a8ac8'); IR(x + 5, b - 13, 1, 7, '#d8d8e0'); IR(x + 7, b - 12, 1, 6, '#d8d8e0');
+      disc(IX, x + 3, b - 7, 2, '#c84a6a'); disc(IX, x + 7, b - 8, 2, '#5a8ac8'); IR(x + 5, b - 13, 1, 7, '#d8d8e0'); IR(x + 7, b - 12, 1, 6, '#d8d8e0');
       return;
     }
     case 'board': {
@@ -795,10 +796,10 @@ function drawItem(L, it, part, t = 0) {
       for (const [nx, ny, c] of notes) { IR(x + nx, y + ny, 7, 6, c); IP(x + nx + 3, y + ny, '#c84a3a'); IR(x + nx + 1, y + ny + 2, 4, 1, '#8a8a94'); }
       // a sketch of the city, and red string between everything
       IR(x + 26, y + 5, 1, 3, '#3a3a5a'); IR(x + 28, y + 4, 1, 4, '#3a3a5a'); IR(x + 30, y + 6, 1, 2, '#3a3a5a');
-      X.fillStyle = '#c84a3a';
+      IX.fillStyle = '#c84a3a';
       for (const [[ax, ay], [bx2, by]] of [[[6, 3], [17, 2]], [[17, 2], [28, 4]], [[17, 2], [22, 12]], [[9, 13], [22, 12]], [[22, 12], [31, 14]]]) {
         const n = Math.max(Math.abs(bx2 - ax), Math.abs(by - ay));
-        for (let k = 0; k <= n; k++) X.fillRect(Math.round(x + ax + (bx2 - ax) * k / n), Math.round(y + ay + (by - ay) * k / n), 1, 1);
+        for (let k = 0; k <= n; k++) IX.fillRect(Math.round(x + ax + (bx2 - ax) * k / n), Math.round(y + ay + (by - ay) * k / n), 1, 1);
       }
       return;
     }
@@ -828,7 +829,7 @@ function drawProp(p, ox, oy) {
     case 'tankard': for (let k = 0; k < 2; k++) { IR(ox - 3 + k * 5, oy + 10, 4, 5, '#c9a46a'); IP(ox + 1 + k * 5, oy + 11, '#c9a46a'); } break;
     case 'pin': IR(ox - 5, oy + 10, 11, 2, '#c9a46a'); IR(ox - 7, oy + 10, 2, 2, '#8a6440'); IR(ox + 6, oy + 10, 2, 2, '#8a6440'); break;
     case 'sack': IR(ox - 3, oy + 8, 7, 9, '#e8dcc0'); IR(ox - 2, oy + 7, 5, 1, '#c8bca0'); IP(ox, oy + 12, '#a89a80'); break;
-    case 'keys': IR(ox, oy + 6, 1, 3, '#b8902a'); disc(X, ox, oy + 10, 1, '#b8902a'); IR(ox + 2, oy + 9, 1, 4, '#b8902a'); break;
+    case 'keys': IR(ox, oy + 6, 1, 3, '#b8902a'); disc(IX, ox, oy + 10, 1, '#b8902a'); IR(ox + 2, oy + 9, 1, 4, '#b8902a'); break;
     case 'satchel': IR(ox - 4, oy + 8, 9, 7, '#8a5a3a'); IR(ox - 4, oy + 8, 9, 2, '#6a4026'); IR(ox - 3, oy + 2, 1, 6, '#6a4026'); IR(ox + 3, oy + 2, 1, 6, '#6a4026'); IR(ox - 2, oy + 11, 5, 1, '#f4ead0'); break;
   }
 }
@@ -860,10 +861,10 @@ function drawPantry(L, it) {
 }
 function drawFood(k, x, sy, s) {
   switch (k) {
-    case 'bread': ellipseFill(X, x + 4, sy - 3, 4, 2, '#b87a3a'); IR(x + 1, sy - 2, 7, 2, '#a8682a'); IP(x + 3, sy - 4, '#d8a060'); IP(x + 5, sy - 4, '#d8a060'); break;
+    case 'bread': ellipseFill(IX, x + 4, sy - 3, 4, 2, '#b87a3a'); IR(x + 1, sy - 2, 7, 2, '#a8682a'); IP(x + 3, sy - 4, '#d8a060'); IP(x + 5, sy - 4, '#d8a060'); break;
     case 'pie': IR(x, sy - 3, 8, 3, '#d8a050'); IR(x + 1, sy - 4, 6, 1, '#e8b860'); IP(x + 2, sy - 3, '#a84a3a'); IP(x + 5, sy - 3, '#a84a3a'); IR(x - 1, sy - 1, 10, 1, '#c8c0b0'); break;
     case 'cake': IR(x, sy - 6, 7, 6, '#f4e0c0'); IR(x, sy - 4, 7, 1, '#e88aa0'); IR(x, sy - 6, 7, 1, '#ffffff'); IP(x + 3, sy - 7, '#e04a5a'); break;
-    case 'veg': if (s % 2) { IR(x + 1, sy - 4, 3, 4, '#5c8f3e'); disc(X, x + 2, sy - 2, 2, '#7ab04c'); } else { IR(x + 1, sy - 4, 3, 1, '#e8742a'); IR(x + 2, sy - 3, 2, 2, '#e8742a'); IP(x + 2, sy - 1, '#e8742a'); IP(x + 1, sy - 5, '#5c8f3e'); IP(x + 3, sy - 5, '#5c8f3e'); } break;
+    case 'veg': if (s % 2) { IR(x + 1, sy - 4, 3, 4, '#5c8f3e'); disc(IX, x + 2, sy - 2, 2, '#7ab04c'); } else { IR(x + 1, sy - 4, 3, 1, '#e8742a'); IR(x + 2, sy - 3, 2, 2, '#e8742a'); IP(x + 2, sy - 1, '#e8742a'); IP(x + 1, sy - 5, '#5c8f3e'); IP(x + 3, sy - 5, '#5c8f3e'); } break;
     case 'fish': IR(x, sy - 2, 7, 2, '#8aa8c0'); IR(x + 1, sy - 3, 5, 1, '#a8c8e0'); IP(x + 7, sy - 3, '#6a88a0'); IP(x + 7, sy - 1, '#6a88a0'); IP(x + 1, sy - 2, '#2a1c12'); break;
     case 'mush': IR(x, sy - 3, 4, 1, '#a8682a'); IR(x + 1, sy - 4, 2, 1, '#c8884a'); IR(x + 1, sy - 2, 2, 2, '#f4ead0'); break;
     case 'apple': IR(x, sy - 3, 4, 3, '#c83a2a'); IP(x + 1, sy - 3, '#f87a6a'); IP(x + 2, sy - 4, '#5a3a22'); break;
@@ -996,19 +997,19 @@ function drawSkyAndViews(L, t) {
   const dk = clamp(dark / 0.7, 0, 1);
   const sky = mix(mix('#9fd4f2', '#f2a86a', dusk * 0.55), '#141a36', dk);
   const skyTop = mix(mix('#6ab4e8', '#c87a6a', dusk * 0.4), '#0a0e22', dk);
-  const g = X.createLinearGradient(0, 0, 0, 60);
+  const g = IX.createLinearGradient(0, 0, 0, 60);
   g.addColorStop(0, skyTop); g.addColorStop(1, sky);
-  X.fillStyle = g; X.fillRect(0, 0, L.IW, IH);
+  IX.fillStyle = g; IX.fillRect(0, 0, L.IW, IH);
   if (dk > 0.5) for (let k = 0; k < L.IW / 9; k++) { const sx = (k * 53) % L.IW, sy = (k * 29) % 40; if (Math.sin(t * 2 + k) > -0.6) IP(sx, sy, `rgba(255,255,240,${(dk - 0.5) * 1.6})`); }
-  else if (!Game.raining) for (let k = 0; k < 3; k++) { const cx = ((k * 211 + t * 3) % (L.IW + 80)) - 40, cy = 8 + k * 9; ellipseFill(X, cx, cy, 14, 3, 'rgba(255,255,255,0.75)'); ellipseFill(X, cx + 6, cy - 2, 8, 3, 'rgba(255,255,255,0.85)'); }
+  else if (!Game.raining) for (let k = 0; k < 3; k++) { const cx = ((k * 211 + t * 3) % (L.IW + 80)) - 40, cy = 8 + k * 9; ellipseFill(IX, cx, cy, 14, 3, 'rgba(255,255,255,0.75)'); ellipseFill(IX, cx + 6, cy - 2, 8, 3, 'rgba(255,255,255,0.85)'); }
   const ground = World.season === 'winter' ? mix('#e8eef8', '#3a4058', dk) : mix(World.season === 'autumn' ? '#9a9a4a' : '#6aa84a', '#16241a', dk);
   const view = (x0, y0, w, hh) => {
-    X.fillStyle = sky; X.fillRect(x0, y0, w, hh);
+    IX.fillStyle = sky; IX.fillRect(x0, y0, w, hh);
     const hz = Math.round(y0 + hh * 0.62);
-    X.fillStyle = ground; X.fillRect(x0, hz, w, y0 + hh - hz);
+    IX.fillStyle = ground; IX.fillRect(x0, hz, w, y0 + hh - hz);
     for (let k = 0; k < w; k += 5) IP(x0 + k, hz - 1 - ((k * 7 + x0) % 3 === 0 ? 1 : 0), shade(ground, -0.1));
-    if (Game.raining) { X.fillStyle = 'rgba(200,220,255,0.55)'; for (let k = 0; k < w; k += 3) X.fillRect(x0 + k, y0 + ((k * 13 + t * 60) % hh), 1, 3); }
-    else if (Game.weather === 'snow') { X.fillStyle = '#ffffff'; for (let k = 0; k < w; k += 4) X.fillRect(x0 + ((k + Math.sin(t + k) * 2) | 0), y0 + ((k * 11 + t * 14) % hh), 1, 1); }
+    if (Game.raining) { IX.fillStyle = 'rgba(200,220,255,0.55)'; for (let k = 0; k < w; k += 3) IX.fillRect(x0 + k, y0 + ((k * 13 + t * 60) % hh), 1, 3); }
+    else if (Game.weather === 'snow') { IX.fillStyle = '#ffffff'; for (let k = 0; k < w; k += 4) IX.fillRect(x0 + ((k + Math.sin(t + k) * 2) | 0), y0 + ((k * 11 + t * 14) % hh), 1, 1); }
   };
   for (const w of L.wins) view(w.x - 10, w.y - 10, 21, 21);
   if (L.door) {
@@ -1023,10 +1024,10 @@ function drawDoorLeaf(L, d) {
     IR(d.x - d.r, d.y - d.r + 4, 6, WALL_B - d.y + d.r - 4, dc); IR(d.x - d.r, d.y - d.r + 4, 1, WALL_B - d.y + d.r - 4, dd);
     return;
   }
-  disc(X, d.x, d.y, d.r, dc); IR(d.x - d.r, d.y, d.r * 2 + 1, WALL_B - d.y, dc);
+  disc(IX, d.x, d.y, d.r, dc); IR(d.x - d.r, d.y, d.r * 2 + 1, WALL_B - d.y, dc);
   for (let k = -d.r + 3; k < d.r - 1; k += 4) IR(d.x + k, d.y - d.r + 3, 1, WALL_B - d.y + d.r - 3, dd);
   for (let a = 0; a < 10; a++) { const ang = Math.PI * 1.15 + (a / 9) * Math.PI * 0.5; IP(Math.round(d.x + Math.cos(ang) * (d.r - 3)), Math.round(d.y + Math.sin(ang) * (d.r - 3)), dl); }
-  disc(X, d.x, d.y + 1, 2, '#b8902a'); IP(d.x - 1, d.y, '#fff2a0');
+  disc(IX, d.x, d.y + 1, 2, '#b8902a'); IP(d.x - 1, d.y, '#fff2a0');
   // the bolt's drawn at night
   if (Game.darkness > 0.3) { IR(d.x + 5, d.y - 1, 7, 2, '#3a3a40'); IP(d.x + 5, d.y - 2, '#3a3a40'); }
 }
@@ -1054,7 +1055,7 @@ function drawLiveBits(L, t, dt) {
   const b = WALL_B;
   // the hall clock's pendulum
   const ck = L.items.find((i) => i.t === 'clock');
-  if (ck) { const sw = Math.round(Math.sin(t * 3) * 2.5); IR(ck.x + 5 + sw, b - 36, 1, 16, '#b8902a'); disc(X, ck.x + 5 + sw, b - 19, 2, '#d8b040'); }
+  if (ck) { const sw = Math.round(Math.sin(t * 3) * 2.5); IR(ck.x + 5 + sw, b - 36, 1, 16, '#b8902a'); disc(IX, ck.x + 5 + sw, b - 19, 2, '#d8b040'); }
   // the oven glowing when someone's baking
   const rg = L.items.find((i) => i.t === 'range');
   if (rg && Interior.baking) { IR(rg.x + 4, b - 19, 10, 10, Math.sin(t * 6) > 0 ? '#e8742a' : '#d8601a'); IR(rg.x + 6, b - 15, 6, 4, '#ffb04a'); }
@@ -1062,10 +1063,10 @@ function drawLiveBits(L, t, dt) {
   if (L.chimTop && Interior.fire > 0.3 && SPEEDS[Game.speedIdx] > 0 && Math.random() < dt * (Interior.fire > 0.5 ? 3 : 1)) Interior.smoke.push({ x: L.chimTop.x, y: L.chimTop.y, r: 2, a: 0.7, vx: R.f(2, 5) });
   for (const s of Interior.smoke) { s.y -= dt * 7; s.x += dt * s.vx; s.r += dt * 1.6; s.a -= dt * 0.18; }
   Interior.smoke = Interior.smoke.filter((s) => s.a > 0 && s.y > -10);
-  for (const s of Interior.smoke) { X.globalAlpha = Math.max(0, s.a); disc(X, Math.round(s.x), Math.round(s.y), Math.round(s.r), L.neon ? '#8a7aa8' : '#d8d4cc'); }
-  X.globalAlpha = 1;
-  if (rg && (Interior.baking || isMealTime(Game.hour))) for (let k = 0; k < 3; k++) { const ph = (t * 0.8 + k / 3) % 1; X.globalAlpha = 0.6 * (1 - ph); IP(rg.x + 13 + Math.round(Math.sin(ph * 6 + k) * 2), b - 37 - Math.round(ph * 12), '#ffffff'); }
-  X.globalAlpha = 1;
+  for (const s of Interior.smoke) { IX.globalAlpha = Math.max(0, s.a); disc(IX, Math.round(s.x), Math.round(s.y), Math.round(s.r), L.neon ? '#8a7aa8' : '#d8d4cc'); }
+  IX.globalAlpha = 1;
+  if (rg && (Interior.baking || isMealTime(Game.hour))) for (let k = 0; k < 3; k++) { const ph = (t * 0.8 + k / 3) % 1; IX.globalAlpha = 0.6 * (1 - ph); IP(rg.x + 13 + Math.round(Math.sin(ph * 6 + k) * 2), b - 37 - Math.round(ph * 12), '#ffffff'); }
+  IX.globalAlpha = 1;
 }
 
 function drawFolk(L, folk, t) {
@@ -1098,7 +1099,7 @@ function drawPerson(L, v, st, t) {
     const ch = Math.round((a.mouth ? a.mouth[1] : 10) + 4);
     const hx = Math.round(st.x - full.width / 2), hy = tg.pose === 'bed' ? WALL_B - 18 - ch + 3 : WALL_B - 16 - ch + 4 + (Interior.rocking.has(tg.bed) ? 0 : 0);
     const rock = tg.pose === 'cradle' ? Math.round(Math.sin(t * 2.5) * 1.5) : 0;
-    X.drawImage(full, 0, 0, full.width, ch, hx + rock, hy, full.width, ch);
+    IX.drawImage(full, 0, 0, full.width, ch, hx + rock, hy, full.width, ch);
     if (tg.pose === 'bed') {
       // eyes shut
       zzz(st.x + 6, hy - 2, t, v.id);
@@ -1121,8 +1122,8 @@ function drawPerson(L, v, st, t) {
   x = Math.round(st.x - img.width / 2 + shiver);
   y = Math.round((tg.pose === 'sit' && !st.walking ? tg.y - 2 : st.y) - img.height + 1) + bob;
   if (tg.pose === 'sit' && !st.walking && tg.seat && tg.seat.kind === 'arm') y -= 3;
-  if (flip) { X.save(); X.translate(x + img.width, y); X.scale(-1, 1); X.drawImage(img, 0, 0); X.restore(); }
-  else X.drawImage(img, x, y);
+  if (flip) { IX.save(); IX.translate(x + img.width, y); IX.scale(-1, 1); IX.drawImage(img, 0, 0); IX.restore(); }
+  else IX.drawImage(img, x, y);
   if (tg.asleep) zzz(st.x + 6, y - 2, t, v.id);
   if (Game.selected === v) { const ax = Math.round(st.x), ay = y - 7 + Math.round(Math.sin(t * 4)); IR(ax - 2, ay, 5, 1, '#ffd23a'); IR(ax - 1, ay + 1, 3, 1, '#ffd23a'); IP(ax, ay + 2, '#ffd23a'); }
   Interior.boxes.push({ v, x0: x, y0: y, x1: x + img.width, y1: y + img.height });
@@ -1131,10 +1132,10 @@ function zzz(x, y, t, seed) {
   for (let k = 0; k < 2; k++) {
     const ph = (t * 0.5 + k * 0.5 + seed * 0.13) % 1;
     const zx = Math.round(x + ph * 6), zy = Math.round(y - ph * 10);
-    X.globalAlpha = 1 - ph;
+    IX.globalAlpha = 1 - ph;
     IR(zx, zy, 3, 1, '#ffffff'); IP(zx + 1, zy + 1, '#ffffff'); IR(zx, zy + 2, 3, 1, '#ffffff');
   }
-  X.globalAlpha = 1;
+  IX.globalAlpha = 1;
 }
 
 // Darkness inside, with pools of light from windows, hearth and lamps.
@@ -1164,13 +1165,13 @@ function drawLight(L, folk, t) {
   if (Interior.lamps) for (const r of L.rooms) glow(r.lampX, L.top(r, r.lampX) + 24, Math.max(52, r.w * 0.6), 0.85);
   if (Interior.baking) { const rg = L.items.find((i) => i.t === 'range'); if (rg) glow(rg.x + 9, WALL_B - 14, 26, 0.6); }
   if (L.neon) for (const r of L.rooms) glow((r.x0 + r.x1) / 2, L.top(r, Math.round((r.x0 + r.x1) / 2)) + 6, 30, 0.35);
-  X.drawImage(lc, 0, 0);
+  IX.drawImage(lc, 0, 0);
   // warm colour from the fire and lamps
-  X.save(); X.globalCompositeOperation = 'lighter';
-  const warm = (x, y, r, a, col) => { for (let k = 3; k >= 1; k--) disc(X, Math.round(x), Math.round(y), Math.round((r * k) / 3), col.replace('A', a * 0.4)); };
+  IX.save(); IX.globalCompositeOperation = 'lighter';
+  const warm = (x, y, r, a, col) => { for (let k = 3; k >= 1; k--) disc(IX, Math.round(x), Math.round(y), Math.round((r * k) / 3), col.replace('A', a * 0.4)); };
   if (L.hearth && Interior.fire > 0.5) warm(L.hearth.x, WALL_B - 12, 60, 0.18 * fl * (0.4 + dk), 'rgba(255,130,40,A)');
   if (Interior.lamps) for (const r of L.rooms) warm(r.lampX, L.top(r, r.lampX) + 22, 40, 0.1, L.neon ? 'rgba(60,220,255,A)' : 'rgba(255,190,90,A)');
-  X.restore();
+  IX.restore();
   // hanging lanterns
   for (const r of L.rooms) {
     const lx0 = r.lampX, ly = L.top(r, lx0);
@@ -1282,10 +1283,10 @@ function renderInterior(dt) {
   if (!L) return;
   Interior.t += dt;
   const t = Interior.t;
-  X = Interior.cx;
+  IX = Interior.cx;
   const folk = updateFolk(L, dt);
   drawSkyAndViews(L, t);
-  X.drawImage(Interior.stat, 0, 0);
+  IX.drawImage(Interior.stat, 0, 0);
   drawFire(L, t);
   drawLiveBits(L, t, dt);
   drawFolk(L, folk, t);

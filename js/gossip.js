@@ -81,7 +81,6 @@ function talkTick(h) {
     if (R.chance(atInn && h >= 17 ? 0.6 : 0.25)) tellNews(s, l, n);
   }
 }
-function innTalk() { talkTick(20); }
 
 // and over dinner, the day's news goes round the table
 function dinnerTalk() {

@@ -54,7 +54,6 @@ function valuesOf(v) {
   v.values = picked;
   return picked;
 }
-function valueWords(v) { return valuesOf(v).map((k) => VALUES[k].label.toLowerCase()).join(' and '); }
 // shared values warm a friendship; opposite ones cool it
 function valueAccord(a, b) {
   const va = valuesOf(a), vb = valuesOf(b);

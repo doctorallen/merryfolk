@@ -99,7 +99,6 @@ function riftSpot() {
   return null;
 }
 
-function riftOpen() { return World.rifts.some((r) => !r.closing && r.a > 0.3); }
 
 // ---------------------------------------------------------------------------
 // Curious but cautious. While the Riftfolk are new, hill-folk watch them from

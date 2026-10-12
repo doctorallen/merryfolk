@@ -102,10 +102,6 @@ function computeLand(seed) {
 // Handy readers for one tile.
 function landAt(key, tx, ty) { const L = World.land; return L ? L[key][clamp(ty, 0, MAP_H - 1) * MAP_W + clamp(tx, 0, MAP_W - 1)] : 0; }
 function slopeN(tx, ty) { return clamp(landAt('slope', tx, ty) / 0.03, 0, 2); }
-// What a tile is like, for the dev overlay's hover.
-function landWords(tx, ty) {
-  return `height ${landAt('h', tx, ty).toFixed(2)} · slope ${slopeN(tx, ty).toFixed(2)} · sun ${landAt('sun', tx, ty).toFixed(2)} · wet ${landAt('moist', tx, ty).toFixed(2)} · flow ${Math.round(landAt('flow', tx, ty))} · ${SOIL_NAME[landAt('soil', tx, ty)]}`;
-}
 
 // Colours for the dev overlay, one per field.
 const LAND_VIEWS = ['off', 'height', 'slope', 'sun', 'wet', 'flow', 'soil'];
