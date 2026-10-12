@@ -76,6 +76,14 @@ function devBuild() {
   const ls = $('dev-ov-land'); ls.value = Dev.overlay.land || 'off';
   ls.addEventListener('change', () => { Dev.overlay.land = ls.value; devSave(); });
   // clicks inside the body: links to villagers, filters, tools
+  // the tuning dials: a number typed in changes TUNE at once (not saved)
+  $('dev-body').addEventListener('change', (e) => {
+    const t = e.target;
+    if (!t.dataset.tune) return;
+    const path = t.dataset.tune.split('.');
+    let o = TUNE; for (const k of path.slice(0, -1)) o = o[k];
+    const n = parseFloat(t.value); if (Number.isFinite(n)) o[path[path.length - 1]] = n;
+  });
   $('dev-body').addEventListener('click', (e) => {
     const t = e.target.closest('[data-v],[data-cat],[data-act]');
     if (!t) return;
@@ -225,6 +233,13 @@ function devWorld() {
 }
 
 // ----- Tools -----
+// The dials of TUNE (tuning.js) that are worth a nudge in play; the rest are a reload away.
+const TUNE_DIALS = [['mood.scale', 'mood scale'], ['mood.steerLow', 'low mood'], ['mood.steerHigh', 'high mood'], ['variety.penalty', 'variety penalty'], ['variety.decayPerHour', 'variety decay/h'], ['memory.halfLifeDays', 'memory half-life'], ['memory.cap', 'memory cap'], ['dream.pull', 'dream pull'], ['manner.rate', 'manner rate'], ['breaks.chance', 'break chance/h'], ['breaks.villagePerDay', 'breaks/day'], ['breaks.tantrumChance', 'tantrum chance'], ['comfort.rate', 'comfort rate'], ['purpose.joblessRate', 'jobless itch'], ['crowded.rate', 'crowd rate'], ['unease.ease', 'unease ease'], ['values.pull', 'values pull']];
+function devTuning() {
+  if (typeof TUNE === 'undefined') return '';
+  const get = (p) => p.split('.').reduce((o, k) => (o ? o[k] : undefined), TUNE);
+  return `<h5>Tuning <small>(TUNE in js/tuning.js; live, not saved)</small></h5><div class="dchips dev-tune">${TUNE_DIALS.map(([p, l]) => `<label title="${p}">${l} <input type="number" step="any" data-tune="${p}" value="${get(p)}"></label>`).join('')}</div>`;
+}
 function devTools() {
   const v = Game.selected;
   const B = (act, label, title = '') => `<button data-act="${act}"${title ? ` title="${escapeHtml(title)}"` : ''}>${label}</button>`;
@@ -234,7 +249,7 @@ function devTools() {
   const civicLeft = World.lots.filter((l) => l.kind !== 'home' && l.state === 'planned').length;
   const loreLeft = Object.keys(LORE).filter((k) => !hasLore(k)).length;
   const pet = v && v.home() && typeof petOf === 'function' ? petOf(v.home()) : null;
-  return `<h5>Time</h5><div class="dchips">${B('hour', '+1 hour')}${B('day', '+1 day')}${B('season', 'next season')}${B('night', 'jump to 21:00')}${B('morning', 'jump to 08:00')}</div>
+  return `${devTuning()}<h5>Time</h5><div class="dchips">${B('hour', '+1 hour')}${B('day', '+1 day')}${B('season', 'next season')}${B('night', 'jump to 21:00')}${B('morning', 'jump to 08:00')}</div>
   <div class="dchips">jump to <input type="number" id="dev-hour" min="0" max="23" value="12" aria-label="hour"> o'clock ${B('tohour', 'go')} · skip <input type="number" id="dev-days" min="1" max="30" value="3" aria-label="days"> days ${B('todays', 'go')} · to <select id="dev-season">${SEASONS.map((s) => `<option value="${s.toLowerCase()}"${s.toLowerCase() === World.season ? ' selected' : ''}>${s}</option>`).join('')}</select> ${B('toseason', 'go', 'runs the simulation up to the first day of that season')}</div>
   <h5>Weather</h5><div class="dchips">${B('rain', 'rain')}${B('storm', 'storm')}${B('snow', 'snow')}${B('fog', 'fog')}${B('clear', 'clear')}</div>
   <h5>Village <small>(${escapeHtml(rank)}${next ? ' → ' + escapeHtml(next.name) : ', the top'})</small></h5><div class="dchips">${B('rankup', 'rank up', 'the next village type at once, without the Moot')}${B('unlock', 'unlock everything', `top rank, every public and rift building raised (${civicLeft} left), all lore learned (${loreLeft} left)`)}grow to <input type="number" id="dev-pop" min="1" max="${MAX_POP}" value="${Math.min(MAX_POP, Game.villagers.length + 10)}" aria-label="folk"> folk ${B('grow', 'go', 'newcomers arrive up the road until the village is that size')}</div>

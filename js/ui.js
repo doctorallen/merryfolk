@@ -310,6 +310,11 @@ function panelNature(v) {
   }
   h += '</div>';
   if (v.stage !== 'baby') { likesOf(v); h += `<div class="likes"><div><b>Loves</b> ${v.likes.map((k) => LIKES[k]).join(' and ')}</div><div><b>Can't abide</b> ${v.dislikes.map((k) => LIKES[k]).join(', ')}</div></div>`; }
+  // how their nature comes out: the manner they talk in, the way they answer today, and what they hold dear
+  if (v.stage !== 'baby' && typeof valuesOf === 'function') {
+    const mw = mannerWords(v), tw = v.isGrown() || v.isChild() ? (TEMPER_WORD[temperOf(v)] || '') : '';
+    h += `<div class="likes"><div><b>Holds dear</b> ${valuesOf(v).map((k) => `${VALUES[k].label}<span class="sub"> (${VALUES[k].say})</span>`).join(' and ') || 'nothing in particular yet'}</div>${mw ? `<div><b>Manner</b> ${mw}</div>` : ''}${tw ? `<div><b>Today</b> ${tw}</div>` : ''}</div>`;
+  }
   h += '<h3>Talents</h3><div class="talents">';
   for (const s of topTalents(g, 3)) h += `<div><span>${SKILL_LABEL[s]}</span><span class="stars" title="Aptitude">${stars(g.apt[s])}</span></div>`;
   h += '</div><h3>Inherited looks</h3><div class="genes">';
