@@ -119,6 +119,8 @@ function* buildWorldSteps(cfg) {
   if (valley && !World.gen.plan) World.gen.plan = planValley(seed, mw, mh);
   applyLayout(valley && World.gen.plan ? World.gen.plan : CLASSIC_LAYOUT);
   World.land = null; World.grass = []; World.statics = []; World.flowers = []; World.pads = null; World.padNear = null; World._nh = null; World.cliffMask = null; World.cliff = null;
+  // the last valley's trees, bushes and seasonal images are let go, so making valley after valley on the setup screen doesn't pile them up
+  TREE_MEMO.clear(); BUSH_MEMO.clear(); SEASON_CACHE.clear();
   const rng = mulberry32(seed);
   const tiles = World.tiles;
   tiles.fill(T.GRASS);
@@ -735,7 +737,7 @@ function furnishHome(h, rng = Math.random) {
 function completeHome(h) {
   h.built = true; h.buildProg = 1;
   if (h.siteStatic) h.siteStatic.hidden = true;
-  furnishHome(h);
+  furnishHome(h, mulberry32(h.id * 977 + 5)); // the same furnishing whenever this hole is dug or reloaded
   addHomeFlowers(h);
   applySeasonToStatics(World.season);
   // the tiles under the new garden plots changed, so repaint the patch

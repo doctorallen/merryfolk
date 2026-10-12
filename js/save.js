@@ -144,7 +144,7 @@ function load() {
   const season = seasonKey(Game.day);
   (data.homes || []).forEach((h, i) => {
     const home = World.homes[i]; if (!home) return;
-    if (h.built && !home.built) { home.built = true; furnishHome(home); addHomeFlowers(home); }
+    if (h.built && !home.built) { home.built = true; furnishHome(home, mulberry32(home.id * 977 + 5)); addHomeFlowers(home); }
     home.buildProg = h.buildProg || 0;
     home.pantry = Object.assign(emptyPantry(), h.pantry || {}); home.chilly = !!h.chilly; home.neon = !!h.neon;
     home.crafts = h.crafts || {}; home.collection = h.collection || {}; home.jars = h.jars || {};
