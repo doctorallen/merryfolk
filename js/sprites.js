@@ -919,6 +919,8 @@ function makeGreatTree(seed, season) {
   const { x: fx } = trunkAt(forkY);
   const angles = [-2.5, -2.0, -1.25, -0.7].map((a) => a + (rng() - 0.5) * 0.2);
   const ends = angles.map((a, i) => limb(fx + (i - 1.5) * 4, forkY + 4, a, 44 + rng() * 16, 9 - Math.abs(i - 1.5) * 1.2, winter ? 2 : 1));
+  // and the leader, straight up through the middle of the crown, which carries the topmost mass
+  const topEnd = limb(fx + lean * 0.3, forkY + 2, -Math.PI / 2 + (rng() - 0.5) * 0.25, 60 + rng() * 8, 7, 1);
   if (winter) {
     for (let k = 0; k < 10; k++) limb(fx + (rng() - 0.5) * 10, forkY + 2, -Math.PI / 2 + (rng() - 0.5) * 2.4, 20 + rng() * 30, 2, 1);
     return addSnow(outlineCanvas(c, '#22160c', 160), 0, base - 4, 2, seed);
@@ -930,7 +932,7 @@ function makeGreatTree(seed, season) {
   // low boughs either side, a pair of masses between, and the top of the crown
   masses.push({ x: fx - 52 - rng() * 8, y: forkY - 6, r: 20 + rng() * 4 }, { x: fx + 50 + rng() * 8, y: forkY - 2, r: 19 + rng() * 4 });
   masses.push({ x: fx - 26 + rng() * 8, y: forkY - 42, r: 21 }, { x: fx + 22 + rng() * 8, y: forkY - 46, r: 22 });
-  masses.push({ x: fx + lean, y: forkY - 84, r: 27 });
+  masses.push({ x: topEnd[0], y: topEnd[1] - 8, r: 27 });
   masses.sort((a, b) => a.y - b.y);
   const taken = new Uint8Array(W * H);
   const id0 = x.getImageData(0, 0, W, H).data;
