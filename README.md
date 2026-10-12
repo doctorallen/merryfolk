@@ -102,7 +102,7 @@ Press `` ` `` (or the Dev button) to open a console drawer:
 
 - **The top bar.** It shows the season, the day and time, then chips for the village chest (opens the Market), the village's rank and progress to the next era (opens the Charter), and contentment (opens the Steward's Desk). A ⚠ chip appears when a hazard is coming. The ⚙ menu holds music, how to play, the guide and developer mode.
 - **The Charter tracker.** Under the top bar, a small card tracks the three open charters with progress bars. Hide it with –, or click it to open the Charter.
-- **The Chronicle** has filters: ♥ Hearts (love, births, letters, parties), ⌂ Village (building, trades, seasons, learning), ✦ Rifts, and ⚠ Trouble (illness, quarrels, hazards). Unfound clues on the Rifts page each carry a riddling hint about where to look.
+- **The Chronicle** has filters: ♥ Hearts (love, births, letters, parties), ⌂ Village (building, trades, seasons, learning), ✦ Rifts, ⚠ Trouble (illness, quarrels, hazards), and … Talk, where every natter between two folk is kept as a thread: a heading with the day, the hour, who and where (by the well, outside the Bakehouse, in the lane), then what they said to each other, back and forth, each voice on its own side, the newest natter first and the long ones folded after three lines. Click a name to go to that villager. Remarks across the supper table or the taproom, and the storyteller's tales, aren't threaded. Unfound clues on the Rifts page each carry a riddling hint about where to look.
 - **Notices.** They queue below the top bar, three at most, and never cover the buttons.
 - **The ledger.** Five sections, each with its own sub-tabs, and the game pauses while it's open:
   - **Steward:** policies and workforce, plus trades.
