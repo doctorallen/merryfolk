@@ -256,7 +256,8 @@ function devTools() {
   <div class="dchips">jump to <input type="number" id="dev-hour" min="0" max="23" value="12" aria-label="hour"> o'clock ${B('tohour', 'go')} · skip <input type="number" id="dev-days" min="1" max="30" value="3" aria-label="days"> days ${B('todays', 'go')} · to <select id="dev-season">${SEASONS.map((s) => `<option value="${s.toLowerCase()}"${s.toLowerCase() === World.season ? ' selected' : ''}>${s}</option>`).join('')}</select> ${B('toseason', 'go', 'runs the simulation up to the first day of that season')}</div>
   <h5>Weather</h5><div class="dchips">${B('rain', 'rain')}${B('storm', 'storm')}${B('snow', 'snow')}${B('fog', 'fog')}${B('clear', 'clear')}</div>
   <h5>Village <small>(${escapeHtml(rank)}${next ? ' → ' + escapeHtml(next.name) : ', the top'})</small></h5><div class="dchips">${B('rankup', 'rank up', 'the next village type at once, without the Moot')}${B('unlock', 'unlock everything', `top rank, every public and rift building raised (${civicLeft} left), all lore learned (${loreLeft} left)`)}grow to <input type="number" id="dev-pop" min="1" max="${MAX_POP}" value="${Math.min(MAX_POP, Game.villagers.length + 10)}" aria-label="folk"> folk ${B('grow', 'go', 'newcomers arrive up the road until the village is that size')}</div>
-  <div class="dchips">${B('party', 'start a party')}${B('fireworks', 'fireworks')}${B('traveller', 'invite a traveller')}${B('assign', 're-assign trades')}${B('plan', 'run town planning')}${B('newvalley', 'new valley…', 'the Shape your valley screen: a fresh village from a seed')}</div>
+  <div class="dchips">${B('traveller', 'invite a traveller')}${B('assign', 're-assign trades')}${B('plan', 'run town planning')}${B('newvalley', 'new valley…', 'the Shape your valley screen: a fresh village from a seed')}</div>
+  ${devParties(B)}
   <h5>Building</h5><div class="dchips">${Tg('insta', 'insta-build', Dev.insta, 'every project and plan finishes the moment it is opened')}${B('finishall', `finish all projects now (${Village.projects.length + plansList().length})`)}${B('openhomes', `open all home lots (${planned('home')})`)}${B('opencivic', `open all public lots (${civicLeft})`, 'every public and rift building starts, whatever the village size')}</div>
   <h5>Coin and stores <small>(${Game.coin ?? 0}p)</small></h5><div class="dchips">${Tg('freecoin', 'coin doesn\'t matter', Dev.freeCoin, 'the chest holds 9999 pennies however much is spent')}${B('coin', '+100 pennies')}${B('fill', 'fill the stores')}${B('empty', 'empty the stores')}${B('lore', 'lore +50')}</div>
   <h5>Rifts</h5><div class="dchips">${B('rift', 'open a rift')}${B('riftsoon', 'next rift in 10 min')}${B('wayhome', 'way home +25%')}${B('novelty', 'make rifts new again')}</div>
@@ -267,6 +268,28 @@ function devTools() {
   <h5>Selected villager ${v ? '(' + escapeHtml(v.first) + ')' : '<small>(none selected)</small>'}</h5><div class="dchips">${v ? [B('rethink', 'choose again now'), B('content', 'satisfy all drives'), B('hungry', 'make hungry'), B('tired', 'make sleepy'), B('lonely', 'make lonely'), B('tipsy', 'make tipsy'), B('cold', 'give a cold'), B('riftways', 'rift ways +0.4'), B('older', 'age +1 day'), B('teach', 'education +0.2')].join('') : '<span class="dhint">select someone first</span>'}</div>
   ${v ? `<div class="dchips">${B('natter', 'natter with the nearest', 'starts a conversation with whoever is closest')}${B('gather', 'start a gathering here', 'three or more folk get together where they stand')}${B('ornery', 'make ornery', 'quick-tempered and glum: short with everyone')}${B('cheerful', 'make cheerful', 'even-tempered and merry')}${pet ? `<span class="dhint">has ${escapeHtml(pet.name)} the ${pet.kind}</span>` : B('petdog', 'give a dog') + B('petcat', 'give a cat')}</div>` : ''}
   <p class="dhint">Time skips run the simulation for real, so everything that would have happened does. Cheats aren't saved: they're off again next time.</p>`;
+}
+
+// The parties: what's on, what's coming, and any kind of party at once.
+function devParties(B) {
+  const p = Game.party, k = p.on ? partyKind() : null, f = p.feast;
+  const sel = Dev.partyKind && PARTY_KINDS[Dev.partyKind] ? Dev.partyKind : 'birthday';
+  const host = partyHost();
+  const now = p.on ? `on: <b>${escapeHtml(k.label)}</b> (${escapeHtml(String(p.reason))})${host ? ' for ' + escapeHtml(host.first) : ''} until ${fmtTime(p.until)}${f ? `, dinner ${f.course < 0 ? 'being laid' : f.course >= COURSES.length - 1 ? 'over' : 'at ' + COURSES[f.course].label}` : ''}` : 'none on';
+  const planned = p.planned ? ` · planned: <b>${escapeHtml(partyKind(p.planned).label)}</b> at ${partyStartsAt(partyKind(p.planned))}:00` : '';
+  const hol = holidayToday() ? ` · today is a holiday (${escapeHtml(Game.holiday.name || Game.holiday.key)})` : '';
+  const next = upcomingOccasions(5).map(([d, key]) => `${escapeHtml(PARTY_KINDS[key].label)} day ${d}`).join(', ');
+  return `<h5>Parties</h5><div class="dkv">${now}${planned}${hol}</div><div class="dkv">coming: ${next || 'nothing fixed'} · last birthday party day ${Game.lastBirthdayParty ?? '-'} · last holiday day ${Game.lastHoliday ?? '-'}</div>
+  <div class="dchips"><select id="dev-party" aria-label="kind of party">${Object.values(PARTY_KINDS).map((x) => `<option value="${x.key}"${x.key === sel ? ' selected' : ''}>${escapeHtml(x.label)}</option>`).join('')}</select>${B('partynow', 'start now', 'ends any party that\'s on and starts this one (a birthday is for the selected villager, or someone at random)')}${B('partyplan', 'plan for today', 'it starts at its own hour, as if it were on the calendar')}${B('partyend', 'end the party')}${B('course', 'next course', 'brings the next course of a dinner at the long tables out at once')}${B('fireworks', 'fireworks')}</div>`;
+}
+function devPartyPick() {
+  const key = ($('dev-party') || {}).value || 'evening';
+  Dev.partyKind = key;
+  const k = PARTY_KINDS[key];
+  if (key === 'birthday') { const v = Game.selected && Game.selected.stage !== 'baby' ? Game.selected : R.pick(Game.villagers.filter((o) => o.isGrown())); Game.party.host = v ? v.id : null; }
+  if (key === 'wedding' && !(Game.party.couple || []).length) { const m = Game.villagers.find((o) => o.spouse != null); if (m) Game.party.couple = [m.id, m.spouse]; }
+  if (k.dayOff) Game.holiday = { day: Game.day, key, name: key === 'holiday' ? 'Dev Day' : k.label };
+  return key;
 }
 
 // ----- the cheats -----
@@ -368,7 +391,10 @@ function devAct(act) {
     case 'snow': weather('snow'); break;
     case 'fog': Game.weather = 'fog'; Game.raining = false; break;
     case 'clear': Game.weather = 'clear'; Game.raining = false; break;
-    case 'party': startParty('fireworks'); break;
+    case 'partynow': { const key = devPartyPick(); if (Game.party.on) { Game.party.on = false; Game.party.feast = null; takeDownTables(); } startParty(key); devLog('party', `dev: started ${key}`); break; }
+    case 'partyplan': { const key = devPartyPick(); Game.party.planned = key; devLog('party', `dev: planned ${key} for ${partyStartsAt(PARTY_KINDS[key])}:00`); break; }
+    case 'partyend': if (Game.party.on) Game.party.until = Game.time - 1; break;
+    case 'course': { const f = Game.party.feast; if (f && f.course < COURSES.length - 1) { f.start -= COURSES[f.course + 1].at - (Game.time - f.start); feastStep(); } break; }
     case 'fireworks': fireworkShow(PARTY.danceX * 16 + 8, (PARTY.danceY - 3) * 16, 9); break;
     case 'fill': for (const k of STORE_KEYS) Village.stores[k] = storeCap(k); devLog('town', 'dev: filled the stores'); break;
     case 'empty': for (const k of STORE_KEYS) Village.stores[k] = 0; devLog('town', 'dev: emptied the stores'); break;
