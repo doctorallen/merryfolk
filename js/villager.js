@@ -540,7 +540,7 @@ class Villager {
     if (a.social) this.socialTick(dt);
     if (a.zzz && Math.random() < dt * 0.05) FX.zzz(this.x + 3, this.y - 16);
     if (a.id === 'sleep' && this.inside && this.inside.kind === 'home' && Math.random() < dt * 0.02) FX.zzz(this.inside.doorX + 8, this.inside.doorY - 30);
-    if (a.prop === 'pipe' && Math.random() < dt * 0.12) FX.smokeRing(this.x + (this.facing === 'left' ? -6 : 6), this.y - 17);
+    if (a.prop === 'pipe' && Math.random() < dt * 0.12) FX.smokeRing(this.x + (facingLeft(this.facing) ? -6 : 6), this.y - 17);
     if (a.id === 'chat' && task.partner) this.chatTick(task, dt);
     if ((a.id === 'party' || a.id === 'fiddle') && Math.random() < dt * (a.id === 'fiddle' ? 0.2 : 0.05)) FX.note(this.x, this.y - 18);
     if (this.pose === 'dance' && R.chance(dt * 0.01) && PHRASES[a.id] && this.isGrown()) this.say(R.pick(PHRASES[a.id]), 2);
@@ -711,8 +711,18 @@ class Villager {
         if (this.pathI >= this.path.length) { this.path = null; }
       } else {
         this.x += (dx / d) * step; this.y += (dy / d) * step; this.walkDist += step;
-        if (Math.abs(dx) > Math.abs(dy) * 1.2) this.facing = dx > 0 ? 'right' : 'left';
-        else this.facing = dy > 0 ? 'down' : 'up';
+        // one of eight facings from the way they've been going over the last
+        // yard or so (the path itself zigzags tile by tile), and a new one only
+        // once they've been heading well into its sector for a few steps
+        const k = Math.min(1, step / 40);
+        this._mvx = (this._mvx || 0) * (1 - k) + (dx / d) * k; this._mvy = (this._mvy || 0) * (1 - k) + (dy / d) * k;
+        const want = facingOf(this._mvx, this._mvy);
+        if (want !== this.facing) {
+          const cur = FACINGS.indexOf(this.facing), ang = Math.atan2(this._mvy, this._mvx);
+          let off = cur < 0 ? 9 : Math.abs(ang - cur * Math.PI / 4); if (off > Math.PI) off = Math.PI * 2 - off;
+          if (off >= Math.PI / 6) { this._faceT = (this._faceT || 0) + step; if (this._faceT >= 6) { this.facing = want; this._faceT = 0; } }
+          else this._faceT = 0;
+        } else this._faceT = 0;
         step = 0;
       }
     }

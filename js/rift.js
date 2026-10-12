@@ -648,7 +648,7 @@ function drawRiftEmissive(ctx, cam) {
   for (const v of Game.villagers) {
     if (v.inside || v.carried || v.stage === 'baby' || !v._top || !seen(v.x, v.y)) continue;
     const ex = expressed(v.genes), ey = v._top + 8 / RS;
-    const side = v.facing === 'left' || v.facing === 'right';
+    const side = facingView(v.facing)[0] === 'side';
     if (v.facing === 'up') continue;
     // eye and visor positions on the double-resolution sprite (22 half-pixels wide with its outline)
     const X = (cx, w) => v._sx + (v._flip ? 22 - cx - w : cx) / RS;
@@ -683,7 +683,7 @@ function riftLights(L) {
     if (v.inside || v.carried || v.stage === 'baby') continue;
     const ex = expressed(v.genes);
     if (v.visor && v.techTier >= 2) L.push({ x: v.x, y: v.y - 13, r: 10, a: 0.55, col: ex.neon });
-    else if (ex.chrome) L.push({ x: v.x + (v.facing === 'left' ? -1 : 1), y: v.y - 13, r: 6, a: 0.6, col: '#6af8ff' });
+    else if (ex.chrome) L.push({ x: v.x + (facingLeft(v.facing) ? -1 : 1), y: v.y - 13, r: 6, a: 0.6, col: '#6af8ff' });
     if (v.techTier >= 1) L.push({ x: v.x, y: v.y - 4, r: 7, a: 0.4, col: ex.neon });
   }
   const relay = World.buildings.relay;
@@ -784,7 +784,7 @@ Object.assign(ACTIONS, {
     time: (h) => workHours(h, 8, 19),
     extra: () => 0.1 + ((Village.stores.scrap || 0) < 8 ? 0.1 : 0),
     target: (v) => { const s = salvageSite(v); if (!s) return null; const t = nearSpot(s.x, s.y, 8, 22); if (t) Object.assign(t, s.scar ? { scar: s.scar } : {}); return t; },
-    tick: (v, task, dt) => { if (Math.random() < dt * 0.1) FX.sparkle(v.x + (v.facing === 'left' ? -6 : 6), v.y - 6, '#5af8ff'); },
+    tick: (v, task, dt) => { if (Math.random() < dt * 0.1) FX.sparkle(v.x + (facingLeft(v.facing) ? -6 : 6), v.y - 6, '#5af8ff'); },
     done: (v, task) => {
       const sc = task.target.scar;
       if (sc) { if (sc.stock <= 0) return; sc.stock--; if (sc.stock <= 0) World.riftScars = World.riftScars.filter((s) => s !== sc); }
@@ -854,7 +854,7 @@ Object.assign(ACTIONS, {
       // two heads are better than one, and five are better still
       wayHomeProgress(dt * 0.00011 * s.boost * (0.6 + v.skills.tinkering / 100) * (1 + Math.min(4, crew - 1) * 0.35) / (1 + (Village.wayHomeTries || 0) * 0.6));
       if (Math.random() < dt * 0.02) v.say(R.pick(RIFT_SEEK_SAY), 3);
-      if (Math.random() < dt * 0.08) FX.sparkle(v.x + (v.facing === 'left' ? -6 : 6), v.y - 8, R.pick(['#5af8ff', '#c050ff']));
+      if (Math.random() < dt * 0.08) FX.sparkle(v.x + (facingLeft(v.facing) ? -6 : 6), v.y - 8, R.pick(['#5af8ff', '#c050ff']));
     },
   },
   rift_watch: {

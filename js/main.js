@@ -363,7 +363,7 @@ function lanternFor(v, prop = propFor(v)) {
 }
 // Where its light comes from, in world pixels.
 function lanternLight(v, where) {
-  const side = v.facing === 'left' ? -1 : 1;
+  const side = facingLeft(v.facing) ? -1 : 1;
   return where === 'hand' ? { x: v.x + side * 3, y: v.y - 5 } : { x: v.x + side * 8, y: v.y - 2 };
 }
 // A little oil lantern, drawn in half-pixels from the ring at its top.
@@ -380,8 +380,7 @@ function drawLantern(ctx, x, y, t, id, rift = false) {
 
 function drawVillager(ctx, v, ox = 0, oy = 0) {
   const t = tReal;
-  let dir = v.facing === 'left' || v.facing === 'right' ? 'side' : v.facing === 'up' ? 'up' : 'down';
-  let flip = v.facing === 'left';
+  let [dir, flip] = facingView(v.facing);
   let pose = 'stand', yoff = 0, xoff = 0;
   switch (v.pose) {
     case 'walk': {
@@ -404,9 +403,11 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
   }
   if (v.carried) { pose = Math.floor(t * 8) % 2 ? 'walk1' : 'walk2'; dir = 'down'; flip = false; yoff = Math.round(Math.sin(t * 5) * 1.5); }
   if (v.isTipsy() && v.pose === 'walk') xoff = Math.round(Math.sin(t * 3 + v.id) * 1.5);
+  // the three-quarter views take their props like the side and back views
+  const upish = dir === 'up' || dir === 'qup', sideish = dir === 'side' || dir === 'qdown';
   // eyes shut for a blink every few seconds, or while dozing
   const dozing = v.task && v.task.phase === 'do' && v.task.a.zzz;
-  const shut = dir !== 'up' && (dozing || (tReal + v.id * 0.37) % 4.1 < 0.13);
+  const shut = !upish && (dozing || (tReal + v.id * 0.37) % 4.1 < 0.13);
   const task = v.task;
   const spotKind = task && task.spot ? task.spot.kind : null;
   const groundSit = pose === 'sit' && (!spotKind || spotKind === 'fish' || spotKind === 'shade' || spotKind === 'storyseat' || spotKind === 'story');
@@ -437,7 +438,7 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
   let prop = propFor(v);
   const lantern = lanternFor(v, prop);
   if (lantern === 'hand') prop = 'lantern';
-  if (!prop && v.stage === 'elder' && dir !== 'up' && pose !== 'sit') prop = 'stick';
+  if (!prop && v.stage === 'elder' && !upish && pose !== 'sit') prop = 'stick';
   if (v.leaving && lantern !== 'hand') prop = 'stick';
   if (v.stage === 'baby' || v.carried) prop = null;
   // Props are drawn in half-pixels over the sprite, mirrored with it.
@@ -453,10 +454,10 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
     if (!prop) return;
     const lift = Math.sin(t * 1.3 + v.id) > 0.75;
     const swing = Math.floor(t * 2.2 + v.id) % 2;
-    const W0 = PROP_COL.wood, side = dir === 'side';
+    const W0 = PROP_COL.wood, side = sideish;
     switch (prop) {
       case 'pipe': {
-        if (dir === 'up') break;
+        if (upish) break;
         const [mx, my] = M;
         Q(mx + 1, my, 2, 1, W0); Q(mx + 3, my + 1, 2, 1, W0);
         Q(mx + 4, my - 2, 4, 4, '#4a2a14'); Q(mx + 4, my - 2, 4, 1, '#6a4020');
@@ -464,13 +465,13 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
         break;
       }
       case 'mug': {
-        const [x, y] = lift && dir !== 'up' ? [M[0] + 1, M[1] - 3] : [HR[0] - 3, HR[1] - 5];
+        const [x, y] = lift && !upish ? [M[0] + 1, M[1] - 3] : [HR[0] - 3, HR[1] - 5];
         Q(x, y, 6, 7, PROP_COL.mug); Q(x, y, 6, 2, PROP_COL.foam); Q(x + 1, y + 3, 1, 3, '#e0c08a');
         Q(x + 6, y + 2, 2, 1, PROP_COL.mug); Q(x + 7, y + 3, 1, 2, PROP_COL.mug); Q(x + 6, y + 5, 2, 1, PROP_COL.mug);
         Q(x, y + 6, 6, 1, '#9a7a4a');
         break;
       }
-      case 'cup': if (dir !== 'up') { const [x, y] = lift ? [M[0] + 1, M[1] - 1] : [HR[0] - 2, HR[1] - 3]; Q(x, y, 5, 4, '#9a9488'); Q(x + 1, y, 3, 1, '#7a5030'); Q(x + 5, y + 1, 1, 2, '#9a9488'); } break;
+      case 'cup': if (!upish) { const [x, y] = lift ? [M[0] + 1, M[1] - 1] : [HR[0] - 2, HR[1] - 3]; Q(x, y, 5, 4, '#9a9488'); Q(x + 1, y, 3, 1, '#7a5030'); Q(x + 5, y + 1, 1, 2, '#9a9488'); } break;
       case 'plate':
         if (dir === 'down') { Q(4, HR[1] + 1, 14, 2, PROP_COL.plate); Q(4, HR[1] + 2, 14, 1, '#c8c0b0'); Q(6, HR[1], 4, 1, '#c8945a'); Q(11, HR[1], 4, 1, '#7cc05a'); if (lift) Q(M[0] + 1, M[1] + 1, 2, 2, '#c8945a'); }
         else if (side) { Q(HR[0] + 1, HR[1] - 1, 9, 2, PROP_COL.plate); Q(HR[0] + 3, HR[1] - 2, 4, 1, '#c8945a'); }
@@ -505,19 +506,19 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
         Q(1 + bow, my + 8, 14, 1, '#e8dcc0'); Q(bow, my + 7, 2, 3, '#5a3a22');
         break;
       }
-      case 'letter': if (dir !== 'up') { Q(HR[0] - 1, HR[1] - 4, 8, 6, '#f4efe2'); Q(HR[0] - 1, HR[1] - 4, 8, 1, '#d8d0bc'); Q(HR[0] + 2, HR[1] - 2, 2, 2, '#d83a2a'); } break;
-      case 'flowers': if (dir !== 'up') {
+      case 'letter': if (!upish) { Q(HR[0] - 1, HR[1] - 4, 8, 6, '#f4efe2'); Q(HR[0] - 1, HR[1] - 4, 8, 1, '#d8d0bc'); Q(HR[0] + 2, HR[1] - 2, 2, 2, '#d83a2a'); } break;
+      case 'flowers': if (!upish) {
         const [x, y] = [HR[0], HR[1]];
         Q(x + 1, y - 7, 1, 8, '#3f7a32'); Q(x + 3, y - 6, 1, 7, '#3f7a32'); Q(x - 1, y - 5, 1, 6, '#3f7a32');
         Q(x, y - 9, 2, 2, '#e85a6a'); Q(x + 2, y - 10, 2, 2, '#f2d24a'); Q(x - 2, y - 7, 2, 2, '#ffffff'); Q(x + 3, y - 8, 2, 2, '#8a6ad8');
         Q(x - 1, y - 1, 6, 2, '#e8dcc0');
         break;
       }
-      case 'sack': { const x = dir === 'up' ? 4 : 12; Q(x, HR[1] - 13, 10, 12, '#e8dcc0'); Q(x + 7, HR[1] - 12, 3, 11, '#c8bca0'); Q(x + 3, HR[1] - 15, 4, 2, '#a08a60'); Q(x + 4, HR[1] - 13, 2, 1, '#7a6a48'); break; }
-      case 'bucket': if (dir !== 'up') { const [x, y] = [HR[0] - 2, HR[1] - 1]; Q(x, y, 6, 5, '#7a7a84'); Q(x, y, 6, 1, '#a0a0aa'); Q(x + 1, y + 1, 4, 3, '#4a6a8a'); Q(x + 1, y - 2, 1, 2, '#5a5a62'); Q(x + 4, y - 2, 1, 2, '#5a5a62'); Q(x + 1, y - 3, 4, 1, '#5a5a62'); } break;
+      case 'sack': { const x = upish ? 4 : 12; Q(x, HR[1] - 13, 10, 12, '#e8dcc0'); Q(x + 7, HR[1] - 12, 3, 11, '#c8bca0'); Q(x + 3, HR[1] - 15, 4, 2, '#a08a60'); Q(x + 4, HR[1] - 13, 2, 1, '#7a6a48'); break; }
+      case 'bucket': if (!upish) { const [x, y] = [HR[0] - 2, HR[1] - 1]; Q(x, y, 6, 5, '#7a7a84'); Q(x, y, 6, 1, '#a0a0aa'); Q(x + 1, y + 1, 4, 3, '#4a6a8a'); Q(x + 1, y - 2, 1, 2, '#5a5a62'); Q(x + 4, y - 2, 1, 2, '#5a5a62'); Q(x + 1, y - 3, 4, 1, '#5a5a62'); } break;
       case 'broom': { const x = HR[0] + 1; Q(x, 2, 2, SH - 8, '#9a7a52'); Q(x, 2, 1, SH - 8, '#b89a66'); Q(x - 3, SH - 8, 8, 2, '#c8a858'); Q(x - 4, SH - 6, 10, 4, '#d8b860'); Q(x - 4, SH - 3, 10, 1, '#a8883a'); break; }
-      case 'brush': if (dir !== 'up') { const [x, y] = [HR[0] - 1, HR[1] - 2]; Q(x, y, 6, 2, '#6a4a2a'); Q(x, y + 2, 6, 2, '#d8c8a0'); } break;
-      case 'basket': if (dir !== 'up') { const [x, y] = [HR[0] - 3, HR[1] - 2]; Q(x, y, 9, 6, '#8a6440'); Q(x, y + 2, 9, 1, '#6a4a2a'); Q(x + 1, y - 4, 1, 4, '#6a4a2a'); Q(x + 7, y - 4, 1, 4, '#6a4a2a'); Q(x + 2, y - 5, 5, 1, '#6a4a2a'); Q(x + 1, y - 1, 2, 2, '#d83a2a'); Q(x + 4, y - 1, 2, 2, '#c8925a'); Q(x + 6, y - 1, 2, 2, '#7cc05a'); } break;
+      case 'brush': if (!upish) { const [x, y] = [HR[0] - 1, HR[1] - 2]; Q(x, y, 6, 2, '#6a4a2a'); Q(x, y + 2, 6, 2, '#d8c8a0'); } break;
+      case 'basket': if (!upish) { const [x, y] = [HR[0] - 3, HR[1] - 2]; Q(x, y, 9, 6, '#8a6440'); Q(x, y + 2, 9, 1, '#6a4a2a'); Q(x + 1, y - 4, 1, 4, '#6a4a2a'); Q(x + 7, y - 4, 1, 4, '#6a4a2a'); Q(x + 2, y - 5, 5, 1, '#6a4a2a'); Q(x + 1, y - 1, 2, 2, '#d83a2a'); Q(x + 4, y - 1, 2, 2, '#c8925a'); Q(x + 6, y - 1, 2, 2, '#7cc05a'); } break;
       case 'rod': {
         const bob = Math.round(Math.sin(t * 2 + v.id) * 2), [x, y] = HR;
         for (let k = 0; k < 11; k++) Q(x + 1 + k, y - 1 + Math.round(k * 0.6), 2, 1, k > 7 ? '#8a6a4a' : '#6a4a2a');
@@ -528,8 +529,8 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
         break;
       }
       case 'stick': { const x = HR[0] + 1; Q(x, HR[1] - 8, 2, SH - HR[1] + 7, '#7a5a3a'); Q(x, HR[1] - 8, 1, SH - HR[1] + 7, '#9a7a52'); Q(x - 1, HR[1] - 10, 4, 3, '#5a3a22'); break; }
-      case 'whittle': if (dir !== 'up') { const [x, y] = HR; Q(x - 4, y - 4, 5, 3, '#c9a46a'); Q(x - 4, y - 4, 5, 1, '#e0c08a'); Q(x + 1, y - 6, 1, 4, '#c8c8d0'); Q(x + 1, y - 2, 1, 2, '#5a3a22'); if (Math.sin(t * 5 + v.id) > 0.6) Q(x - 6, y + 2, 1, 1, '#e0c08a'); } break;
-      case 'knit': if (dir !== 'up') {
+      case 'whittle': if (!upish) { const [x, y] = HR; Q(x - 4, y - 4, 5, 3, '#c9a46a'); Q(x - 4, y - 4, 5, 1, '#e0c08a'); Q(x + 1, y - 6, 1, 4, '#c8c8d0'); Q(x + 1, y - 2, 1, 2, '#5a3a22'); if (Math.sin(t * 5 + v.id) > 0.6) Q(x - 6, y + 2, 1, 1, '#e0c08a'); } break;
+      case 'knit': if (!upish) {
         const yarn = ['#c84a6a', '#5a8ac8', '#7ab04c', '#e8b84a'][v.id % 4], [x, y] = HR;
         Q(x - 12, y - 4, 11, 4, yarn); Q(x - 12, y - 4, 11, 1, shade(yarn, 0.25)); Q(x - 13, y - 8, 1, 7, '#d8d8e0'); Q(x, y - 8, 1, 7, '#d8d8e0');
         Q(x - 8, y + 6, 4, 4, yarn);
@@ -542,7 +543,7 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
         Q(ex, SH - 30, 13, 10, '#f4ead0'); Q(ex, SH - 30, 13, 1, '#7a5030'); Q(ex + 1, SH - 29, 11, 4, '#9fd4f2'); Q(ex + 1, SH - 25, 11, 3, '#5c8f3e');
         if (Math.sin(t * 2 + v.id) > 0) Q(ex + 4, SH - 26, 2, 1, '#c84a3a');
         Q(ex, SH - 20, 13, 2, '#8a6440');
-        if (dir !== 'up') { const [x, y] = HR; Q(x, y - 6, 1, 6, '#7a5030'); Q(x, y - 7, 1, 1, '#c84a3a'); }
+        if (!upish) { const [x, y] = HR; Q(x, y - 6, 1, 6, '#7a5030'); Q(x, y - 7, 1, 1, '#c84a3a'); }
         break;
       }
       case 'lantern': {
@@ -553,25 +554,25 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
       case 'gadget': { const [x, y] = [HR[0] - 3, HR[1] - 4]; Q(x, y, 7, 5, '#2a2a32'); Q(x + 1, y + 1, 5, 2, Math.sin(t * 4 + v.id) > -0.3 ? expressed(v.genes).neon : '#1a4a50'); Q(x + 2, y + 4, 3, 1, '#4a4a52'); break; }
     }
   };
-  if (lantern === 'ground') drawLantern(ctx, Math.round(vx) + (v.facing === 'left' ? -8 : 8), Math.round(vy) - 4.5, t, v.id, v.tech >= 0.5);
-  if (dir === 'up') drawProp();
+  if (lantern === 'ground') drawLantern(ctx, Math.round(vx) + (facingLeft(v.facing) ? -8 : 8), Math.round(vy) - 4.5, t, v.id, v.tech >= 0.5);
+  if (upish) drawProp();
   blit(ctx, spr, sx, sy, flip);
-  if (dir !== 'up') drawProp();
+  if (!upish) drawProp();
   // a baby in their arms, swaddled, across the chest
-  if (v.holding && v.holding.length && dir !== 'up') {
+  if (v.holding && v.holding.length && !upish) {
     v.holding.forEach((id, k) => {
       const b = personById(id), bs = b && b.sprites.held;
       if (!bs) return;
       const [cx0, cy0] = an.chest || [9.5, 18];
       const bw = bs.width / ((bs.res || RS) / RS);
-      const bx = Math.round(cx0) + 1 - (bw >> 1) + (dir === 'side' ? 2 : k * 5 - (v.holding.length - 1) * 2), by = cy0 - 2 - k * 3;
+      const bx = Math.round(cx0) + 1 - (bw >> 1) + (sideish ? 2 : k * 5 - (v.holding.length - 1) * 2), by = cy0 - 2 - k * 3;
       blit(ctx, bs, sx + (flip ? SW - bx - bw : bx) / RS, sy + by / RS, flip);
       b._top = sy; b._sx = sx;
     });
   }
-  if (v.leaving) { Q(dir === 'side' ? 3 : 1, 15, 6, 9, '#6a4a2a'); Q(dir === 'side' ? 3 : 1, 15, 6, 2, '#8a6a42'); Q(dir === 'side' ? 4 : 2, 19, 4, 1, '#4a2e1a'); }
+  if (v.leaving) { Q(sideish ? 3 : 1, 15, 6, 9, '#6a4a2a'); Q(sideish ? 3 : 1, 15, 6, 2, '#8a6a42'); Q(sideish ? 4 : 2, 19, 4, 1, '#4a2e1a'); }
   // a red scarf in winter
-  if (World.season === 'winter' && v.isGrown() && !v.inside && dir !== 'up' && v.stage !== 'baby') {
+  if (World.season === 'winter' && v.isGrown() && !v.inside && !upish && v.stage !== 'baby') {
     const sc = v.genes.vest === '#8b2e2e' ? '#2f6f8f' : '#a23b2a';
     if (dir === 'down') { Q(6, 15, 10, 2, sc); Q(12, 17, 2, 4, sc); Q(6, 15, 10, 1, shade(sc, 0.2)); }
     else { Q(9, 15, 6, 2, sc); Q(9, 17, 2, 4, sc); }
@@ -684,7 +685,7 @@ function collectLights() {
     const lan = lanternFor(v);
     if (lan) { const p = lanternLight(v, lan), rift = v.tech >= 0.5; L.push({ x: p.x, y: p.y, r: 32, a: 0.85 * (0.9 + 0.1 * flicker(v.id + 7)), warm: !rift, col: rift ? '#b070ff' : undefined, glow: rift ? 2 : 1, tint: rift ? 0.5 : 0 }); }
     if (v.inside || !v.task || v.task.phase !== 'do') continue;
-    if (v.task.a.prop === 'pipe') L.push({ x: v.x + (v.facing === 'left' ? -4 : 4), y: v.y - 13, r: 10, a: 0.55, col: '#ff8a3a' });
+    if (v.task.a.prop === 'pipe') L.push({ x: v.x + (facingLeft(v.facing) ? -4 : 4), y: v.y - 13, r: 10, a: 0.55, col: '#ff8a3a' });
   }
   if (Game.selected && !Game.selected.inside) L.push({ x: Game.selected.x, y: Game.selected.y - 8, r: 26, a: 0.5 });
   FX.lights(L);

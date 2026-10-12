@@ -9,6 +9,17 @@ const TILE = 16;
 const RS = 2;
 // villagers alone are drawn finer still: four canvas pixels to a world pixel
 const FOLK_RES = 4;
+// The eight ways a villager (or pet) can face, and the view each is drawn
+// with: front, back, side, three-quarter front and three-quarter back, the
+// left-hand ones mirrored from the right-hand sprites.
+const FACINGS = ['right', 'downright', 'down', 'downleft', 'left', 'upleft', 'up', 'upright'];
+const FACING_VIEW = { down: ['down', false], downright: ['qdown', false], right: ['side', false], upright: ['qup', false], up: ['up', false], upleft: ['qup', true], left: ['side', true], downleft: ['qdown', true] };
+function facingView(f) { return FACING_VIEW[f] || FACING_VIEW.down; }
+// -1 for the facings with any left in them, 1 for right, 0 straight up or down
+function facingX(f) { return f === 'left' || f === 'upleft' || f === 'downleft' ? -1 : f === 'right' || f === 'upright' || f === 'downright' ? 1 : 0; }
+function facingLeft(f) { return facingX(f) < 0; }
+// The facing nearest a direction of travel (screen y downwards), one of eight.
+function facingOf(dx, dy) { return FACINGS[((Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) % 8) + 8) % 8]; }
 // at this zoom a quarter-pixel is half a screen pixel and the finer detail
 // can't show, so the half-pixel copy of each villager sprite is drawn instead
 const FOLK_LO_ZOOMS = new Set([2]);

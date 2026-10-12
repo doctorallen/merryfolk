@@ -34,6 +34,12 @@ function petSprites(kind, coat) {
       down2: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.cecwcec.', '.cccpccc.', '..ccccc..', '.ccccccc.', '.ccccccc.', '..cc.cc..'],
       up1: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.ccccccc.', '.ccccccc.', '..ccdcc..', '.cccdccc.', '.cccdccc.', '.c.c.c.c.'],
       up2: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.ccccccc.', '.ccccccc.', '..ccdcc..', '.ccdcccc.', '.cccdccc.', '..cc.cc..'],
+      // coming towards you and to the right: the face turned, tail curling out behind on the left
+      qdown1: ['...d...d..', '...dc.cd..', 'd..cccccc.', '.d.cecwce.', '..dcccpcc.', '...ccccc..', '..ccccccc.', '..ccccccc.', '..c.c.cc..'],
+      qdown2: ['...d...d..', '...dc.cd..', 'd..cccccc.', '.d.cecwce.', '..dcccpcc.', '...ccccc..', '..ccccccc.', '..ccccccc.', '...cc.c.c.'],
+      // going away and to the right: the back of the head, one ear, tail up on the left
+      qup1: ['...d...d..', '...dc.cd..', 'd..cccccc.', '.d.cccccc.', '..dcccccc.', '...ccdcc..', '..cccdccc.', '..ccccccc.', '..c.c.cc..'],
+      qup2: ['...d...d..', '...dc.cd..', 'd..cccccc.', '.d.cccccc.', '..dcccccc.', '...ccdcc..', '..ccdcccc.', '..ccccccc.', '...cc.c.c.'],
     };
   } else {
     frames = {
@@ -45,6 +51,12 @@ function petSprites(kind, coat) {
       down2: ['..d.....d..', '.dcccccccd.', '.dcecccecd.', '..ccccccc..', '...ccecc...', '..ccccccc..', '.ccccccccc.', '.ccccccccc.', '..cc.c.cc..'],
       up1: ['..d.....d..', '.dcccccccd.', '.dcccccccd.', '..ccccccc..', '..ccccccc..', '..cccdccc..', '.ccccdcccc.', '.ccccccccc.', '.cc.ccc.cc.'],
       up2: ['..d.....d..', '.dcccccccd.', '.dcccccccd.', '..ccccccc..', '..ccccccc..', '..cccdccc..', '.cccdccccc.', '.ccccccccc.', '..cc.c.cc..'],
+      // coming towards you and to the right: the muzzle turned, the tail out behind on the left
+      qdown1: ['....dd.....d', '...dcccccccd', 'dd.dcecccece', '..ddcccccccp', '....ccccecc.', '....ccccccc.', '...ccccccccc', '...ccccccccc', '...cc.ccc.cc'],
+      qdown2: ['....dd.....d', '...dcccccccd', 'dd.dcecccece', '..ddcccccccp', '....ccccecc.', '....ccccccc.', '...ccccccccc', '...ccccccccc', '....cc.c.cc.'],
+      // going away and to the right: the back of the head, one ear, the tail up on the left
+      qup1: ['....dd.....d', '...dcccccccd', 'dd.dccccccc.', '..ddccccccc.', '....ccccccc.', '....cccdccc.', '...ccccdcccc', '...ccccccccc', '...cc.ccc.cc'],
+      qup2: ['....dd.....d', '...dcccccccd', 'dd.dccccccc.', '..ddccccccc.', '....ccccccc.', '....cccdccc.', '...cccdccccc', '...ccccccccc', '....cc.c.cc.'],
     };
   }
   const out = {};
@@ -132,13 +144,20 @@ function stepPet(p, tx, ty, speed, dt) {
 // once it has been heading the other way for a moment, so a dog dithering
 // about a spot doesn't flick left and right.
 function petFacing(p, ex, ey, dt) {
-  const ax = Math.abs(ex), ay = Math.abs(ey);
-  if (p.dir === 'down' || p.dir === 'up') { if (ax > ay * 1.6) p.dir = 'side'; }
-  else if (ay > ax * 1.6) p.dir = ey > 0 ? 'down' : 'up';
-  if ((p.dir === 'down' && ey < 0 && ay > ax) || (p.dir === 'up' && ey > 0 && ay > ax)) p.dir = ey > 0 ? 'down' : 'up';
-  const want = ex > 3 ? 1 : ex < -3 ? -1 : 0;
-  if (want && want !== p.face) { p.faceT = (p.faceT || 0) + dt; if (p.faceT >= 1) { p.face = want; p.faceT = 0; } }
-  else p.faceT = 0;
+  if (Math.abs(ex) < 1 && Math.abs(ey) < 1) return;
+  // one of eight facings from the way it's going (the diagonals drawn
+  // three-quarter on); it only changes once the pet has been heading well
+  // into the new sector for a moment
+  const want = facingOf(ex, ey), cur = p.facing || (p.dir === 'down' || p.dir === 'up' ? p.dir : p.face < 0 ? 'left' : 'right');
+  if (want !== cur) {
+    const ci = FACINGS.indexOf(cur), ang = Math.atan2(ey, ex);
+    let off = ci < 0 ? 9 : Math.abs(ang - ci * Math.PI / 4); if (off > Math.PI) off = Math.PI * 2 - off;
+    if (off >= Math.PI / 6) { p.faceT = (p.faceT || 0) + dt; if (p.faceT >= 0.6) { p.facing = want; p.faceT = 0; } }
+    else p.faceT = 0;
+  } else { p.faceT = 0; p.facing = cur; }
+  const [view, left] = facingView(p.facing || cur);
+  p.dir = view;
+  p.face = left ? -1 : view === 'down' || view === 'up' ? p.face : 1;
 }
 function updatePets(dtMin, hour) {
   for (const p of petsList()) {
@@ -171,14 +190,14 @@ function updatePets(dtMin, hour) {
     const owner = p.kind === 'dog' && p.owner != null ? Game.villagers.find((v) => v.id === p.owner) : null;
     if (owner && !owner.inside && !owner.leaving && dist(owner.x, owner.y, home.stepX, home.stepY) < 900) {
       const d = dist(p.x, p.y, owner.x, owner.y);
-      if (d > 360) { p.x = owner.x - 14 * (owner.facing === 'left' ? -1 : 1); p.y = owner.y + 2; }
+      if (d > 360) { p.x = owner.x - 14 * (facingLeft(owner.facing) ? -1 : 1); p.y = owner.y + 2; }
       // sets off once its person has got a fair way ahead, and keeps trotting
       // until it's right at heel, rather than stopping and starting at the edge
       if (d > 28) p.heeling = true;
       else if (d < 14) p.heeling = false;
       if (p.heeling) {
         // at heel (the side it was on, unless its person turns round), or the other side if that's walled off
-        if (owner.facing === 'left' || owner.facing === 'right') p.heelSide = owner.facing === 'left' ? -1 : 1;
+        if (facingX(owner.facing)) p.heelSide = facingX(owner.facing);
         const side = p.heelSide || 1, hx = petWalkable(owner.x - 12 * side, owner.y + 3) ? owner.x - 12 * side : petWalkable(owner.x + 12 * side, owner.y + 3) ? owner.x + 12 * side : owner.x;
         p.state = 'walk';
         // slowing as it comes up, so it never overshoots and has to turn back
@@ -188,7 +207,7 @@ function updatePets(dtMin, hour) {
       else {
         p.state = owner.task && owner.task.phase === 'do' && owner.pose === 'sit' ? 'sleep' : 'sit';
         // sat at heel it looks the way its person does
-        if (owner.facing === 'left' || owner.facing === 'right') { p.face = owner.facing === 'left' ? -1 : 1; p.dir = 'side'; }
+        if (facingX(owner.facing)) { p.face = facingX(owner.facing); p.dir = 'side'; p.facing = p.face < 0 ? 'left' : 'right'; }
         if (Math.random() < dtMin * 0.004) p.say = { text: R.pick(['Woof!', 'Wuff.', '*pant pant*']), t: 2 };
       }
       continue;
@@ -207,7 +226,7 @@ function updatePets(dtMin, hour) {
 }
 function petFrame(p) {
   const S = petSprites(p.kind, p.coat);
-  if (p.state === 'walk') { const k = Math.floor((p.walk || 0) / 5) % 2 ? 2 : 1; return S[(p.dir === 'down' || p.dir === 'up' ? p.dir : 'walk') + k]; }
+  if (p.state === 'walk') { const k = Math.floor((p.walk || 0) / 5) % 2 ? 2 : 1; return S[(p.dir === 'down' || p.dir === 'up' || p.dir === 'qdown' || p.dir === 'qup' ? p.dir : 'walk') + k]; }
   return p.state === 'sleep' ? S.sleep : S.sit;
 }
 

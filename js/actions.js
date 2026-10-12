@@ -887,7 +887,7 @@ const ACTIONS = {
       s.claimed = v.id;
       return { x: s.x, y: s.y, facing: s.facing, wood: s };
     },
-    tick: (v, task, dt) => { if (Math.random() < dt * 0.15) FX.chips(v.x + (v.facing === 'left' ? -8 : 8), v.y - 6); },
+    tick: (v, task, dt) => { if (Math.random() < dt * 0.15) FX.chips(v.x + (facingLeft(v.facing) ? -8 : 8), v.y - 6); },
     done: (v, task) => {
       const s = task.target.wood;
       s.stock--;

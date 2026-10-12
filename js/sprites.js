@@ -238,15 +238,14 @@ function folkArms(rect, top, bot, lx, rx, pose, lk, rk) {
 
 // The torso from the front: an open waistcoat over a shirt, or a closed
 // synth-weave jacket with a neon collar and zip for the thoroughly rift-minded.
-function frontTorso(B, rect, put, top, bot, x0, x1, pose) {
-  const mid = 9;
+function frontTorso(B, rect, put, top, bot, x0, x1, pose, mid = 9, armL = x0 - 2, armR = x1 + 1) {
   rect(x0 + 1, top, x1 - 1, bot, 'c'); rect(mid, top + 1, mid + 1, bot, 'C');
   rect(x0, top, mid - 1, bot, 'v'); rect(mid + 2, top, x1, bot, 'v'); rect(x1, top, x1, bot, 'V');
   put(mid - 1, top, 'u'); put(mid - 1, top + 1, 'u'); put(mid + 2, top, 'u'); put(mid + 2, top + 1, 'u');
   for (let k = 3; k < bot - top; k += 2) put(mid - 2, top + k, 'b');
   if (!B.child && !B.female) { put(mid + 3, top + 3, 'p'); put(mid + 4, top + 3, 'p'); put(mid + 3, top + 2, 'y'); put(mid + 2, top + 3, 'y'); }
   // sleeves and hands
-  const handR = folkArms(rect, top, bot, x0 - 2, x1 + 1, pose, 'c', 'C');
+  const handR = folkArms(rect, top, bot, armL, armR, pose, 'c', 'C');
   rect(x0, bot, x1, bot, 'l'); put(mid, bot, 'o'); put(mid + 1, bot, 'o');
   if (B.tier >= 1) rect(x0, bot, x1, bot, 'n');
   if (B.tier >= 2) {
@@ -391,6 +390,146 @@ function folkSide(B, pose) {
   return { g, anchors: { mouth: [16, 11], handR: hand, handL: hand, chest: [11, top + 3] } };
 }
 
+// ----- three-quarter front, facing down and to the right (flipped for down-left) -----
+// The head turned a little to the right: the left cheek is the broad one, the
+// left ear shows, the right eye is narrowed in beside the nose, which sits on
+// the turn, and the parting of the hair follows. The body is a shade narrower,
+// the waistcoat's opening sits to the right, and the right arm is in front.
+function folkQFront(B, pose) {
+  const sit = pose === 'sit', gsit = pose === 'sitg';
+  const H = sit ? B.bot + 6 : gsit ? B.bot + 5 : B.H;
+  const { g, put, rect, get } = folkGrid(H);
+  const hx = 10.2, hy = 7.6, rx = 6.3, ry = 6.6;
+  const inHead = (x, y) => ((x - hx) / rx) ** 2 + ((y - hy) / ry) ** 2 < 1;
+  for (let y = 0; y < 15; y++) for (let x = 0; x < FOLK_W; x++) if (inHead(x, y)) put(x, y, x >= 15 ? 'S' : 's');
+  for (const [x, y] of [[3, 8], [3, 7], [2, 6]]) put(x, y, 's');
+  // hair: the fringe, and more of it on the left and over the crown
+  for (let y = 0; y < 15; y++) for (let x = 0; x < FOLK_W; x++) {
+    if (!inHead(x, y)) continue;
+    const fringe = y <= 4 || (y === 5 && ![7, 8, 12, 13].includes(x));
+    const side = (x <= 5 && y <= 9) || (x >= 16 && y <= 6);
+    if (fringe || side) put(x, y, x >= 15 ? 'H' : 'h');
+  }
+  for (const [x, y] of [[7, 1], [8, 1], [9, 1], [6, 2], [7, 2], [8, 3]]) put(x, y, 'j');
+  if (B.style === 1) {
+    for (let y = 5; y <= (B.child ? 13 : 16); y++) { put(3, y, 'h'); put(4, y, 'h'); }
+    for (let y = 5; y <= (B.child ? 11 : 13); y++) put(17, y, 'H');
+    put(2, 9, 'h');
+  }
+  if (B.style === 2) {
+    for (const [x, y] of [[6, 0], [10, 0], [14, 0], [4, 2], [16, 2]]) put(x, y, x >= 15 ? 'H' : 'h');
+    for (const [x, y] of [[9, 5], [11, 5]]) put(x, y, 'h');
+  }
+  if (B.style === 3) {
+    for (let y = 0; y <= 5; y++) for (let x = 0; x < FOLK_W; x++) if ((get(x, y) === 'h' || get(x, y) === 'H') && (x + y * 2) % 4 === 0) put(x, y, get(x, y) === 'h' ? 'j' : 'h');
+    for (let x = 5; x <= 15; x += 2) if (get(x, 1) !== '.' && get(x, 0) === '.') put(x, 0, x >= 15 ? 'H' : 'h');
+    for (const [x, y] of [[3, 4], [17, 4], [3, 6]]) put(x, y, x > 10 ? 'H' : 'h');
+  }
+  if (B.spiky) {
+    for (let x = 0; x < FOLK_W; x++) if ('hHj'.includes(get(x, 0))) put(x, 0, '.');
+    for (const x of [5, 8, 11, 14, 16]) { put(x, 0, 'h'); put(x, 1, 'h'); }
+  }
+  // face: the broad left eye, the narrowed right one, the nose on the turn
+  rect(6, 6, 8, 6, 'd'); rect(12, 6, 13, 6, 'd');
+  if (B.shut) {
+    put(6, 8, 'd'); put(7, 9, 'd'); put(8, 9, 'd'); put(12, 9, 'd'); put(13, 8, 'd');
+  } else {
+    rect(7, 7, 8, 9, 'e'); put(8, 7, 'w'); rect(12, 7, 12, 9, 'e'); put(12, 7, 'w');
+    if (B.female) { put(6, 7, 'e'); put(13, 7, 'e'); }
+  }
+  put(5, 10, 'r'); put(6, 10, 'r'); put(14, 10, 'r');
+  if (B.ex.freckles) for (const [x, y] of [[5, 9], [7, 10], [13, 10]]) put(x, y, 'k');
+  put(14, 9, 'N'); put(14, 10, 'N'); put(15, 10, 'N');
+  rect(9, 11, 12, 11, 'm'); put(8, 10, 'm'); put(13, 10, 'm');
+  rect(9, 14, 12, 14, 'S');
+  if (B.female) { rect(14, 1, 16, 2, 'R'); put(17, 2, 'R'); }
+  else if (!B.child) rect(4, 9, 4, 11, 'H');
+  if (B.elder && !B.female) { rect(8, 12, 13, 13, 'h'); rect(9, 11, 12, 11, 'm'); }
+  if (B.specs) {
+    rect(5, 6, 8, 6, 'G'); rect(5, 10, 8, 10, 'G'); rect(5, 6, 5, 10, 'G'); rect(8, 6, 8, 10, 'G');
+    rect(11, 6, 13, 6, 'G'); rect(11, 10, 13, 10, 'G'); rect(11, 6, 11, 10, 'G'); rect(13, 6, 13, 10, 'G');
+    rect(9, 8, 10, 8, 'G');
+  }
+  if (B.ex.chrome && !B.shut) { rect(12, 7, 12, 9, 'g'); put(12, 7, 'w'); }
+  if (B.visor) { rect(4, 7, 16, 9, 'z'); rect(6, 7, 9, 7, 'Z'); put(17, 8, 'n'); }
+  // body, a shade narrower, the right arm in front of it
+  const top = B.top, bot = B.bot;
+  const handR = frontTorso(B, rect, put, top, bot, 6, 14, pose, 10, 4, 13);
+  const lt = bot + 1;
+  if (sit) {
+    rect(5, lt, 15, lt + 1, 't'); rect(13, lt, 15, lt + 1, 'T');
+    if (B.skirt) { rect(4, lt, 16, lt + 1, 'v'); rect(14, lt, 16, lt + 1, 'V'); rect(4, lt + 2, 16, lt + 2, 'u'); }
+    for (const fx of [5, 11]) { put(fx + 1, lt + 2 + (B.skirt ? 1 : 0), 's'); rect(fx, lt + 3, fx + 4, lt + 3, 'F'); rect(fx, lt + 4, fx + 4, lt + 4, 'f'); }
+  } else if (gsit) {
+    rect(4, lt, 16, lt, 't'); rect(3, lt + 1, 17, lt + 2, 't'); rect(14, lt, 16, lt, 'T'); rect(14, lt + 1, 17, lt + 2, 'T');
+    if (B.skirt) { rect(3, lt, 17, lt + 1, 'v'); rect(14, lt, 17, lt + 1, 'V'); rect(2, lt + 2, 18, lt + 2, 'u'); }
+    for (const fx of [5, 11]) { rect(fx, lt + 2, fx + 4, lt + 2, 'F'); rect(fx, lt + 3, fx + 4, lt + 3, 'f'); put(fx + (fx > 9 ? 4 : 0), lt + 2, 'f'); }
+  } else {
+    const lb = H - 4, ank = H - 3;
+    rect(6, lt, 14, lb, 't'); rect(12, lt, 14, lb, 'T');
+    rect(10, lt + 2, 10, lb, '.');
+    // the near (right) leg leads
+    const feet = { stand: [[5, 0, 4], [11, 0, 5]], walk1: [[5, 0, 4], [12, -1, 5]], walk2: [[4, -1, 4], [11, 0, 5]] }[pose] || [[5, 0, 4], [11, 0, 5]];
+    for (const [fx, dy, fw] of feet) {
+      put(fx + 2, ank + dy, 's'); put(fx + 3, ank + dy, 'S');
+      rect(fx, ank + 1 + dy, fx + fw, ank + 1 + dy, 'F'); rect(fx, ank + 2 + dy, fx + fw, ank + 2 + dy, 'f');
+      put(fx, ank + 1 + dy, 'f'); put(fx + fw, ank + 2 + dy, 'F');
+    }
+    if (B.skirt) {
+      for (let y = lt; y <= lb; y++) { const fl = Math.round((y - lt) * 0.9); rect(6 - fl, y, 14 + fl, y, 'v'); rect(13 + fl, y, 14 + fl, y, 'V'); }
+      const fl = Math.round((lb - lt) * 0.9); rect(6 - fl, lb, 14 + fl, lb, 'u');
+    }
+  }
+  return { g, anchors: { mouth: [12, 11], handR, handL: [4.5, bot], chest: [10, top + 3] } };
+}
+
+// ----- three-quarter back, facing up and to the right (flipped for up-left) -----
+// The back of the head turned a little: a sliver of the right cheek and the
+// right ear show past the hair, the hair's weight sits to the left, and the
+// right arm swings at the edge of the body.
+function folkQBack(B, pose) {
+  const sit = pose === 'sit', gsit = pose === 'sitg';
+  const H = sit ? B.bot + 6 : gsit ? B.bot + 3 : B.H;
+  const { g, put, rect, get } = folkGrid(H);
+  const hx = 9.8, hy = 7.6, rx = 6.3, ry = 6.6;
+  const inHead = (x, y) => ((x - hx) / rx) ** 2 + ((y - hy) / ry) ** 2 < 1;
+  for (let y = 0; y < 15; y++) for (let x = 0; x < FOLK_W; x++) if (inHead(x, y)) put(x, y, y >= 12 ? 'S' : x >= 15 && y >= 6 ? 'S' : x >= 12 ? 'H' : 'h');
+  for (const [x, y] of [[16, 8], [16, 7], [17, 6]]) put(x, y, 'S');
+  put(15, 9, 'r');
+  for (const [x, y] of [[6, 1], [7, 1], [5, 2], [8, 3], [4, 5], [10, 7]]) put(x, y, 'j');
+  for (let x = 5; x <= 12; x += 2) put(x, 11, 'H');
+  if (B.style === 1) { for (let y = 10; y <= (B.child ? 15 : 18); y++) rect(3, y, 13, y, y % 3 ? 'h' : 'H'); rect(11, 10, 13, B.child ? 15 : 18, 'H'); }
+  if (B.style === 2) for (const [x, y] of [[5, 0], [9, 0], [13, 0], [3, 2]]) put(x, y, 'h');
+  if (B.style === 3) for (let y = 0; y <= 11; y++) for (let x = 0; x < FOLK_W; x++) if ((get(x, y) === 'h' || get(x, y) === 'H') && (x + y * 2) % 4 === 0) put(x, y, get(x, y) === 'h' ? 'j' : 'h');
+  if (B.spiky) { for (let x = 0; x < FOLK_W; x++) if ('hHj'.includes(get(x, 0))) put(x, 0, '.'); for (const x of [4, 7, 10, 13, 15]) { put(x, 0, 'h'); put(x, 1, 'h'); } }
+  if (B.female) { rect(6, 2, 9, 3, 'R'); put(5, 2, 'R'); put(10, 2, 'R'); }
+  if (B.visor) { rect(2, 8, 14, 8, 'Z'); rect(15, 8, 17, 8, 'z'); }
+  if (B.specs) { rect(16, 7, 17, 7, 'G'); put(17, 8, 'G'); }
+  rect(8, 13, 11, 14, 'S');
+  const top = B.top, bot = B.bot;
+  rect(5, top, 13, bot, 'v'); rect(8, top + 1, 9, bot - 1, 'V'); rect(12, top, 13, bot, 'V');
+  const handB = folkArms(rect, top, bot, 14, 3, pose, 'C', 'c');
+  rect(5, bot, 13, bot, B.tier >= 1 ? 'n' : 'l');
+  if (B.tier >= 2) { for (let y = top; y < bot; y++) put(8 + (y % 2), y, 'n'); rect(6, top, 11, top, 'n'); }
+  if (B.style === 1 && !B.child) rect(4, top, 12, top + 2, 'h');
+  const lt = bot + 1;
+  if (sit) {
+    rect(4, lt, 14, lt + 1, 't'); rect(12, lt, 14, lt + 1, 'T');
+    if (B.skirt) rect(3, lt, 15, lt + 2, 'v');
+    rect(5, lt + 2, 7, lt + 3, 'S'); rect(11, lt + 2, 13, lt + 3, 'S');
+  } else if (gsit) {
+    rect(2, lt, 16, lt + 1, 't'); rect(5, lt, 13, lt, 'T'); rect(14, lt, 16, lt + 1, 'T');
+    if (B.skirt) { rect(1, lt, 17, lt + 1, 'v'); rect(14, lt, 17, lt + 1, 'V'); }
+  } else {
+    const lb = H - 4, ank = H - 3;
+    rect(5, lt, 13, lb, 't'); rect(11, lt, 13, lb, 'T'); rect(9, lt + 2, 9, lb, '.');
+    const feet = { stand: [[5, 0], [10, 0]], walk1: [[5, 0], [11, -1]], walk2: [[4, -1], [10, 0]] }[pose] || [[5, 0], [10, 0]];
+    for (const [fx, dy] of feet) { rect(fx + 1, ank + dy, fx + 2, ank + dy, 'S'); rect(fx, ank + 1 + dy, fx + 3, ank + 2 + dy, 'f'); rect(fx, ank + 1 + dy, fx + 3, ank + 1 + dy, 'F'); }
+    if (B.skirt) { for (let y = lt; y <= lb; y++) { const fl = Math.round((y - lt) * 0.9); rect(5 - fl, y, 13 + fl, y, 'v'); rect(12 + fl, y, 13 + fl, y, 'V'); } const fl = Math.round((lb - lt) * 0.9); rect(5 - fl, lb, 13 + fl, lb, 'u'); }
+  }
+  return { g, anchors: { mouth: [12, 11], handR: handB, handL: [15, bot], chest: [9, top + 3] } };
+}
+
 // ----- a swaddled baby: a round face peeking out of a blanket -----
 function folkBaby(B, view) {
   const H = 18, W = 16;
@@ -520,6 +659,20 @@ function refineFolk(F, grid, o) {
     for (const [x, y] of [[14, 20], [15, 20], [24, 20], [25, 20]]) under(x, y, 'm');
     for (const [x, y] of [[15, 21], [24, 21]]) if (get(x, y) === 's') put(x, y, 'm');
   }
+  if (view === 'qdown' && !B.baby) {
+    if (eyes) {
+      // the broad left eye gets its pupil and glint; the narrowed right one a pupil only
+      for (let y = 14; y <= 19; y++) for (let x = 14; x <= 17; x++) if (get(x, y) === 'w') put(x, y, 'e');
+      put(15, 16, 'E'); put(16, 16, 'E'); put(15, 17, 'E'); put(16, 17, 'E'); put(15, 18, 'E'); put(16, 18, 'E'); put(17, 14, 'w'); put(17, 15, 'w'); put(16, 14, 'w');
+      for (let y = 14; y <= 19; y++) for (let x = 24; x <= 25; x++) if (get(x, y) === 'w') put(x, y, 'e');
+      put(24, 16, 'E'); put(25, 16, 'E'); put(24, 17, 'E'); put(25, 17, 'E'); put(25, 14, 'w');
+    }
+    for (let x = 12; x <= 17; x++) { under(x, 13, 'd'); if (x !== 17) put(x, 12, 'd'); }
+    for (let x = 24; x <= 27; x++) under(x, 13, 'd');
+    for (let y = 18; y <= 21; y++) if (get(29, y) === 'N') put(29, y, 'S');
+    for (let x = 16; x <= 27; x++) under(x, 23, 'm');
+    for (const [x, y] of [[16, 20], [17, 20], [26, 20], [27, 20]]) under(x, y, 'm');
+  }
   if (view === 'side' && !B.baby) {
     if (eyes) {
       for (let y = 14; y <= 19; y++) for (let x = 28; x <= 31; x++) if (get(x, y) === 'w') put(x, y, 'e');
@@ -565,26 +718,36 @@ function folkCanvas(grid, pal, o = {}) {
   return c;
 }
 
+const FOLK_POSES = ['stand', 'walk1', 'walk2', 'sit', 'sitg', 'work', 'reach'];
 function buildVillagerSprites(genes, stage, look = {}, shut = false) {
   const pal = villagerPalette(genes, stage, look);
   const B = folkBody(genes, stage, look);
   B.shut = shut;
   const out = { down: {}, up: {}, side: {} };
   const make = (r, view) => { const c = folkCanvas(r.g, pal, { B, view }); c.anchors = r.anchors; c.lo.anchors = r.anchors; return c; };
+  // the three-quarter views are made the first time they're looked at
+  const lazy = (view, builder) => Object.defineProperty(out, view, { configurable: true, enumerable: true, get() {
+    const set = {};
+    for (const pose of FOLK_POSES) set[pose] = make(builder(B, pose), view);
+    Object.defineProperty(out, view, { value: set, writable: true, configurable: true, enumerable: true });
+    return set;
+  } });
   if (stage === 'baby') {
     const ex = expressed(genes);
     pal.c = mix(ex.vest, '#fff8e8', 0.65); pal.C = mix(ex.vest, '#fff8e8', 0.3);
     B.baby = true;
     const f = make(folkBaby(B, 'down'), 'down'), b = make(folkBaby(B, 'up'), 'up');
-    for (const pose of ['stand', 'walk1', 'walk2', 'sit', 'sitg', 'work', 'reach']) { out.down[pose] = f; out.up[pose] = b; out.side[pose] = f; }
+    for (const pose of FOLK_POSES) { out.down[pose] = f; out.up[pose] = b; out.side[pose] = f; }
+    out.qdown = out.down; out.qup = out.up;
     out.held = folkCanvas(folkBundle(), pal, { B, view: 'held' });
     return out;
   }
-  for (const pose of ['stand', 'walk1', 'walk2', 'sit', 'sitg', 'work', 'reach']) {
+  for (const pose of FOLK_POSES) {
     out.down[pose] = make(folkFront(B, pose), 'down');
     out.up[pose] = make(folkBack(B, pose), 'up');
     out.side[pose] = make(folkSide(B, pose), 'side');
   }
+  lazy('qdown', folkQFront); lazy('qup', folkQBack);
   return out;
 }
 
