@@ -499,7 +499,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 
 ## Deployment
 
-Every commit is stamped with a sequential version (v1, v2, …) by `.githooks/pre-commit`, which writes `js/version.js`; the game shows it in the bottom-right corner. After cloning, run `git config core.hooksPath .githooks` once to turn the hook on.
+Every commit is stamped with a version made of the day of the year and the number of builds that day (v285.1, v285.2, … then v286.1) by `.githooks/pre-commit`, which writes `js/version.js`; the game shows it in the bottom-right corner. After cloning, run `git config core.hooksPath .githooks` once to turn the hook on.
 
 `npm test` runs the checks CI runs before deploying (`test/`): a syntax and type check, the world-generation golden hashes, a two-day smoke run on desktop and phone with a save round-trip, and the valley layout's reachability. It needs Node and the installed Chrome (`CHROME` points at the binary if it isn't in the usual place).
 

@@ -1,13 +1,15 @@
 #!/bin/sh
-# Stamps js/version.js with the next sequential build number (the number of
-# commits including this one) and today's date, so every commit carries its
-# own version and the game shows it in the corner.
-n=$(( $(git rev-list --count HEAD 2>/dev/null || echo 0) + 1 ))
-d=$(date -u +%Y-%m-%d)
+# Stamps js/version.js with the build number, the day of the year and how
+# many builds have been made that day (this one included), as in v285.3, and
+# today's date, so every commit carries its own version and the game shows it
+# in the corner. Days are the local calendar's.
+d=$(date +%Y-%m-%d)
+doy=$((10#$(date +%j)))
+n=$(( $(git log --date=format-local:%Y-%m-%d --format=%cd 2>/dev/null | grep -c "^$d\$") + 1 ))
 cat > js/version.js <<EOV
 'use strict';
 // The build stamp shown in the corner. Written by .githooks/pre-commit on
-// every commit: v<number of commits> and the date.
-const BUILD_INFO = 'v$n · $d';
+// every commit: v<day of the year>.<build that day> and the date.
+const BUILD_INFO = 'v$doy.$n · $d';
 EOV
 git add js/version.js
