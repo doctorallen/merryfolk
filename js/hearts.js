@@ -206,7 +206,7 @@ function moodSwingsHourly() {
     if (!v.isGrown() || v.leaving) continue;
     const m = v.mood();
     v.highT = m > 0.84 ? (v.highT || 0) + 1 : 0;
-    v.lowT = m < 0.28 ? (v.lowT || 0) + 1 : 0;
+    v.lowT = m < TUNE.breaks.lowMood ? (v.lowT || 0) + 1 : 0;
     // an inspired spell pays off
     if (v.inspired && Game.time > v.inspired) {
       v.inspired = null;
@@ -225,9 +225,9 @@ function moodSwingsHourly() {
       // and, once in a lifetime, a fey mood: a masterpiece
       if (k === 'creative') maybeMasterpiece(v);
     }
-    if (v.lowT >= 10 && R.chance(0.04)) {
+    if (v.lowT >= TUNE.breaks.lowHours && R.chance(TUNE.breaks.chance)) {
       const k = R.pick(Object.keys(SULKS));
-      v.sulk = { k, until: Game.time + 600 };
+      v.sulk = { k, until: Game.time + TUNE.breaks.minutes };
       if (R.chance(0.6)) chronicle(`${SULKS[k].text(v)} A visit from a friend might help.`, 'sick');
     }
   }

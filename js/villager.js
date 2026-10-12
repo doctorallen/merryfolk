@@ -36,7 +36,8 @@ class Villager {
     this.spouse = o.spouse ?? null;
     this.sweetheart = o.sweetheart ?? null;
     this.x = o.x ?? 0; this.y = o.y ?? 0;
-    this.drives = Object.assign(Object.fromEntries(DRIVES.map((d) => [d, R.f(0.05, 0.35)])), o.drives || {});
+    // the needs that minds.js adds start at nothing (so an older village's folk aren't seeded with them)
+    this.drives = Object.assign(Object.fromEntries(DRIVES.map((d) => [d, typeof NEW_DRIVES !== 'undefined' && NEW_DRIVES.includes(d) ? 0 : R.f(0.05, 0.35)])), o.drives || {});
     this.drives.ache = o.drives ? (o.drives.ache || 0) : 0;
     this.drives.cold = o.drives ? (o.drives.cold || 0) : 0;
     this.chem = Object.assign({ ale: 0, germs: 0, toxin: 0, immune: 0, hangover: 0 }, o.chem || {});
@@ -56,6 +57,7 @@ class Villager {
     this.memories = o.memories ?? [];
     this.moodlets = o.moodlets ?? [];
     this.wishes = o.wishes ?? []; this.dream = o.dream ?? null; this.dreamsDone = o.dreamsDone ?? []; this.heirlooms = o.heirlooms ?? []; this.owesThanks = o.owesThanks ?? []; this.arc = o.arc ?? null; this.sent = o.sent ?? {}; this.likes = o.likes ?? null; this.dislikes = o.dislikes ?? null; this.rival = o.rival ?? null; this.rivalSkill = o.rivalSkill ?? null; this.rivalScore = o.rivalScore ?? 0; this.masterpiece = o.masterpiece ?? null; this.sulk = o.sulk ?? null; this.illness = o.illness ?? null; this.glum = o.glum ?? 0;
+    this.values = o.values ?? null; this.tol = o.tol ?? {}; this.breakDay = o.breakDay ?? -1; this.tantrum = o.tantrum ?? null;
     this.job = o.job ?? null;
     this.playerJob = o.playerJob ?? false;
     this.wary = o.wary ?? 0;
@@ -104,9 +106,11 @@ class Villager {
     return best;
   }
   mood() {
-    let s = 0;
-    for (const d of DRIVES) { const w = d === 'industry' ? 0.5 : 1; s += this.drives[d] * this.drives[d] * w; }
-    return clamp(1 - Math.sqrt(s / (DRIVES.length - 0.5)) * 1.45, 0, 1);
+    // the needs added up, each with its weight (TUNE.mood.weights), and scaled by TUNE.mood.scale
+    const W = (typeof TUNE !== 'undefined' && TUNE.mood.weights) || { industry: 0.5 };
+    let s = 0, n = 0;
+    for (const d of DRIVES) { const w = W[d] ?? 1; s += (this.drives[d] || 0) * (this.drives[d] || 0) * w; n += w; }
+    return clamp(1 - Math.sqrt(s / n) * ((typeof TUNE !== 'undefined' && TUNE.mood.scale) || 1.45), 0, 1);
   }
   moodWord() {
     const m = this.mood();
@@ -222,7 +226,8 @@ class Villager {
     if (a.job && this.stage === 'elder' && a.job !== 'storyteller') mul('elderly', 0.5);
     if (this.isSick() && a.id !== 'sleep' && a.id !== 'remedy_item') mul('poorly', 0.4);
     if (this.stage === 'elder' && (a.id === 'party' || a.id === 'play')) mul('elderly', 0.7);
-    if (this.lastAction === a.id && a.id !== 'sleep' && !a.job) mul('did it last', 0.75);
+    // (pastimes have their own, finer sense of 'had enough' in minds.js)
+    if (this.lastAction === a.id && a.id !== 'sleep' && !a.job && !(typeof LEISURE_KIND !== 'undefined' && LEISURE_KIND[a.id])) mul('did it last', 0.75);
     // with a baby to mind, home is the easier place to be
     if (this._arms && !HOME_ACTS.has(a.id)) mul('baby in arms', 0.6);
     if (this._flagging) mul('little ones flagging', HOME_ACTS.has(a.id) ? 1.8 : 0.6);
@@ -434,7 +439,7 @@ class Villager {
     d.bored += rate * 0.06 * (0.5 + g.curiosity) * mul;
     if (grown) d.craving += rate * 0.04 * g.pipeLove * mul;
     if (grown && this.job && h > 6.5 && h < 19) d.industry += rate * 0.12 * (1.25 - g.laziness) * (this.stage === 'elder' ? 0.6 : 1);
-    else if (grown && !this.job && h > 7 && h < 18) d.industry += rate * 0.02 * (1.1 - g.laziness);
+    else if (grown && !this.job && h > 7 && h < 18) d.industry += rate * (typeof TUNE !== 'undefined' ? (this.stage === 'elder' ? TUNE.purpose.elderRate : TUNE.purpose.joblessRate) : 0.02) * (1.1 - g.laziness);
     // warmth: drifts towards how chilly it is where they are
     let chill;
     if (this.inside) chill = this.inside.kind === 'home' && this.inside.chilly ? 0.35 : 0;
@@ -740,6 +745,7 @@ class Villager {
       carvePart: this.carvePart, knitPart: this.knitPart, paintPart: this.paintPart, inspired: this.inspired, apprenticedTo: this.apprenticedTo,
       heard: (this.heard || []).filter((n) => n.until > Game.time), raves: this.raves, curious: this.curious, master: this.master, trained: this.trained, tipDay: this.tipDay,
       moodlets: (this.moodlets || []).filter((m) => m.until > Game.time), wishes: this.wishes, dream: this.dream, dreamsDone: this.dreamsDone, heirlooms: this.heirlooms, owesThanks: this.owesThanks, arc: this.arc, sent: this.sent, likes: this.likes, dislikes: this.dislikes, rival: this.rival, rivalSkill: this.rivalSkill, rivalScore: this.rivalScore, masterpiece: this.masterpiece, sulk: this.sulk, illness: this.illness, glum: this.glum,
+      values: this.values, tol: this.tol, breakDay: this.breakDay, tantrum: this.tantrum,
     };
   }
 }

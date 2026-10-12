@@ -725,7 +725,8 @@ function roundTick() {
       const left = folk.filter((v) => v.id !== r.opener && !r.said.has(v.id));
       if (!left.length) { r.step = 2; r.next = Game.time; continue; }
       who = left[0]; r.said.add(who.id);
-      text = fillTalk(pickUnused(replyPool(TABLE_REPLY[r.topic], who, r.temper[who.id]) || (TABLE_REPLY[r.topic] || {}).cheerful || [], r.used) || 'Mm.', who, personById(r.opener) || folk[0], ctx);
+      const RT = TABLE_REPLY[r.topic] || TABLE_REPLY.day;
+      text = fillTalk(pickUnused(replyPool(RT, who, r.temper[who.id]) || RT.cheerful || RT.any, r.used) || 'Mm.', who, personById(r.opener) || folk[0], ctx);
       if (left.length > 1) r.step = 0.5; // stay on the replies
     } else if (r.step === 2) {
       who = personById(r.opener) || folk[0];
