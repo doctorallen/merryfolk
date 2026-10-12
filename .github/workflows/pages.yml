@@ -39,9 +39,26 @@ jobs:
         with:
           path: _site
 
+  # The headless tests: static checks, the world-generation golden hashes,
+  # a two-day smoke run with a save round trip, and the valley planner.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+      - run: npm ci
+      - run: npm test
+        env:
+          CHROME: ${{ steps.chrome.outputs.chrome-path }}
+
   deploy:
     if: github.event_name != 'pull_request'
-    needs: check
+    needs: [check, test]
     runs-on: ubuntu-latest
     environment:
       name: github-pages
