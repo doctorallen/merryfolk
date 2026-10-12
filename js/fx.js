@@ -333,7 +333,7 @@ const Light = {
     if (s) return s;
     if (this.stamps.size > 600) this.stamps.clear();
     const ry = Math.max(1, Math.round((r * rings * 0.62) / div)), rx = Math.round((r * rings) / div);
-    const [c, x] = makeCanvas(rx * 2 + 1, ry * 2 + 1);
+    const [c, x] = makeCanvas(rx * 2 + 1, ry * 2 + 1, true);
     x.globalCompositeOperation = op;
     for (let k = rings; k >= 1; k--) ellipseFill(x, rx, ry, Math.round((r * k) / div), Math.max(1, Math.round((r * k * 0.62) / div)), col);
     s = { c, rx, ry };
@@ -343,7 +343,7 @@ const Light = {
   render(ctx, cam, darkness, tint, lights) {
     if (darkness <= 0.01) return;
     if (!this.c || this.c.width !== cam.w || this.c.height !== cam.h) {
-      [this.c, this.x] = makeCanvas(cam.w, cam.h);
+      [this.c, this.x] = makeCanvas(cam.w, cam.h, true);
     }
     const x = this.x;
     x.globalCompositeOperation = 'source-over';

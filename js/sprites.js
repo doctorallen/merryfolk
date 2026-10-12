@@ -34,7 +34,7 @@ function scale2x(src) {
   const [c, x] = makeCanvas(src.width * 2, src.height * 2);
   x.imageSmoothingEnabled = false;
   x.drawImage(src, 0, 0, src.width * 2, src.height * 2);
-  return c;
+  return gpuCopy(c);
 }
 // Draws any sprite at its world size: native double-resolution art as it is,
 // world-resolution art through the upscaler.
@@ -469,7 +469,7 @@ function gridCanvas(grid, pal, pad, res) {
   }
   x.putImageData(img, 0, 0);
   c.hd = true; c.res = res;
-  return c;
+  return gpuCopy(c);
 }
 // Keys that are areas of colour, which the finer grid rounds at their edges;
 // the rest (eyes, buttons, chain, specs) are detail and stay put.

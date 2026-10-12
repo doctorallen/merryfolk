@@ -83,12 +83,25 @@ function makeNoise(seed) {
   return (x, y) => v(x, y) * 0.6 + v(x * 2.1 + 17, y * 2.1 + 9) * 0.3 + v(x * 4.3 + 3, y * 4.3 + 41) * 0.1;
 }
 
-function makeCanvas(w, h) {
+// A canvas to work on: kept in ordinary memory, so reading its pixels back
+// while a sprite is built or a chunk of ground painted costs nothing much.
+// With `draw` set it lives on the graphics card instead, for images that are
+// drawn to the screen every frame (see gpuCopy).
+function makeCanvas(w, h, draw = false) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
-  const x = c.getContext('2d', { willReadFrequently: true });
+  const x = c.getContext('2d', draw ? undefined : { willReadFrequently: true });
   x.imageSmoothingEnabled = false;
   return [c, x];
+}
+// A finished image copied once onto a graphics-card canvas, so drawing it
+// each frame doesn't upload it each frame.
+function gpuCopy(c) {
+  const [g, gx] = makeCanvas(c.width, c.height, true);
+  gx.drawImage(c, 0, 0);
+  // whatever was pinned on the image (hd, res, anchors and so on) comes with it
+  for (const k of Object.keys(c)) g[k] = c[k];
+  return g;
 }
 
 // Pixel-perfect filled circle / ellipse.
@@ -139,7 +152,7 @@ function outlineCanvas(c, col = '#2a1c12', alpha = 255) {
     }
   for (let m = 0; m < mark.length; m += 4) { const i = mark[m] * 4; d[i] = mark[m + 1] * OUTLINE_DARK; d[i + 1] = mark[m + 2] * OUTLINE_DARK; d[i + 2] = mark[m + 3] * OUTLINE_DARK; d[i + 3] = alpha; }
   ctx.putImageData(img, 0, 0);
-  return c;
+  return gpuCopy(c);
 }
 
 // Renders a list of strings into a canvas using a palette map. '.' is transparent.

@@ -54,9 +54,9 @@ const TUFT_W = 9, TUFT_H = 13;
 function tuftSprite(v, season, lean) {
   const key = v + ':' + season + ':' + lean;
   let c = TUFT_CACHE.get(key);
-  if (c) return c;
-  if (v >= TALL_V) { c = tallSprite(v, season, lean); TUFT_CACHE.set(key, c); return c; }
-  if (v >= WILD_V) { c = wildSprite(v, season, lean); TUFT_CACHE.set(key, c); return c; }
+  if (c) return c; // already made
+  if (v >= TALL_V) { c = gpuCopy(tallSprite(v, season, lean)); TUFT_CACHE.set(key, c); return c; }
+  if (v >= WILD_V) { c = gpuCopy(wildSprite(v, season, lean)); TUFT_CACHE.set(key, c); return c; }
   let ctx;
   [c, ctx] = makeCanvas(TUFT_W, TUFT_H);
   const rng = mulberry32(v * 977 + 5);
@@ -83,6 +83,7 @@ function tuftSprite(v, season, lean) {
     else if (!reed && season === 'summer' && i % 3 === 0) { ctx.fillStyle = '#d8c890'; ctx.fillRect(tipX, tipY - 1, 1, 1); }
     else if (winter && i % 2 === 0) { ctx.fillStyle = '#f4f8ff'; ctx.fillRect(tipX, tipY, 1, 1); }
   }
+  c = gpuCopy(c);
   TUFT_CACHE.set(key, c);
   return c;
 }

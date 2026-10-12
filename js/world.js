@@ -1180,7 +1180,7 @@ const DITHER_STEP = 14;
 // longest, so a big valley never holds more than a score of them. A change
 // of season repaints each chunk as it is seen, fading from the old one.
 // ---------------------------------------------------------------------------
-const CHUNK_T = 16, CHUNK_PX = CHUNK_T * TILE, CHUNK_MAX = 80;
+const CHUNK_T = 16, CHUNK_PX = CHUNK_T * TILE, CHUNK_MAX = 112;
 // A flat sketch of the tiles in a rectangle, for the moment before the real painting.
 function sketchGround(x, season, r) {
   const pal = GROUND_PAL[season], S = TILE * GS, Q = 4 * GS;
@@ -1210,7 +1210,7 @@ const Ground = {
     let ch = this.chunks.get(k);
     if (!ch) {
       const r = this.rect(cx, cy);
-      const [c, x] = makeCanvas((r.x1 - r.x0) * GS, (r.y1 - r.y0) * GS);
+      const [c, x] = makeCanvas((r.x1 - r.x0) * GS, (r.y1 - r.y0) * GS, true);
       sketchGround(x, this.season, r);
       ch = { cx, cy, r, c, season: this.season, painted: false, prev: null, fade: 0, fadeRate: 3, gen: null, next: null, used: 0 };
       this.chunks.set(k, ch);
@@ -1245,7 +1245,7 @@ const Ground = {
       while (performance.now() - t0 < budgetMs) {
         if (ch.gen.next().done) {
           ch.prev = ch.c; ch.fade = 1; ch.fadeRate = ch.painted ? 0.5 : 3;
-          ch.c = ch.next; ch.next = null; ch.gen = null; ch.season = this.season; ch.painted = true;
+          ch.c = gpuCopy(ch.next); ch.next = null; ch.gen = null; ch.season = this.season; ch.painted = true;
           World.paintStamp = (World.paintStamp || 0) + 1;
           break;
         }
@@ -1270,9 +1270,10 @@ const Ground = {
     this.reset(season);
     for (let cy = 0; cy < this.rows(); cy++) for (let cx = 0; cx < this.cols(); cx++) {
       const ch = this.get(cx, cy, false);
-      const g = paintGroundGen(season, ch.c, ch.r, { x: ch.r.x0, y: ch.r.y0 });
+      const [c] = makeCanvas(ch.c.width, ch.c.height);
+      const g = paintGroundGen(season, c, ch.r, { x: ch.r.x0, y: ch.r.y0 });
       while (!g.next().done) { /* paint every slice */ }
-      ch.painted = true; ch.season = season;
+      ch.c = gpuCopy(c); ch.painted = true; ch.season = season;
     }
     this.urgent = false; World.paintJob = null;
   },
@@ -1337,8 +1338,17 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
   const x0 = Math.floor((cx - rx * 1.25) * G), y0 = Math.floor((cy - ry * 1.3) * G);
   const w = Math.ceil(rx * 2.5 * G), hh = Math.ceil((ry * 2.3 + 22) * G);
   const ox = org.x * G, oy = org.y * G;
-  const img = ctx.getImageData(x0 - ox, y0 - oy, w, hh);
-  const p = img.data;
+  // only the part of the hill's box that lies on this canvas is painted
+  const i0 = Math.max(0, ox - x0), j0 = Math.max(0, oy - y0), i1 = Math.min(w, ox + ctx.canvas.width - x0), j1 = Math.min(hh, oy + ctx.canvas.height - y0);
+  if (i1 <= i0 || j1 <= j0) return;
+  const img = ctx.getImageData(x0 - ox + i0, y0 - oy + j0, i1 - i0, j1 - j0);
+  const p = img.data, pw = i1 - i0;
+  // the hill's shape is worked out once per home and kept: how far out each half-pixel is
+  let M = sh._mask;
+  if (!M || M.x0 !== x0 || M.y0 !== y0 || M.w !== w || M.hh !== hh) {
+    M = sh._mask = { x0, y0, w, hh, u: new Float32Array(w * hh) };
+    for (let j = 0; j < hh; j++) for (let i = 0; i < w; i++) M.u[j * w + i] = sh.u((x0 + i) / G / 16, (y0 + j) / G / 16);
+  }
   const [b0, d0, l0] = MOUND_PAL[season];
   const tint = (h.v && h.v.tint) || 0;
   const base = hexToRgb(shade(b0, tint)), dark = hexToRgb(d0), light = hexToRgb(shade(l0, tint * 0.6));
@@ -1357,10 +1367,10 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
     faceH[i] = b == null ? 0 : (h.built || h.buildProg > 0.3 ? (h.grand ? 27 : 23) : 0) * Math.pow(front, 0.3) * (1 + Math.sin(px * 0.21 + h.id) * 0.05);
   }
   const stones = winter ? [[176, 180, 186], [196, 198, 204], [150, 154, 162]] : [[132, 124, 110], [154, 146, 130], [112, 106, 96], [140, 128, 104]];
-  for (let j = 0; j < hh; j++) for (let i = 0; i < w; i++) {
+  for (let j = j0; j < j1; j++) for (let i = i0; i < i1; i++) {
     const qx = x0 + i, qy = y0 + j, px = qx / G, py = qy / G;
-    const k = (j * w + i) * 4;
-    const u = sh.u(px / 16, py / 16);
+    const k = ((j - j0) * pw + (i - i0)) * 4;
+    const u = M.u[j * w + i];
     const fy = footY[i], fh = faceH[i];
     // the stone face: dry-stone courses, mortar dark, a grassy lip over the top
     if (fy > 0 && fh > 0.5 && py <= fy && py > fy - fh) {
@@ -1412,18 +1422,18 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
     if (!winter && hsh > 0.997 && u < 0.95) { p[k] = 240; p[k + 1] = 220; p[k + 2] = 90; }
     if (roofFlowers && ny < 0.1 && u < 0.8 && hash2(qx >> 4, qy >> 4) > 0.55 && hash2(qx, qy) > 0.982) {
       p[k] = petal[0]; p[k + 1] = petal[1]; p[k + 2] = petal[2];
-      if (hash2(qx + 1, qy) > 0.5) { const k2 = k + w * 4; if (k2 < p.length) { p[k2] = 70; p[k2 + 1] = 120; p[k2 + 2] = 50; } }
+      if (hash2(qx + 1, qy) > 0.5) { const k2 = k + pw * 4; if (k2 < p.length) { p[k2] = 70; p[k2 + 1] = 120; p[k2 + 2] = 50; } }
     }
     if (!winter && hsh > 0.9985 && u < 0.95) { p[k] = 245; p[k + 1] = 245; p[k + 2] = 245; }
   }
   // grass hanging down over the top of the face
-  if (!winter) for (let i = 0; i < w; i++) {
+  if (!winter) for (let i = i0; i < i1; i++) {
     const fy = footY[i], fh = faceH[i];
     if (fy < 0 || fh < 2 || hash2(x0 + i, h.id) > 0.3) continue;
     const top = Math.round((fy - fh) * G) - y0, len = 1 + Math.floor(hash2(i, 5) * 3);
-    for (let j = 0; j < len; j++) { const k = ((top + j) * w + i) * 4; if (k >= 0 && k < p.length) { p[k] = 58; p[k + 1] = 100; p[k + 2] = 42; } }
+    for (let j = 0; j < len; j++) { const jj = top + j; if (jj < j0 || jj >= j1) continue; const k = ((jj - j0) * pw + (i - i0)) * 4; p[k] = 58; p[k + 1] = 100; p[k + 2] = 42; }
   }
-  ctx.putImageData(img, x0 - ox, y0 - oy);
+  ctx.putImageData(img, x0 - ox + i0, y0 - oy + j0);
   if (!h.built) return;
   ctx.save(); ctx.translate(-ox, -oy);
   // stone, timber or brick round the door, at full detail

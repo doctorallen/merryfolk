@@ -756,7 +756,8 @@ function render(dtReal, dtWall = dtReal) {
   // upstream side, a wake of ripples trailing away downstream
   for (const rk of World.riverRocks || []) {
     if (rk.x < cx - 40 || rk.x > cx + cam.w + 40 || rk.y < cy - 20 || rk.y > cy + cam.h + 20) continue;
-    const hw = rk.w / 2, wy = rk.y - rk.h * (1 - rk.st.sink) * 0.5, ph = tReal * 4 + rk.x * 0.3;
+    // the water line is where the rock is cut off: the sunk part of its height up from its base
+    const hw = rk.w / 2, wy = rk.y - rk.h * rk.st.sink + 1, ph = tReal * 4 + rk.x * 0.3;
     ctx.fillStyle = 'rgba(230,242,250,0.85)';
     for (let k = 0; k < 4; k++) { const t = (ph + k * 1.6) % 6.4; ctx.fillRect(Math.round(rk.x - hw - 1 - t * 0.6), Math.round(wy - 2 + Math.sin(ph * 1.7 + k) * 1.5), 2, 1); }
     ctx.fillStyle = 'rgba(214,232,244,0.7)';
@@ -862,9 +863,15 @@ function render(dtReal, dtWall = dtReal) {
     ctx.fillStyle = '#ffe14a'; ctx.fillRect(ax - 2, ay, 5, 1); ctx.fillRect(ax - 1, ay + 1, 3, 1); ctx.fillRect(ax, ay + 2, 1, 1);
   }
   ctx.setTransform(RS, 0, 0, RS, 0, 0);
-  const vg = ctx.createRadialGradient(cam.w / 2, cam.h / 2, Math.min(cam.w, cam.h) * 0.45, cam.w / 2, cam.h / 2, Math.max(cam.w, cam.h) * 0.75);
-  vg.addColorStop(0, 'rgba(20,12,4,0)'); vg.addColorStop(1, 'rgba(20,12,4,0.28)');
-  ctx.fillStyle = vg; ctx.fillRect(0, 0, cam.w, cam.h);
+  // the vignette is made once per view size, since a gradient is rasterised afresh every fill
+  if (!render.vg || render.vgW !== cam.w || render.vgH !== cam.h) {
+    const [c, x] = makeCanvas(cam.w, cam.h, true);
+    const vg = x.createRadialGradient(cam.w / 2, cam.h / 2, Math.min(cam.w, cam.h) * 0.45, cam.w / 2, cam.h / 2, Math.max(cam.w, cam.h) * 0.75);
+    vg.addColorStop(0, 'rgba(20,12,4,0)'); vg.addColorStop(1, 'rgba(20,12,4,0.28)');
+    x.fillStyle = vg; x.fillRect(0, 0, cam.w, cam.h);
+    render.vg = c; render.vgW = cam.w; render.vgH = cam.h;
+  }
+  ctx.drawImage(render.vg, 0, 0);
 }
 
 function wrapText(ctx, text, maxW) {
@@ -1326,7 +1333,9 @@ function frame(now) {
     // paint faster while the intro card is up and nobody's looking at the ground
     // bare ground in sight gets most of a frame's worth of painting; otherwise a little goes to the chunks just off screen
     const bare = World.paintJob && Game.cam && Ground.over(Game.cam.x, Game.cam.y, Game.cam.x + Game.cam.w, Game.cam.y + Game.cam.h, false).some((ch) => !ch.painted);
-    stepPaint(Game.introOpen || (World.paintJob && World.paintJob.urgent) ? 28 : bare ? 16 : 6);
+    // and when the camera hasn't moved for a while, only a sliver goes to the chunks off screen
+    if (Game.cam && (Game.cam.x !== Game._pcx || Game.cam.y !== Game._pcy)) { Game._pcx = Game.cam.x; Game._pcy = Game.cam.y; Game._camMoved = tReal; }
+    stepPaint(Game.introOpen || (World.paintJob && World.paintJob.urgent) ? 28 : bare ? 16 : tReal - (Game._camMoved || 0) < 1 ? 6 : 2);
     const fxDt = speed > 0 ? dtReal : 0;
     emitSmoke(speed > 0 ? dtReal : 0);
     emitRiftFx(dtReal);
