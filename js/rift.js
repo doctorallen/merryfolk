@@ -670,10 +670,10 @@ function emitRiftFx(dt) {
 function riftLights(L) {
   for (const r of World.rifts) {
     const H = 46 * r.a;
-    L.push({ x: r.x, y: r.y - H / 2, r: 90 * r.a * (0.95 + Math.sin(tReal * 6) * 0.05), a: 0.95, col: r.home ? '#ffb840' : '#b050ff' });
-    L.push({ x: r.x, y: r.y - H / 2, r: 36 * r.a, a: 0.8, col: r.home ? '#fff0c0' : '#5af8ff' });
+    L.push({ x: r.x, y: r.y - H / 2, r: 90 * r.a * (0.95 + Math.sin(tReal * 6) * 0.05), a: 0.8, col: r.home ? '#ffb840' : '#b050ff', glow: r.home ? 1.5 : 3, tint: r.home ? 0 : 0.9 });
+    L.push({ x: r.x, y: r.y - H / 2, r: 36 * r.a, a: 0.8, col: r.home ? '#fff0c0' : '#8a70ff', glow: 2 });
   }
-  for (const s of World.riftScars) L.push({ x: s.x, y: s.y - 2, r: 16, a: 0.4, col: '#c050ff' });
+  for (const s of World.riftScars) L.push({ x: s.x, y: s.y - 2, r: 16, a: 0.4, col: '#c050ff', glow: 2, tint: 0.6 });
   for (const h of World.homes) {
     if (!h.built || !h.neon) continue;
     L.push({ x: h.doorX, y: h.doorY - h.doorR, r: 26, a: 0.7, col: NEON_COLS[h.id % NEON_COLS.length] });

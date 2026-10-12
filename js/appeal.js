@@ -152,7 +152,12 @@ function drawAppealAndPins() {
     octx.fillStyle = '#c83a2a'; octx.beginPath(); octx.arc(sx, sy - 14, 9, 0, Math.PI * 2); octx.fill();
     octx.beginPath(); octx.moveTo(sx - 5, sy - 9); octx.lineTo(sx + 5, sy - 9); octx.lineTo(sx, sy); octx.fill();
     octx.fillStyle = '#fff6dc'; octx.font = '700 12px "Pixelify Sans", monospace'; octx.textAlign = 'center'; octx.fillText('!', sx, sy - 13); octx.textAlign = 'left';
-    octx.strokeStyle = 'rgba(200,58,42,0.5)'; octx.setLineDash([4, 4]); octx.beginPath(); octx.arc(sx, sy - 6, 6 * 16 * z, 0, Math.PI * 2); octx.stroke(); octx.setLineDash([]);
+    const rr = 6 * 16 * z;
+    octx.beginPath(); octx.arc(sx, sy - 6, rr, 0, Math.PI * 2);
+    octx.fillStyle = 'rgba(255,220,120,0.12)'; octx.fill();
+    octx.lineWidth = 5; octx.strokeStyle = 'rgba(40,20,10,0.55)'; octx.setLineDash([10, 8]); octx.stroke();
+    octx.lineWidth = 3; octx.strokeStyle = '#ffd24a'; octx.stroke();
+    octx.setLineDash([]); octx.lineWidth = 1;
   }
   octx.restore();
 }

@@ -236,7 +236,24 @@ const FX = {
     }
   },
 
-  // Falling things in screen space: snowflakes, blossom petals, autumn leaves.
+  // Falling things are kept in a window the size of the screen but move with
+  // the world: when the camera pans, they slide the other way and wrap round,
+  // so they seem to hang in the air over the valley rather than stick to the glass.
+  panWindow(list, cam, key, pad) {
+    const last = this[key];
+    if (last) {
+      // the view changed size (a zoom): spread what's there over the new window
+      if (last.w !== cam.w || last.h !== cam.h) for (const f of list) { f.x *= cam.w / last.w; f.y *= cam.h / last.h; }
+      const dx = cam.x - last.x, dy = cam.y - last.y;
+      if (dx || dy) for (const f of list) {
+        f.x -= dx; f.y -= dy;
+        const w = cam.w + pad * 2, h = cam.h + pad * 2;
+        f.x = ((f.x + pad) % w + w) % w - pad;
+        f.y = ((f.y + pad) % h + h) % h - pad;
+      }
+    }
+    this[key] = { x: cam.x, y: cam.y, w: cam.w, h: cam.h };
+  },
   flakes: [],
   drawFalling(ctx, game, cam, dt) {
     const season = World.season;
@@ -246,6 +263,8 @@ const FX = {
     else if (season === 'autumn' && !game.raining) { kind = 'leaf'; want = Math.floor(cam.w * cam.h / 7000); }
     if (!kind) { this.flakes.length = 0; return; }
     this.flakes = this.flakes.filter((f) => f.kind === kind);
+    this.panWindow(this.flakes, cam, '_flakeCam', 40);
+    if (this.flakes.length > want * 1.5) this.flakes.length = want;
     while (this.flakes.length < want) this.flakes.push({ kind, x: R.f(0, cam.w + 40), y: R.f(-cam.h, cam.h), v: kind === 'snow' ? R.f(14, 30) : R.f(8, 16), ph: R.f(0, 6), col: kind === 'leaf' ? R.pick(['#d8782a', '#c84a1e', '#e8b84a', '#a8561a']) : kind === 'petal' ? R.pick(['#ffd0e0', '#ffffff', '#ffb0c8']) : '#ffffff' });
     for (const f of this.flakes) {
       f.y += f.v * dt; f.ph += dt * 2; f.x += Math.sin(f.ph) * dt * (kind === 'snow' ? 6 : 14) - dt * (kind === 'snow' ? 2 : 8);
@@ -283,6 +302,8 @@ const FX = {
   drawRain(ctx, game, cam, dt) {
     if (!game.raining) { this.rain.length = 0; return; }
     const want = Math.floor(cam.w * cam.h / (game.weather === 'storm' ? 500 : 900));
+    this.panWindow(this.rain, cam, '_rainCam', 40);
+    if (this.rain.length > want * 1.5) this.rain.length = want;
     while (this.rain.length < want) this.rain.push({ x: R.f(0, cam.w + 40), y: R.f(-cam.h, cam.h), v: R.f(160, 220) });
     ctx.fillStyle = 'rgba(200,220,255,0.55)';
     for (const r of this.rain) {
@@ -348,6 +369,8 @@ const Light = {
       const sx = Math.round(l.x), sy = Math.round(l.y);
       if (!seen(l, sx - cam.x, sy - cam.y)) continue;
       const [cr, cg, cb] = hexToRgb(l.col || '#ffaa50');
+      // a tinted light (rift light) washes its pool in its own colour as well
+      if (l.tint) { const st2 = this.stamp(Math.round(l.r), 4, 4, `rgba(${cr},${cg},${cb},0.25)`, 'source-over'); ctx.globalAlpha = Math.min(1, l.tint * darkness * (l.a || 1)); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(st2.c, sx - st2.rx, sy - st2.ry); ctx.globalCompositeOperation = 'lighter'; }
       // drawn at a quarter strength and scaled down to the glow wanted; `glow`
       // warms a bright light's pool more strongly
       const st = this.stamp(Math.round(l.r), 3, 5, `rgba(${cr},${cg},${cb},0.25)`, 'lighter');

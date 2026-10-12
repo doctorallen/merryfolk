@@ -558,7 +558,11 @@ function drawItem(L, it, part, t = 0) {
     }
     case 'mat': {
       if (part !== 'back') return;
-      IR(x - 12, 100, 25, 4, L.neon ? '#2a1f44' : '#a8742a'); for (let k = 0; k < 25; k += 2) IP(x - 12 + k, 101, L.neon ? '#ff3aa8' : '#c89a4a');
+      // a coir doormat: a dark bound edge, a close weave in two tones, and a stripe along each end
+      const [edge, w1, w2, st] = L.neon ? ['#1a1430', '#2a2048', '#342a58', '#ff3aa8'] : ['#6a4a22', '#b08a48', '#9c7838', '#7a5a2a'];
+      IR(x - 13, 99, 27, 7, edge);
+      for (let j = 0; j < 5; j++) for (let k = 0; k < 25; k++) IP(x - 12 + k, 100 + j, (k + j) % 2 ? w1 : w2);
+      IR(x - 10, 100, 1, 5, st); IR(x + 9, 100, 1, 5, st);
       return;
     }
     case 'prop': {
