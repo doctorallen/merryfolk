@@ -347,7 +347,7 @@ function planValley(seed, W = MAP_W, H = MAP_H) {
   }
 
   // --- the knolls: the Hall on the Hill above the square, nine homes on sunny slopes round about, six spare further out ---
-  L.homes = [];
+  L.homes = []; L.fallbacks = 0;
   const knoll = (rx, ry_, dmin, dmax, grand, bank) => {
     const cands = ring(PX, PY, dmin, dmax, 2, bank);
     let best = null, bs = 1e9;
@@ -372,14 +372,14 @@ function planValley(seed, W = MAP_W, H = MAP_H) {
   };
   // each knoll looks close in first, then further out, then anywhere there's room
   const anyKnoll = (rx, ry_, dmin, dmax, grand, bank) => knoll(rx, ry_, dmin, dmax, grand, bank) || knoll(rx, ry_, dmin, dmax * 1.6, grand, bank) || knoll(rx, ry_, 6, Math.max(W, H), grand, null);
-  anyKnoll(9, 5.5, 10, 26, true, 'north') || anyKnoll(7, 4.5, 8, 40, true, null) || L.homes.push({ cx: PX, cy: Math.max(8, PY - 19), rx: 9, ry: 5.5, grand: true });
+  anyKnoll(9, 5.5, 10, 26, true, 'north') || anyKnoll(7, 4.5, 8, 40, true, null) || (L.fallbacks++, L.homes.push({ cx: PX, cy: Math.max(8, PY - 19), rx: 9, ry: 5.5, grand: true }));
   for (let k = 0; k < 9; k++) {
     const big = k < 3;
-    anyKnoll(big ? 5 : 4.5, big ? 3.5 : 3, 8, 36 * Math.min(sx, sy), false, null) || anyKnoll(4, 2.8, 6, Math.max(W, H), false, null) || L.homes.push({ cx: PX - 20 + k * 5, cy: Math.max(8, PY - 26), rx: 4.5, ry: 3 });
+    anyKnoll(big ? 5 : 4.5, big ? 3.5 : 3, 8, 36 * Math.min(sx, sy), false, null) || anyKnoll(4, 2.8, 6, Math.max(W, H), false, null) || (L.fallbacks++, L.homes.push({ cx: PX - 20 + k * 5, cy: Math.max(8, PY - 26), rx: 4.5, ry: 3 }));
   }
   for (let k = 0; k < 6; k++) {
     const d = anyKnoll(4.5, 3, 24, 60 * Math.min(sx, sy), false, null);
-    if (d) d.site = true; else L.homes.push({ cx: 12 + k * 8, cy: Math.max(8, PY - 26), rx: 4.5, ry: 3, site: true });
+    if (d) d.site = true; else { L.fallbacks++; L.homes.push({ cx: 12 + k * 8, cy: Math.max(8, PY - 26), rx: 4.5, ry: 3, site: true }); }
   }
   const doorTyOf = (d) => { let t = 0; for (let y = Math.floor(d.cy - d.ry - 1); y <= Math.ceil(d.cy + d.ry + 1); y++) { const ny = (y - d.cy) / d.ry; if (ny * ny < 1) t = Math.max(t, y); } return t; };
 

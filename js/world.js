@@ -93,7 +93,6 @@ const GEN_OPTIONS = {
   rocks: { label: 'Rocks', opts: [['few', 'Few', 0.45], ['some', 'Some', 1], ['many', 'Many', 1.9]] },
   cliffs: { label: 'Cliffs', opts: [['none', 'None', 0], ['some', 'Some', 1], ['many', 'Many', 1.7]] },
   relief: { label: 'Relief', opts: [['smooth', 'Smooth', 0], ['broken', 'Broken', 1], ['rugged', 'Rugged', 1.6]] },
-  layout: { label: 'The valley', opts: [['classic', 'Thistledown', 0], ['valley', 'A new valley', 1]] },
 };
 function defaultGen(seed = 1337) { return { seed, hills: 'rolling', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some', cliffs: 'some', relief: 'broken', layout: 'classic' }; }
 // The number behind a setting, e.g. gen('woods') → 1.6 for thick woodland.
@@ -110,9 +109,14 @@ function* buildWorldSteps(cfg) {
   World.gen = typeof cfg === 'object' ? { ...defaultGen(), cliffs: 'none', relief: 'smooth', layout: 'classic', ...cfg } : defaultGen(cfg);
   const seed = World.gen.seed;
   World.seed = seed;
-  // a new valley is planned from its seed once, and the plan kept with the village
-  if (World.gen.layout === 'valley' && !World.gen.plan) World.gen.plan = planValley(seed);
-  applyLayout(World.gen.layout === 'valley' && World.gen.plan ? World.gen.plan : CLASSIC_LAYOUT);
+  // A new valley is half as big again each way as the original, and is
+  // planned from its seed once, the plan kept with the village. The map is
+  // sized to the plan (or to Thistledown's valley) before anything is built.
+  const valley = World.gen.layout === 'valley';
+  const [mw, mh] = valley ? (World.gen.plan ? [World.gen.plan.w, World.gen.plan.h] : [192, 144]) : [CLASSIC_LAYOUT.w, CLASSIC_LAYOUT.h];
+  if (MAP_W !== mw || MAP_H !== mh) setMapSize(mw, mh);
+  if (valley && !World.gen.plan) World.gen.plan = planValley(seed, mw, mh);
+  applyLayout(valley && World.gen.plan ? World.gen.plan : CLASSIC_LAYOUT);
   World.land = null; World.grass = []; World.statics = []; World.flowers = []; World.pads = null; World.padNear = null; World._nh = null; World.cliffMask = null; World.cliff = null;
   const rng = mulberry32(seed);
   const tiles = World.tiles;
@@ -1040,15 +1044,32 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
     }
     if (t === T.WATER) return col;
     if (t === T.COBBLE) {
-      // laid stones of varied colour, mortar dark, lit on their top-left edges, moss in the gaps
-      if (notNear(px, py, T.COBBLE, 1)) return winter ? [170, 176, 184] : [62, 56, 50];
-      const row = Math.floor(py / 6), off = (row % 2) * 4, lx = (px + off) % 8, ly = py % 6, cid = Math.floor((px + off) / 8);
-      if (lx === 0 || ly === 0) return !winter && hash2(px, py) > 0.8 && nM(px * 0.07, py * 0.07) > 0.6 ? [70, 110, 52] : winter ? [200, 205, 212] : [62, 56, 50];
-      if (winter && hash2(cid, row * 3) < 0.35) return ly === 1 ? [255, 255, 255] : [236, 240, 246];
-      let c = lx === 1 || ly === 1 ? [202, 192, 170] : lx === 7 || ly === 5 ? [110, 102, 92] : [172, 162, 144];
-      if (hash2(cid, row * 7 + 3) > 0.55 && lx > 1 && ly > 1 && lx < 7 && ly < 5) c = [142, 132, 118];
-      const tint = STONE_TINT[Math.floor(hash2(cid, row) * 5)], m = 0.9 + hash2(cid * 3, row) * 0.16;
-      return [c[0] * tint[0] * m, c[1] * tint[1] * m, c[2] * tint[2] * m];
+      // cobbles: rounded stones of all sizes and tints, each the nearest of a
+      // jittered scatter of stone centres, lit on the top-left and dark on the
+      // bottom-right, with dark mortar and moss in the gaps between them
+      if (notNear(px, py, T.COBBLE, 1)) return winter ? [170, 176, 184] : [122, 108, 84];
+      const CX = 7, CY = 6, gx = Math.floor(px / CX), gy = Math.floor(py / CY);
+      let d1 = 1e9, d2 = 1e9, sid = 0, sx0 = 0, sy0 = 0, srx = 0, sry = 0;
+      for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) {
+        const cx = gx + i, cy = gy + j;
+        const ox = hash2(cx * 3 + 1, cy * 5 + 2), oy = hash2(cx * 7 + 3, cy * 11 + 5);
+        const qx = cx * CX + 1 + ox * (CX - 2), qy = cy * CY + 1 + oy * (CY - 2);
+        const rx = 3 + hash2(cx, cy * 13) * 1.6, ry = 2.4 + hash2(cx * 17, cy) * 1.2;
+        const d = Math.hypot((px + 0.5 - qx) / rx, (py + 0.5 - qy) / ry);
+        if (d < d1) { d2 = d1; d1 = d; sid = hash2(cx * 31, cy * 37); sx0 = qx; sy0 = qy; srx = rx; sry = ry; } else if (d < d2) d2 = d;
+      }
+      // the gaps are packed with sandy earth, grass and moss growing in them, so the yard sits quietly in the green
+      const gap = d1 > 0.98 || d2 - d1 < 0.1;
+      if (gap) { const g = nM(px * 0.09, py * 0.09); return winter ? [196, 202, 210] : g > 0.58 ? lerpC(C.G1, C.G2, hash2(px, py)) : g > 0.46 && hash2(px, py) > 0.5 ? [96, 118, 62] : lerpC([150, 136, 108], [128, 114, 90], hash2(px * 3, py)); }
+      if (winter && sid < 0.4) return d1 < 0.6 ? [255, 255, 255] : [232, 236, 244];
+      const lx = (px + 0.5 - sx0) / srx, ly = (py + 0.5 - sy0) / sry, lit = -(lx * 0.6 + ly * 0.8);
+      let c = lit > 0.35 ? [190, 182, 164] : lit < -0.4 ? [136, 128, 114] : [166, 158, 142];
+      if (d1 > 0.8) c = lit > 0 ? [178, 170, 152] : [124, 116, 102];
+      const tint = STONE_TINT[Math.floor(sid * 5)], m = 0.92 + hash2(Math.floor(sx0), Math.floor(sy0)) * 0.14;
+      c = [c[0] * tint[0] * m, c[1] * tint[1] * m, c[2] * tint[2] * m];
+      // a few stones gone green with moss on their shaded side
+      if (!winter && sid > 0.82 && lit < 0) c = lerpC(c, [96, 118, 62], 0.5);
+      return c;
     }
     return col;
   };
@@ -1335,12 +1356,20 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
     const fy = footY[i], fh = faceH[i];
     // the stone face: dry-stone courses, mortar dark, a grassy lip over the top
     if (fy > 0 && fh > 0.5 && py <= fy && py > fy - fh) {
-      const up = fy - py, row = Math.floor(up / 3.4), off = (row % 2) * 4 + hash2(row, h.id) * 3;
-      const sx = Math.floor((px + off) / (6 + (row % 3)));
-      const inRow = up - row * 3.4, inStone = (px + off) % (6 + (row % 3));
+      // courses of uneven height, and in each a run of stones of uneven length,
+      // the odd one standing taller than its course; the joints dark, the tops lit
+      const up = fy - py;
+      let row = 0, base = 0, rh = 3 + Math.floor(hash2(0, h.id * 3) * 2.5);
+      while (up >= base + rh) { base += rh; row++; rh = 3 + Math.floor(hash2(row, h.id * 3) * 2.5); }
+      const len = 5 + Math.floor(hash2(row * 5, h.id) * 4), off = hash2(row, h.id) * len;
+      let sx = Math.floor((px + off) / len);
+      const jit = Math.floor(hash2(sx, row * 7 + h.id) * 3) - 1;
+      const inStone = (px + off) - sx * len - jit;
+      if (inStone < 0) sx--;
+      const inRow = up - base, tall = hash2(sx * 3, row + h.id) < 0.12;
       let col;
-      if (inRow < 0.6 || inStone < 0.6) col = winter ? [120, 124, 132] : [70, 62, 54];
-      else { col = stones[Math.floor(hash2(sx, row * 7 + h.id) * stones.length)].slice(); if (inRow > 2.6) col = col.map((c) => c * 1.12); if (hash2(qx, qy) < 0.05) col = col.map((c) => c * 0.85); }
+      if ((inRow < 0.8 && !(tall && row % 2)) || inStone < 0.8 || inStone >= len + jit - 0.2) col = winter ? [120, 124, 132] : [70, 62, 54];
+      else { col = stones[Math.floor(hash2(sx, row * 7 + h.id) * stones.length)].slice(); if (inRow > rh - 1.4) col = col.map((c) => c * 1.12); if (hash2(qx, qy) < 0.07) col = col.map((c) => c * 0.85); if (hash2(qx * 3, qy) > 0.985) col = col.map((c) => Math.min(255, c * 1.2)); }
       // moss and ivy creeping over the stones
       if (!winter && hash2(sx * 3, row + 11) < 0.12 && hash2(qx >> 1, qy >> 1) < 0.6) col = [74, 112, 52];
       if (up > fh - 1.2) col = winter ? [236, 242, 248] : [52, 92, 40];

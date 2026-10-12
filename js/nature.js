@@ -413,6 +413,19 @@ function plantNature(rng, addStatic, blk) {
     else if (hb.shade && r < 0.015 && boulders < 45) rock(x, y, 2);
     else if (r < 0.006) rock(x, y, 0);
   }
+  // A few rocks break the river's surface here and there, clear of the
+  // bridges and the mill wheels (only in the valleys made since).
+  if (World.gen && (World.gen.layout === 'valley' || gen('relief') > 0)) {
+    const nearWheel = (x, y) => (World.millWheels || []).some((w) => Math.abs(w.x / 16 - x) < 5 && Math.abs(w.y / 16 - y) < 4);
+    for (let y = 2; y < MAP_H - 2; y++) for (let x = 2; x < MAP_W - 2; x++) {
+      if (tiles[tIdx(x, y)] !== T.WATER || rng() > 0.012) continue;
+      let ok = true;
+      for (let j = -2; j <= 2 && ok; j++) for (let i = -3; i <= 3; i++) if (tiles[tIdx(x + i, y + j)] === T.BRIDGE) { ok = false; break; }
+      if (!ok || nearWheel(x, y)) continue;
+      const size = rng() < 0.3 ? 2 : 1;
+      addStatic(makeRock(Math.floor(rng() * 9999), size), x * 16 + 8 + Math.round((rng() - 0.5) * 6), y * 16 + 11, { sortBias: -4, snow: false }).rock = size + 1;
+    }
+  }
   // Along the cliffs: scree and fallen stones at the foot of the rock, and
   // gorse, heather, thistles and bracken along the lip above it. (Only
   // valleys with cliffs draw these, so older ones come out as they were.)
@@ -707,7 +720,8 @@ function plantHedges(rng, { addStatic, blk }) {
     };
     cells.forEach(([x, y], i) => {
       n++;
-      if (!free(x, y) || nextToPath(x, y) || i % 8 === 4 || i % 8 === 5) { flush(); n = 0; return; }
+      // a hedge breaks where a terrace bank crosses its line (in the valleys made since the banks were earth faces)
+      if (!free(x, y) || nextToPath(x, y) || i % 8 === 4 || i % 8 === 5 || (brokenBanks && onBank(x, y))) { flush(); n = 0; return; }
       if (n % 9 === 0 && rng() < 0.7) {
         flush();
         const kind = rng() < 0.5 ? 'oak' : rng() < 0.6 ? 'birch' : 'beech', [s0, sn] = TREE_SEEDS[kind], seed = s0 + Math.floor(rng() * sn);
@@ -719,6 +733,7 @@ function plantHedges(rng, { addStatic, blk }) {
     });
     flush();
   };
+  const brokenBanks = World.gen && (World.gen.layout === 'valley' || gen('relief') > 0);
   const ring = (r) => {
     const top = [], bot = [], left = [], right = [];
     for (let x = r.x0 - 1; x <= r.x1 + 1; x++) { top.push([x, r.y0 - 1]); bot.push([x, r.y1 + 1]); }

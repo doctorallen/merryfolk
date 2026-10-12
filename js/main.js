@@ -944,7 +944,8 @@ function renderOverlay() {
     octx.beginPath(); octx.moveTo(ax, it.by + it.bh + 4); octx.lineTo(it.sx - 3, it.by0 + it.bh + (it.think ? 12 : 8)); octx.stroke();
   }
   for (const { v, sx, think, to, lines, bw, bh, bx, by } of items) {
-    octx.globalAlpha = Math.min(1, v.bubble.t * 2.5);
+    // a thought is half seen, so it doesn't shout like speech does
+    octx.globalAlpha = Math.min(1, v.bubble.t * 2.5) * (think ? 0.62 : 1);
     octx.font = think ? 'italic 600 15px "Alegreya Sans", system-ui, sans-serif' : '600 14px "Pixelify Sans", ui-monospace, monospace';
     if (think) {
       // musing to themselves: a soft thought cloud, trailing little bubbles
