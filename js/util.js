@@ -2,6 +2,14 @@
 'use strict';
 // An element by id; used by the interface files and by anything that toasts.
 const $ = (id) => document.getElementById(id);
+
+// Errors that escape: a script that fails as it loads (which would silently
+// skip that file's patches and hooks), or a promise nobody caught. Counted
+// from the first script onwards, so the dev drawer and the tests can see them.
+/** @type {{ msg: string, at: number }[]} */
+const ScriptErrors = [];
+window.addEventListener('error', (ev) => { ScriptErrors.push({ msg: String(ev.message || ev.error || ev), at: Date.now() }); });
+window.addEventListener('unhandledrejection', (ev) => { ScriptErrors.push({ msg: 'unhandled: ' + String(ev.reason && ev.reason.message || ev.reason), at: Date.now() }); });
 // ---------------------------------------------------------------------------
 // Small helpers shared by every module.
 // ---------------------------------------------------------------------------

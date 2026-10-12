@@ -92,6 +92,17 @@ function newVillage() {
 // ---------------------------------------------------------------------------
 // Simulation
 // ---------------------------------------------------------------------------
+// An error caught in play: remembered on Game.lastError (the hourly autosave
+// holds off for a game hour, so a broken state isn't written over a good
+// save), logged to the dev drawer, and printed once per distinct message.
+const errorsSeen = new Set();
+function noteError(e, where) {
+  const msg = `${where}: ${e && e.message ? e.message : e}`;
+  Game.lastError = { msg, at: Game.time, stack: e && e.stack };
+  if (typeof devLog === 'function') devLog('error', msg);
+  if (!errorsSeen.has(msg)) { errorsSeen.add(msg); console.error(msg, e); }
+}
+
 function simulate(dt) {
   Game.time += dt;
   Game.day = Math.floor(Game.time / 1440) + 1;
@@ -103,7 +114,11 @@ function simulate(dt) {
   updateWorld(dt, Game.raining, World.season, Game.hour);
   updateRifts(dt);
   riftPowerTick(dt);
-  for (const v of Game.villagers) v.update(dt, Game.hour);
+  // one villager's trouble is noted and their task dropped, rather than the whole step failing every frame
+  for (const v of Game.villagers) {
+    try { v.update(dt, Game.hour); }
+    catch (e) { noteError(e, `${v.first}'s update`); try { v.abort(); } catch (e2) { /* nothing more to be done for them this step */ } }
+  }
   const gone = Game.villagers.filter((v) => v.gone);
   if (gone.length) {
     Game.villagers = Game.villagers.filter((v) => !v.gone);
@@ -1282,7 +1297,7 @@ function frame(now) {
     hudT -= dtReal;
     if (hudT <= 0) { hudT = 0.25; updateHUD(); }
   } catch (e) {
-    console.error(e);
+    noteError(e, 'the frame');
   }
   requestAnimationFrame(frame);
 }

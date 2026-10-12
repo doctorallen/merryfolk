@@ -95,7 +95,11 @@ function loadGameFields(data) {
   for (const k in PET_FIELDS) Game[PET_FIELDS[k].game] = fieldValue(PET_FIELDS[k], P[k]);
 }
 
-function save() {
+// `force` is for leaving the page; the routine saves hold off for a game hour
+// after an error, so a village that has just gone wrong isn't written over the
+// last good save.
+function save(force = false) {
+  if (!force && Game.lastError && Game.time - Game.lastError.at < 60) return;
   try {
     const data = {
       v: 2, world: JSON.parse(JSON.stringify(World.gen, (k, v) => (k[0] === '_' ? undefined : v))),

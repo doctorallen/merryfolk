@@ -109,9 +109,12 @@ function devRender(full) {
   document.querySelectorAll('#dev .dev-tabs button').forEach((b) => b.classList.toggle('active', b.dataset.tab === Dev.tab));
   const T = Dev.timing, G = typeof Ground !== 'undefined' ? Ground : null;
   const chunks = G ? [...G.chunks.values()] : [], painted = chunks.filter((c) => c.painted).length;
-  $('dev-fps').textContent = `${Math.round(Dev.fps)} fps · sim ${dfmt(T.sim, 1)} paint ${dfmt(T.paint, 1)} draw ${dfmt(T.render, 1)} ms · ${Game.villagers.length} folk · ${SPEEDS[Game.speedIdx]}×`
+  // a red ! leads the line while an error has been caught, with what it was
+  const errs = (typeof ScriptErrors !== 'undefined' ? ScriptErrors.length : 0), last = Game.lastError;
+  const flag = errs || last ? `<b style="color:#c83a2a" title="${escapeHtml((last ? last.msg + ' ' : '') + (errs ? errs + ' script error(s) at load: ' + ScriptErrors.map((e) => e.msg).join('; ') : ''))}">!</b> ` : '';
+  $('dev-fps').innerHTML = flag + escapeHtml(`${Math.round(Dev.fps)} fps · sim ${dfmt(T.sim, 1)} paint ${dfmt(T.paint, 1)} draw ${dfmt(T.render, 1)} ms · ${Game.villagers.length} folk · ${SPEEDS[Game.speedIdx]}×`
     + (G ? ` · chunks ${painted}/${chunks.length} (${Math.round(chunks.length * CHUNK_PX * CHUNK_PX * GS * GS * 4 / 1e6)} MB)` : '')
-    + (typeof Scene !== 'undefined' ? ` · buckets ${[...Scene.by.values()].reduce((s, e) => s + e.map.size, 0)}` : '');
+    + (typeof Scene !== 'undefined' ? ` · buckets ${[...Scene.by.values()].reduce((s, e) => s + e.map.size, 0)}` : ''));
   for (const k of ['labels', 'paths', 'grid', 'cliffs', 'chunks']) $('dev-ov-' + k).checked = Dev.overlay[k];
   const body = $('dev-body');
   if (Dev.tab === 'events') {
