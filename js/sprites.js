@@ -751,6 +751,7 @@ function makeTree(seed, kind, season = 'summer') {
   return c;
 }
 function makeTreeRaw(seed, kind, season = 'summer') {
+  if (kind === 'great') return makeGreatTree(seed, season);
   const big = kind === 'big';
   const sh = treeShape(seed, kind);
   if (season === 'winter' && !EVERGREEN.includes(kind)) return makeBareTree(seed, kind, big, sh);
@@ -863,6 +864,113 @@ function makeTreeRaw(seed, kind, season = 'summer') {
       const px = Math.round(cx + (rng() - 0.5) * R0 * 1.5), py = Math.round(ccy + (rng() - 0.3) * R0);
       if (solidAt(px, py)) { x.fillStyle = '#d23a2a'; x.fillRect(px, py, 2, 2); x.fillStyle = '#ff8a6a'; x.fillRect(px, py, 1, 1); }
     }
+  }
+  return outlineCanvas(c, shade(pal[0], -0.45));
+}
+
+// A great oak: the venerable tree a village dances under. Twice the size of
+// a big tree, with a thick gnarled trunk on buttress roots that forks into
+// four heavy limbs, each with a branch or two of its own and its own rounded
+// mass of foliage, the masses overlapping into a broad, irregular crown with
+// gaps where the limbs show through. In winter it stands bare, every limb and
+// twig showing, with snow along the tops.
+function makeGreatTree(seed, season) {
+  const W = 170, H = 212;
+  const [c, x] = makeCanvas(W, H);
+  const rng = mulberry32(seed * 7 + 11);
+  const cx = W / 2, base = H - 3, winter = season === 'winter';
+  const pal = TREE_PAL[winter ? 'summer' : season].oak;
+  ellipseFill(x, cx, base, 62, 10, 'rgba(20,40,10,0.22)');
+  const bark = '#6b4a2b', barkL = '#8a6440', barkD = '#4a3220', barkX = '#3a2614';
+  // the trunk: broad at the foot, narrowing to the fork, leaning a touch, with deep grooves
+  const forkY = base - 66, lean = (rng() - 0.5) * 6;
+  const trunkAt = (y) => { const t = (base - y) / (base - forkY); return { x: cx + lean * t, w: 24 - 8 * t + Math.sin(y * 0.3 + seed) * 1.2 }; };
+  const grooves = Array.from({ length: 5 }, () => rng());
+  for (let y = forkY; y <= base; y++) {
+    const { x: tx, w } = trunkAt(y), l = Math.round(tx - w / 2), r = Math.round(tx + w / 2);
+    for (let px = l; px <= r; px++) {
+      const u = (px - l) / Math.max(1, r - l);
+      let col = u < 0.12 ? barkL : u > 0.8 ? barkD : u > 0.94 ? barkX : bark;
+      for (const g of grooves) if (Math.abs(u - (0.18 + g * 0.6) + Math.sin(y * 0.11 + g * 9) * 0.03) < 0.035) col = barkX;
+      x.fillStyle = col; x.fillRect(px, y, 1, 1);
+    }
+  }
+  // buttress roots spreading at the foot
+  for (const [dir, len] of [[-1, 16], [-1, 9], [1, 14], [1, 8]]) {
+    const { x: tx, w } = trunkAt(base - 2), sx = Math.round(tx + dir * w / 2);
+    for (let k = 0; k < len; k++) { const h = Math.max(1, Math.round(5 - (k / len) * 5)); x.fillStyle = k < 2 ? bark : barkD; x.fillRect(sx + dir * k, base - h, 1, h); if (k % 3 === 0) { x.fillStyle = barkL; x.fillRect(sx + dir * k, base - h, 1, 1); } }
+  }
+  // the limbs, each a thick tapering line with a kink and a side branch
+  const limb = (x0, y0, ang, len, thick, depth) => {
+    let px = x0, py = y0, a = ang;
+    for (let k = 0; k < len; k++) {
+      const t = k / len, w = Math.max(1, Math.round(thick * (1 - t * 0.6)));
+      if (k % 9 === 8) a += (rng() - 0.5) * 0.35;
+      px += Math.cos(a); py += Math.sin(a);
+      const lx = Math.round(px - w / 2);
+      x.fillStyle = bark; x.fillRect(lx, Math.round(py), w, 1);
+      x.fillStyle = barkD; x.fillRect(lx + w - 1, Math.round(py), 1, 1);
+      if (w > 2) { x.fillStyle = barkL; x.fillRect(lx, Math.round(py), 1, 1); }
+      if (depth > 0 && k === Math.round(len * (0.45 + rng() * 0.2))) limb(px, py, a + (rng() < 0.5 ? -1 : 1) * (0.55 + rng() * 0.4), len * 0.5, thick * 0.6, depth - 1);
+      if (winter && depth === 0 && k > len * 0.3 && k % 5 === 0) limb(px, py, a + (rng() - 0.5) * 1.6, 4 + rng() * 6, 1, 0);
+    }
+    return [px, py];
+  };
+  const { x: fx } = trunkAt(forkY);
+  const angles = [-2.5, -2.0, -1.25, -0.7].map((a) => a + (rng() - 0.5) * 0.2);
+  const ends = angles.map((a, i) => limb(fx + (i - 1.5) * 4, forkY + 4, a, 44 + rng() * 16, 9 - Math.abs(i - 1.5) * 1.2, winter ? 2 : 1));
+  if (winter) {
+    for (let k = 0; k < 10; k++) limb(fx + (rng() - 0.5) * 10, forkY + 2, -Math.PI / 2 + (rng() - 0.5) * 2.4, 20 + rng() * 30, 2, 1);
+    return addSnow(outlineCanvas(c, '#22160c', 160), 0, base - 4, 2, seed);
+  }
+  // the foliage: a mass at the end of each limb and a higher one in the
+  // middle, each its own cluster of lobes, painted one mass after another so
+  // the nearer masses sit over the further, with a dark rim where they meet
+  const masses = ends.map(([ex, ey], i) => ({ x: ex + Math.cos(angles[i]) * 6, y: ey - 6, r: 23 + rng() * 7 }));
+  // low boughs either side, a pair of masses between, and the top of the crown
+  masses.push({ x: fx - 52 - rng() * 8, y: forkY - 6, r: 20 + rng() * 4 }, { x: fx + 50 + rng() * 8, y: forkY - 2, r: 19 + rng() * 4 });
+  masses.push({ x: fx - 26 + rng() * 8, y: forkY - 42, r: 21 }, { x: fx + 22 + rng() * 8, y: forkY - 46, r: 22 });
+  masses.push({ x: fx + lean, y: forkY - 84, r: 27 });
+  masses.sort((a, b) => a.y - b.y);
+  const taken = new Uint8Array(W * H);
+  const id0 = x.getImageData(0, 0, W, H).data;
+  for (let i = 0; i < W * H; i++) if (id0[i * 4 + 3] > 200) taken[i] = 1;
+  let group = 2;
+  for (const m of masses) {
+    const blobs = [{ x: m.x, y: m.y, r: Math.round(m.r * 0.72) }];
+    for (let k = 0, n = 5 + Math.floor(rng() * 3); k < n; k++) {
+      const a = rng() * Math.PI * 2, d = Math.sqrt(rng()) * m.r * 0.6;
+      blobs.push({ x: m.x + Math.cos(a) * d, y: m.y + Math.sin(a) * d * 0.8, r: Math.round(m.r * (0.3 + rng() * 0.28)) });
+    }
+    paintCrown(x, W, H, blobs, pal, m.x, m.y, m.r * 1.25, m.r * 1.1, seed + group);
+    // which pixels this mass covers, and a dark rim where it sits over an earlier one
+    const img = x.getImageData(0, 0, W, H), d = img.data, rim = hexToRgb(shade(pal[0], -0.4));
+    const inMass = (px, py) => blobs.some((b) => { const dx = px - b.x, dy = py - b.y; return dx * dx + dy * dy <= b.r * b.r + b.r * 0.6; });
+    for (let py = 0; py < H; py++) for (let px = 0; px < W; px++) {
+      if (!inMass(px, py)) continue;
+      const i = py * W + px;
+      let edge = false;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = px + dx, ny = py + dy; if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue; if (!inMass(nx, ny) && taken[ny * W + nx] && taken[ny * W + nx] !== group) { edge = true; break; } }
+      if (edge) { d[i * 4] = rim[0]; d[i * 4 + 1] = rim[1]; d[i * 4 + 2] = rim[2]; d[i * 4 + 3] = 255; }
+      taken[i] = group;
+    }
+    x.putImageData(img, 0, 0);
+    group++;
+  }
+  // leafy speckle, blossom in spring, acorns in autumn
+  const id = x.getImageData(0, 0, W, H).data;
+  const solidAt = (px, py) => px >= 0 && py >= 0 && px < W && py < H && id[(py * W + px) * 4 + 3] > 200 && taken[py * W + px] >= 2;
+  for (let k = 0; k < 520; k++) {
+    const px = Math.round(cx + (rng() - 0.5) * 150), py = Math.round(forkY - 40 + (rng() - 0.5) * 120);
+    if (solidAt(px, py)) { x.fillStyle = rng() < 0.5 ? pal[4] : pal[1]; x.fillRect(px, py, 1, 1); }
+  }
+  if (season === 'spring') for (let k = 0; k < 220; k++) {
+    const px = Math.round(cx + (rng() - 0.5) * 150), py = Math.round(forkY - 46 + (rng() - 0.55) * 110);
+    if (solidAt(px, py)) { x.fillStyle = k % 2 ? '#fff6f0' : '#ffe0ea'; x.fillRect(px, py, 1, 1); if (rng() < 0.4) x.fillRect(px + 1, py, 1, 1); }
+  }
+  if (season === 'autumn') for (let k = 0; k < 40; k++) {
+    const px = Math.round(cx + (rng() - 0.5) * 140), py = Math.round(forkY - 30 + (rng() - 0.3) * 80);
+    if (solidAt(px, py)) { x.fillStyle = '#7a5a2a'; x.fillRect(px, py, 2, 2); x.fillStyle = '#b08a4a'; x.fillRect(px, py, 1, 1); }
   }
   return outlineCanvas(c, shade(pal[0], -0.45));
 }

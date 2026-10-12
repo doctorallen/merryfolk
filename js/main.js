@@ -773,9 +773,10 @@ function render(dtReal, dtWall = dtReal) {
 
   // y-sorted drawables
   const list = [];
-  const inView = (x, y, mx = 100, my = 140) => x > cx - mx && x < cx + cam.w + mx && y > cy - 20 && y < cy + cam.h + my;
+  // the margins allow for the tallest sprite, the great oak at 212 px
+  const inView = (x, y, mx = 110, my = 220) => x > cx - mx && x < cx + cam.w + mx && y > cy - 20 && y < cy + cam.h + my;
   // the scenery and grass near the camera, from their buckets, rather than every piece on the map
-  Scene.gather(World.statics, cx - 100, cy - 20, cx + cam.w + 100, cy + cam.h + 140, (s) => { if (!s.hidden) list.push({ y: s.sortY, s }); });
+  Scene.gather(World.statics, cx - 110, cy - 20, cx + cam.w + 110, cy + cam.h + 220, (s) => { if (!s.hidden) list.push({ y: s.sortY, s }); });
   Scene.gather(World.grass || [], cx - 20, cy - 20, cx + cam.w + 20, cy + cam.h + 30, (g) => list.push({ y: g.y, g }));
   for (const h of World.homes) if (h.built) for (const p of h.plots) if (inView(p.x, p.y)) list.push({ y: p.y, img: SPR.crops[h.cropType][p.stage], x: p.x - 7, iy: p.y - 12 });
   const winter = World.season === 'winter';

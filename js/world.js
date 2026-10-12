@@ -173,7 +173,7 @@ function* buildWorldSteps(cfg) {
       img, base: img, x: Math.round(x), y: Math.round(y), ox: opts.ox ?? Math.floor(img.width / 2), oy: opts.oy ?? img.height, w: img.width,
       sortY: y + (opts.sortBias || 0), snow: opts.snow !== false, gen: opts.gen, seasons: opts.seasons,
       // trees and bushes sway in the wind
-      sway: opts.sway ?? (opts.gen ? (opts.gen.type === 'tree' ? (opts.gen.kind === 'big' ? 0.6 : 1) : 0.35) : 0),
+      sway: opts.sway ?? (opts.gen ? (opts.gen.type === 'tree' ? (opts.gen.kind === 'great' ? 0.3 : opts.gen.kind === 'big' ? 0.6 : 1) : 0.35) : 0),
     };
     World.statics.push(s); return s;
   };
@@ -330,7 +330,7 @@ function* buildWorldSteps(cfg) {
   }
 
   // --- Story circle beneath an old oak ---
-  addStatic(makeTree(5151, 'big'), STORY.x * 16 + 8, (STORY.y + 1) * 16, { gen: { type: 'tree', seed: 5151, kind: 'big' } });
+  addStatic(makeTree(5151, 'great'), STORY.x * 16 + 8, (STORY.y + 1) * 16, { gen: { type: 'tree', seed: 5151, kind: 'great' } });
   for (let x = STORY.x - 1; x <= STORY.x + 1; x++) blk(x, STORY.y);
   res(STORY.x, STORY.y, 2);
   World.storyteller = makeSpot(STORY.x * 16 + 8, (STORY.y + 1) * 16 + 10, 'down', 'sit', 'story');
@@ -342,7 +342,7 @@ function* buildWorldSteps(cfg) {
   for (const [dx, dy] of [[-2.2, 2.9], [2.2, 2.9]]) addStatic(logImg, (STORY.x + dx) * 16 + 8, (STORY.y + dy) * 16 + 8, { sortBias: -6 });
 
   // --- Party field ---
-  addStatic(makeTree(4242, 'big'), PARTY.treeX * 16 + 8, (PARTY.treeY + 1) * 16, { gen: { type: 'tree', seed: 4242, kind: 'big' } });
+  addStatic(makeTree(4242, 'great'), PARTY.treeX * 16 + 8, (PARTY.treeY + 1) * 16, { gen: { type: 'tree', seed: 4242, kind: 'great' } });
   for (let x = PARTY.treeX - 1; x <= PARTY.treeX + 1; x++) blk(x, PARTY.treeY);
   res(PARTY.treeX, PARTY.treeY, 2);
   for (let i = 0; i < 12; i++) {
@@ -1911,7 +1911,8 @@ function drawWindmillSails(ctx) {
 
 function drawPartyLanterns(ctx, time, on) {
   const poles = World.partyPoles;
-  const top = { x: PARTY.treeX * 16 + 8, y: PARTY.treeY * 16 - 26 };
+  // the strings hang from the lower boughs of the great oak
+  const top = { x: PARTY.treeX * 16 + 8, y: PARTY.treeY * 16 - 70 };
   const cols = ['#ff6a5a', '#ffd34a', '#6ad0ff', '#9aff7a', '#ff9ae0'];
   for (let i = 0; i < poles.length; i++) {
     const p = poles[i];
