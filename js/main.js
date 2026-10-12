@@ -782,7 +782,8 @@ function render(dtReal, dtWall = dtReal) {
   const inView = (x, y, mx = 110, my = 220) => x > cx - mx && x < cx + cam.w + mx && y > cy - 20 && y < cy + cam.h + my;
   // the scenery and grass near the camera, from their buckets, rather than every piece on the map
   Scene.gather(World.statics, cx - 110, cy - 20, cx + cam.w + 110, cy + cam.h + 220, (s) => { if (!s.hidden) list.push({ y: s.sortY, s }); });
-  Scene.gather(World.grass || [], cx - 20, cy - 20, cx + cam.w + 20, cy + cam.h + 30, (g) => list.push({ y: g.y, g }));
+  // at the widest zoom the short grass and weeds are too small to see, so only the tall stands are drawn
+  Scene.gather(World.grass || [], cx - 20, cy - 20, cx + cam.w + 20, cy + cam.h + 30, (g) => { if (Game.zoom > 1 || g.v >= TALL_V) list.push({ y: g.y, g }); });
   for (const h of World.homes) if (h.built) for (const p of h.plots) if (inView(p.x, p.y)) list.push({ y: p.y, img: SPR.crops[h.cropType][p.stage], x: p.x - 7, iy: p.y - 12 });
   const winter = World.season === 'winter';
   if (!winter) {
@@ -1044,9 +1045,20 @@ function renderOverlay() {
 const keys = new Set();
 const pointer = { down: false, sx: 0, sy: 0, camX: 0, camY: 0, moved: false, x: 0, y: 0, cand: null };
 
+// A phone (or any small or short window) gets the compact interface: the
+// body carries `phone` (and `landscape` when it's wider than it is tall).
+const isPhone = () => window.innerWidth < 760 || window.innerHeight < 500;
+function markScreen() {
+  const W = window.innerWidth, H = window.innerHeight;
+  document.body.classList.toggle('phone', isPhone());
+  document.body.classList.toggle('landscape', H < 500 && W > H);
+  // at the widest zoom the view is drawn at half size, smoothed, since there's no whole pixel for each half-pixel of art
+  document.body.classList.toggle('zoom-1', Game.zoom === 1);
+}
 function resize() {
   dpr = window.devicePixelRatio || 1;
   const W = window.innerWidth, H = window.innerHeight;
+  markScreen();
   Game.cam.w = Math.ceil(W / Game.zoom); Game.cam.h = Math.ceil(H / Game.zoom);
   // two canvas pixels to every world pixel; the zoom steps keep them whole on screen
   view.width = Game.cam.w * RS; view.height = Game.cam.h * RS;
@@ -1064,8 +1076,9 @@ function clampCam() {
 }
 
 // Zoom levels, in screen pixels per world pixel. They're even, so every
-// half-pixel of art lands on whole screen pixels.
-const ZOOMS = [2, 4, 6, 8];
+// half-pixel of art lands on whole screen pixels; the widest, 1, shows a
+// whole stretch of the valley on a phone, smoothed down to half size.
+const ZOOMS = [1, 2, 4, 6, 8];
 const snapZoom = (z) => ZOOMS.reduce((best, k) => (Math.abs(k - z) < Math.abs(best - z) ? k : best), ZOOMS[0]);
 function zoomStep(dir, anchorX, anchorY) { const i = ZOOMS.indexOf(snapZoom(Game.zoom)); setZoom(ZOOMS[clamp(i + dir, 0, ZOOMS.length - 1)], anchorX, anchorY); }
 function setZoom(z, anchorX, anchorY) {
@@ -1262,6 +1275,8 @@ function handleClick(sx, sy) {
       if (h && h.built) { openInterior(h); return; }
       const bd = buildingAt(wx, wy);
       if (bd) { openInterior(bd); return; }
+      // a finger can't hover: a tap on a place names it for a moment
+      if (pointer.touch) { const p = placeAt(wx, wy); if (p) toast(p[1] ? `${p[0]}: ${p[1]}` : p[0], 'info'); }
       // shoo rabbits and crows with a click
       for (const r of World.rabbits) if (dist(r.x, r.y, wx, wy) < 14) { r.flee = 40; r.fx = wx; r.fy = wy; FX.puff(r.x, r.y - 4); }
       for (const c of World.crows) if (c.state === 'peck' && dist(c.x, c.y, wx, wy) < 40) { c.state = 'fly'; c.leaving = true; c.tx = c.x + R.f(-300, 300); c.ty = -60; }
@@ -1371,7 +1386,8 @@ function boot() {
   // the valley the saved village lives in (older saves: the original one)
   buildWorld(savedGen() || SEED);
   FX.initAmbient();
-  Game.zoom = snapZoom(Math.min(window.innerWidth / 240, window.innerHeight / 280));
+  // a comfortable first zoom: about 15 tiles across, never the widest (that one's for looking about)
+  Game.zoom = Math.max(2, snapZoom(Math.min(window.innerWidth / 240, window.innerHeight / 280)));
   resize();
   const loaded = load();
   if (!loaded) { World.season = 'spring'; newVillage(); }
