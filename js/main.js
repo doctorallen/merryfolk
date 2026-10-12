@@ -149,7 +149,10 @@ function simulate(dt) {
   }
   if (Game.party.on && Game.time > Game.party.until) {
     Game.party.on = false;
-    if (Game.party.reason && !['evening', 'highday', 'fireworks'].includes(Game.party.reason)) chronicle('The last lanterns are blown out in the party field. What a night!', 'info');
+    const k = partyKind();
+    if (Game.party.reason && !k.quiet) chronicle(k.lunch ? 'The long tables are cleared away from the party field. What a lunch!' : 'The last lanterns are blown out in the party field. What a night!', 'info');
+    Game.party.feast = null; Game.party.host = null; Game.party.given = null;
+    takeDownTables();
   }
 }
 
@@ -178,6 +181,8 @@ function checkSeason(announce) {
   if (dayOfSeason(Game.day) === 2 && Game.festivalDay !== Game.day) {
     Game.festivalDay = Game.day;
     const [key, note] = FESTIVALS[s];
+    // whatever else was planned for tonight is toasted at the festival
+    if (Game.party.planned && Game.party.planned !== key) alsoToast(Game.party.planned);
     Game.party.planned = key;
     if (announce) chronicle(note, 'party');
   }
@@ -212,32 +217,30 @@ function onHour(h) {
   logWeather();
   // evening hearths, parties and fireworks
   if (h === 19) lightHearths();
-  if (h === 18 && !Game.party.on && !Game.raining) {
-    // a do every few days, and the festivals, weddings and comings of age
-    if (Game.party.planned || Game.day % 4 === 0 || Math.random() < 0.08) startParty(Game.party.planned || 'evening');
-  }
-  if (h === 22 && Game.party.on && !Game.raining) fireworkShow(PARTY.danceX * 16 + 8, (PARTY.danceY - 3) * 16, Game.party.reason === 'midsummer' ? 18 : 9);
-  if (h === 23 && Game.party.on && Game.party.reason === 'midsummer') fireworkShow(PARTY.danceX * 16 + 8, (PARTY.danceY - 3) * 16, 14);
-  if (h === 0) Game.party.planned = null;
+  // the parties themselves, what they're for and their fireworks, are in occasions.js
   // every feature's hourly turn, in the order the files were loaded, then the save
   runHooks('onHour', h);
   save();
 }
 
+// Every party has a reason (PARTY_KINDS, occasions.js), which says what it's
+// like: when it ends, whether there's a dinner at the long tables first, and
+// what the Chronicle says.
 function startParty(reason) {
   if (Game.party.on) { Game.party.until = Math.max(Game.party.until, Game.time + 180); return; }
+  const k = partyKind(reason);
   const dayStart = Math.floor(Game.time / 1440) * 1440;
   Game.party.on = true;
-  Game.party.until = Math.max(Game.time + 150, dayStart + 23.75 * 60);
+  Game.party.until = k.until ? Math.max(Game.time + 90, dayStart + k.until * 60) : Math.max(Game.time + 150, dayStart + 23.75 * 60);
   Game.party.reason = reason;
   Game.party.planned = null;
-  if (['mayday', 'midsummer', 'harvest', 'yule'].includes(reason)) {
-    chronicle({ mayday: 'The maypole is up and the fiddles are tuned. Round and round they go!', midsummer: 'Midsummer revels have begun in the party field!', harvest: 'The Harvest Feast is laid! Pies, stews and cider for everyone.', yule: 'The Yule bonfire is roaring. Mulled ale and carols in the snow!' }[reason], 'party');
-    if (reason === 'harvest') { Village.produce('pie', 10); Village.produce('stew', 12); }
-    return;
-  }
-  const why = { wedding: 'for the happy couple', 'coming-of-age': 'to celebrate a coming of age', fireworks: 'and it\'s an impromptu one!', 'house-warming': 'to warm the new hole' }[reason] || 'and everyone\'s invited';
-  chronicle(`The lanterns are lit in the party field: there's a do tonight, ${why}.`, 'party');
+  Game.party.given = [];
+  Game.party.feast = k.feast ? { start: Game.time, course: -1 } : null;
+  Game.lastParty = Game.day;
+  if (k.start) k.start(reason);
+  const note = typeof k.note === 'function' ? k.note(reason) : k.note;
+  if (note) chronicle(note, 'party');
+  if (k.feast) feastBegin();
 }
 
 function fireworkShow(x, y, n) {
@@ -603,7 +606,7 @@ function collectLights() {
   if (Game.party.on) {
     for (const p of World.partyPoles) L.push({ x: p.x, y: p.y + 8, r: 42, a: 0.85, col: '#ffcf70' });
     L.push({ x: PARTY.danceX * 16 + 8, y: PARTY.danceY * 16, r: 90, a: 0.9, col: '#ffcf70' });
-    if (World.season === 'winter') L.push({ x: World.bonfire.x, y: World.bonfire.y - 8, r: 110, a: 0.95, col: '#ff9a3a', glow: 1.2 * flicker(99) });
+    if (World.season === 'winter' || partyKind().bonfire) L.push({ x: World.bonfire.x, y: World.bonfire.y - 8, r: 110, a: 0.95, col: '#ff9a3a', glow: 1.2 * flicker(99) });
   }
   for (const v of Game.villagers) {
     const lan = lanternFor(v);
@@ -759,7 +762,7 @@ function render(dtReal, dtWall = dtReal) {
     else if (d.o) d.o.draw(ctx);
     else blit(ctx, d.img, d.x, d.iy, !!d.flip);
   }
-  if (winter) drawBonfire(ctx, tReal, Game.party.on);
+  if (winter || (Game.party.on && partyKind().bonfire)) drawBonfire(ctx, tReal, Game.party.on);
   for (const c of World.crows) if (c.state === 'fly') blit(ctx, SPR.crow[Math.floor(c.flap * 2) % 2], Math.round(c.x) - 3, Math.round(c.y) - 3);
   drawPartyLanterns(ctx, tReal, Game.party.on);
   FX.drawAmbientDay(ctx, Game, cr);

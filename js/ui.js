@@ -781,7 +781,7 @@ function placeAt(wx, wy) {
   const t = tileAt(tx, ty);
   if (t === T.WEED) return ['The pipe-weed field', World.season === 'winter' ? 'Bare until spring' : 'Leaf grows here for the village pipes'];
   if (t === T.FIELD) { const f = World.fields.find((f) => tx >= f.x0 && tx <= f.x1 && ty >= f.y0 && ty <= f.y1); return [f ? f.name.replace(/^the /, 'The ') : 'Barley', World.season === 'winter' ? 'Resting under the snow' : 'Barley for bread and ale']; }
-  if (Math.hypot(tx - PARTY.cx, (ty - PARTY.cy) * 1.4) < 10) return ['The party field', Game.party.on ? 'A party is on!' : 'Parties most evenings (drop fireworks here to start one)'];
+  if (Math.hypot(tx - PARTY.cx, (ty - PARTY.cy) * 1.4) < 10) return ['The party field', Game.party.on ? `${partyKind().label} is on!` : 'Parties on feast days, birthdays and holidays (drop fireworks here to start one)'];
   if (Math.hypot(tx - STORY.x, ty - STORY.y - 1) < 3.5) { const st = anyStoryteller(); return ['The old story oak', st ? `${st.first} is telling stories!` : 'Little ones gather here for stories in the afternoon']; }
   for (const w of World.wells) if (Math.hypot(wx - w.x, wy - w.y + 14) < 18) return [w.name ? w.name.replace(/^the /, 'The ') : 'The village well', 'Cool water for thirsty folk'];
   if (Math.hypot(tx - 60.5, ty - 24.5) < 2) return ['Market stall', 'Folk fetch food for their larders here'];
@@ -806,7 +806,8 @@ const WEATHER_WORD = { clear: 'Fair', cloudy: 'Overcast', rain: 'Rain', storm: '
 function updateHUD() {
   $('hud-day').textContent = `${weekday(Game.day)} · Day ${Game.day} · Year ${yearOf(Game.day)}`;
   const bdays = Game.villagers.filter(birthdayToday).map((v) => v.first);
-  $('hud-day').title = dayWords(Game.day) + (bdays.length ? `\nBirthdays today: ${bdays.join(', ')}` : '');
+  const occ = occasionOn(Game.day) || (holidayToday() && Game.holiday.key);
+  $('hud-day').title = dayWords(Game.day) + (occ && PARTY_KINDS[occ] ? `\nToday: ${occ === 'holiday' ? Game.holiday.name : PARTY_KINDS[occ].label}` : '') + (bdays.length ? `\nBirthdays today: ${bdays.join(', ')}` : '');
   $('hud-season').textContent = SEASONS[seasonIdx(Game.day)];
   $('hud-season').dataset.season = World.season;
   $('hud-time').textContent = fmtTime(Game.time);
@@ -814,7 +815,7 @@ function updateHUD() {
   $('hud-weather').textContent = Game.weather === 'clear' && Game.darkness > 0.4 ? 'Starry' : WEATHER_WORD[Game.weather] || 'Fair';
   $('hud-pop').textContent = Game.villagers.length + ' folk';
   $('hud-party').hidden = !Game.party.on;
-  $('hud-party').textContent = { mayday: 'Mayday dance!', midsummer: 'Midsummer!', harvest: 'Harvest Feast!', yule: 'Yule!' }[Game.party.reason] || 'Party tonight!';
+  if (Game.party.on) { const k = partyKind(); $('hud-party').textContent = k.hud || k.label + '!'; }
   if (Game.selected) renderPanel(false);
   if (!$('roster').hidden) renderRoster();
   if (!$('village').hidden && Game.villageTab === 'stores') { Game._vT = (Game._vT || 0) + 1; if (Game._vT % 8 === 0) renderVillage(); }

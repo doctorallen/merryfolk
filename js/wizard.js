@@ -103,6 +103,19 @@ const TALE_REACTS = {
 const WIZARD_IDLE = ['Good morning! Or is it? Well, it is a good morning to be out walking, at any rate.', 'Has anybody here seen a hobbit with a taste for adventure? No? Pity.', 'Lovely leaf you grow here. Very lovely leaf.', 'Do not meddle in the affairs of wizards. Unless there is cake.', 'Fireworks tonight! If the weather holds, and if I can remember which crate is which.', 'Ah, the Shire. It never changes, and I hope it never does.', 'What a fine hole that is. Round door, brass knob, everything just so.', 'A wizard is never late. Nor early. He arrives precisely when he means to.'];
 const WIZARD_PARTY = ['Splendid party! Splendid!', 'Is that a seed-cake? I think it might be a seed-cake.', 'Not long now, little ones. Patience!', 'Another tune, fiddler!', 'Hobbits do know how to throw a party. I have always said so.'];
 
+// --- His party ------------------------------------------------------------------
+// A night of his own among the occasions: it gives way to the calendar's
+// festivals and the Steward's feasts (he comes to those, and the fireworks
+// are his anyway), and wins over a wedding or a birthday, which are toasted at it.
+addPartyKind('wizard', {
+  rank: 3.5, label: 'The wizard\'s party', hud: 'Wizard!', fireworks: 0, encore: 0,
+  note: 'The lanterns are lit in the party field: there\'s a do tonight for the wizard, and he\'s promised fireworks.',
+  also: 'the wizard\'s visit',
+  show: (x, y) => wizardShow(x, y),
+  lines: ['Is it time for the fireworks yet?', 'Gandalf! Do the dragon!', 'A wizard at our party!', 'Faster, fiddler! The wizard\'s watching!'],
+});
+const wizardPartyTonight = () => (Game.schedulePartyTonight ? Game.schedulePartyTonight('wizard') : (Game.party.planned = Game.party.planned || 'wizard'));
+
 // --- Where he is and what he's doing --------------------------------------------
 function wizard() { return Game.wizard || null; }
 function wizardHere() { const w = wizard(); return !!w && w.phase === 'here'; }
@@ -152,7 +165,7 @@ function wizardParked() {
   const w = wizard();
   w.phase = 'here'; w.x = w.camp.x; w.y = w.camp.y; w.path = null; w.doing = 'wagon'; w.fx = w.camp.x + w.face * 30; w.fy = w.camp.y + 4;
   chronicle('Gandalf has drawn up his wagon by the party field and is staying two nights. He\'ll tell tales beneath the great tree in the afternoons, and if there\'s a party, the fireworks are his.', 'party');
-  if (!Game.party.planned || Game.party.planned === 'evening') Game.party.planned = 'wizard';
+  wizardPartyTonight();
   for (const v of Game.villagers) if (!v.inside || v.isChild()) feel(v, 'wizard_came');
 }
 function wizardDepart() {
@@ -864,7 +877,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (h === 9 && !wizard() && Game.day >= 3 && Game.day - Game.wizardLast >= WIZARD.gap && !Game.raining && R.chance(WIZARD.chance * (World.season === 'winter' ? 0.5 : 1))) wizardArrive();
     // a party every night he's in town, unless one's planned anyway
     const w = wizard();
-    if (h === 17 && w && w.phase === 'here' && w.showDay !== Game.day && !Game.party.planned) Game.party.planned = 'wizard';
+    if (h === 12 && w && w.phase === 'here' && w.day !== Game.day && w.leave > Game.day && !Game.party.on) wizardPartyTonight();
     // and the night he arrives there's always one, rain or no rain: he sees to the rain
     if (h === 18 && w && w.day === Game.day && !Game.party.on) {
       if (Game.raining) { Game.weather = 'clear'; Game.raining = false; Game.rainUntil = Game.time; chronicle('The wizard rapped his staff on the ground, and the rain stopped as if a tap had been turned off. "There," he said. "Now we can have a party."', 'party'); }
