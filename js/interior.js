@@ -60,31 +60,46 @@ function interiorLayout(h) {
   if (!study && (neon || res.some((v) => v.isRiftborn()))) study = 'tinker';
   if (!study && h.grand) study = 'books';
   const lost = res.some((v) => v.lost > 0.05);
-  const rooms = [];
+  // Every hole was dug its own way, and always the same way for the same
+  // hole: which side of the hall the parlour is, whether the pantry is
+  // tucked between the hall and the kitchen or beyond it, whether the
+  // bedrooms run down one passage or sit at both ends, which end the study
+  // and the workshop are at, where the hearth is, how roomy each room is,
+  // and how the furniture stands.
+  const plan = {
+    parlourLeft: vr() < 0.5, pantryFirst: vr() < 0.3, bedsSplit: vr() < 0.6, bedsEnd: vr() < 0.5 ? -1 : 1, studyEnd: vr() < 0.5 ? -1 : 1,
+    hearthKitchen: !h.grand && vr() < 0.3, hallW: 56 + Math.floor(vr() * 3) * 8, parlourPad: Math.floor(vr() * 4) * 12, kitchenPad: Math.floor(vr() * 3) * 10,
+    bedPad: Math.floor(vr() * 3) * 12, pantryW: 50 + Math.floor(vr() * 3) * 8, winFirst: Math.floor(vr() * 3),
+    arr: Math.floor(vr() * 3), arrK: Math.floor(vr() * 2), arrB: Math.floor(vr() * 2), arrS: Math.floor(vr() * 2), drops: [0, 1, 2, 3, 4, 5, 6, 7].map(() => Math.floor(vr() * 3) * 3),
+  };
+  const core = plan.pantryFirst ? [{ kind: 'parlour' }, { kind: 'hall' }, { kind: 'pantry' }, { kind: 'kitchen' }] : [{ kind: 'parlour' }, { kind: 'hall' }, { kind: 'kitchen' }, { kind: 'pantry' }];
+  if (!plan.parlourLeft) core.reverse();
   const left = [], right = [];
-  bedrooms.forEach((b, i) => (i % 2 ? right : left).push(b));
-  for (const b of left.reverse()) rooms.push(b);
-  rooms.push({ kind: 'parlour' }, { kind: 'hall' }, { kind: 'kitchen' }, { kind: 'pantry' });
-  for (const b of right) rooms.push(b);
-  if (study) rooms.push({ kind: 'study', variant: study, lost });
+  bedrooms.forEach((b, i) => ((plan.bedsSplit ? (i % 2 ? -plan.bedsEnd : plan.bedsEnd) : plan.bedsEnd) < 0 ? left : right).push(b));
+  const extras = [];
+  if (study) extras.push({ kind: 'study', variant: study, lost });
   // hobby rooms: a workshop for the makers, a curio room for the collectors
   const makes = (k) => res.some((v) => hasHobby(v, k)) || (homeCrafts(h)[k] || 0) > 0;
   const workshop = ['carving', 'basketry', 'pottery', 'painting'].filter(makes);
-  if (workshop.length) rooms.push({ kind: 'workshop', crafts: workshop });
-  if (res.some((v) => hasHobby(v, 'collecting') || hasHobby(v, 'birdwatching')) || collectionTotal(h) >= 4) rooms.push({ kind: 'curio', birds: Math.max(0, ...res.map((v) => v.birds || 0)) });
+  if (workshop.length) extras.push({ kind: 'workshop', crafts: workshop });
+  if (res.some((v) => hasHobby(v, 'collecting') || hasHobby(v, 'birdwatching')) || collectionTotal(h) >= 4) extras.push({ kind: 'curio', birds: Math.max(0, ...res.map((v) => v.birds || 0)) });
+  extras.forEach((r, i) => ((i % 2 ? -plan.studyEnd : plan.studyEnd) < 0 ? left : right).push(r));
+  const rooms = left.slice().reverse().concat(core, right);
   const kitchenSeats = (rs) => clamp(rs.filter((v) => v.stage !== 'baby').length, 2, 4);
   const hallI = rooms.findIndex((r) => r.kind === 'hall');
   let x = PAD;
   rooms.forEach((r, i) => {
     r.side = i < hallI ? -1 : i > hallI ? 1 : 0;
-    r.w = r.kind === 'hall' ? 62 : r.kind === 'parlour' ? (h.grand ? 176 : 136) : r.kind === 'kitchen' ? 96 + kitchenSeats(res) * 20 + 6
-      : r.kind === 'pantry' ? 58 : r.kind === 'study' ? 90 : r.kind === 'workshop' ? 56 + r.crafts.length * 22 : r.kind === 'curio' ? 84
-      : Math.max(96, 30 + r.beds.reduce((s, b) => s + b.w, 0) + 14 * (r.beds.length - 1) + 26);
+    r.w = r.kind === 'hall' ? plan.hallW : r.kind === 'parlour' ? (h.grand ? 176 : 136) + plan.parlourPad : r.kind === 'kitchen' ? 96 + kitchenSeats(res) * 20 + 6 + plan.kitchenPad + (plan.hearthKitchen ? 14 : 0)
+      : r.kind === 'pantry' ? plan.pantryW : r.kind === 'study' ? 90 + plan.arrS * 12 : r.kind === 'workshop' ? 56 + r.crafts.length * 22 : r.kind === 'curio' ? 84
+      : Math.max(96, 30 + r.beds.reduce((s, b) => s + b.w, 0) + 14 * (r.beds.length - 1) + 26) + plan.bedPad;
+    // some rooms are dug lower than others (the ones at the ends are low anyway, under the slope)
+    r.drop = (r.kind === 'hall' || r.kind === 'parlour') ? Math.min(3, plan.drops[i % 8]) : plan.drops[i % 8];
     r.x0 = x; r.x1 = x + r.w; x = r.x1 + WT;
   });
   const IW = x - WT + PAD;
   const L = {
-    h, IW, rooms, beds, res, neon, lost, hallI, vr, seats: [], spots: {}, items: [], hot: [], wins: [], cradles: [],
+    h, IW, rooms, beds, res, neon, lost, hallI, vr, plan, seats: [], spots: {}, items: [], hot: [], wins: [], cradles: [],
     wall: neon ? '#1f2338' : shade(WALLS[h.id % WALLS.length], (h.v ? h.v.tint : 0) * 0.5),
     pal: neon ? { o: '#0a0b14', d: '#1a1d30', m: '#2c3150', l: '#3e456c', h: '#55608e' } : IWOOD,
   };
@@ -93,14 +108,15 @@ function interiorLayout(h) {
     return Math.round(FLOOR_B - (FLOOR_B - 3) * Math.pow(1 - Math.pow(Math.abs(u), 3.2), 1 / 3.2));
   };
   L.top = (r, px) => {
-    let t = Math.max(CEIL, L.crust(px) + 10);
+    let t = Math.max(CEIL, L.crust(px) + 10) + (r.drop || 0);
     const dx = Math.min(px - r.x0, r.x1 - 1 - px);
     if (dx < RC) t += Math.round(RC - Math.sqrt(RC * RC - (RC - dx) * (RC - dx)));
     return t;
   };
-  // windows: as many as the hole has from outside, in the rooms that face front
+  // windows: as many as the hole has from outside, in the rooms that face front (which first varies by hole)
   const want = Math.max(1, h.windows.length);
-  const order = rooms.filter((r) => r.kind === 'parlour' || r.kind === 'kitchen').concat(rooms.filter((r) => r.kind === 'bed' || r.kind === 'nursery' || r.kind === 'study' || r.kind === 'workshop'));
+  const front = [rooms.find((r) => r.kind === 'parlour'), rooms.find((r) => r.kind === 'kitchen')], backs = rooms.filter((r) => r.kind === 'bed' || r.kind === 'nursery' || r.kind === 'study' || r.kind === 'workshop');
+  const order = plan.winFirst === 1 ? [front[1], front[0], ...backs] : plan.winFirst === 2 && backs.length ? [backs[0], ...front, ...backs.slice(1)] : [...front, ...backs];
   let nw = 0;
   for (const r of order) if (nw < want) { r.win = true; nw++; }
   if (h.grand) rooms.find((r) => r.kind === 'parlour').win2 = true;
@@ -139,33 +155,41 @@ function placeRoom(L, r) {
     hot(r.x0 + 2, 50, r.x0 + 22, 90, () => `Coats on the pegs: ${L.res.filter((v) => v.isGrown()).map((v) => v.first).join(', ') || 'none'}.`);
   } else if (r.kind === 'parlour') {
     r.name = 'The parlour';
-    const hx = cx;
-    L.hearth = { x: hx, y: WALL_B };
-    add({ t: 'hearth', x: hx });
-    add({ t: 'rug', x: hx, w: 56 });
-    for (const [k, dx] of [[0, -36], [1, 36]]) {
-      const a = add({ t: 'arm', x: hx + dx, col: L.neon ? ['#ff3aa8', '#3af0ff'][k] : ['#8a3a2a', '#3a5a3a', '#4a4a7a', '#7a5a2a'][(h.id + k) % 4] });
-      a.seat = seat({ kind: 'arm', x: hx + dx, y: 104, item: a });
-    }
-    if (L.res.some((v) => hasHobby(v, 'knitting'))) { add({ t: 'yarn', x: hx + 50 }); hot(hx + 46, 92, hx + 60, 104, () => `A basket of wool and needles. ${homeCrafts(h).knitting || 0} knitted things so far.`); }
+    const { plan } = L, arr = plan.arr, hearth = !plan.hearthKitchen;
+    const hx = cx + [0, -22, 22][arr], chairX = arr === 0 ? [hx - 36, hx + 36] : arr === 1 ? [hx + 34, hx + 58] : [hx - 58, hx - 34];
+    if (hearth) { L.hearth = { x: hx, y: WALL_B }; add({ t: 'hearth', x: hx }); } else add({ t: 'lamp', x: hx });
+    add({ t: 'rug', x: Math.round((chairX[0] + chairX[1]) / 2), w: arr ? 48 : 56 });
+    chairX.forEach((x, k) => {
+      const a = add({ t: 'arm', x, col: L.neon ? ['#ff3aa8', '#3af0ff'][k] : ['#8a3a2a', '#3a5a3a', '#4a4a7a', '#7a5a2a'][(h.id + k) % 4] });
+      a.seat = seat({ kind: 'arm', x, y: 104, item: a });
+    });
+    const yarnX = arr === 2 ? chairX[0] - 16 : chairX[1] + 14;
+    if (L.res.some((v) => hasHobby(v, 'knitting'))) { add({ t: 'yarn', x: yarnX }); hot(yarnX - 4, 92, yarnX + 10, 104, () => `A basket of wool and needles. ${homeCrafts(h).knitting || 0} knitted things so far.`); }
     if (h.grand) { add({ t: 'books', x: r.x0 + 6, w: 22 }); add({ t: 'books', x: r.x1 - 28, w: 22 }); }
-    else { add({ t: 'lamp', x: r.x0 + 10 }); add({ t: 'books', x: r.x1 - 20, w: 16 }); }
-    if (r.win && !win(hx - 36, 52)) r.win = false;
+    else if (plan.arrB) { add({ t: 'lamp', x: r.x0 + 10 }); add({ t: 'books', x: r.x1 - 20, w: 16 }); }
+    else { add({ t: 'books', x: r.x0 + 6, w: 16 }); add({ t: 'lamp', x: r.x1 - 14 }); }
+    const winX = arr === 1 ? hx - 30 : arr === 2 ? hx + 30 : hx - 36;
+    if (r.win && !win(winX, 52)) r.win = false;
     if (r.win2) win(hx + 36, 52);
     // portraits: the family, and those gone before them
-    const wallY = 40, slots = [hx - 36, hx + 36].filter((x) => !L.wins.some((w) => Math.abs(w.x - x) < 14));
+    const wallY = 40, slots = [hx - 36, hx + 36, hx].filter((x) => x > r.x0 + 14 && x < r.x1 - 14 && !L.wins.some((w) => Math.abs(w.x - x) < 14));
     const faces = portraitsFor(L);
     slots.forEach((x, i) => { if (faces[i]) add({ t: 'portrait', x, y: wallY + 6, who: faces[i] }); });
-    hot(hx - 22, 50, hx + 22, 98, () => h.chilly ? 'The hearth is cold. There\'s no timber in the Store for it.' : Interior.fire > 0.5 ? 'A good fire crackling in the grate.' : 'The fire is banked low, embers glowing.');
+    hot(hx - 22, 50, hx + 22, 98, () => !hearth ? 'A lamp on a little table between the chairs; the fire\'s in the kitchen.' : h.chilly ? 'The hearth is cold. There\'s no timber in the Store for it.' : Interior.fire > 0.5 ? 'A good fire crackling in the grate.' : 'The fire is banked low, embers glowing.');
     for (const f of L.items.filter((i) => i.t === 'portrait' && i.room === r)) hot(f.x - 8, f.y - 9, f.x + 8, f.y + 10, () => f.who.archived ? `A faded likeness of ${f.who.first} ${f.who.surname || ''}, who ${f.who.reason === 'home' ? 'went home through a rift' : 'went off on a last adventure'}.` : `A portrait of ${f.who.first}.`);
   } else if (r.kind === 'kitchen') {
     r.name = 'The kitchen';
-    const rangeX = r.x0 + 6;
+    const { plan } = L, mirrored = plan.arrK === 1;
+    const n = clamp(L.res.filter((v) => v.stage !== 'baby').length, 2, 4);
+    const tw = n * 20 + 6;
+    const rangeX = mirrored ? r.x1 - 40 : r.x0 + 6, tx = mirrored ? r.x0 + (plan.hearthKitchen ? 54 : 44) : r.x0 + 50;
     add({ t: 'range', x: rangeX });
     L.spots.oven = { x: rangeX + 17, y: 104 };
-    add({ t: 'dresser', x: r.x1 - 36 });
-    const n = clamp(L.res.filter((v) => v.stage !== 'baby').length, 2, 4);
-    const tw = n * 20 + 6, tx = r.x0 + 50;
+    if (plan.hearthKitchen) {
+      const hx = mirrored ? r.x0 + 24 : r.x1 - 26;
+      L.hearth = { x: hx, y: WALL_B }; add({ t: 'hearth', x: hx });
+      hot(hx - 22, 50, hx + 22, 98, () => h.chilly ? 'The hearth is cold. There\'s no timber in the Store for it.' : Interior.fire > 0.5 ? 'A good fire crackling in the kitchen grate.' : 'The kitchen fire is banked low, embers glowing.');
+    } else add({ t: 'dresser', x: mirrored ? r.x0 + 6 : r.x1 - 36 });
     const tbl = add({ t: 'table', x: tx, w: tw, n });
     // diners sit up behind the table, facing out, with their plates in front of them
     for (let i = 0; i < n; i++) seat({ kind: 'chair', x: tx + 13 + i * 20, y: 90, item: tbl, i });
@@ -187,7 +211,8 @@ function placeRoom(L, r) {
     add({ t: r.kind === 'nursery' ? 'toys' : 'wardrobe', x: inner(tallW), w: tallW });
     let bx = r.side < 0 ? r.x0 + 10 : r.x0 + 12 + tallW + 6;
     if (r.side === 0) bx = r.x0 + 10;
-    for (const b of r.beds) {
+    const bedList = L.plan.arrB && r.beds.length > 1 ? r.beds.slice().reverse() : r.beds;
+    for (const b of bedList) {
       b.x = bx; b.room = r; bx += b.w + 14;
       add({ t: b.kind === 'cradle' ? 'cradle' : 'bed', x: b.x, bed: b });
       if (b.kind === 'cradle') L.cradles.push(b);
@@ -199,13 +224,13 @@ function placeRoom(L, r) {
     if (r.win) { const wx = r.beds.length > 1 ? Math.round(r.beds[0].x + r.beds[0].w + 7) : cx; if (!win(wx, 48)) r.win = false; }
   } else if (r.kind === 'study') {
     r.name = r.variant === 'tinker' ? (L.neon ? 'The rig room' : 'The workroom') : r.variant === 'herbs' ? 'The stillroom' : 'The study';
-    const dx = r.x0 + 10;
+    const flipS = L.plan.arrS === 1, dx = flipS ? r.x1 - 48 : r.x0 + 10;
     add({ t: r.variant === 'tinker' ? 'bench' : r.variant === 'herbs' ? 'herbtable' : 'desk', x: dx });
     L.spots.desk = seat({ kind: 'stool', x: dx + 20, y: 104 });
-    add({ t: r.variant === 'herbs' ? 'jars' : 'books', x: r.x1 - 30, w: 24 });
+    add({ t: r.variant === 'herbs' ? 'jars' : 'books', x: flipS ? r.x0 + 6 : r.x1 - 30, w: 24 });
     if (r.lost) { add({ t: 'board', x: dx + 2 }); hot(dx, 38, dx + 38, 64, () => `Sketches of a city, a map of the rifts, red string everywhere. ${wayHomeWord()}`); }
-    if (r.win && !win(r.x1 - 50, 50)) r.win = false;
-    hot(r.x0, 66, r.x0 + 50, 104, () => r.variant === 'tinker' ? (L.neon ? 'A humming bench of salvaged rift-tech, wired into the hill.' : 'A workbench of gears, springs and half-mended things.') : r.variant === 'herbs' ? 'Herbs drying, a mortar and pestle, jars of remedies.' : 'A writing desk heaped with letters and stories.');
+    if (r.win && !win(flipS ? r.x0 + 50 : r.x1 - 50, 50)) r.win = false;
+    hot(dx - 10, 66, dx + 40, 104, () => r.variant === 'tinker' ? (L.neon ? 'A humming bench of salvaged rift-tech, wired into the hill.' : 'A workbench of gears, springs and half-mended things.') : r.variant === 'herbs' ? 'Herbs drying, a mortar and pestle, jars of remedies.' : 'A writing desk heaped with letters and stories.');
   } else if (r.kind === 'workshop') {
     r.name = r.crafts.length === 1 && r.crafts[0] === 'painting' ? 'The studio' : 'The workshop';
     const C = homeCrafts(h);
