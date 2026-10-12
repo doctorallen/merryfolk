@@ -177,7 +177,8 @@ function addWish(v, k, extra = {}) {
   const list = wishesOf(v);
   if (list.some((w) => w.k === k)) return null;
   const made = W.make ? W.make(v) : {};
-  if (made === null) return null;
+  // a wish with a blank in it (no name to put in the words) is no wish at all; and a blank would vanish from the save
+  if (made === null || Object.values(made).some((x) => x === undefined)) return null;
   const w = { k, ...made, made: Game.time, until: Game.time + (W.days || 1.5) * 1440, ...extra };
   list.push(w);
   if (typeof devLog === 'function' && Game.selected === v) devLog('mood', `${v.first} wishes: ${wishText(w)}`);
