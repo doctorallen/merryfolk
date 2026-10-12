@@ -328,8 +328,7 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
   }
   if (v.carried) { pose = Math.floor(t * 8) % 2 ? 'walk1' : 'walk2'; dir = 'down'; flip = false; yoff = Math.round(Math.sin(t * 5) * 1.5); }
   if (v.isTipsy() && v.pose === 'walk') xoff = Math.round(Math.sin(t * 3 + v.id) * 1.5);
-  // the three-quarter views take their props like the side and back views
-  const upish = dir === 'up' || dir === 'qup', sideish = dir === 'side' || dir === 'qdown';
+  const upish = dir === 'up', sideish = dir === 'side';
   // eyes shut for a blink every few seconds, or while dozing
   const dozing = v.task && v.task.phase === 'do' && v.task.a.zzz;
   const shut = !upish && (dozing || (tReal + v.id * 0.37) % 4.1 < 0.13);

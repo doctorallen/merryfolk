@@ -34,14 +34,6 @@ function petSprites(kind, coat) {
       down2: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.cecwcec.', '.cccpccc.', '..ccccc..', '.ccccccc.', '.ccccccc.', '..cc.cc..'],
       up1: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.ccccccc.', '.ccccccc.', '..ccdcc..', '.cccdccc.', '.cccdccc.', '.c.c.c.c.'],
       up2: ['.d.....d.', '.dc...cd.', '.ccccccc.', '.ccccccc.', '.ccccccc.', '..ccdcc..', '.ccdcccc.', '.cccdccc.', '..cc.cc..'],
-      // coming towards you and to the right: the near ear big, the far one small, the
-      // eyes and muzzle over to the right, the tail curling out behind on the left
-      qdown1: ['..dd...d..', '..dcc.cd..', '..ccccccc.', '..ccecwce.', '..cccccpc.', 'd..ccccc..', '.dccccccc.', '.dccccccc.', '..c.c.cc..'],
-      qdown2: ['..dd...d..', '..dcc.cd..', '..ccccccc.', '..ccecwce.', '..cccccpc.', 'd..ccccc..', '.dccccccc.', '.dccccccc.', '...cc.c.c.'],
-      // going away and to the right: the back of the head with the near ear, the stripe
-      // down the spine a little right of centre, the tail up on the left
-      qup1: ['..dd...d..', '..dcc.cd..', '..ccccccc.', '..ccccccc.', '..cccccc..', 'd.ccdccc..', '.dcccdccc.', '..ccccccc.', '..c.c.cc..'],
-      qup2: ['..dd...d..', '..dcc.cd..', '..ccccccc.', '..ccccccc.', '..cccccc..', 'd.ccdccc..', '.dccdcccc.', '..ccccccc.', '...cc.c.c.'],
     };
   } else {
     frames = {
@@ -53,13 +45,6 @@ function petSprites(kind, coat) {
       down2: ['..d.....d..', '.dcccccccd.', '.dcecccecd.', '..ccccccc..', '...ccecc...', '..ccccccc..', '.ccccccccc.', '.ccccccccc.', '..cc.c.cc..'],
       up1: ['..d.....d..', '.dcccccccd.', '.dcccccccd.', '..ccccccc..', '..ccccccc..', '..cccdccc..', '.ccccdcccc.', '.ccccccccc.', '.cc.ccc.cc.'],
       up2: ['..d.....d..', '.dcccccccd.', '.dcccccccd.', '..ccccccc..', '..ccccccc..', '..cccdccc..', '.cccdccccc.', '.ccccccccc.', '..cc.c.cc..'],
-      // coming towards you and to the right: the near ear hanging big, the far one small,
-      // the eyes over to the right and the muzzle on the turn, the tail out behind on the left
-      qdown1: ['...dd.....d.', '..ddccccccd.', '..dccceccec.', '...cccccccce', '....ccccccp.', 'd...ccccccc.', '.dccccccccc.', '..ccccccccc.', '..cc.ccc.cc.'],
-      qdown2: ['...dd.....d.', '..ddccccccd.', '..dccceccec.', '...cccccccce', '....ccccccp.', 'd...ccccccc.', '.dccccccccc.', '..ccccccccc.', '...cc.c.cc..'],
-      // going away and to the right: the back of the head with the near ear, the tail up on the left
-      qup1: ['...dd.....d.', '..ddccccccd.', '..dcccccccc.', '...ccccccc..', '....ccccccc.', 'd...cccdccc.', '.dccccdcccc.', '..ccccccccc.', '..cc.ccc.cc.'],
-      qup2: ['...dd.....d.', '..ddccccccd.', '..dcccccccc.', '...ccccccc..', '....ccccccc.', 'd...cccdccc.', '.dcccdccccc.', '..ccccccccc.', '...cc.c.cc..'],
     };
   }
   const out = {};
@@ -147,20 +132,14 @@ function stepPet(p, tx, ty, speed, dt) {
 // once it has been heading the other way for a moment, so a dog dithering
 // about a spot doesn't flick left and right.
 function petFacing(p, ex, ey, dt) {
-  if (Math.abs(ex) < 1 && Math.abs(ey) < 1) return;
-  // one of eight facings from the way it's going (the diagonals drawn
-  // three-quarter on); it only changes once the pet has been heading well
-  // into the new sector for a moment
-  const want = facingOf(ex, ey), cur = p.facing || (p.dir === 'down' || p.dir === 'up' ? p.dir : p.face < 0 ? 'left' : 'right');
-  if (want !== cur) {
-    const ci = FACINGS.indexOf(cur), ang = Math.atan2(ey, ex);
-    let off = ci < 0 ? 9 : Math.abs(ang - ci * Math.PI / 4); if (off > Math.PI) off = Math.PI * 2 - off;
-    if (off >= Math.PI / 6) { p.faceT = (p.faceT || 0) + dt; if (p.faceT >= 0.6) { p.facing = want; p.faceT = 0; } }
-    else p.faceT = 0;
-  } else { p.faceT = 0; p.facing = cur; }
-  const [view, left] = facingView(p.facing || cur);
-  p.dir = view;
-  p.face = left ? -1 : view === 'down' || view === 'up' ? p.face : 1;
+  const ax = Math.abs(ex), ay = Math.abs(ey);
+  if (p.dir === 'down' || p.dir === 'up') { if (ax > ay * 1.6) p.dir = 'side'; }
+  else if (ay > ax * 1.6) p.dir = ey > 0 ? 'down' : 'up';
+  if ((p.dir === 'down' && ey < 0 && ay > ax) || (p.dir === 'up' && ey > 0 && ay > ax)) p.dir = ey > 0 ? 'down' : 'up';
+  const want = ex > 3 ? 1 : ex < -3 ? -1 : 0;
+  if (want && want !== p.face) { p.faceT = (p.faceT || 0) + dt; if (p.faceT >= 1) { p.face = want; p.faceT = 0; } }
+  else p.faceT = 0;
+  p.facing = p.dir === 'side' ? (p.face < 0 ? 'left' : 'right') : p.dir;
 }
 function updatePets(dtMin, hour) {
   for (const p of petsList()) {
@@ -229,7 +208,7 @@ function updatePets(dtMin, hour) {
 }
 function petFrame(p) {
   const S = petSprites(p.kind, p.coat);
-  if (p.state === 'walk') { const k = Math.floor((p.walk || 0) / 5) % 2 ? 2 : 1; return S[(p.dir === 'down' || p.dir === 'up' || p.dir === 'qdown' || p.dir === 'qup' ? p.dir : 'walk') + k]; }
+  if (p.state === 'walk') { const k = Math.floor((p.walk || 0) / 5) % 2 ? 2 : 1; return S[(p.dir === 'down' || p.dir === 'up' ? p.dir : 'walk') + k]; }
   return p.state === 'sleep' ? S.sleep : S.sit;
 }
 
