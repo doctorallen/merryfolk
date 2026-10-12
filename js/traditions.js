@@ -45,7 +45,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const wpt = ACTIONS.work_plan.tick;
   ACTIONS.work_plan.tick = (v, task, dt) => wpt(v, task, hasTrad('building') ? dt * 1.25 : dt);
   const f = feel;
-  feel = function (v, key, x = '', mins) { if (hasTrad('merry') && ['party', 'feasted', 'festival', 'singsong'].includes(key)) mins = Math.round(MOODLETS[key][2] * 1.5); return f(v, key, x, mins); };
+  feel = function (v, key, x = '', mins) { if (hasTrad('merry') && ['party', 'feasted', 'festival', 'singsong', 'feast_dined', 'bday_guest', 'holiday'].includes(key)) mins = Math.round(MOODLETS[key][2] * 1.5); return f(v, key, x, mins); };
   const sp = sellPrice, bp = buyPrice;
   sellPrice = function (k) { return sp(k) * (hasTrad('commerce') ? 1.2 : 1); };
   buyPrice = function (k) { return bp(k) * (hasTrad('commerce') ? 0.9 : 1); };
