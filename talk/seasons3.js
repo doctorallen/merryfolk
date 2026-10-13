@@ -663,7 +663,7 @@ talkPack('seasons3', () => {
         { ap: 'jest', say: 'And how many breakfasts does {season} get, in your hole?', to: 'breakfasts' },
         { ap: 'ask', say: 'What\'s the best thing you ever ate?', to: 'best' },
       ] },
-      fav: { line: 'season.food.fav', fx: { learn: ['season.favfood', '{Name}\'s favourite is {favFood}'] }, go: [
+      fav: { line: 'season.food.fav', fx: { learn: ['season.favfood', '{Name}\'s favourite is {seasonFavFood}'] }, go: [
         { ap: 'ask', say: 'And who made it best?', to: 'who', need: { open: 1 }, soft: true },
         { ap: 'jest', say: 'I\'ll remember that, next time I need a favour.', to: 'favour' },
         { ap: 'share', say: 'Mine\'s mushrooms on toast, by a fire, after a long wet road.', to: 'wizfav' },
@@ -686,7 +686,7 @@ talkPack('seasons3', () => {
       honoured: { line: 'season.food.honoured', fx: { fond: 0.03, hook: 'season.dish' }, end: true },
       make: { line: 'season.food.make', fx: { remember: 'The wizard said I should make the old dish myself.', rv: 1 }, end: true },
       taught: { line: 'season.food.taught', end: true },
-      favour: { line: 'season.food.favour', fx: { joke: { k: 'season.favour', t: 'The wizard knows the way to a favour is through {favFood}.' } }, end: true },
+      favour: { line: 'season.food.favour', fx: { joke: { k: 'season.favour', t: 'The wizard knows the way to a favour is through {seasonFavFood}.' } }, end: true },
       wizfav: { line: 'season.food.wizfav', fx: { trust: 0.02 }, end: true },
       again: { line: 'season.food.again', end: true },
       porridge: { line: 'season.food.porridge', fx: { fond: 0.01 }, end: true },
@@ -730,20 +730,20 @@ talkPack('seasons3', () => {
     { if: { hungry: true }, pri: 1, text: ['Don\'t talk about food. I\'m starving. ...No, do. Talk about food.'] },
   ]);
   lines('season.food.fav', [
-    { text: ['{FavFood}. Always has been. Always will be.', 'Give me {favFood} and I\'m anybody\'s.'] },
-    { if: { favFood: 'seed-cake' }, text: ['Seed-cake. With a cup of tea. At four o\'clock. Exactly four.'] },
-    { if: { favFood: 'mushrooms' }, text: ['Mushrooms. I\'d trespass for them. I have trespassed for them.'] },
-    { if: { favFood: 'pie' }, text: ['Pie. Any pie. The crust is the point. The filling\'s just there to hold it up.'] },
-    { if: { favFood: 'cheese' }, text: ['Cheese. A great crumbly lump of it, and an apple to make it respectable.'] },
-    { if: { favFood: 'fish' }, text: ['Fish, fresh that morning. If it\'s been out of the river an hour it\'s old.'] },
-    { if: { favFood: 'bread' }, text: ['Bread. Warm, with butter going in. You can keep your cakes.'] },
-    { if: { favFood: 'apples' }, text: ['Apples. The first crisp one of autumn, straight off the tree.'] },
-    { if: { favFood: 'eggs' }, text: ['Eggs. Boiled, with soldiers. I never grew out of it and I never will.'] },
-    { if: { favFood: 'vegetables' }, text: ['Vegetables. Don\'t laugh. A good roast parsnip is better than any cake.'] },
-    { if: { temper: 'shy' }, text: ['...{FavFood}. Don\'t tell anyone. They\'ll bring it to me and I\'ll have to say thank you.'] },
-    { if: { temper: 'witty' }, text: ['{FavFood}, closely followed by more {favFood}.'] },
-    { if: { temper: 'proud' }, text: ['{FavFood}, and mine is better than anyone\'s.'] },
-    { if: { stage: 'child' }, text: ['{FavFood}! And sweets. And {favFood} with sweets on.'] },
+    { text: ['{SeasonFavFood}. Always has been. Always will be.', 'Give me {seasonFavFood} and I\'m anybody\'s.'] },
+    { if: { seasonFavFood: 'seed-cake' }, text: ['Seed-cake. With a cup of tea. At four o\'clock. Exactly four.'] },
+    { if: { seasonFavFood: 'mushrooms' }, text: ['Mushrooms. I\'d trespass for them. I have trespassed for them.'] },
+    { if: { seasonFavFood: 'pie' }, text: ['Pie. Any pie. The crust is the point. The filling\'s just there to hold it up.'] },
+    { if: { seasonFavFood: 'cheese' }, text: ['Cheese. A great crumbly lump of it, and an apple to make it respectable.'] },
+    { if: { seasonFavFood: 'fish' }, text: ['Fish, fresh that morning. If it\'s been out of the river an hour it\'s old.'] },
+    { if: { seasonFavFood: 'bread' }, text: ['Bread. Warm, with butter going in. You can keep your cakes.'] },
+    { if: { seasonFavFood: 'apples' }, text: ['Apples. The first crisp one of autumn, straight off the tree.'] },
+    { if: { seasonFavFood: 'eggs' }, text: ['Eggs. Boiled, with soldiers. I never grew out of it and I never will.'] },
+    { if: { seasonFavFood: 'vegetables' }, text: ['Vegetables. Don\'t laugh. A good roast parsnip is better than any cake.'] },
+    { if: { temper: 'shy' }, text: ['...{SeasonFavFood}. Don\'t tell anyone. They\'ll bring it to me and I\'ll have to say thank you.'] },
+    { if: { temper: 'witty' }, text: ['{SeasonFavFood}, closely followed by more {seasonFavFood}.'] },
+    { if: { temper: 'proud' }, text: ['{SeasonFavFood}, and mine is better than anyone\'s.'] },
+    { if: { stage: 'child' }, text: ['{SeasonFavFood}! And sweets. And {seasonFavFood} with sweets on.'] },
   ]);
   lines('season.food.best', [
     { text: ['A pie at a wedding, years ago. Rabbit and something. I never found out what.', 'A slice of bread and dripping on a cold morning, after a long walk. Nothing ever beat it.'] },
@@ -801,8 +801,8 @@ talkPack('seasons3', () => {
   ]);
   lines('season.food.favour', [
     { text: ['Ha! You\'ve found my weak spot. Use it wisely.', 'Oh, you\'re a cunning one. It would work, mind.'] },
-    { if: { temper: 'ornery' }, text: ['It\'ll take more than {favFood}. ...A lot of {favFood}, maybe.'] },
-    { if: { stage: 'child' }, text: ['Bring me {favFood} and I\'ll do ANYTHING. Except bath.'] },
+    { if: { temper: 'ornery' }, text: ['It\'ll take more than {seasonFavFood}. ...A lot of {seasonFavFood}, maybe.'] },
+    { if: { stage: 'child' }, text: ['Bring me {seasonFavFood} and I\'ll do ANYTHING. Except bath.'] },
   ]);
   lines('season.food.wizfav', [
     { text: ['Mushrooms on toast! You\'re a hobbit in a wizard\'s hat.', 'After a long wet road. Yes. That\'s when food\'s best.'] },
@@ -1095,7 +1095,7 @@ talkPack('seasons3', () => {
   ]);
   lines('season.tables.course', [
     { text: ['Pudding. You go light on the mains and heavy on the pudding. Every hobbit knows.', 'All of them. That\'s the challenge. That\'s the glory.'] },
-    { if: { favFood: 'pie' }, pri: 1, text: ['The mains. The pie. I don\'t care what comes after the pie.'] },
+    { if: { seasonFavFood: 'pie' }, pri: 1, text: ['The mains. The pie. I don\'t care what comes after the pie.'] },
     { if: { temper: 'shy' }, text: ['...The soup. I always fill up on soup. Then I sit and watch.'] },
     { if: { stage: 'child' }, text: ['I\'m going to skip the soup and the mains and go STRAIGHT to pudding.'] },
   ]);
@@ -1222,7 +1222,7 @@ talkPack('seasons3', () => {
   ]);
   lines('season.food.pass.supper', [
     { text: ['Whatever\'s left after second supper. Ha.', 'Stew. Same as yesterday. Better than yesterday, stew always is.'] },
-    { if: { favFood: (f) => !!f }, text: ['{FavFood}, if I\'ve any say. And I have.'] },
+    { if: { seasonFavFood: (f) => !!f }, text: ['{SeasonFavFood}, if I\'ve any say. And I have.'] },
     { if: { stage: 'child' }, text: ['Greens. I\'m going to hide them in my pocket.'] },
   ]);
   lines('season.food.pass.invite', [
@@ -1323,7 +1323,7 @@ talkPack('seasons3', () => {
   ]);
   lines('season.food.favour', [
     { if: { temper: 'witty' }, text: ['Use it sparingly. I\'m cheap, but I\'m not that cheap. Actually, I am.'] },
-    { if: { temper: 'shy' }, text: ['...You\'d not need {favFood}. You could just ask.'] },
+    { if: { temper: 'shy' }, text: ['...You\'d not need {seasonFavFood}. You could just ask.'] },
   ]);
   lines('season.taste.whatin', [
     { if: { temper: 'witty' }, text: ['If I told you, you\'d have to marry me. Or at least do the washing up.'] },

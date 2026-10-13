@@ -68,7 +68,7 @@ talkPack('seasons', () => {
     F.jars = jars; F.jarsWord = jars == null ? null : jars >= 12 ? 'full' : jars >= 4 ? 'some' : 'bare';
     F.puttingBy = typeof puttingBySeason === 'function' && puttingBySeason();
     F.pantryBare = home ? pantryTotal(home) < 4 : null;
-    F.favFood = v.favouriteFood && FOODS[v.favouriteFood()] ? FOODS[v.favouriteFood()].label : null;
+    F.seasonFavFood = v.favouriteFood && FOODS[v.favouriteFood()] ? FOODS[v.favouriteFood()].label : null;
     F.feastOn = typeof feastOn === 'function' && feastOn();
     F.tomorrowDay = weekday(day + 1);
     F.restDay = isRestDay(day); F.marketDay = isMarketDay(day);
@@ -518,7 +518,7 @@ talkPack('seasons', () => {
         { ap: 'jest', say: 'Then {season} it is. Five meals and a picnic.', to: 'end' },
         { ap: 'ask', say: 'And the best meal of the whole year?', to: 'feast' },
       ] },
-      feast: { line: 'season.season.feast', fx: { learn: ['season.food', '{Name} would call a plate of {favFood} a feast'] }, end: true },
+      feast: { line: 'season.season.feast', fx: { learn: ['season.food', '{Name} would call a plate of {seasonFavFood} a feast'] }, end: true },
       miss: { line: 'season.season.miss', fx: { open: 1 }, go: [
         { ap: 'warm', say: 'It\'ll come round again. It always does.', to: 'end' },
         { ap: 'ask', say: 'Was it always so? When you were young?', to: 'old', need: { open: 2 }, soft: true },
@@ -709,7 +709,7 @@ talkPack('seasons', () => {
   ]);
   lines('season.season.feast', [
     { text: ['The Harvest Feast. Long tables, and pie till you can\'t stand.', 'Yule supper. Everybody you love round one table.'] },
-    { if: { favFood: (f) => !!f }, text: ['Anything with {favFood}. Any season. Any meal.', 'Give me a plate of {favFood} and I\'ll call it a feast.'] },
+    { if: { seasonFavFood: (f) => !!f }, text: ['Anything with {seasonFavFood}. Any season. Any meal.', 'Give me a plate of {seasonFavFood} and I\'ll call it a feast.'] },
     { if: { stage: 'child' }, text: ['Pudding. Any pudding. The biggest pudding.'] },
     { if: { temper: 'dreamy' }, text: ['A picnic on Midsummer evening, with the sun not wanting to go down.'] },
   ]);
