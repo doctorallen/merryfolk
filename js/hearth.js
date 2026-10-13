@@ -300,6 +300,7 @@ ACTIONS.whisper_visit = {
       v.bond(o, 0.06); addSentiment(o, v, 'fond', 'came to see me');
     }
     v.remember(`The wizard said I should go and see ${o.first}. I'm glad I did.`, 1);
+    v.whisperDue = null;
   },
 };
 ACTIONS.whisper_visit.id = 'whisper_visit';
@@ -331,6 +332,8 @@ addTalkOption({
         if (Math.random() < take) {
           T.reply(R.pick([`You're right. I'll go and see ${x.o.first}.`, `I will. I've been meaning to.`, `Now? ...All right. Now.`]));
           v.queue.unshift({ a: ACTIONS.whisper_visit, extra: { to: x.o, kind: x.kind } });
+          // (and if the other's indoors just now, they'll try again later in the day)
+          v.whisperDue = { to: x.o.id, kind: x.kind, until: Game.time + 12 * 60 };
           v.noteDecision('whisper_visit', 'the wizard suggested it', []);
           addRegard(v, 0.02);
         } else T.reply(R.pick(['Hmph. I\'ll see to my own affairs, thank you.', 'Maybe. Not today.', 'You don\'t know the half of it.']));
@@ -426,5 +429,15 @@ window.addEventListener('DOMContentLoaded', () => {
   // a save made at the table wakes up outside on the step
   patch(window, 'load', (ld) => function () { const r = ld.apply(this, arguments); const w = wizard(); if (w && w.doing === 'indoors') w.doing = 'player'; Play.supper = null; return r; }, 'hearth');
   addHook('onHour', (h) => { if (h === 7) hearthDaily(); });
+  // a visit the wizard suggested that didn't come off (they were indoors) is tried again
+  addHook('onHour', () => {
+    for (const v of Game.villagers) {
+      const d = v.whisperDue;
+      if (!d) continue;
+      const o = Game.villagers.find((x) => x.id === d.to);
+      if (!o || o.leaving || v.leaving || Game.time > d.until) { v.whisperDue = null; continue; }
+      if (!(v.task && v.task.a.id === 'whisper_visit') && !v.queue.some((q) => q.a.id === 'whisper_visit')) v.queue.push({ a: ACTIONS.whisper_visit, extra: { to: o, kind: d.kind } });
+    }
+  });
   addHook('newVillage', () => { Game.hearth = null; Game.hearthAsked = {}; });
 });
