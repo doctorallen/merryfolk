@@ -96,7 +96,7 @@ function farewell(key) {
   Game.journey = { phase: 'leaving', dest: key, leftDay: Game.day, leftTime: Game.time, back, snap, homes: World.homes.filter((h) => h.built).map((h) => h.id), told: w.told || [], letters: [], events: [], calls: [], sent: {}, frags: typeof story === 'function' ? story().frags.length : 0, stage: typeof story === 'function' ? story().stage : 0 };
   Journey.cut = false;
   wizSay(R.pick(['Well! The road goes ever on, and I must go with it.', 'I shall be back before you\'ve missed me. Probably.', 'Look after the place for me.']));
-  wizWalkTo(w.camp.x + w.face * 18, w.camp.y + 4, { kind: 'depart', run: driveOff });
+  wizWalkTo(w.camp.x + w.face * 18, w.camp.y + 4, { kind: 'depart' });
 }
 function driveOff(w) {
   const J = journeyOf();
@@ -580,6 +580,13 @@ window.addEventListener('DOMContentLoaded', () => {
       FX.sparkle(w.x + w.face * 6, w.y - 46, '#ffd34a');
     }
     return wd.apply(this, arguments);
+  }, 'journey');
+  // stopped on his way to the wagon (another walk, a word with someone), he stays after all
+  patch(window, 'playTick', (pt) => function (w) {
+    const r = pt.apply(this, arguments);
+    const J = journeyOf();
+    if (J && J.phase === 'leaving' && w.phase === 'here' && !(w.goal && w.goal.kind === 'depart')) Game.journey = null;
+    return r;
   }, 'journey');
   patch(window, 'wizardGone', (wg) => function () {
     const J = journeyOf();

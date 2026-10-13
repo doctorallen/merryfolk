@@ -105,6 +105,7 @@ function arriveGoal(w, g) {
   else if (g.kind === 'tale') chooseTale();
   else if (g.kind === 'show') { const s = wizardShowSpot(); w.facing = 'up'; w.doing = 'show'; wizardShow(s.x, s.y); }
   else if (g.kind === 'sleep') sleepTillMorning();
+  else if (g.kind === 'depart' && typeof driveOff === 'function') driveOff(w);
   else if (g.run) g.run(w);
 }
 
