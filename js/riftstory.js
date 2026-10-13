@@ -322,7 +322,9 @@ function storyTick() {
   if (S.stageDay != null && Game.day - S.stageDay < 1 && next > 2) return;
   S.stage = next; S.stageDay = Game.day;
   const when = Game.hour >= 15 && Game.hour < 18 ? 'at teatime' : Game.hour < 6 || Game.hour >= 21 ? 'in the dead of night' : Game.hour < 12 ? 'in the middle of second breakfast' : 'over luncheon';
-  chronicle(RIFT_STAGES[next].beat.replace('at teatime', when), 'rift');
+  // (a village played as the wizard has no Steward to call it)
+  const beat = RIFT_STAGES[next].beat.replace('at teatime', when);
+  chronicle(typeof playMode === 'function' && playMode() ? beat.replace('The Steward has called a Moot.', 'There\'s to be a Moot.') : beat, 'rift');
   if (next === 1) for (const o of Game.villagers) if (!o.isRiftborn() && o.isGrown() && R.chance(0.6)) feel(o, 'uneasy');
   if (next === 2 && !S.policy) setTimeout(() => queueMoot(firstMoot), 50);
   if (next === 6) { findFragment('ledger', null); S.wary = (S.wary || 1) * 0.5; }
