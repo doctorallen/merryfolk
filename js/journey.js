@@ -350,6 +350,8 @@ function journeyHome() {
   $('skip-title').textContent = Journey.cut ? 'Turning the wagon round' : `Home ${D.to}`;
   $('skip-text').textContent = Journey.cut ? 'Back down the road, as fast as the horse will go.' : 'The road turns for home, and Thistledown is over the next hill.';
   const card = document.querySelector('#skip .skip-card');
+  // the road's done: a letter's "turn the wagon round" has nothing left to turn
+  card.querySelectorAll('.j-come').forEach((x) => { x.disabled = true; });
   let b = $('journey-home');
   // up by the road picture, where it can't be scrolled out of reach by a long post-bag
   if (!b) { b = document.createElement('button'); b.id = 'journey-home'; b.className = 'primary'; }
