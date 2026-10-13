@@ -95,7 +95,9 @@ function playTick(w, dt) {
     if (!w.fpath && g && g.kind !== 'talk') arriveGoal(w, g);
     return;
   }
-  if (w.doing === 'tale') { taleTick(w, dt); return; }
+  // a tale or the fireworks over, he's his own master again
+  if (w.doing === 'tale') { if (Game.time < (w.taleUntil || 0)) { taleTick(w, dt); return; } w.doing = 'player'; }
+  if (w.doing === 'show' && !(Game.fireworks.until > Game.time)) w.doing = 'player';
   if (Math.random() < dt * 0.006 && !Play.talk) FX.smokeRing(w.fx + (facingLeft(w.facing) ? -6 : 6), w.fy - 30);
 }
 function arriveGoal(w, g) {
