@@ -71,6 +71,8 @@ const { launch, openGame, finish } = require('./lib');
       startGame(true);
       Game.mode = 'wizard'; document.body.classList.add('wizmode'); wizardBegin();
       for (let i = 0; i < 2000 && Game.wizard.phase === 'coming'; i++) simulate(0.5);
+      // one village has rift-folk from the start, so their talk is played too
+      if (seed === 11) { devAct('rift'); for (let i = 0; i < 200; i++) simulate(0.5); devAct('rift'); }
       for (let day = 0; day < 3; day++) {
         for (let i = 0; i < 700; i++) simulate(0.5);
         const folk = Game.villagers.filter((v) => !v.inside && v.stage !== 'baby' && !v.leaving);
