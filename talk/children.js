@@ -594,7 +594,7 @@ talkPack('children', () => {
   ]);
   lines('child.frog.name', [
     { text: ['Gandalf. After you.', 'Mister Hoppington.', 'Pudding. He looks like a pudding.', 'Bilbo. Because he likes going out and coming back.'] },
-    { if: { childSib: has }, text: ['{ChildSib}. Because he\'s green and grumpy. Don\'t tell {childSib}.'] },
+    { if: { childSib: has }, text: ['{ChildSib}. Because they\'re green and grumpy. Don\'t tell {childSib}.'] },
     { if: { childTemper: 'ornery' }, text: ['He doesn\'t have a name. He\'s a frog. Frogs don\'t care.'] },
   ]);
   lines('child.frog.keep', [
