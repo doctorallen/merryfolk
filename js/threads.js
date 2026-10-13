@@ -520,7 +520,7 @@ function somethingElse(T) {
   const rest = Object.values(THREADS).map((th) => [threadScore(th, T), th]).filter(([s, th]) => s > 0.05 && !top.has(th.id)).sort((a, b) => b[0] - a[0]).slice(0, 6);
   for (const [, th] of rest) out.push({ label: escapeHtml(threadLabel(th, F)), run: () => { T.sub = null; enterThread(T, th, th.ap || null); } });
   for (const o of TalkOptions) {
-    if (['how', 'mind', 'news', 'chat', 'bye'].includes(o.id)) continue;
+    if (['how', 'mind', 'news', 'chat', 'bye'].includes(o.id) || T.used.has(o.id)) continue;
     try { if (o.when && !o.when(T.v, T)) continue; } catch (e) { continue; }
     out.push({ label: typeof o.label === 'function' ? o.label(T.v, T) : o.label, run: () => { T.sub = null; T.used.add(o.id); o.run(T.v, T); } });
   }
