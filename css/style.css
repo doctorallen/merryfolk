@@ -985,3 +985,48 @@ body.landscape .sheet { left: auto; right: 8px; top: 8px; bottom: 8px; width: mi
 .skip-log { list-style: none; margin: 8px 0 0; padding: 0; max-height: 40vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
 .skip-log li { background: #fbf3df; border: 1px solid var(--parch-3); border-radius: 6px; padding: 6px 9px; font-size: 14px; }
 .wg-note { margin: 0 0 8px; font-size: 14px; color: var(--ink-2); }
+
+/* ---------- the rifts, played as the wizard (riftplay.js, relay.js) ---------- */
+.sh-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; position: sticky; top: 0; background: var(--parch); padding-bottom: 4px; z-index: 1; }
+.sh-tabs button { font-family: var(--font-ui); font-size: 13px; padding: 4px 10px; min-height: 34px; border: 2px solid var(--ink); border-radius: 16px; background: #fbf3df; cursor: pointer; }
+.sh-tabs button.on { background: var(--ink); color: var(--parch); }
+.sheet.rifts, .sheet.relay-sheet, .sheet.moot { max-height: 72%; }
+.sheet.rifts .sheet-body, .sheet.relay-sheet .sheet-body, .sheet.moot .sheet-body { max-height: none; flex: 1 1 auto; }
+.thread { border: 2px solid var(--parch-3); border-left: 4px solid #a83a7a; border-radius: 6px; background: #fbf3df; padding: 7px 10px; margin-bottom: 8px; }
+.th-head { display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; }
+.th-head a { font-family: var(--font-ui); font-size: 15px; color: var(--ink); text-decoration: underline; cursor: pointer; }
+.th-head .sub { font-size: 13px; }
+.thread ul { list-style: none; margin: 4px 0; padding: 0; display: grid; gap: 2px; font-size: 14px; }
+.thread li { display: flex; gap: 6px; align-items: baseline; }
+.thread li .tick { font-family: var(--font-ui); width: 14px; flex: none; color: var(--ink-3); }
+.thread li.done .tick { color: var(--moss); }
+.th-next { margin: 4px 0 0; font-size: 13px; font-style: italic; color: var(--ink-2); }
+.casebook { display: grid; gap: 6px; }
+.casebook .clue { font-size: 14px; padding: 6px 9px; border-radius: 6px; background: #fbf3df; border: 1px dashed var(--parch-3); }
+.casebook .clue.found { border-style: solid; border-color: #2a7a8a; }
+.faces { display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 6px; }
+.face { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 2px; border-radius: 6px; border: 2px solid var(--parch-3); background: #fbf3df; cursor: pointer; text-decoration: none; color: var(--ink); min-width: 0; }
+.face canvas { width: 30px; height: 40px; image-rendering: pixelated; }
+.face span { font-size: 11px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.face.hearthlink { border-color: var(--brass); background: #f6e7b0; }
+.face.softclose { border-color: #2f5e9a; background: #dbe6f2; }
+.face.undecided { border-color: var(--ink-3); }
+.face.unknown { opacity: 0.7; border-style: dashed; }
+.face.gb::after { content: '×2'; font-family: var(--font-ui); font-size: 10px; color: #a83a7a; }
+.vote-bars { display: grid; gap: 4px; margin: 8px 0; }
+.vb { display: grid; grid-template-columns: 84px 1fr 28px; align-items: center; gap: 6px; font-size: 13px; }
+.vb i { display: block; height: 12px; border: 1px solid var(--ink); border-radius: 3px; background: var(--ink-3); min-width: 2px; }
+.vb.hearthlink i { background: var(--brass); }
+.vb.softclose i { background: #2f5e9a; }
+.vb b { font-family: var(--font-ui); text-align: right; }
+.relay { display: grid; gap: 5px; font-family: 'Share Tech Mono', ui-monospace, monospace; }
+.post { background: #1c1e2c; color: #c9f6ff; border-radius: 6px; padding: 6px 9px; border-left: 3px solid #3af0ff; display: grid; gap: 1px; }
+.post .pw { font-size: 12px; color: #ff7acb; }
+.post .pw small { color: #8a90b0; }
+.post .pt { font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
+.post.hill { border-left-color: #c9a227; }
+.post.hill .pt { color: #f2e4c2; font-family: var(--font-body); }
+.post.kid { border-left-color: #9aff7a; }
+.post.wizard { border-left-color: #e8eef8; }
+.post.wizard .pt { color: #fff; }
+.post.pinned { outline: 2px solid var(--brass); }
