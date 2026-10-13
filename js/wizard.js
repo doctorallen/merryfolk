@@ -336,8 +336,10 @@ function taleTick(w, dt) {
   if (w.line === 0) {
     const coming = Game.villagers.filter((v) => v.task && v.task.a.id === 'wizard_tale').length;
     // until most of those coming have sat down, or it's gone a quarter past three
-    const ready = listening.length >= Math.max(3, coming * 0.8) && Game.hour >= 14.5;
-    if (!ready && Game.hour < 15.25 && Game.time < w.taleAt + 100) {
+    // (played as the wizard, a tale can be told at any hour: he just waits for them)
+    const anyHour = typeof playMode === 'function' && playMode();
+    const ready = listening.length >= Math.max(3, coming * 0.8) && (anyHour || Game.hour >= 14.5);
+    if (!ready && (anyHour || Game.hour < 15.25) && Game.time < w.taleAt + 100) {
       if (!Wiz.bubbleBusy() && Math.random() < dt * 0.03) wizSay(R.pick(['Come along, come along! Sit wherever you like.', 'Is that everybody? No, here come some more.', 'Make room for the little ones at the front.', 'Patience. A tale is no good half-heard.']));
       return;
     }
