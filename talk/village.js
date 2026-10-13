@@ -217,7 +217,7 @@ talkPack('village', () => {
     { if: { vFriendMood: ['low', 'miserable'] }, text: ['{VFriend}? A bit low lately, I think. I\'ve been meaning to look in.', 'Not so bright, {vFriend}. I don\'t know why. I haven\'t liked to ask.'] },
     { if: { vFriendMood: 'merry' }, text: ['{VFriend}\'s as merry as a lark this week. It\'s catching.', 'On top of the world, {vFriend}. Whistling at breakfast, I heard.'] },
     { if: { vFriendRift: true, rift: false }, text: ['{VFriend}? From the other side, you know. Talks in riddles. Lovely riddles.', 'Funny, a friend from through the sky. {VFriend} taught me what a battery is. Sort of.'] },
-    { if: { vFriendJob: (j) => has(j) }, text: ['{VFriend}\'s well. Worked off {vFriend}\'s feet, mind. {VFriendJob}s never get a sit-down.'] },
+    { if: { vFriendJob: (j) => has(j) }, text: ['{VFriend}\'s well. Worked off their feet, mind. {VFriendJob}s never get a sit-down.'] },
     { if: { vFriendWhy: (w) => has(w) }, pri: 1, text: ['{VFriend}? Oh, the best. I still think about {vFriendWhy}.', 'Grand, I hope. There was {vFriendWhy}, not long ago. I\'ve been smiling since.'] },
   ]);
   lines('village.friend.jest', [{ text: ['Thick as thieves, you two. What are you plotting?', 'Every time I see you and {vFriend} together, a pie goes missing. I\'m only saying.'] }]);

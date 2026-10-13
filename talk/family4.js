@@ -253,7 +253,7 @@ talkPack('family4', () => {
     tm(Gl, 'I don\'t know. I hope so. I don\'t know.'),
   ]);
   L('family.gone.laugh', GN, [
-    FB('"Never trust a hobbit who doesn\'t like mushrooms." {GoneKin} said it about everyone.', '{GoneKin} used to put a spoon on {goneKin}\'s nose at weddings. Every wedding.'),
+    FB('"Never trust a hobbit who doesn\'t like mushrooms." {GoneKin} said it about everyone.', '{GoneKin} used to put a spoon on their nose at weddings. Every wedding.'),
     G('{GoneKin} once chased a goose round the party field in a Yule hat. The goose won.'),
     tm(C, 'Ha! {GoneKin} fell in the pond at the spring fair! Twice! Same pond!'),
     tm(O, '{GoneKin} once told the Steward his hat looked like a tea cosy. To his face. I\'ve never been prouder.'),
@@ -267,7 +267,7 @@ talkPack('family4', () => {
   L('family.gone.found', GN, [
     FB('I hope so. {GoneKin} was always looking for something.', 'I don\'t know. I like to think so.'),
     tm(C, 'Oh, I\'m sure of it! {GoneKin} always found everything! Except keys!'),
-    tm(O, 'If {goneKin} didn\'t, {goneKin}\'ll have given whoever\'s in charge a piece of {goneKin}\'s mind.'),
+    tm(O, 'If {goneKin} didn\'t, they\'ll have given whoever\'s in charge a piece of their mind.'),
     tm(S, '...I hope so. I really hope so.'),
     tm(Q, 'What was {goneKin} looking for? I never asked. I should have asked.'),
     tm(D, 'The sea. {GoneKin} was looking for the sea. I think {goneKin} found it.'),
