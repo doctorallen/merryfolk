@@ -377,9 +377,9 @@ function settleHome() {
   }
   // a new tale from the road, and presents
   if (full && D.tale && !(Game.wizTales || []).includes(D.tale)) { (Game.wizTales = Game.wizTales || []).push(D.tale); WIZARD_TALES[D.tale] = JOURNEY_TALES[D.tale]; }
-  const pres = presentFor(), gifts = [];
+  const pres = roadPresentFor(), gifts = [];
   if (pres) gifts.push({ id: pres.id, what: D.gift });
-  if (D.gift2) { const p2 = presentFor(pres); if (p2) gifts.push({ id: p2.id, what: D.gift2 }); }
+  if (D.gift2) { const p2 = roadPresentFor(pres); if (p2) gifts.push({ id: p2.id, what: D.gift2 }); }
   Game.wizGifts = (Game.wizGifts || []).concat(gifts);
   // from Neverdark: letters for the rift-folk, and perhaps someone they lost
   let found = null;
@@ -402,7 +402,7 @@ function settleHome() {
   Game.journey = null;
   sinceSheet();
 }
-function presentFor(not) {
+function roadPresentFor(not) {
   const pool = Game.villagers.filter((v) => v !== not && v.stage !== 'baby' && ((Game.wizMet || {})[v.id] || hearthIds().includes(v.id)));
   // a child of the hearth first, then the fondest
   pool.sort((a, b) => (hearthIds().includes(b.id) && b.isChild() ? 5 : 0) - (hearthIds().includes(a.id) && a.isChild() ? 5 : 0) || weight(b) - weight(a));

@@ -13,6 +13,12 @@ for f in js/*.js; do
   grep -q "src=\"$f\"" index.html || { echo "$f is not loaded by index.html"; exit 1; }
 done
 
+# every file shares one global scope, so a function or top-level const declared
+# in two files silently replaces the first (as a journey's presentFor once
+# replaced the birthday one)
+dups=$(grep -hoE '^(function|const|let|class) [A-Za-z0-9_$]+' js/*.js | awk '{print $2}' | sort | uniq -d)
+if [ -n "$dups" ]; then echo "declared in more than one file: $dups"; exit 1; fi
+
 if [ -f tsconfig.json ]; then
   if [ -x node_modules/.bin/tsc ]; then node_modules/.bin/tsc -p .; else npx -y typescript@5 tsc -p .; fi
 fi
