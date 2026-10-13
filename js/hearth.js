@@ -167,10 +167,13 @@ const TABLE_TALK = {
   rift: ['Back home, supper came out of a slot in the wall.', 'What is this green thing? It\'s... very alive.', 'We used to eat on the roof, under the neon. You could see the whole city.'],
 };
 const CLASH_LINES = ['Do they not have table manners where you come from, {lodger}?', 'Must you keep that blinking thing on at supper, {lodger}?', 'In this house we say grace to the cook, {lodger}. Not to the lamp.'];
-function tableLine(v, others) {
+function tableLine(v, others, used = new Set()) {
   const pool = v.isRiftborn && v.isRiftborn() && R.chance(0.6) ? TABLE_TALK.rift : v.isChild() ? TABLE_TALK.child : v.stage === 'elder' && R.chance(0.5) ? TABLE_TALK.elder : TABLE_TALK[temperOf(v)] || TABLE_TALK.cheerful;
   const o = R.pick(others.filter((x) => x !== v && x.stage !== 'baby')) || v;
-  return R.pick(pool).replace('{other}', o.first);
+  // (two of a temper at one table don't say the same thing)
+  const line = R.pick(pool.filter((t) => !used.has(t)).concat(pool.every((t) => used.has(t)) ? pool : []));
+  used.add(line);
+  return line.replace('{other}', o.first);
 }
 // a custom passed across the table, and which one it was
 function swapCustom(a, b) {
@@ -196,7 +199,8 @@ function startSupper() {
   const dish = R.pick(World.season === 'winter' ? ['a pot of mutton stew', 'pease pudding and a ham'] : World.season === 'autumn' ? ['mushroom pie', 'roast pumpkin and new bread'] : ['new potatoes and a cold pie', 'a heap of buttered carrots and a ham']);
   say(null, `${host.first} has laid a place for you at the head of the table. There's ${dish}, and a jug of the good ale.`);
   const talkers = res.slice().sort(() => Math.random() - 0.5).slice(0, Math.min(3, res.length));
-  for (const v of talkers) say(v, tableLine(v, res));
+  const used = new Set();
+  for (const v of talkers) say(v, tableLine(v, res, used));
   const S = { res, host, lodger, lines, clash: null, done: false };
   // a lodger brings a custom to the table, or takes one away
   if (lodger) {
