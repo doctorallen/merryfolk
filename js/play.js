@@ -135,6 +135,8 @@ function startTalk(v) {
   v.pose = 'stand'; v.path = null;
   v.facing = facingOf(w.fx - v.x, w.fy - v.y);
   w.facing = facingOf(v.x - w.fx, v.y - w.fy);
+  // stopping for a word in the middle of a tale ends it, as walking off does
+  if (w.doing === 'tale' && Game.time < (w.taleUntil || 0)) w.taleUntil = 0;
   w.fpath = null; w.goal = null; w.doing = 'player';
   const T = { v, third, quarrel, was, log: [], used: new Set(), sub: null };
   if (third) {
