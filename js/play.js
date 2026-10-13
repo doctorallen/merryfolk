@@ -584,10 +584,11 @@ window.addEventListener('DOMContentLoaded', () => {
       b.addEventListener('click', () => { GenUI.mode = val; renderWorldSetup(); });
       seg.appendChild(b);
     }
-    row.appendChild(seg);
-    const note = document.createElement('p'); note.className = 'wg-note';
+    // the note sits under the buttons, as the scenario's does
+    const col = document.createElement('div'); col.appendChild(seg); row.appendChild(col);
+    const note = document.createElement('div'); note.className = 'sub';
     note.textContent = mode === 'wizard' ? 'Walk the valley as the grey wizard: talk with the folk, tell tales, teach the children. The village runs itself.' : 'Run the village from above: build, set rations and trades, trade with the caravans, and lend a giant hand.';
-    box.prepend(note); box.prepend(row);
+    col.appendChild(note); box.prepend(row);
     return r;
   }, 'play');
   addHook('afterNewVillage', () => {
