@@ -110,10 +110,10 @@ talkPack('phrasing_pass2', () => {
   ]);
   lines('pass.rainbet.lore', [{ text: ['When the smoke from the chimneys hangs low, rain\'s on its way.', 'A ring round the moon means rain within a day. I saw one last night.', 'When the leaves show their pale backs, the rain\'s close behind.'] }]);
   lines('pass.rainbet.lored', [
-    { text: ['Did you? Well. Maybe. Doesn\'t mean I\'ll lose.', 'Huh. I\'ve heard that. Never believed it.'] },
-    tm('curious', 'Really? Is that true? I\'m going to watch the chimneys all evening.'),
+    { text: ['Hm. Maybe. Doesn\'t mean I\'ll lose.', 'Huh. I\'ve heard that. Never believed it.'] },
+    tm('curious', 'Really? Is that true? I\'m going to watch for it all evening.'),
     tm('ornery', 'Old wives\' tales. I\'m an old wife, and I don\'t believe it.'),
-    kid('I\'m going to look at the moon TONIGHT.'),
+    kid('I\'m going to look out for it ALL NIGHT.'),
   ]);
   lines('pass.rainbet.shake', [
     { text: ['Done! A toffee it is. Shake.', 'You\'re on. And I want a good toffee. Not a furry one.'] },
@@ -268,7 +268,6 @@ talkPack('phrasing_pass2', () => {
   });
   lines('pass.breakfast.open', [
     { text: ['What did you have for breakfast, {name}? And don\'t say "nothing".', 'Tell me about breakfast, {name}. I\'ve had a hard biscuit and I want to suffer.'] },
-    { if: { phrMeal: ['luncheon', 'afternoon tea', 'dinner', 'supper'] }, text: ['What\'s for {phrMeal}, {name}? Go on. Make me jealous.'] },
   ]);
   lines('pass.breakfast.menu', [
     { text: ['Eggs, bacon, mushrooms, toast, the last of the plum jam, and a small pork pie for luck.', 'Porridge with honey, then bacon, then a bit more porridge to settle the bacon.'] },
@@ -384,8 +383,8 @@ talkPack('phrasing_pass2', () => {
   lines('pass.hat.vanish', [{ text: ['*from inside the hat* I\'m still here!', '*the hat giggles*'] }, kid('*from inside the hat* I\'M INVISIBLE! Tell everyone!')]);
   lines('pass.hat.tale', [{ text: ['This hat has been through three dragons, a goblin market and a laundry. The laundry was the worst.', 'This hat was blown off on the Misty Mountains and came back to me a week later. On an eagle.'] }]);
   lines('pass.hat.history', [
-    { text: ['A laundry! Ha! Poor hat.', 'On an eagle! Hats don\'t do that. Do they?'] },
-    tm('curious', 'Three dragons? What were they like? Did the hat get singed? Show me the singe!'),
+    { text: ['Ha! Poor hat. It\'s had a harder life than you.', 'Hats don\'t do that. Do they? Yours does.'] },
+    tm('curious', 'What else has it seen? Did it get singed? Show me the singe!'),
     tm('ornery', 'And it\'s never been washed since, by the look of it.'),
     tm('dreamy', 'So it\'s seen more of the world than I ever will. Lucky hat.'),
     kid('Can it go on an adventure with ME? Without you? I\'ll bring it back.'),
@@ -497,7 +496,7 @@ talkPack('phrasing_pass2', () => {
       ] },
       more: { line: 'pass.fortune.more', fx: { learn: ['dream', '{dreamText}'], trust: 0.02 }, end: true },
       jam: { line: 'pass.fortune.jam', end: true },
-      silly: { line: 'pass.fortune.sillyback', fx: { joke: { k: 'phr.fortune', t: '"You will eat a pie," said the wizard. And so it came to pass.' } }, end: true },
+      silly: { line: 'pass.fortune.sillyback', fx: { joke: { k: 'phr.fortune', t: 'The wizard told a very silly fortune. It may yet come true.' } }, end: true },
       kind: { line: 'pass.fortune.kindback', fx: { trust: 0.02, fond: 0.02 }, end: true },
     },
     end: { fond: 0.02 },
@@ -525,12 +524,12 @@ talkPack('phrasing_pass2', () => {
     { if: { kid: (k) => !!k }, text: ['I see {kid} grown and proud, and telling everyone about you.'] },
   ]);
   lines('pass.fortune.grandback', [
-    { text: ['A dragon! A small one? How small? Small enough to keep?', 'A feast! Oh, I like the sound of that.'] },
-    tm('ornery', 'Hmph. Dragons. ...How small, exactly?'),
-    tm('dreamy', 'Oh. Oh, I\'ve always felt there was a door somewhere.'),
-    tm('gloomy', 'A friend? For me? You\'re sure it\'s my hand you\'re reading?'),
-    tm('curious', 'When? Where? Which door? How long a road?'),
-    kid('A DRAGON! I KNEW it! I knew I\'d get a dragon!'),
+    { text: ['Ooh! Is that really in there? Say it again, slowly.', 'Oh, I like the sound of that. When?'] },
+    tm('ornery', 'Hmph. Nonsense. ...When, exactly?'),
+    tm('dreamy', 'Oh. Oh, I\'ve always felt something like that was coming.'),
+    tm('gloomy', 'For me? You\'re sure it\'s my hand you\'re reading?'),
+    tm('curious', 'When? Where? How? Can you see any more?'),
+    kid('I KNEW it! I knew something good would happen to me!'),
     rift('Okay. That\'s a better forecast than the city ever gave me.'),
   ]);
   lines('pass.fortune.more', [
@@ -541,11 +540,11 @@ talkPack('phrasing_pass2', () => {
   ]);
   lines('pass.fortune.jam', [{ text: ['Jam! You fraud! ...Lick it off and read it again.', 'A smudge of jam! Ha! I\'ll take a jam future.'] }]);
   lines('pass.fortune.sillyback', [
-    { text: ['A pie! Ha! That\'s not a fortune, that\'s a Trewsday.', 'Geese! I KNEW it. It\'s that grey one, isn\'t it.'] },
+    { text: ['Ha! That\'s not a fortune, that\'s a Trewsday.', 'I KNEW it. I knew it would be something like that.'] },
     tm('ornery', 'That\'s not a fortune. That\'s a menu.'),
-    tm('witty', 'And you\'ll lose a hat, and find it on your head.'),
-    tm('gloomy', 'Even my fortune\'s about losing socks.'),
-    kid('A PIE! When? Now? Is it now?'),
+    tm('witty', 'And you, wizard, will lose your hat, and find it on your head.'),
+    tm('gloomy', 'Even my fortune\'s a bit daft.'),
+    kid('WHEN? Now? Is it now?'),
   ]);
   lines('pass.fortune.kindback', [
     { text: ['...Oh. That\'s a nice thing to see. Thank you.', 'I\'ll hold on to that. Even if you made it up.'] },
@@ -666,13 +665,331 @@ talkPack('phrasing_pass2', () => {
   ]);
   lines('pass.weather.road', [{ text: ['It was worse in the mountains. Snow up to my hat.', 'Ah, this is nothing. In the south the rain comes sideways, and stays for tea.'] }]);
   lines('pass.weather.roadback', [
-    { text: ['Up to your hat! That\'s a lot of snow.', 'Sideways rain! I\'ll not complain again. Well, not today.'] },
+    { text: ['Worse than this? I\'ll not complain again. Well, not today.', 'You do get about. I\'ll stay here, thank you.'] },
     tm('curious', 'What else was it like? Were there wolves? Were you cold?'),
-    kid('Up to your HAT? How did you breathe?'),
+    kid('WHOA. Did you nearly die? Did you?'),
   ]);
   lines('pass.weather.worst', [
     { text: ['The great flood, when the Water came over the bridge. We rowed to the Badger.', 'The long winter. Snow till the spring. We ate the seed-potatoes.'] },
     elder('The year of the hailstones. Big as eggs. Bigger. My father wore a pan.'),
     kid('Last week it rained in my BOOTS. From the inside.'),
   ]);
+
+  // =====================================================================================
+  // A tongue-twister
+  addThread({
+    id: 'pass.twister', light: true, ap: 'jest', label: 'A tongue-twister', when: notTot, open: { jest: 'pass.twister.open' },
+    beats: {
+      start: { line: 'pass.twister.try', go: [
+        { ap: 'jest', say: 'Faster! Three times!', to: 'faster' },
+        { ap: 'warm', say: 'Not bad at all. Better than me.', to: 'wizturn' },
+        { ap: 'ask', say: 'Do you know a harder one?', to: 'theirs' },
+      ] },
+      faster: { line: 'pass.twister.faster', go: [
+        { ap: 'jest', say: '*You try it yourself, and make a dreadful mess of it.*', label: 'Try it yourself', to: 'mess' },
+        { ap: 'ask', say: 'Go on, then. Give me one of yours.', to: 'theirs' },
+      ] },
+      wizturn: { line: 'pass.twister.dare', go: [
+        { ap: 'jest', say: '*You try it yourself, and make a dreadful mess of it.*', label: 'Try it yourself', to: 'mess' },
+        { ap: 'share', say: '*You say it perfectly, slowly, with great dignity.*', label: 'Say it slowly, with dignity', to: 'slow' },
+      ] },
+      theirs: { line: 'pass.twister.theirs', go: [
+        { ap: 'jest', say: '*You try. Your tongue ties itself in a reef knot.*', label: 'Have a go', to: 'mess' },
+        { ap: 'warm', say: 'I yield. Your tongue is mightier than mine.', to: 'yield' },
+      ] },
+      mess: { line: 'pass.twister.mess', fx: { joke: { k: 'phr.twister', t: 'The wizard tried a tongue-twister and his tongue lost.' } }, end: true },
+      slow: { line: 'pass.twister.slow', end: true },
+      yield: { line: 'pass.twister.yield', end: true },
+    },
+    end: { fond: 0.02 },
+  });
+  lines('pass.twister.open', [{ text: ['Say this three times fast, {name}: six slippery snails slid slowly seaward.', 'Try this, {name}. Six slippery snails slid slowly seaward. Fast as you can.', 'Here\'s one my old tutor gave me, {name}: six slippery snails slid slowly seaward.'] }]);
+  lines('pass.twister.try', [
+    { text: ['Six slippy... six sloppy... six snippy... oh, bother.', 'The bakers bread brunt... burnt... I\'ve bitten my tongue.'] },
+    tm('cheerful', '*tries, gets it hopelessly wrong, and laughs so hard they snort*'),
+    tm('ornery', 'I\'m not doing that. ...Six slippery snails. There. Once is plenty.'),
+    tm('shy', '*mouths it silently first* ...Six slippery snails. Oh. I did it. Quietly.'),
+    tm('curious', 'Why do tongues trip on those? Is it the S? It\'s the S, isn\'t it? Six slippery...'),
+    tm('dreamy', 'Six slippery snails slid slowly seaward. Oh, that\'s lovely. Like a little poem.'),
+    tm('witty', 'Six slippery snails slid slowly seaward. Six slippery snails... ha! Twice! Beat that.'),
+    tm('proud', 'Six slippery snails slid slowly seaward. Six. Slippery... I have a very good tongue, usually.'),
+    tm('gloomy', 'Six sloppy... no. See. I can\'t even talk properly.'),
+    kid('SIX SLIPPY SNAILS SLID SLOWLY SEASIDE! Did I win?', 'Thix thlippery... I can\'t! My tooth\'s missing!'),
+    rift('Six slippery snails... okay, my mouth is buffering.'),
+    elder('Six slippery... my teeth aren\'t what they were. Nor my snails.'),
+  ]);
+  lines('pass.twister.faster', [
+    { text: ['Sixslipperysnailsslid... sixslipp... SIX! There. Close enough.', 'Three times! Snails, snails, snails! ...That\'s not it, is it?'] },
+    tm('witty', 'Faster? My tongue has a family to think of.'),
+    tm('ornery', 'Faster. Hmph. *gets it right, all three times, scowling*'),
+    tm('proud', '*rattles it off three times, flawlessly, then looks very pleased*'),
+    kid('SIXSLIPPERY... *collapses giggling*'),
+  ]);
+  lines('pass.twister.dare', [
+    { text: ['Better than you? Go on, then. You do it.', 'Your turn, wizard. All the way through. Fast.'] },
+    tm('witty', 'Prove it. Three times. Go.'),
+    kid('YOU do it! You do it! Go go go!'),
+  ]);
+  lines('pass.twister.theirs', [
+    { text: ['Try this one. Red lorry, yellow lorry. Ten times.', 'Here\'s my gran\'s: she sells sea-shells by the sea-shore. Go on.'] },
+    { if: { job: 'miller' }, text: ['A miller\'s one: which wheel would a wheelwright wheel if a wheelwright would wheel wheels?'] },
+    { if: { job: 'baker' }, text: ['A baker\'s one: Betty baked a batch of better buns. Fast as you can.'] },
+    tm('witty', 'Mine\'s a cruel one. The sixth sick sheikh\'s sixth sheep\'s sick.'),
+    tm('proud', 'I\'ll give you a proper one. Peter Piper picked a peck of pickled peppers. In full.'),
+    kid('Mine is: big black bug bit a big black bear. Say it! SAY IT!'),
+    rift('Here\'s one from the city. Unique New York. Unique New York. Except, you know, Neverdark.'),
+  ]);
+  lines('pass.twister.mess', [
+    { text: ['Ha! You sounded like a goose with hiccups!', 'Ha! That wasn\'t even words! That was soup!'] },
+    tm('cheerful', '*laughs till they have to sit on the wall* AGAIN!'),
+    tm('ornery', 'Ha. Ha! Hmph. All that wisdom and you can\'t say snails.'),
+    tm('shy', '*hides a giggle behind both hands*'),
+    tm('witty', 'Six slithery sausages. Well, that\'s the wizard sorted.'),
+    tm('proud', 'Hm. I believe that\'s one to me.'),
+    kid('HAHAHA! You said it WRONG! You said SNAILY!'),
+    rift('Ha! Your speech module crashed.'),
+  ]);
+  lines('pass.twister.slow', [{ text: ['Slowly doesn\'t count! That\'s cheating!', 'Ha! With dignity! That\'s not how twisters work, wizard.'] }, kid('That\'s CHEATING. Fast! Do it FAST!'), tm('proud', 'Very dignified. Also cheating.')]);
+  lines('pass.twister.yield', [{ text: ['Ha! I\'ve beaten a wizard with my tongue.', 'Mightier! I\'ll tell everyone.'] }, kid('I WIN! My tongue is the BEST tongue!')]);
+
+  // =====================================================================================
+  // A dandelion clock (spring and summer)
+  addThread({
+    id: 'pass.dandelion', light: true, ap: 'warm', label: 'A dandelion clock', when: (F) => notTot(F) && ['spring', 'summer'].includes(F.season) && F.weather !== 'rain',
+    open: { warm: 'pass.dandelion.open' },
+    beats: {
+      start: { line: 'pass.dandelion.blow', go: [
+        { ap: 'ask', say: 'And did you make a wish?', to: 'wish' },
+        { ap: 'jest', say: 'Four o\'clock. Teatime, then.', to: 'tea' },
+        { ap: 'listen', say: '*You watch the seeds drift away over the hedge.*', label: 'Watch the seeds go', to: 'drift' },
+      ] },
+      wish: { line: 'pass.dandelion.wish', go: [
+        { ap: 'warm', say: 'Then I hope it lands somewhere good.', to: 'end' },
+        { ap: 'ask', say: 'Can you tell me? Or is that bad luck?', to: 'tell' },
+      ] },
+      tell: { line: 'pass.dandelion.tell', fx: { learn: ['wish', '{wishText}'] }, end: true },
+      tea: { line: 'pass.dandelion.tea', end: true },
+      drift: { line: 'pass.dandelion.drift', fx: { trust: 0.01 }, end: true },
+    },
+    end: { fond: 0.02 },
+  });
+  lines('pass.dandelion.open', [{ text: ['*You pick a dandelion clock and hold it out.* Go on, {name}. Tell the time.', 'Here, {name}. A dandelion clock. Blow.'] }]);
+  lines('pass.dandelion.blow', [
+    { text: ['*puffs* One o\'clock, two o\'clock, three... four! Four o\'clock.', '*blows; the seeds scatter everywhere, mostly over you*'] },
+    tm('shy', '*blows, very gently, so only a few seeds go*'),
+    tm('ornery', 'I\'ll get seeds in my garden. ...*blows anyway, hard*'),
+    tm('proud', '*one great puff, every seed gone at once* One o\'clock. Precisely.'),
+    tm('dreamy', '*blows, and watches every seed as if it were a ship leaving*'),
+    tm('curious', 'How many seeds are there? Shall I count? *blows before counting*'),
+    tm('gloomy', '*puffs* Seven o\'clock. Late. It\'s always late.'),
+    kid('*blows SO hard they nearly fall over* TWELVE O\'CLOCK!', '*blows, then tries to catch the seeds* Come back!'),
+    rift('*blows* It\'s a clock? It\'s a plant clock? Okay. Twenty past whatever.'),
+    elder('*puffs, and laughs* I could clear one in a breath, once. Now it takes three.'),
+  ]);
+  lines('pass.dandelion.wish', [
+    { text: ['Of course I did. You always wish on the last puff.', 'I did. A small one. A sensible one.'] },
+    tm('dreamy', 'Oh, I wished. I always wish. I\'ve wished on every dandelion in the valley.'),
+    tm('ornery', 'Wishes. Pah. ...Yes. I did.'),
+    kid('YES. A big one. The BIGGEST.'),
+  ]);
+  lines('pass.dandelion.tell', [
+    { text: ['It\'s bad luck. ...Oh, all right. It was a small thing. Something to look forward to.'] },
+    { if: { wish: (w) => !!w }, text: ['It\'s bad luck. ...{WishText}. There. Now it won\'t come true.', 'Only you, mind. {WishText}. Don\'t tell the dandelions.'] },
+    { if: { wish: (w) => !!w, stage: 'child' }, text: ['{WishText}! Oh no! I SAID it! Does it still count?'] },
+  ]);
+  lines('pass.dandelion.tea', [{ text: ['Ha! Teatime by the dandelion. I\'ll tell the kettle.', 'Four o\'clock it is. The dandelions never lie. Only the hens.'] }, kid('Is it really teatime? Can I have cake? The dandelion SAID.')]);
+  lines('pass.dandelion.drift', [{ text: ['*watches with you until the last seed is gone* ...They\'ll be dandelions somewhere else, next year.', 'Off they go. Further than I\'ll ever go.'] }, tm('gloomy', '...I hope they land somewhere kind.'), kid('Bye bye, seeds! Write to me!')]);
+
+  // =====================================================================================
+  // A knock-knock joke, with the children
+  addThread({
+    id: 'pass.knock', light: true, ap: 'jest', label: 'A knock-knock joke', when: (F) => F.stage === 'child' && F.band !== 'toddler', open: { jest: 'pass.knock.open' },
+    beats: {
+      start: { line: 'pass.knock.who', go: [
+        { ap: 'jest', say: 'Lettuce.', to: 'lettuce' },
+        { ap: 'jest', say: 'Wizard.', to: 'wizard' },
+      ] },
+      lettuce: { line: 'pass.knock.lettucewho', go: [{ ap: 'jest', say: 'Lettuce in, it\'s cold out here!', to: 'groan' }] },
+      wizard: { line: 'pass.knock.wizardwho', go: [{ ap: 'jest', say: 'Wizard you been all my life?', to: 'groan' }] },
+      groan: { line: 'pass.knock.groan', go: [
+        { ap: 'ask', say: 'Your turn. Knock knock.', to: 'theirs' },
+        { ap: 'warm', say: 'I\'ve a hundred more where that came from.', to: 'end' },
+      ] },
+      theirs: { line: 'pass.knock.theirs', go: [{ ap: 'ask', say: 'Who\'s there?', to: 'punch' }] },
+      punch: { line: 'pass.knock.punch', go: [{ ap: 'ask', say: '...Who?', to: 'end' }, { ap: 'jest', say: '*You laugh, much louder than it deserves.*', label: 'Laugh, much too loudly', to: 'loud' }] },
+      loud: { line: 'pass.knock.loud', fx: { fond: 0.02 }, end: true },
+    },
+    end: { fond: 0.02, drive: { bored: -0.1 } },
+  });
+  lines('pass.knock.open', [{ text: ['Knock knock, {name}.', 'I\'ve a joke for you, {name}. Knock knock.'] }]);
+  lines('pass.knock.who', [{ text: ['Who\'s there?', 'WHO\'S THERE?'] }, { if: { band: 'youth' }, text: ['Seriously? ...Fine. Who\'s there?'] }, { if: { band: 'young' }, text: ['Who\'s there? Is it a bear? Is it a BEAR?'] }]);
+  lines('pass.knock.lettucewho', [{ text: ['Lettuce who?', 'Lettuce WHO?'] }, { if: { band: 'youth' }, text: ['Lettuce who. Go on.'] }]);
+  lines('pass.knock.wizardwho', [{ text: ['Wizard who?', 'Wizard WHO?'] }, { if: { band: 'youth' }, text: ['Wizard who. I can see where this is going.'] }]);
+  lines('pass.knock.groan', [
+    { text: ['*groans* That\'s TERRIBLE. Do another one!', 'Ha! That\'s awful! I\'m telling everyone!'] },
+    { if: { band: 'youth' }, text: ['That\'s the worst joke I\'ve ever heard. ...Ha.'] },
+    { if: { band: 'young' }, text: ['*laughs, then asks* ...Why is it funny?'] },
+    { if: { register: 'bright' }, text: ['Ha! It\'s a pun. Lettuce, let us. I see what you did.'] },
+    rift('Ha! Okay, analogue jokes hit different.'),
+  ]);
+  lines('pass.knock.theirs', [{ text: ['Knock knock!', 'My turn! Knock knock! KNOCK KNOCK!'] }, { if: { band: 'youth' }, text: ['Fine. Knock knock.'] }]);
+  lines('pass.knock.punch', [
+    { text: ['Boo!', 'Cow says.', 'Interrupting hen. BAWK!'] },
+    { if: { band: 'young' }, text: ['Banana! ...I forget the rest. BANANA!'] },
+    { if: { band: 'youth' }, text: ['Atch. ...Bless you. Ha. Got you.'] },
+    rift('Signal. Signal who? Exactly. There isn\'t any. Ha!'),
+  ]);
+  lines('pass.knock.loud', [{ text: ['*beams with pride*', 'I KNEW you\'d like it! I made it up! Well, Grandad did.'] }, { if: { band: 'youth' }, text: ['It wasn\'t THAT funny. ...It was quite funny.'] }]);
+
+  // --- More voices for the beats above ---------------------------------------------------
+  lines('pass.stars.taleback', [
+    tm('cheerful', 'Oh, I love that! I\'m going to tell it to everyone at the Badger!'),
+    tm('shy', '...I\'ll look for it every night now. Thank you.'),
+    tm('witty', 'Lovely story. I\'ll pretend I believe it. Out loud, anyway.'),
+    tm('proud', 'I knew there was a story to it. Everything worth looking at has one.'),
+    tm('gloomy', 'A star that never goes out. That\'s something, I suppose.'),
+    elder('I\'ve looked at that star all my life and never knew. Fancy that, at my age.'),
+  ]);
+  lines('pass.stars.name', [
+    tm('cheerful', 'The Jolly Pudding! Because it\'s round and it makes me happy.'),
+    tm('ornery', 'It\'s a star. It\'s called a star. ...Fine. The Grumbler. It looks grumpy.'),
+    tm('shy', '...Little One. It\'s small and it\'s a bit on its own.'),
+    tm('curious', 'Wait, can you just name them? Who decides? I\'m calling it the Question.'),
+    elder('Old Faithful. It was there when I was born and it\'ll be there after.'),
+  ]);
+  lines('pass.stars.quiet', [
+    tm('dreamy', '*whispers* You can almost hear them, can\'t you?'),
+    tm('curious', '...I\'ve a hundred questions. I\'ll ask them tomorrow. This is nice.'),
+    tm('ornery', '...Hm. Not bad, a bit of quiet. Not bad at all.'),
+    rift('...No notifications. Just this. I didn\'t know I needed this.'),
+    elder('...I used to do this with someone, long ago. Just this. Thank you.'),
+  ]);
+  lines('pass.clouds.another', [
+    tm('cheerful', 'That one\'s a dancing pig! Look at its trotters!'),
+    tm('ornery', 'That one\'s a cloud as well. Shocking, I know.'),
+    tm('shy', '...A teacup. With a little handle.'),
+    tm('witty', 'That one\'s you, wizard. Look. It\'s mostly hat.'),
+    tm('proud', 'That one\'s a crown. Very fitting for a day like today.'),
+    rift('That one looks like a server farm. I miss nothing about server farms.'),
+    elder('That one\'s the old mill, before they rebuilt it. Exactly.'),
+  ]);
+  lines('pass.clouds.laugh', [
+    tm('cheerful', 'Ha! Oh, I see it! I see it! Look at its face!'),
+    tm('witty', 'Ha! And next to it, a troll looking for his dinner. That\'s us, then.'),
+    tm('shy', '*giggles, and looks to see if anyone saw*'),
+    tm('gloomy', 'Ha. ...It\'s raining on the troll. Poor troll.'),
+  ]);
+  lines('pass.clouds.lie', [
+    tm('dreamy', '*sighs* I could do this every day. I do, nearly.'),
+    tm('ornery', 'Hm. Five minutes. Then I\'ve got things to do. ...Ten.'),
+    rift('*lies back* This is the best screen I\'ve ever watched.'),
+  ]);
+  lines('pass.signal.report', [
+    tm('shy', '...None. I stopped looking. I still look.'),
+    tm('dreamy', 'Sometimes I think I hear it, in the wind. Probably not. Probably.'),
+    tm('proud', 'I\'ve rigged a booster on my roof. Three bars. When it\'s not raining. Or cloudy.'),
+    elder('Signal? At my age, I\'m lucky to get a signal from my own knees.'),
+  ]);
+  lines('pass.signal.send', [
+    tm('cheerful', 'A message saying "it\'s great here, come and see!" To everyone!'),
+    tm('witty', 'A complaint to the city council. About the lack of sky.'),
+    tm('curious', 'A picture of a hedgehog. They\'d never believe it. Spikes! On an animal!'),
+  ]);
+  lines('pass.signal.moth', [
+    tm('cheerful', 'Moths! That\'s brilliant! Can I send one?'),
+    tm('gloomy', 'Moths. Slow, and they get eaten. Sounds like the city post.'),
+    kid('Can I send a moth to my friend? She lives three holes down.'),
+  ]);
+  lines('pass.weather.talk', [
+    tm('shy', '...It\'s nice. The weather. Yes.'),
+    tm('curious', 'Do you know where weather comes from? Over the hills? From the sea?'),
+    tm('witty', 'It\'s weather, all right. Can\'t fault it for effort.'),
+    tm('proud', 'I\'ve kept a record of the weather for twenty years. This is about average.'),
+    elder('I\'ve seen worse. I\'ve seen better. Mostly I\'ve seen weather.'),
+  ]);
+  lines('pass.weather.forecast', [
+    tm('cheerful', 'It\'ll be lovely! It\'s always lovely tomorrow!'),
+    tm('ornery', 'It\'ll do whatever it likes. Weather always does.'),
+    tm('dreamy', 'The clouds are moving east. Somewhere east is going to have a lovely sunset.'),
+    tm('witty', 'Ask the hens. They\'re never wrong. Mostly because they never say anything.'),
+    rift('No idea. I keep wanting to check a forecast. Then I remember.'),
+  ]);
+  lines('pass.weather.blame', [
+    tm('cheerful', 'Ha! Then do some fireworks and chase the clouds off!'),
+    tm('shy', '*laughs, very quietly*'),
+    tm('gloomy', 'If you could do weather you\'d have done something by now.'),
+    rift('A wizard who controls the weather. That\'s just a really old weather machine.'),
+  ]);
+  lines('pass.weather.worst', [
+    tm('ornery', 'The year the Water froze and we lost three sheep through the ice. Not a joke.'),
+    tm('cheerful', 'The year it snowed in June! We had snowball fights at Midsummer!'),
+    tm('dreamy', 'The night of the great wind. The whole valley sang, like an organ.'),
+    rift('The night I came through. The sky tore open. That was the worst weather. And the best.'),
+  ]);
+  lines('pass.hat.opinion', [
+    { if: { register: 'fine' }, text: ['It\'s... a statement, certainly. A bold one.'] },
+    { if: { register: 'plain' }, text: ['It\'s a hat and a half, that is.'] },
+  ]);
+  lines('pass.hat.guess', [
+    tm('cheerful', 'Ooh! Is it Bluebell? It looks like a Bluebell!'),
+    tm('proud', 'Something distinguished, I hope. It\'s a distinguished hat.'),
+    tm('shy', '...Is it... Hat?'),
+    tm('curious', 'What sort of name? A hat name or a person name? Does it answer to it?'),
+    tm('gloomy', 'Something sad. It looks like it\'s seen things.'),
+  ]);
+  lines('pass.hat.try', [
+    tm('witty', '*puts it on* Fetch me a dragon. I feel ready.'),
+    tm('gloomy', '*puts it on* ...It\'s dark in here. Peaceful, actually.'),
+    tm('curious', '*puts it on, and peers up inside it* Is there a pocket in here? There\'s a pocket!'),
+    tm('dreamy', '*puts it on* I can feel the roads in it. All of them.'),
+    elder('*puts it on* Ha! I look like my grandmother. She\'d have liked this hat.'),
+  ]);
+  lines('pass.breakfast.only', [
+    tm('cheerful', 'Only that? You\'re right! I\'ll have more! Thank you!'),
+    tm('witty', 'That was the list I tell people. The real one\'s longer.'),
+    tm('gloomy', 'I know. I\'m wasting away. Nobody notices.'),
+    rift('It\'s more than I ate in a week back home. Everything\'s relative.'),
+  ]);
+  lines('pass.breakfast.second', [
+    tm('ornery', 'Second breakfast was porridge as well. Don\'t start.'),
+    tm('proud', 'Kedgeree. My own recipe. The fish was caught this morning.'),
+    tm('shy', '...More toast. With honey, this time.'),
+    tm('cheerful', 'Fritters! Apple ones! I could have had a third breakfast!'),
+    elder('Second breakfast was a nap. At my age that counts.'),
+  ]);
+  lines('pass.breakfast.pity', [
+    tm('witty', 'A hard biscuit. And you call yourself a wizard. Sit. I\'ll make you a real one.'),
+    tm('gloomy', 'Poor thing. I know how that biscuit feels.'),
+    tm('dreamy', 'Oh, you should have a breakfast with a view. Come to mine. There\'s a view of the hill.'),
+    elder('A biscuit! At your age! You\'ll waste away. Come in, come in.'),
+  ]);
+  lines('pass.fortune.kindback', [
+    tm('cheerful', 'Oh, I\'ll believe it! I always believe the nice ones!'),
+    tm('proud', 'At the head of the table. Yes. That seems right.'),
+    tm('curious', 'Can you really see it? How does it work? Can you teach me?'),
+    tm('dreamy', 'I\'ll keep that one. In a little box. With the other good things.'),
+    rift('That\'s a good forecast. I\'ll take it over the city\'s any day.'),
+  ]);
+  lines('pass.fortune.sillyback', [
+    tm('cheerful', 'Ha! Oh, I hope it\'s true! I hope it\'s true today!'),
+    tm('proud', 'I hardly think that\'s a proper fortune.'),
+    tm('shy', '*laughs* ...Is that really what it says?'),
+    rift('Ha! That\'s a better forecast than the city ever gave me.'),
+  ]);
+  lines('pass.rainbet.shake', [
+    tm('witty', 'Done. And when I win, I want the toffee presented on a cushion.'),
+    tm('shy', '...All right. Done. A small toffee, though.'),
+    tm('dreamy', 'Done. I\'ll lie awake listening for it on the roof.'),
+    tm('curious', 'Done! I\'m going to watch the sky all night and keep notes.'),
+    elder('Done. I\'ve won more bets on the weather than you\'ve had hot dinners.'),
+  ]);
+  lines('pass.twister.try', [
+    { if: { register: 'fine' }, text: ['Six slippery snails slid slowly seaward. Elocution, wizard. I had lessons.'] },
+    { if: { register: 'plain' }, text: ['Six slippy snails... sloid... no. Can\'t be done, that.'] },
+  ]);
+  lines('pass.ispy.got', [
+    { if: { band: 'young' }, text: ['*points* THAT! That one! The {phrSpyA}!'] },
+    rift('{PhrSpyA}. Found it. Object recognised.'),
+  ]);
+  lines('pass.ispy.notit', [{ if: { band: 'young' }, text: ['NO! WIZARD! W is for WIZARD! I\'m so clever!'] }, rift('Nope! W for wizard. Obviously.')]);
 });

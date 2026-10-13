@@ -713,4 +713,55 @@ talkPack('phrasing', () => {
     at(3.7, { lonely: true, temper: 'gloomy' }, ['Oh. Someone. ...Don\'t go yet.']),
     at(3.7, { lonely: true, stage: 'elder' }, ['Sit a while, would you? The days are long on your own.']),
   ]);
+
+  // --- Greetings for the rift-folk, the youngsters and the old, wherever they are -------
+  lines('greet', [
+    at(2.8, { phrFlavour: 'temper', rift: true, temper: 'cheerful' }, ['Wizard! Best part of the day, you showing up. Well, joint best. With toast.']),
+    at(2.8, { phrFlavour: 'temper', rift: true, temper: 'ornery' }, ['Wizard. If this is about the noise from my workshop, it\'s a feature.']),
+    at(2.8, { phrFlavour: 'temper', rift: true, temper: 'shy' }, ['Oh. Hi. I was just... recalibrating. Myself. Hi.']),
+    at(2.8, { phrFlavour: 'temper', rift: true, temper: 'curious' }, ['Wizard! Is magic just tech nobody\'s explained yet? I\'ve been thinking about it all night.']),
+    at(2.8, { phrFlavour: 'temper', rift: true, temper: 'dreamy' }, ['Hey. I was watching the river. It doesn\'t loop. It just keeps going. Wild.']),
+    at(2.8, { phrFlavour: 'temper', rift: true, temper: 'witty' }, ['The wizard! Still running on the original firmware, I see.']),
+    at(2.8, { phrFlavour: 'temper', rift: true, temper: 'proud' }, ['Wizard. You\'ll have noticed my lamp. Only neon on the lane. You\'re welcome.']),
+    at(2.8, { phrFlavour: 'temper', rift: true, temper: 'gloomy' }, ['Hey. Low power mode today. Don\'t mind me.']),
+    at(2.8, { phrFlavour: 'temper', rift: true, stage: 'child' }, ['Wizard! Did you know your staff would make a great antenna? Can I borrow it?']),
+    at(2.8, { phrFlavour: 'register', rift: true }, ['Hey, wizard. Still getting used to "good morning". Good morning. Or whatever it is.', 'Wizard. Greetings. Is that how you say it here? Greetings.']),
+    at(2.8, { phrFlavour: 'likes', rift: true, likes: 'rifttech' }, ['Wizard! I got the Relay to say hello to a hill-hobbit. She screamed. Then she said hello back.']),
+    at(2.8, { phrFlavour: 'weather', rift: true, phrStorm: true }, ['Thunder! Back home that meant the grid was about to fail. Here it just means rain. Better.']),
+    at(4.5, { phrDoing: 'work', rift: true }, ['Hey. Mid-job. Talk while I work? It\'s basically multitasking.']),
+    at(3.8, { phrDoing: 'meal', rift: true }, ['Real food! I\'m eating real food! Sorry. Still excited. Hello.']),
+    at(3.8, { phrDoing: 'tea', rift: true }, ['Tea. You lot fix everything with tea. I\'m starting to think it works.']),
+    at(3.8, { phrDoing: 'garden', rift: true }, ['I planted a seed and it GREW. Nobody coded it. It just grew.']),
+    at(3.8, { phrDoing: 'stroll', rift: true }, ['Just walking. No destination. That\'s apparently a thing you can do here.']),
+    at(3.8, { phrDoing: 'read', rift: true }, ['Paper books! They don\'t need charging. They just work. Hi.']),
+
+    // youngsters, nearly grown and very aware of it
+    at(2.8, { phrFlavour: 'weather', band: 'youth', weather: 'rain' }, ['Ugh. Rain. My hair. ...What? Hobbits can have hair problems.']),
+    at(2.8, { phrFlavour: 'hour', band: 'youth', hour: 'morning' }, ['Morning. Don\'t talk too loud. It\'s too early for faces.']),
+    at(2.8, { phrFlavour: 'hour', band: 'youth', hour: 'night' }, ['I\'m allowed out late now. Nearly. Don\'t tell anyone.']),
+    at(2.8, { phrFlavour: 'season', band: 'youth' }, ['Another season, still not grown. They say next year. They always say next year.']),
+    at(2.8, { phrFlavour: 'fond', band: 'youth', fond: { min: 0.4 } }, ['Oh, it\'s you. Good. I mean, whatever. Good.']),
+    at(2.8, { phrFlavour: 'mood', band: 'youth', mood: 'low' }, ['Hi. I\'m fine. I\'m FINE. Everyone keeps asking.']),
+    at(2.8, { phrFlavour: 'meal', band: 'youth' }, ['I\'m always hungry. Mum says it\'s growing. I say it\'s pie.']),
+    at(4.4, { phrDoing: 'lesson', band: 'youth' }, ['Story time. I\'m too old for story time. ...It\'s a good story, though.']),
+
+    // the old, in all weathers
+    at(2.8, { phrFlavour: 'weather', stage: 'elder', weather: 'fog' }, ['Fog. At my age you get used to not seeing much. Hello, I think.']),
+    at(2.8, { phrFlavour: 'weather', stage: 'elder', weather: 'cloudy' }, ['Grey. Like my hair. Like my beard, if I had one. Hello.']),
+    at(2.8, { phrFlavour: 'mood', stage: 'elder', mood: 'merry' }, ['I feel twenty years younger today! Well, ten. Five.']),
+    at(2.8, { phrFlavour: 'mood', stage: 'elder', mood: 'low' }, ['Hello. The old aches are talking today. They\'ve a lot to say.']),
+    at(2.8, { phrFlavour: 'meal', stage: 'elder' }, ['At my age every meal\'s a feast. I eat slowly and enjoy all of it.']),
+    at(2.8, { phrFlavour: 'likes', stage: 'elder' }, ['Sit, sit. I\'ll tell you how it was in my day. Briefly. Mostly briefly.']),
+    at(2.8, { phrFlavour: 'register', stage: 'elder', register: 'common' }, ['Ah, wizard. You\'re a sight for old eyes.']),
+    at(4.5, { phrDoing: 'work', stage: 'elder', temper: 'proud' }, ['Still working, at my age. The young ones can\'t keep up.']),
+    at(3.8, { phrDoing: 'nap', stage: 'elder' }, ['*wakes* Hm? I was just... where was I? Oh. Wizard. Hello.']),
+    at(3.8, { phrDoing: 'stroll', stage: 'elder' }, ['My daily walk. Down the lane and back. Takes longer every year.']),
+
+    // first meetings at work, by trade
+    at(8.8, { met: false, phrDoing: 'work', job: 'innkeeper' }, ['A wizard in the Badger! First drink\'s on the house. Second\'s on you.']),
+    at(8.8, { met: false, phrDoing: 'work', job: 'baker' }, ['A wizard! Have a bun. Everybody gets a bun on first meeting. Rule of the house.']),
+    at(8.8, { met: false, phrDoing: 'work', job: 'postie' }, ['A wizard! Have you an address? Everybody needs an address.']),
+    at(8.8, { met: false, phrDoing: 'work', job: 'farmer' }, ['A wizard in my barley! Mind where you tread. How do you do?']),
+    at(8.8, { met: false, phrDoing: 'work', job: 'tinker' }, ['Oh! A wizard. Hi. Don\'t touch anything. Actually, touch that. Does it spark?']),
+  ]);
 });
