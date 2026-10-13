@@ -940,7 +940,7 @@ body.wizmode #btn-build, body.wizmode #btn-village, body.wizmode #b-pat, body.wi
 body.sheet-open #wizbar, body.sheet-open #chronicle { display: none; }
 
 .sheet {
-  position: absolute; z-index: 6; left: 8px; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  position: absolute; z-index: 8; left: 8px; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   max-height: 58%; display: flex; flex-direction: column; gap: 8px; padding: 10px 12px 12px; overflow: hidden;
   animation: sheet-up 0.18s ease-out;
 }
@@ -985,3 +985,23 @@ body.landscape .sheet { left: auto; right: 8px; top: 8px; bottom: 8px; width: mi
 .skip-log { list-style: none; margin: 8px 0 0; padding: 0; max-height: 40vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
 .skip-log li { background: #fbf3df; border: 1px solid var(--parch-3); border-radius: 6px; padding: 6px 9px; font-size: 14px; }
 .wg-note { margin: 0 0 8px; font-size: 14px; color: var(--ink-2); }
+
+/* ---------- the wizard's hearth: the family book and supper ---------- */
+.sheet.book, .sheet.supper { max-height: 82%; }
+.sheet.book .sheet-body, .sheet.supper .sheet-body { max-height: none; flex: 1 1 auto; }
+.sheet.book .sheet-choices, .sheet.supper .sheet-choices { flex: 0 0 auto; }
+.fb { display: flex; flex-direction: column; gap: 8px; }
+.fb-card { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; background: #fbf3df; border: 1px solid var(--parch-3); border-radius: 8px; }
+.fb-card.lodger { border-color: #7a5aa8; box-shadow: inset 3px 0 0 #7a5aa8; }
+.fb-por { width: 36px; height: 48px; image-rendering: pixelated; flex: none; }
+.fb-txt { min-width: 0; flex: 1; }
+.fb-txt p { margin: 0 0 3px; font-size: 14px; line-height: 1.35; }
+.fb-txt .fb-name { font-family: var(--font-ui); font-size: 15px; margin-bottom: 1px; }
+.fb-txt .fb-sub { color: var(--ink-2); font-size: 13px; }
+.fb-txt .fb-love { color: var(--moss); font-style: italic; }
+.fb-tag { font-family: var(--font-body); font-size: 11px; padding: 0 6px; border-radius: 8px; background: #7a5aa8; color: var(--parch); vertical-align: middle; }
+.fb-h { font-family: var(--font-ui); font-size: 14px; margin: 12px 0 4px; }
+.fb-log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; line-height: 1.35; }
+.fb-log span { font-family: var(--font-ui); font-size: 11px; color: var(--ink-3); margin-right: 4px; }
+.sp-scene { display: flex; flex-direction: column; gap: 5px; }
+.sp-narr { margin: 0 0 2px; font-style: italic; color: var(--ink-2); font-size: 14px; }

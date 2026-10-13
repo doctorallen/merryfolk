@@ -376,7 +376,7 @@ const Wiz = {
     for (const o of [this.speaker, this.wagonVis]) if (!Visitors.includes(o)) Visitors.push(o);
     const sp = this.speaker;
     const onSeat = w.phase !== 'here';
-    sp.hidden = !onSeat && w.doing === 'sleep' && !w.fpath;
+    sp.hidden = !onSeat && (w.doing === 'sleep' || w.doing === 'indoors') && !w.fpath;
     sp.x = onSeat ? w.x + w.face * 2 : w.fx; sp.y = onSeat ? w.y + 1 : w.fy;
     sp._top = onSeat ? w.y - 58 : w.fy - 50;
     this.wagonVis.x = w.x; this.wagonVis.y = w.y;
