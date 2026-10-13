@@ -207,7 +207,12 @@ function noteEvent(text) {
   const ev = J.events[J.events.length - 1];
   if (e[0] === 'farewell') for (const id of ids) { const v = personById(id); if (v && (regardOf(v) > 0.05 || (Game.wizMet || {})[id]) && J.letters.length < letterCap(J) + 2 && !(J.bye = J.bye || []).includes(id)) { J.bye.push(id); ev.told = true; letterFrom(v, 'goodbye', { e: ev }); } }
 }
-const jName = (id) => { const v = personById(id); return v ? v.first : 'someone'; };
+// (by name, whether they're here, off adventuring, gone for good, or only remembered from when he left)
+const jName = (id) => {
+  const v = personById(id); if (v) return v.first;
+  const a = (Game.away || []).find((x) => x.id === id), gone = Game.archive && Game.archive[id], J = journeyOf() || Game.wizBack;
+  return (a && a.data && a.data.first) || (gone && gone.first) || (J && J.snap && J.snap[id] && J.snap[id].first) || 'someone';
+};
 // how many letters a journey's worth
 const letterCap = (J) => ({ 1: 3, 3: 6, 12: 14 })[JOURNEYS[J.dest].days] || 6;
 function writeLetters() {
