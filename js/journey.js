@@ -104,6 +104,7 @@ function driveOff(w) {
   w.phase = 'going'; w.doing = 'drive'; w.fpath = null;
   const ex = WEST_EXIT, end = { x: clamp(ex.x, 8, MAP_W * 16 - 8), y: ex.y };
   w.path = wizPath({ x: w.x, y: w.y }, end); w.pi = 0;
+  if (w.path) shortDrive(w, 'out');
   J.driveStart = Game.time;
   chronicle(`Gandalf has climbed up onto his wagon and set off ${JOURNEYS[J.dest].to.replace(/^from /, 'for ')}${J.dest === 'hills' ? '' : ''}, waving his hat. The children ran after him as far as the bridge.`.replace('set off for the Mountain', 'set off east for the Mountain').replace('set off for the Sea', 'set off west for the Sea').replace('set off over the hills', 'set off over the hills').replace('set off for the long road south', 'set off on the long road south').replace('set off for Neverdark', 'set off through the golden door for Neverdark'), 'party');
   Game.follow = true;
@@ -355,8 +356,8 @@ function arriveHome() {
   const camp = wizardCamp(), path = wizPath(start, camp);
   Game.wizard = { phase: 'coming', day: Game.day, leave: Game.day + WIZARD.stay, x: start.x, y: start.y, face: start.x < camp.x ? 1 : -1, path, pi: 0, camp, doing: 'drive', fx: camp.x, fy: camp.y, facing: 'down', fpath: null, fpi: 0, dist: 0, told: J.told || [], taleDay: 0, showDay: 0, cheered: [] };
   if (!path) { Game.wizard.x = camp.x; Game.wizard.y = camp.y; }
-  // start him some way along, so the wagon's in the valley when you look
-  if (path && path.length > 30) { Game.wizard.pi = path.length - 30; [Game.wizard.x, Game.wizard.y] = path[Game.wizard.pi]; }
+  // only the last stretch of the road is seen: the wagon rolls up and he climbs down
+  if (path) shortDrive(Game.wizard, 'in');
   J.phase = 'returning';
   Game.wizardLast = Game.day;
   Game.follow = true;

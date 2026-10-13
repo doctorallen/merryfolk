@@ -156,14 +156,18 @@ function wizardArrive() {
   const camp = wizardCamp();
   const path = wizPath(start, camp);
   Game.wizard = { phase: 'coming', day: Game.day, leave: Game.day + WIZARD.stay, x: start.x, y: start.y, face: start.x < camp.x ? 1 : -1, path, pi: 0, camp, doing: 'drive', fx: camp.x, fy: camp.y, facing: 'down', fpath: null, fpi: 0, dist: 0, told: [], taleDay: 0, showDay: 0, cheered: [] };
-  if (!path) { Game.wizard.x = camp.x; Game.wizard.y = camp.y; }
+  if (!path) { Game.wizard.x = camp.x; Game.wizard.y = camp.y; } else shortDrive(Game.wizard, 'in');
   Game.wizardLast = Game.day;
   chronicle('A horse and wagon is rattling up the road into Thistledown, and on the seat sits an old man in a tall pointed grey hat and a long grey robe, a silver scarf at his throat and a grey beard down past his belt. It\'s Gandalf the Grey! And the wagon is stacked with crates of fireworks.', 'party');
   toast('Gandalf the wizard is coming up the road!', 'info');
 }
 function wizardParked() {
   const w = wizard();
-  w.phase = 'here'; w.x = w.camp.x; w.y = w.camp.y; w.path = null; w.doing = 'wagon'; w.fx = w.camp.x + w.face * 30; w.fy = w.camp.y + 4;
+  w.phase = 'here'; w.x = w.camp.x; w.y = w.camp.y; w.path = null; w.doing = 'wagon'; w.fade = null;
+  // he climbs down off the bench and steps away from the wagon
+  w.fx = w.camp.x + w.face * 2; w.fy = w.camp.y + 1;
+  w.fpath = [[w.camp.x + w.face * 6, w.camp.y + 10], [w.camp.x + w.face * 22, w.camp.y + 12]]; w.fpi = 0;
+  FX.puff(w.fx, w.fy);
   if (typeof playMode === 'function' && playMode()) {
     // you're the wizard: you stay as long as you like
     w.leave = 1e9; w.doing = 'player';
@@ -177,10 +181,31 @@ function wizardDepart() {
   w.phase = 'going'; w.doing = 'drive'; w.fpath = null;
   const ex = WEST_EXIT, end = { x: clamp(ex.x, 8, MAP_W * 16 - 8), y: ex.y };
   w.path = wizPath({ x: w.x, y: w.y }, end); w.pi = 0;
+  if (w.path) shortDrive(w, 'out');
   chronicle(w.showDay ? 'Gandalf has climbed up onto his wagon and driven off down the road, waving his hat. The children ran after him as far as the bridge.' : 'Gandalf has driven off down the road again. No party while he was here, so no fireworks this time! Folk are kicking themselves.', 'party');
   if (!w.path) wizardGone();
 }
 function wizardGone() { Game.wizard = null; Wiz.seats = []; }
+// The wagon is only seen for the last few yards of its road in, and the first
+// few out: it fades in rolling up to his camp, and fades out as it goes.
+const DRIVE_SEEN = 7;
+function shortDrive(w, how) {
+  if (!w.path || !w.path.length) return;
+  if (how === 'in') {
+    w.pi = Math.max(0, w.path.length - DRIVE_SEEN);
+    [w.x, w.y] = w.path[w.pi];
+    const [ex] = w.path[w.path.length - 1];
+    if (Math.abs(ex - w.x) > 2) w.face = ex > w.x ? 1 : -1;
+  } else w.path = w.path.slice(0, DRIVE_SEEN);
+  w.fade = how; w.dist = 0;
+}
+// how much of the wagon shows: fading in over its first yards, out over its last
+function wagonAlpha(w) {
+  if (w.phase === 'here' || !w.fade) return 1;
+  if (w.fade === 'in') return clamp((w.dist || 0) / 40, 0, 1);
+  const left = w.path ? (w.path.length - w.pi) * 16 : 0;
+  return clamp(left / 48, 0, 1);
+}
 
 // --- The wagon and the walk --------------------------------------------------------
 function wizStep(o, pathKey, iKey, speed, dt) {
@@ -304,6 +329,7 @@ function wizardStartTale(force, pick) {
 function taleTick(w, dt) {
   const tale = WIZARD_TALES[w.tale];
   if (!tale) return;
+  hushTick();
   w.lineAt = (w.lineAt || 0) - dt;
   // he waits for a few to gather before he begins
   const listening = Game.villagers.filter((v) => v.task && v.task.a.id === 'wizard_tale' && v.task.phase === 'do');
@@ -330,12 +356,37 @@ function taleTick(w, dt) {
   if (w.react && Game.time >= w.react.at) {
     const l = Game.villagers.find((o) => o.id === w.react.id);
     w.react = null;
-    if (l && l.task && l.task.a.id === 'wizard_tale') l.say(R.pick(TALE_REACTS[l.isChild() ? 'child' : temperOf(l)] || TALE_REACTS.cheerful), 2.6);
+    if (l && l.task && l.task.a.id === 'wizard_tale') { Wiz.reacting = true; l.say(R.pick(TALE_REACTS[l.isChild() ? 'child' : temperOf(l)] || TALE_REACTS.cheerful), 2.6); Wiz.reacting = false; }
   }
   w.raise = Math.max(0, (w.raise || 0) - dt);
   if (w.line >= tale.lines.length && w.lineAt <= 0) {
     w.taleUntil = 0;
     for (const v of listening) feel(v, 'wizard_tale', tale.x);
+  }
+}
+
+// --- Hush! ------------------------------------------------------------------------
+// Once he's begun, those listening hold their tongues: grown-ups quite, and
+// most children most of the time; a grown-up passing by doesn't stop to tell
+// a listening child things. A child who can't help it gets a "Shhh!" from
+// whoever's sitting nearest (another child, by preference), and sometimes
+// whispers sorry. Their reactions to the tale itself are allowed.
+function taleUnderway() { const w = wizard(); return !!w && w.phase === 'here' && w.doing === 'tale' && (w.line || 0) > 0 && Game.time < (w.taleUntil || 0); }
+const listening = (v) => !!(v && v.task && v.task.a.id === 'wizard_tale' && v.task.phase === 'do');
+function hushTick() {
+  if (!Wiz.hush || !Wiz.hush.length) return;
+  for (const h of Wiz.hush.slice()) {
+    if (Game.time < h.at) continue;
+    const by = Game.villagers.find((o) => o.id === h.by), to = Game.villagers.find((o) => o.id === h.to);
+    Wiz.reacting = true;
+    if (h.step === 0 && listening(by) && to) {
+      by.say(R.pick(['Shhh!', 'Shh! He\'s telling it!', `Shush, ${to.first}!`, '*glares* Shhhh.']), 2, { to });
+      h.step = 1; h.at = Game.time + 2;
+    } else {
+      if (listening(to) && R.chance(0.6)) to.say(R.pick(['*whispers* Sorry...', 'Sorry!', '...']), 1.8);
+      Wiz.hush.splice(Wiz.hush.indexOf(h), 1);
+    }
+    Wiz.reacting = false;
   }
 }
 
@@ -388,7 +439,7 @@ const Wiz = {
       first: WIZARD.name, inside: null, iconT: 0, bubble: null, hidden: false, x: 0, y: 0,
       isGrown: () => true, isSick: () => false,
       draw: (ctx) => { const w = wizard(); if (w && w.phase === 'here') drawWizardOnFoot(ctx, w); },
-      lights: (L) => { const w = wizard(); if (w && w.phase === 'here' && !this.speaker.hidden && Game.darkness > 0.2) L.push({ x: w.fx + (facingLeft(w.facing) ? 10 : -10), y: w.fy - 46 - (w.doing === 'show' ? 8 : 0), r: w.doing === 'show' ? 40 : 22, a: 0.75, col: '#e8f0ff' }); },
+      lights: (L) => { const w = wizard(); if (w && w.phase === 'here' && !this.speaker.hidden && Game.darkness > 0.2) { const st = w._staff || { x: w.fx, y: w.fy - 20 }; L.push({ x: (st.x + w.fx) / 2, y: w.fy - 4, r: 46, a: 0.9, warm: true }); } },
     };
     this.wagonVis = {
       x: 0, y: 0,
@@ -572,12 +623,21 @@ function drawWizardOnFoot(ctx, w) {
   const W = spr.width / spr.res, H = spr.height / spr.res;
   ctx.fillStyle = 'rgba(20,30,10,0.25)'; ctx.fillRect(Math.round(w.fx) - 6, Math.round(w.fy) - 1, 13, 2); ctx.fillRect(Math.round(w.fx) - 5, Math.round(w.fy), 11, 1);
   blit(ctx, spr, Math.round((w.fx - W / 2) * RS) / RS, Math.round((w.fy - H + 1) * RS) / RS, flip);
-  // a glimmer at the head of the staff after dark, or while the show is on
-  if (Game.darkness > 0.2 || pose === 'show') {
-    const sxw = (flip ? W - 1 - (dir === 'side' ? 21 : dir === 'up' ? 24 : 2) : (dir === 'side' ? 21 : dir === 'up' ? 24 : 2)) + 0.5;
-    const top = pose === 'show' ? 1 : pose === 'raise' ? 4 : 8;
-    ctx.fillStyle = Math.sin(tReal * 6) > 0 ? '#ffffff' : '#d8e8ff';
-    ctx.fillRect(Math.round((w.fx - W / 2) * RS) / RS + sxw, Math.round((w.fy - H + 1) * RS) / RS + top - 1, 1, 1);
+  // after dark a lantern hangs from the crook of his staff (the grid is in
+  // half-pixels: coarse column c is c/2 + 0.5 world pixels in from the edge)
+  const col = dir === 'side' ? 21 : dir === 'up' ? 24 : 2;
+  const top = pose === 'show' ? 1 : pose === 'raise' ? 4 : pose === 'walk2' && dir !== 'side' ? 7 : pose === 'walk1' && dir === 'side' ? 7 : 8;
+  const left = Math.round((w.fx - W / 2) * RS) / RS, topY = Math.round((w.fy - H + 1) * RS) / RS;
+  let sx = left + (col + 1) / 2 + 0.5;
+  if (flip) sx = left + W - ((col + 1) / 2 + 0.5);
+  const sy = topY + top / 2 + 0.5;
+  w._staff = { x: sx, y: sy };
+  if (Game.darkness > 0.35) {
+    // it hangs on the far side of the staff from him, swinging a little as he walks
+    const out = dir === 'side' ? (flip ? -1.5 : 1.5) : dir === 'up' ? 1.5 : -1.5;
+    const sway = w.fpath ? Math.round(Math.sin((w.walkDist || 0) * 0.35) * 2) / RS : 0;
+    ctx.fillStyle = '#3a2a1a'; ctx.fillRect(sx + out * 0.4, sy, 1 / RS, 1.5);
+    drawLantern(ctx, sx + out + sway, sy + 1.5, tReal, 7);
   }
 }
 
@@ -641,6 +701,9 @@ function drawWizardWagon(ctx, w) {
   let spr = wagonSprite(frame);
   if (w.face < 0) spr = mirrorCanvas(spr);
   const x0 = Math.round(w.x) - 40, y0 = Math.round(w.y) - 37;
+  const a = wagonAlpha(w);
+  if (a <= 0) return;
+  ctx.globalAlpha = a;
   ctx.fillStyle = 'rgba(20,30,10,0.25)'; ctx.fillRect(x0 + 6, Math.round(w.y) - 2, 66, 3);
   blit(ctx, spr, x0, y0);
   // the old man on the bench, reins in hand
@@ -649,6 +712,7 @@ function drawWizardWagon(ctx, w) {
     const bx = w.face > 0 ? x0 + 41 : x0 + 80 - 41;
     blit(ctx, s, bx - W / 2, y0 + 16 - H + 1, w.face < 0);
   }
+  ctx.globalAlpha = 1;
 }
 
 // --- The fireworks ----------------------------------------------------------------------
@@ -877,6 +941,18 @@ window.addEventListener('DOMContentLoaded', () => {
   patch(window, 'fireworkShow', (fs) => function (x, y, n) { if (wizardHere() && wizard().showDay !== Game.day) return wizardShow(x, y); return fs.apply(this, arguments); }, 'wizard');
   // a wizard's tale is worth an hour off work
   SHIFT_OK.add('wizard_tale');
+  patch(Villager.prototype, 'say', (say) => function (text, dur, opts = {}) {
+    if (Wiz.reacting || !taleUnderway()) return say.apply(this, arguments);
+    const at = listening(this), toListener = opts && opts.to && listening(opts.to);
+    if (!at && !toListener) return say.apply(this, arguments);
+    // rapt: not even a thought shows
+    if (opts && opts.think) return;
+    if (!at || !this.isChild() || Math.random() < 0.8) return; // they hold their tongues
+    const r = say.apply(this, arguments);
+    const by = Game.villagers.filter((o) => o !== this && listening(o) && dist(o.x, o.y, this.x, this.y) < 48).sort((p, q) => (q.isChild() ? 1 : 0) - (p.isChild() ? 1 : 0) || dist(p.x, p.y, this.x, this.y) - dist(q.x, q.y, this.x, this.y))[0];
+    if (by && !(Wiz.hush || []).some((h) => h.to === this.id)) (Wiz.hush || (Wiz.hush = [])).push({ by: by.id, to: this.id, at: Game.time + 1.2, step: 0 });
+    return r;
+  }, 'hush');
   // folk listening to him aren't to be called away for a natter
   patch(Villager.prototype, 'isBusyForChat', (busy) => function () { return (this.task && this.task.a.id === 'wizard_tale') || busy.apply(this, arguments); }, 'wizard');
   patch(window, 'placeAt', (pa) => function (wx, wy) {
