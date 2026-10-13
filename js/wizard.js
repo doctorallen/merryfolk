@@ -288,11 +288,13 @@ function summonListeners(w) {
     v.thinkDelay = R.f(0, 10);
   }
 }
+// a tale he can tell yet (some wait on something being found out)
+function taleOpen(k) { const t = WIZARD_TALES[k]; return !!t && (!t.locked || !t.locked()); }
 function wizardStartTale(force, pick) {
   const w = wizard();
   if (!w || w.phase !== 'here') return;
-  const left = Object.keys(WIZARD_TALES).filter((k) => !(w.told || []).includes(k));
-  const key = pick && WIZARD_TALES[pick] ? pick : R.pick(left.length ? left : Object.keys(WIZARD_TALES));
+  const open = Object.keys(WIZARD_TALES).filter(taleOpen), left = open.filter((k) => !(w.told || []).includes(k));
+  const key = pick && WIZARD_TALES[pick] ? pick : R.pick(left.length ? left : open);
   w.told = (w.told || []).concat(key);
   w.tale = key; w.line = 0; w.lineAt = 0; w.taleDay = Game.day;
   w.taleUntil = Game.time + 200; w.taleAt = Game.time;

@@ -109,8 +109,10 @@ function giveArc(v) {
     if (!v) return v;
     // sometimes it's the very person someone's been missing (of the right sex, and age)
     const waiting = riftBorn().filter((o) => o !== v && o.arc && !o.arc.lost.found && (o.arc.lost.sex || v.genes.sex) === v.genes.sex && v.isGrown() && o.isGrown() && !Game.villagers.some((x) => x !== v && x.first === o.arc.lost.name));
-    if (waiting.length && R.chance(0.35)) {
-      const o = R.pick(waiting), rel = o.arc.lost.rel, oldName = v.first;
+    // (a name the wizard keeps in mind is likelier to come through: riftplay.js)
+    if (waiting.length && R.chance(0.35 + (typeof reunionBoost === 'function' ? reunionBoost() : 0))) {
+      const kept = typeof keptNames === 'function' ? waiting.filter((x) => keptNames().includes(x.arc.lost.name)) : [];
+      const o = R.pick(kept.length ? kept : waiting), rel = o.arc.lost.rel, oldName = v.first;
       v.first = o.arc.lost.name; o.arc.lost.found = true;
       // parents are older, children younger
       if (/mother|father/.test(rel)) v.age = Math.max(v.age, o.age + R.f(6, 10));
@@ -145,7 +147,7 @@ function arcsDaily() {
   for (const v of riftBorn()) {
     giveArc(v);
     if (!v.arc || v.arc.turned || !v.isGrown()) continue;
-    const f = Object.entries(v.rel).map(([id, r]) => [Game.villagers.find((o) => o.id === +id), r]).filter(([o, r]) => o && !o.isRiftborn() && o.isGrown() && r >= 0.6 && o.spouse !== v.id && v.spouse !== o.id && o.sweetheart !== v.id && (o.love[v.id] || 0) < 0.3 && !related(o, v)).sort((a, b) => b[1] - a[1])[0];
+    const f = Object.entries(v.rel).map(([id, r]) => [Game.villagers.find((o) => o.id === +id), r]).filter(([o, r]) => o && !o.isRiftborn() && o.isGrown() && r >= (typeof turnThreshold === 'function' ? turnThreshold(v, o) : 0.6) && o.spouse !== v.id && v.spouse !== o.id && o.sweetheart !== v.id && (o.love[v.id] || 0) < 0.3 && !related(o, v)).sort((a, b) => b[1] - a[1])[0];
     if (!f) continue;
     const o = f[0];
     v.arc.turned = o.id;
@@ -314,7 +316,9 @@ function storyTick() {
     7: () => rb.length && housed / rb.length >= 0.5 && !!Game.stats.firstHybrid,
     8: () => (S.stage >= 7 && ((builtCivic('dynamo') && builtCivic('turbine')) || Game.day - (S.stageDay || 0) >= 4)) || (yearOf(Game.day) >= 3 && S.stage >= 5),
   }[next];
-  if (!ok || !ok()) return;
+  // the wizard's game moves some stages on friendships rather than machines (riftplay.js)
+  const gate = typeof riftGate === 'function' ? riftGate(next, S) : null;
+  if (gate === false || (gate === null && (!ok || !ok()))) return;
   if (S.stageDay != null && Game.day - S.stageDay < 1 && next > 2) return;
   S.stage = next; S.stageDay = Game.day;
   const when = Game.hour >= 15 && Game.hour < 18 ? 'at teatime' : Game.hour < 6 || Game.hour >= 21 ? 'in the dead of night' : Game.hour < 12 ? 'in the middle of second breakfast' : 'over luncheon';

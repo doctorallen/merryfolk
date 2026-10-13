@@ -376,7 +376,7 @@ function chooseTale() {
   const told = w.told || [];
   Sheet.open({
     kind: 'pick', title: 'Which tale?', sub: 'Folk will come from all over the village to hear it.',
-    choices: Object.keys(WIZARD_TALES).map((k) => ({ label: `The tale ${WIZARD_TALES[k].x}${told.includes(k) ? ' <small>(told before)</small>' : ''}`, dim: told.includes(k), run: () => { Sheet.close(true); beginTale(k); } }))
+    choices: Object.keys(WIZARD_TALES).filter(taleOpen).map((k) => ({ label: `The tale ${WIZARD_TALES[k].x}${told.includes(k) ? ' <small>(told before)</small>' : ''}`, dim: told.includes(k), run: () => { Sheet.close(true); beginTale(k); } }))
       .concat([{ label: 'Not now', back: true, run: () => Sheet.close(true) }]),
   });
 }
