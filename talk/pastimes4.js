@@ -1017,4 +1017,63 @@ talkPack('pastimes4', () => {
     ornery: ['Must be nice.'],
     child: ['You can\'t do LESS than nothing! ...Can you?'],
   });
+
+  // --- More ways of saying it: registers, moods, weather and the rift-born ---------------
+  const M = (key, rules) => lines(key, guard(rules));
+  M('pastime.reading.start', [
+    { if: { register: 'fine' }, text: ['I\'m re-reading the Annals of the Westfarthing. Volume three. It improves on acquaintance.'] },
+    { if: { register: 'bright' }, text: ['I\'m reading EVERYTHING. I read the back of the flour sack this morning. It was quite good.'] },
+    { if: { mood: 'merry' }, text: ['I\'ve just got to the bit where they find the treasure! I\'m so happy I could burst!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['I\'ve been hiding in books lately. They\'re kinder than days.'] },
+    { if: { season: 'winter' }, text: ['Winter\'s for reading. Long nights, a candle, and somebody else\'s adventure.'] },
+  ]);
+  M('pastime.reading.kind', [
+    { if: { register: 'fine' }, text: ['Histories. Genealogies. One can trace half the Shire back to three families.'] },
+    { if: { register: 'bright' }, text: ['Facts! Did you know a snail can sleep for three years? I read that!'] },
+  ]);
+  M('pastime.stroll.start', [
+    { if: { register: 'fine' }, text: ['A constitutional. Round the pond and back by the mill. It aids the digestion.'] },
+    { if: { register: 'plain' }, text: ['Just walkin\'. Stretchin\' me legs.'] },
+    { if: { mood: 'merry' }, text: ['Isn\'t it a day for it! I\'ve been round twice already!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['Walking helps. A bit. You can\'t think so hard when your feet are moving.'] },
+    { if: { weather: 'snow' }, text: ['In the snow! Look, my footprints are the only ones. I\'m the first person in the world.'] },
+  ]);
+  M('pastime.nap.start', [
+    { if: { register: 'fine' }, text: ['A brief repose after luncheon. The physicians recommend it. Well. I recommend it.'] },
+    { if: { register: 'plain' }, text: ['Forty winks. Fifty. Who\'s countin\'.'] },
+    { if: { mood: 'merry' }, text: ['Best nap of my life! I dreamt of pies and woke up to bees!'] },
+    { if: { season: 'summer' }, text: ['In this heat? A nap is the only sensible thing a hobbit can do.'] },
+  ]);
+  M('pastime.tea.start', [
+    { if: { register: 'plain' }, text: ['Tea. Strong. Brown. Hot. That\'s all it needs to be.'] },
+    { if: { mood: 'merry' }, text: ['Tea! The kettle\'s singing and so am I!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['I\'ve had six cups. They help. A little. Each one a little.'] },
+    { if: { rift: true }, text: ['Back home it was synth-caff in a tube. This is leaves in hot water and it\'s better. How?'] },
+    { if: { stage: 'elder' }, text: ['Seventy years of four o\'clock tea. I\'ve not missed one. Not even the year of the flood.'] },
+  ]);
+  M('pastime.food.start', [
+    { if: { register: 'fine' }, text: ['{FavFoodWord}, I confess. Properly prepared, it\'s a dish fit for the Thain.'] },
+    { if: { register: 'plain' }, text: ['{FavFoodWord}. Every day if I could. Twice.'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['{FavFoodWord}. It\'s the only thing that\'s cheered me this week.'] },
+    { if: { rift: true }, text: ['{FavFoodWord}! Real food! Back home it was protein bars and noodles from a machine.'] },
+    { if: { stage: 'elder' }, text: ['{FavFoodWord}. My mother\'s way. I\'ve never had it right since she went.'] },
+  ]);
+  M('pastime.food.meals', [
+    { if: { register: 'fine' }, text: ['Breakfast, a second breakfast, elevenses, luncheon, afternoon tea, dinner and supper. One keeps a proper table.'] },
+    { if: { register: 'plain' }, text: ['Four? I\'ve had six. Don\'t tell nobody.'] },
+    { if: { rift: true }, text: ['SEVEN meals? Back home we had one, standing up. I\'ve gained a stone. I\'m so happy.'] },
+  ]);
+  M('pastime.baking.start', [
+    { if: { register: 'fine' }, text: ['A little light baking. Shortbread, a plaited loaf. One finds it restful.'] },
+    { if: { register: 'plain' }, text: ['Bread. Always bread. And a pie Highdays.'] },
+    { if: { mood: 'merry' }, text: ['I\'ve made buns! Twelve! There are nine left! There were twelve!'] },
+    { if: { weather: 'rain' }, text: ['A rainy day is a baking day. The kitchen windows steam up and the world goes away.'] },
+  ]);
+  M('pastime.games.start', [
+    { if: { register: 'fine' }, text: ['Skittles? I\'m considered something of a player. In a small way.'] },
+    { if: { register: 'plain' }, text: ['Skittles! Now yer talkin\'. Loser buys.'] },
+    { if: { mood: 'merry' }, text: ['A game! Yes! I feel lucky today! I feel VERY lucky!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['A game? ...All right. It might help.'] },
+    { if: { rift: true }, text: ['We had games back home but they were all on screens. You throw a real ball here. With your arm.'] },
+  ]);
 });

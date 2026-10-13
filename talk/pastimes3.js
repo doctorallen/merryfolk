@@ -991,4 +991,86 @@ talkPack('pastimes3', () => {
     shy: ['...Really? ...Tomorrow, then.'],
     cheerful: ['Yes! I\'ll do every kind!'],
   });
+
+  // --- More ways of saying it: registers, moods, weather and the rift-born ---------------
+  const M = (key, rules) => lines(key, guard(rules));
+  M('pastime.inn.start', [
+    { if: { register: 'fine' }, text: ['I take a glass at the Badger of an evening. One must keep up with the parish.', 'The Badger is a little rough, but the fire is excellent and the company improving.'] },
+    { if: { register: 'plain' }, text: ['Badger\'s me second home. First, some weeks.', 'Pint after work. Two on a Mersday. That\'s me.'] },
+    { if: { mood: 'merry' }, text: ['Last night was the best night! We sang till the innkeeper threw her apron at us!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['I go to be near folk. Even if I don\'t say much. Specially then.'] },
+    { if: { tipsy: true }, pri: 2, text: ['I\'ve jus\' come from there! Lovely place. Lovely people. Lovely... what was I saying?'] },
+    { if: { hour: 'morning' }, text: ['Not at this hour! I\'m not a sot. ...Not till noon.'] },
+    { if: { party: true }, pri: 1, text: ['Not tonight! There\'s a party! The Badger\'s come to us!'] },
+  ]);
+  M('pastime.inn.seat', [
+    { if: { register: 'fine' }, text: ['The settle by the hearth. It has a cushion, which I brought myself.'] },
+    { if: { register: 'plain' }, text: ['End o\' the bench. Back to the wall. Same as me dad.'] },
+  ]);
+  M('pastime.inn.ale', [
+    { if: { register: 'fine' }, text: ['Rather good this season. A pleasing nuttiness. I\'ve said as much to the brewer.'] },
+    { if: { register: 'plain' }, text: ['Wet an\' brown an\' there\'s plenty. Can\'t ask more.'] },
+    { if: { season: 'autumn' }, text: ['The new barrels are in. Harvest ale. It\'s like drinking a hayfield.'] },
+    { if: { season: 'winter' }, text: ['Mulled, this time of year. With apple and a hot poker. Lovely.'] },
+  ]);
+  M('pastime.inn.sing', [
+    { if: { register: 'fine' }, text: ['I\'ve been known to take the descant. Quietly.'] },
+    { if: { register: 'plain' }, text: ['Sing? Loudest in the room. Can\'t carry a tune in a bucket, mind.'] },
+  ]);
+  M('pastime.pipe.start', [
+    { if: { register: 'fine' }, text: ['Do join me. A pipe after dinner is one of the civilised pleasures.'] },
+    { if: { register: 'plain' }, text: ['Sit down. Pipe\'s lit. Nothin\' better.'] },
+    { if: { mood: 'merry' }, text: ['Sit! What an evening! Look at that sky! Puff, puff. Lovely.'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['Sit if you like. I\'m not much company. The pipe\'s better company than me.'] },
+    { if: { weather: 'rain' }, text: ['Under the eaves. A pipe tastes better when it\'s raining just past your toes.'] },
+    { if: { season: 'winter' }, text: ['Cold for it. But a pipe warms the nose, if nothing else.'] },
+    { if: { tipsy: true }, pri: 2, text: ['Sssit. Sit down! Have a puff. Have two. I\'ve had... several.'] },
+  ]);
+  M('pastime.pipe.leaf', [
+    { if: { register: 'fine' }, text: ['A fine Longbottom when I can get it. The valley leaf when I can\'t, which is usually.'] },
+    { if: { register: 'plain' }, text: ['Valley leaf. Rough. Does the job.'] },
+  ]);
+  M('pastime.pipe.ring', [
+    { if: { register: 'fine' }, text: ['*A neat, small ring, launched with some ceremony.* There. A modest ring.'] },
+    { if: { mood: 'merry' }, text: ['*A big fat ring, and a laugh blows it to pieces.* Oh! Ha! Again!'] },
+  ]);
+  M('pastime.fishing.start', [
+    { if: { register: 'fine' }, text: ['I fish a little. Fly, chiefly. It\'s a contemplative art.'] },
+    { if: { register: 'plain' }, text: ['Fishin\'. Rod, worm, river. Can\'t beat it.'] },
+    { if: { mood: 'merry' }, text: ['I had three this morning! THREE! Before breakfast!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['I go down to the river when things are bad. The fish don\'t ask how I am.'] },
+    { if: { weather: 'rain' }, text: ['Rain\'s the best time. The fish come up for the drops. I come down for the fish.'] },
+    { if: { hour: 'morning' }, text: ['Just come back. Dawn\'s the time. Mist on the water and the trout rising.'] },
+    { if: { rift: true }, text: ['Back home the fish came in tins. Here they fight back. It\'s amazing. It\'s rude.'] },
+  ]);
+  M('pastime.fishing.spot', [
+    { if: { register: 'fine' }, text: ['A pool beneath the willows. I\'ll not be more specific. A gentleman keeps his water.'] },
+    { if: { register: 'plain' }, text: ['Down the bend. Under the tree. Best spot there is.'] },
+  ]);
+  M('pastime.fishing.away', [
+    { if: { register: 'fine' }, text: ['A trout of some considerable size. I estimate four pounds. Possibly five.'] },
+    { if: { fishN: { min: 5 } }, text: ['I\'ve caught {fishN} good ones. But the one I didn\'t catch is the one I think about.'] },
+  ]);
+  M('pastime.garden.start', [
+    { if: { register: 'fine' }, text: ['The {cropWord} are doing rather well. I attribute it to a rigorous regime of manure.'] },
+    { if: { register: 'plain' }, text: ['Comin\' on. {CropWord} are fat as pigs. Good soil, this.'] },
+    { if: { mood: 'merry' }, text: ['Everything\'s up! Everything! I counted! I went round twice!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['I\'ve let it go a bit. The weeds are winning. I can\'t find the heart.'] },
+    { if: { rift: true }, text: ['I\'ve never grown anything before. You put a seed in the dirt and it just... does it. It\'s mad.'] },
+  ]);
+  M('pastime.garden.secret', [
+    { if: { register: 'fine' }, text: ['Well-rotted manure, a careful rotation, and a little bone meal. It\'s a science.'] },
+    { if: { register: 'plain' }, text: ['Muck. Good honest muck. And spit on yer hands.'] },
+  ]);
+  M('pastime.mushrooms.start', [
+    { if: { register: 'fine' }, text: ['I forage a little. It\'s rather a passion. The fungi of the valley are remarkably various.'] },
+    { if: { register: 'plain' }, text: ['Mushrooms. Up early, basket, wet feet. Lovely.'] },
+    { if: { mood: 'merry' }, text: ['I found a ring of them this morning! A whole ring! I danced in the middle!'] },
+    { if: { weather: 'rain' }, text: ['Rain! Tomorrow they\'ll be up everywhere. I\'ll be out at dawn.'] },
+    { if: { rift: true }, text: ['You can just pick food off the ground here! Nobody stops you! Some of it kills you, but still!'] },
+  ]);
+  M('pastime.mushrooms.cook', [
+    { if: { register: 'fine' }, text: ['Sauteed in butter with a little thyme and a splash of cream. Simplicity itself.'] },
+    { if: { register: 'plain' }, text: ['Pan. Butter. Bit o\' bacon. Bread to mop.'] },
+  ]);
 });

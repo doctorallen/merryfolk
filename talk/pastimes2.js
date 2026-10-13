@@ -899,15 +899,15 @@ talkPack('pastimes2', () => {
   // ==================================================================================
   addThread({
     id: 'pastime.second', about: 'pastime', weight: 0.8, cool: 6,
-    label: (F) => `And you do ${F.pastime2Word || 'something else'} as well?`,
-    when: (F) => !!F.pastime2 && (F.known || []).some((k) => k === 'hobby' || k.startsWith('pastime.')),
-    open: { ask: 'I hear you do {pastime2Word} as well as {pastimeWord}, {name}. Where do you find the evenings?' },
+    label: (F) => `And you do ${F.secondWord || 'something else'} as well?`,
+    when: (F) => !!F.second && (F.known || []).some((k) => k === 'hobby' || k.startsWith('pastime.')),
+    open: { ask: 'I hear you do {secondWord} as well as {pastimeWord}, {name}. Where do you find the evenings?' },
     beats: {
       start: { line: 'pastime.second.start', go: [
         { ap: 'ask', say: 'Which do you love more?', to: 'more' },
         { ap: 'jest', say: 'Do the two ever get muddled?', to: 'muddle' },
       ] },
-      more: { line: 'pastime.second.more', fx: { learn: ['pastime.second', '{Name} also does {pastime2Word}'] }, go: [
+      more: { line: 'pastime.second.more', fx: { learn: ['pastime.second', '{Name} also does {secondWord}'] }, go: [
         { ap: 'warm', say: 'A good life has room for two loves.', to: 'end' },
         { ap: 'ask', say: 'Would you ever give one up?', to: 'giveup' },
       ] },
@@ -931,11 +931,11 @@ talkPack('pastimes2', () => {
     gloomy: ['The evenings are long. They need filling.'],
     child: ['I do EVERYTHING. I want to do more things.'],
   });
-  L('pastime.second.more', ['Don\'t make me choose. It\'s like choosing between puddings.', '{PastimeWord}. But don\'t tell the {pastime2Word}.', 'Depends on the day. {PastimeWord} when I\'m happy, {pastime2Word} when I\'m thinking.'], {
+  L('pastime.second.more', ['Don\'t make me choose. It\'s like choosing between puddings.', '{PastimeWord}. But don\'t tell the {secondWord}.', 'Depends on the day. {PastimeWord} when I\'m happy, {secondWord} when I\'m thinking.'], {
     cheerful: ['Both! Equally! Like two puddings!'],
     ornery: ['That\'s like asking which leg I like more.'],
-    shy: ['...{Pastime2Word}. It\'s quieter.'],
-    dreamy: ['{PastimeWord} is for the hands. {Pastime2Word} is for the heart. Or the other way round.'],
+    shy: ['...{SecondWord}. It\'s quieter.'],
+    dreamy: ['{PastimeWord} is for the hands. {SecondWord} is for the heart. Or the other way round.'],
     witty: ['Whichever one I\'m not doing at the time.'],
     proud: ['I excel at both. I couldn\'t choose.'],
     gloomy: ['Neither, some days. Both, other days.'],
@@ -949,7 +949,7 @@ talkPack('pastimes2', () => {
     gloomy: ['I might. I\'m not much good at either.'],
     proud: ['Never. Both are part of me.'],
   });
-  L('pastime.second.first', ['{PastimeWord}. Then {pastime2Word} crept up on me.', 'I can\'t remember. They grew up together.'], {
+  L('pastime.second.first', ['{PastimeWord}. Then {secondWord} crept up on me.', 'I can\'t remember. They grew up together.'], {
     dreamy: ['They came together, I think. Like twins.'],
   });
 
@@ -1156,4 +1156,73 @@ talkPack('pastimes2', () => {
   L('pastime.birdnow.leaf', ['...It IS a leaf. Oh. It was there a minute ago.', 'Ha! That\'s a leaf. The bird\'s gone. You frightened it with your eyebrows.'], {
     ornery: ['It was a bird. You were too slow.'],
   });
+
+  // --- More ways of saying it: registers, moods, weather and the rift-born ---------------
+  const M = (key, rules) => lines(key, guard(rules));
+  M('pastime.collecting.start', [
+    { if: { register: 'fine' }, text: ['I keep a modest cabinet of curiosities. Labelled, naturally.', 'A collection, yes. Natural history, chiefly. One has a duty to observe.'] },
+    { if: { register: 'plain' }, text: ['Bits an\' bobs. Stones, mostly. Can\'t help pickin\' \'em up.'] },
+    { if: { register: 'bright' }, text: ['I\'ve got a system! Colour, then size, then where I found it. It\'s called a catalogue.'] },
+    { if: { mood: 'merry' }, text: ['I found the BEST one yesterday. I\'ve been smiling since.'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['I haven\'t been out looking much. I just sit and sort them. It helps.'] },
+    { if: { season: 'autumn' }, text: ['Autumn! Conkers, acorns, feathers from the moult. My pockets are bursting.'] },
+    { if: { collectTrinkets: true }, text: ['Some of mine come from the rift scar. Little bits of somewhere else. They hum at night.'] },
+  ]);
+  M('pastime.collecting.what', [
+    { if: { register: 'fine' }, text: ['{CollectKind}, principally. I\'ve a drawer for each kind.'] },
+    { if: { register: 'plain' }, text: ['{CollectKind}. Got a box of \'em. Two boxes.'] },
+    { if: { stage: 'child' }, text: ['{CollectKind}! I keep them in a tin! It\'s a biscuit tin! There\'s no biscuits.'] },
+  ]);
+  M('pastime.collecting.best', [
+    { if: { register: 'fine' }, text: ['A fossil ammonite, coiled like a ram\'s horn. From the quarry. Before the flood, they say.'] },
+    { if: { stage: 'elder' }, text: ['A brooch. My mother lost it when I was small. Found it sixty years later in the vegetable bed.'] },
+  ]);
+  M('pastime.birds.start', [
+    { if: { register: 'fine' }, text: ['I keep a careful list. One must be rigorous, or one ends up with a great many sparrows.'] },
+    { if: { register: 'plain' }, text: ['Birds. Watch \'em. Write \'em down. That\'s about it.'] },
+    { if: { register: 'bright' }, text: ['I know all their Latin names! Well. Some. Well. One.'] },
+    { if: { mood: 'merry' }, text: ['Oh, I heard a skylark this morning, going up and up and singing all the way!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['I go out to watch them when I\'m low. They don\'t know I\'m low. It helps.'] },
+    { if: { season: 'winter' }, text: ['Winter birds! Redwings, fieldfares. They come from the north, all hungry.'] },
+    { if: { season: 'summer' }, text: ['Summer\'s for swifts. Screaming round the chimneys. I love them.'] },
+    { if: { hour: 'evening' }, text: ['The owls will be out soon. I\'m off to the oak in a bit. Bring a lantern? No. No lanterns.'] },
+  ]);
+  M('pastime.birds.last', [
+    { if: { register: 'fine' }, text: ['A {birdLast}, in the alders by the bend. Number {birdN} in the book. Quite a satisfactory morning.'] },
+    { if: { register: 'plain' }, text: ['A {birdLast}. Down by the river. Wrote it down.'] },
+    { if: { birdN: { min: 20 } }, text: ['A {birdLast}. That makes {birdTally}. I\'m running out of birds. Not a bad problem.'] },
+  ]);
+  M('pastime.birds.want', [
+    { if: { register: 'fine' }, text: ['A {birdWant}. I\'ve read every account. I\'ve yet to have the pleasure.'] },
+    { if: { stage: 'elder' }, text: ['A {birdWant}. Seventy years of looking. I\'d like it before I go.'] },
+  ]);
+  M('pastime.masterpiece.start', [
+    { if: { register: 'fine' }, text: ['One hardly knows what to say about it. It seems to belong to the village now, rather than to me.'] },
+    { if: { register: 'plain' }, text: ['Don\'t know where it come from. Just did it. Now folk won\'t stop lookin\'.'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['Everyone thinks I must be so happy. I made the best thing I\'ll ever make. What now?'] },
+  ]);
+  M('pastime.teach.start', [
+    { if: { register: 'fine' }, text: ['Teach you? I should be delighted. Do sit. Mind the shavings.'] },
+    { if: { register: 'plain' }, text: ['Teach you? Ha! Sit there. Watch me hands.'] },
+    { if: { pastimeLevel: { min: 45 } }, text: ['I\'ve taught a few. None of them were wizards. Let\'s see how you do.'] },
+    { if: { pastimeLevel: { max: 14 } }, text: ['Teach you? I\'m hardly past beginning myself! But all right. We\'ll learn together.'] },
+  ]);
+  M('pastime.gift.start', [
+    { if: { register: 'fine' }, text: ['I am, as it happens. A small token. One likes to mark the occasion.'] },
+    { if: { register: 'plain' }, text: ['Might be. Ain\'t sayin\' who for.'] },
+    { if: { mood: 'merry' }, text: ['I am! I\'m so excited I keep almost telling them!'] },
+  ]);
+  M('pastime.show.start', [
+    { if: { register: 'fine' }, text: ['I wondered if you might care to see my latest. A {showPiece}. Your opinion would be valued.'] },
+    { if: { register: 'plain' }, text: ['Here. Made a {showPiece}. Thought you\'d want a look.'] },
+    { if: { stage: 'elder' }, text: ['A {showPiece}. My hands are slower now, but they still know the way. Look.'] },
+  ]);
+  M('pastime.find.start', [
+    { if: { register: 'fine' }, text: ['I\'ve made rather a remarkable find. Would you care to give an opinion?'] },
+    { if: { register: 'bright' }, text: ['Look! I think it\'s a fossil! Or a very old potato! I need an expert!'] },
+  ]);
+  M('pastime.birdnow.start', [
+    { if: { register: 'fine' }, text: ['*Very softly.* Don\'t turn your head. On the fence. A rarity, I believe.'] },
+    { if: { hour: 'morning' }, text: ['Shh! Listen! Can you hear it? That\'s the one. Look, there!'] },
+  ]);
 });

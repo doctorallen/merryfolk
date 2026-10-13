@@ -53,8 +53,8 @@ talkPack('pastimes', () => {
     const hs = typeof hobbiesOf === 'function' ? hobbiesOf(v) : [];
     const st = v.stats || {}, sk = v.hobbySkill || {};
     F.hobbies = hs.slice();
-    F.pastime2 = hs[1] || null;
-    F.pastime2Word = hs[1] ? hobbyName(v, hs[1]).toLowerCase() : null;
+    F.second = hs[1] || null;
+    F.secondWord = hs[1] ? hobbyName(v, hs[1]).toLowerCase() : null;
     F.pastimeLevel = hs[0] ? Math.round(sk[hs[0]] || 0) : 0;
     let show = null;
     for (const k in SHORT) {
@@ -69,7 +69,7 @@ talkPack('pastimes', () => {
       if (!show && n > 0 && LAST[k]) show = k;
     }
     F.pastimeTally = hs[0] ? F[SHORT[hs[0]] + 'Tally'] : null;
-    F.pastime2Tally = hs[1] ? F[SHORT[hs[1]] + 'Tally'] : null;
+    F.secondTally = hs[1] ? F[SHORT[hs[1]] + 'Tally'] : null;
     // birds: the latest written up, and the one they're still waiting for
     const nb = F.birdN;
     F.birdLast = nb > 0 ? BIRDS[(v.id * 7 + (nb - 1) * 13) % BIRDS.length] : null;
@@ -1265,4 +1265,112 @@ talkPack('pastimes', () => {
   L('pastime.painting.havent', ['...Because I\'d get it wrong, and then that would be how I remember them.', '...Because they\'d see how I see them. And that\'s too much.'], {
     shy: ['...I couldn\'t. They\'d know. They\'d know everything.'],
   });
+
+  // --- More ways of saying it: registers, moods, weather and the rift-born ---------------
+  const M = (key, rules) => lines(key, guard(rules));
+  M('pastime.carving.start', [
+    { if: { register: 'fine' }, text: ['I carve, in a modest way. One must have an occupation for the evenings.', 'A little wood-carving. It settles the mind, I find, after a day of accounts.'] },
+    { if: { register: 'plain' }, text: ['Whittlin\'. Bit o\' wood, bit o\' knife, bit o\' peace.', 'Carvin\'. Keeps me hands out o\' mischief, me mum always said.'] },
+    { if: { mood: 'merry' }, text: ['Grand! I finished the ears last night and they\'re the best ears I\'ve ever done.'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['I haven\'t had the heart for it lately. The knife\'s gone dull. Or I have.'] },
+    { if: { weather: 'rain' }, text: ['Rainy days are carving days. I\'ve a pile of shavings up to my knees.'] },
+    { if: { hour: 'evening' }, text: ['I was just going in to it. Fire\'s lit, knife\'s sharp, wood\'s waiting.'] },
+    { if: { inspired: true }, pri: 2, text: ['I\'ve an idea. A big one. I can\'t stop thinking about it. My hands are itching.'] },
+    { if: { stage: 'child', band: 'youth' }, text: ['I\'m nearly as good as Dad now. Don\'t tell him I said nearly.'] },
+  ]);
+  M('pastime.carving.piece', [
+    { if: { register: 'fine' }, text: ['A {carveLast}, in lime-wood. I\'m rather pleased with the proportions.'] },
+    { if: { register: 'plain' }, text: ['A {carveLast}. Near done. Just the tail to sort.'] },
+    { if: { season: 'winter' }, text: ['A {carveLast} for the Yule shelf. Every year one more.'] },
+    { if: { carveN: { min: 10 } }, text: ['A {carveLast}. That\'s {carveTally} now. They\'re taking over the dresser.'] },
+  ]);
+  M('pastime.carving.wood', [
+    { if: { register: 'fine' }, text: ['Box-wood, for preference. The grain is exquisitely close.'] },
+    { if: { register: 'plain' }, text: ['Lime. Soft as butter. Don\'t need no fancy wood.'] },
+    { if: { season: 'autumn' }, text: ['Whatever comes down in the autumn gales. I go round after a storm like a magpie.'] },
+  ]);
+  M('pastime.carving.finished', [
+    { if: { register: 'fine' }, text: ['When any further cut would be an impertinence.'] },
+    { if: { register: 'plain' }, text: ['When it looks right. You just know.'] },
+  ]);
+  M('pastime.carving.dream', [
+    { if: { stage: 'elder' }, text: ['A box for my grandchildren. With all of us carved round it. So they don\'t forget the faces.'] },
+    { if: { spouse: has }, text: ['A bed. A great carved bed, for me and {spouse}. Leaves all up the posts.'] },
+  ]);
+
+  M('pastime.basketry.start', [
+    { if: { register: 'fine' }, text: ['Basketry. A rustic art, but there\'s real elegance in a well-made hamper.'] },
+    { if: { register: 'plain' }, text: ['Baskets. Always baskets. Can\'t stop. Wouldn\'t want to.'] },
+    { if: { mood: 'merry' }, text: ['Over and under, and the sun on the reeds. What a day for it!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['I weave when I\'m sad. There\'s been a lot of weaving lately.'] },
+    { if: { weather: 'rain' }, text: ['Rain\'s good for reeds. Keeps them supple. Bad for me, but good for reeds.'] },
+    { if: { rift: true }, text: ['Nobody back home made anything by hand. Here I\'ve made a basket! A real one! It holds eggs!'] },
+  ]);
+  M('pastime.basketry.reeds', [
+    { if: { register: 'fine' }, text: ['From the reed-beds below the mill, cut green in the autumn and seasoned over winter.'] },
+    { if: { register: 'plain' }, text: ['River. Bend in the river. Up to me knees.'] },
+    { if: { season: 'autumn' }, text: ['Autumn\'s cutting time. I\'ve a whole stook drying in the shed.'] },
+    { if: { season: 'spring' }, text: ['The new reeds are only just up. Too green. I\'m using last year\'s.'] },
+  ]);
+  M('pastime.basketry.how', [
+    { if: { register: 'fine' }, text: ['One sets the stakes radially, then weaves the randing in alternation. It\'s rather mathematical.'] },
+    { if: { register: 'plain' }, text: ['In, out. In, out. Pull it tight. That\'s all there is.'] },
+  ]);
+
+  M('pastime.pottery.start', [
+    { if: { register: 'fine' }, text: ['I throw a little. Stoneware, mostly. There\'s a great satisfaction in a true form.'] },
+    { if: { register: 'plain' }, text: ['Pots. Mud an\' a wheel. Mucky, but I like it.'] },
+    { if: { mood: 'merry' }, text: ['Everything I threw this week came out round! Every one! I could sing!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['Everything I throw comes out lopsided lately. Like it knows.'] },
+    { if: { weather: 'rain' }, text: ['Too wet to dry anything. The shelves are full of soft pots, sulking.'] },
+    { if: { season: 'winter' }, text: ['Winter\'s hard. The clay\'s like ice. I warm it on the hearth first.'] },
+    { if: { rift: true }, text: ['Back home everything was printed. Here you make a cup with your hands and it\'s yours. It\'s wild.'] },
+  ]);
+  M('pastime.pottery.latest', [
+    { if: { register: 'fine' }, text: ['A {potLast}, with a little foot-ring. I\'m rather proud of the foot-ring.'] },
+    { if: { register: 'plain' }, text: ['A {potLast}. Holds stuff. That\'s the main thing.'] },
+    { if: { potN: { min: 10 } }, text: ['A {potLast}. Number {potN}. There\'s pots in every cupboard now. The cupboards are pots.'] },
+  ]);
+  M('pastime.pottery.wheel', [
+    { if: { register: 'fine' }, text: ['Centring is the whole discipline. Everything else is merely consequence.'] },
+    { if: { register: 'plain' }, text: ['Get it in the middle. If it ain\'t in the middle, it\'s rubbish.'] },
+  ]);
+
+  M('pastime.knitting.start', [
+    { if: { register: 'fine' }, text: ['I knit. Fair Isle, when I have the patience. Plain stocking-stitch when I haven\'t.'] },
+    { if: { register: 'plain' }, text: ['Knittin\'. Every night. Somebody\'s always cold.'] },
+    { if: { mood: 'merry' }, text: ['I\'ve finished a whole sleeve today and it\'s the right length! Both sleeves the same! Never happens!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['I keep dropping stitches. I can\'t keep my mind on it.'] },
+    { if: { weather: 'rain' }, text: ['Rain on the window, wool in my lap. That\'s my favourite kind of day.'] },
+    { if: { weather: 'snow' }, text: ['Snow! I knew it. Everyone\'s mittens are already done. I\'m ahead for once.'] },
+    { if: { rift: true }, text: ['Nobody in the city knitted. Clothes came out of machines. This is so much slower and so much better.'] },
+  ]);
+  M('pastime.knitting.needles', [
+    { if: { register: 'fine' }, text: ['A {knitLast} in a twisted rib. One finds the rhythm soothing.'] },
+    { if: { register: 'plain' }, text: ['A {knitLast}. Thick. For winter.'] },
+    { if: { knitN: { min: 10 } }, text: ['A {knitLast}. I\'ve knitted {knitTally} now. The lane is very well wrapped.'] },
+  ]);
+  M('pastime.knitting.wool', [
+    { if: { register: 'fine' }, text: ['The Store\'s wool, carded and spun on the lane. One does like to know where it\'s been.'] },
+    { if: { season: 'spring' }, text: ['Shearing time! There\'ll be new wool soon. I\'m like a child before Yule.'] },
+  ]);
+
+  M('pastime.painting.start', [
+    { if: { register: 'fine' }, text: ['I paint. Landscapes, mostly, in the old manner. The valley is a patient sitter.'] },
+    { if: { register: 'plain' }, text: ['Paintin\'. Bits o\' the valley. Not proper art. Just what I see.'] },
+    { if: { mood: 'merry' }, text: ['I got the light right yesterday! For once! I nearly danced!'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['Everything comes out grey lately. Even the green bits.'] },
+    { if: { weather: 'rain' }, text: ['Rain. I paint the window. The drops on the glass. It\'s harder than it looks.'] },
+    { if: { hour: 'evening' }, text: ['The evening light is the best. Everything goes gold for an hour. I paint like mad.'] },
+  ]);
+  M('pastime.painting.last', [
+    { if: { register: 'fine' }, text: ['{PaintLast}, in the afternoon. I attempted something of the atmosphere.'] },
+    { if: { register: 'plain' }, text: ['{PaintLast}. Came out all right. Bit muddy.'] },
+    { if: { season: 'winter' }, text: ['{PaintLast}, in the snow. White on white. My eyes ache.'] },
+    { if: { stage: 'child' }, text: ['{PaintLast}! I did it with my fingers! And my elbow!'] },
+  ]);
+  M('pastime.painting.colours', [
+    { if: { register: 'fine' }, text: ['I grind my own pigments. Ochre, umber, a little lamp-black. It\'s alchemy, really.'] },
+    { if: { rift: true }, text: ['I brought one tube of neon pink through the rift. I\'m saving it. For something important.'] },
+  ]);
 });
