@@ -45,6 +45,10 @@ MOODLETS.lesson_took = ['Learned {x} from the wizard', 0.08, 720, ['The wizard t
 MOODLETS.go_between = ['Speaks both ways', 0.06, 2880, ['Hill or rift? Both. Obviously both.']];
 
 const Upb = { pendingMoral: null, flash: null };
+// What the wizard himself does (a lesson, a tale's moral, a word of praise)
+// counts for half as much again when you're playing him.
+const WIZ_SWAY = 1.5;
+const wizSway = () => (typeof playMode === 'function' && playMode() ? WIZ_SWAY : 1);
 function upbOf(v) { const all = Game.upb || (Game.upb = {}); return all[v.id] || (all[v.id] = { h: 0, r: 0, log: [], morals: {} }); }
 function hasUpb(v) { return !!(Game.upb && Game.upb[v.id]); }
 function isGoBetween(v) { return !!(v && Game.upb && Game.upb[v.id] && Game.upb[v.id].go); }
@@ -155,8 +159,8 @@ function giveLesson(v, T, key) {
   const k = took ? 1 : 0.4;
   learn(v, L.edu * k * (0.6 + fit), 'you');
   if (skill) v.skills[skill] = Math.min(100, (v.skills[skill] || 0) + 4 * k * (0.5 + fit));
-  if (L.ways) shiftWays(v, L.ways * k);
-  if (L.side) nudgeUp(v, L.side, (L.amt || 0.03) * k, null, true);
+  if (L.ways) shiftWays(v, L.ways * k * wizSway());
+  if (L.side) nudgeUp(v, L.side, (L.amt || 0.03) * k * wizSway(), null, true);
   v.drives.bored = Math.max(0, v.drives.bored - 0.15);
   const pool = kidBand(v) === 'youth' ? LESSON_TOOK.youth : LESSON_TOOK;
   T.reply(R.pick(took ? pool.yes : pool.no));
@@ -173,14 +177,14 @@ function praise(v, T, good) {
     T.wiz(R.pick([`Well done, ${v.first}. I saw you at it. ${ACTION_NAMES[a] ? 'Keep it up.' : ''}`, `That's the way, ${v.first}. Very good indeed.`]));
     T.reply(v.isChild() ? R.pick(['Really? You saw?', 'Hee! Thank you!']) : R.pick(['Why, thank you.', 'Oh, it\'s nothing.']));
     leanLog(v, `The wizard praised ${v.pron.them} for ${name}`, 'pat', a);
-    if (RIFT_ACTS.has(a)) nudgeUp(v, 'rift', 0.025, null, true); else if (HILL_ACTS.has(a)) nudgeUp(v, 'hill', 0.025, null, true);
+    if (RIFT_ACTS.has(a)) nudgeUp(v, 'rift', 0.025 * wizSway(), null, true); else if (HILL_ACTS.has(a)) nudgeUp(v, 'hill', 0.025 * wizSway(), null, true);
     addRegard(v, 0.02);
   } else {
     v.weights[a] = clamp(v.weights[a] - 0.25, 0.35, 2.2);
     T.wiz(R.pick([`Now then, ${v.first}. Not so much of that, I think.`, `${v.first}. A word about ${name}.`]));
     T.reply(v.isChild() ? R.pick(['Sorry... I won\'t do it again.', 'But everyone does it!']) : R.pick(['Hmph. Well. If you say so.', 'Fair enough, I suppose.']));
     leanLog(v, `The wizard had a word about ${name}`, 'tut', a);
-    if (RIFT_ACTS.has(a)) nudgeUp(v, 'hill', 0.012, null, true); else if (HILL_ACTS.has(a)) nudgeUp(v, 'rift', 0.012, null, true);
+    if (RIFT_ACTS.has(a)) nudgeUp(v, 'hill', 0.012 * wizSway(), null, true); else if (HILL_ACTS.has(a)) nudgeUp(v, 'rift', 0.012 * wizSway(), null, true);
     addRegard(v, v.isChild() ? -0.005 : -0.02);
   }
 }
@@ -216,7 +220,7 @@ function moralLands(w) {
     if (!v.isChild() || !v.task || v.task.a.id !== 'wizard_tale' || v.task.phase !== 'do') continue;
     const u = upbOf(v);
     u.morals[w.moral] = (u.morals[w.moral] || 0) + 1;
-    nudgeUp(v, m.side, m.amt, null, true);
+    nudgeUp(v, m.side, m.amt * wizSway(), null, true);
     leanLog(v, `Heard the wizard's tale ${tale.x}: ${m.label.toLowerCase()}`, m.side, m.side);
     if (R.chance(0.5)) v.remember(`Heard the wizard tell ${tale.x}. It was about ${m.label.toLowerCase()}.`, 1);
   }
@@ -293,7 +297,8 @@ function childrenSheet() {
     choices: kids.map((v) => {
       const u = Game.upb && Game.upb[v.id];
       const rep = u && u.report ? `<span class="kid-rep"><b>${u.report.season.charAt(0).toUpperCase() + u.report.season.slice(1)}:</b> ${escapeHtml(u.report.text)}</span>` : `<span class="kid-rep"><b>So far:</b> ${escapeHtml(reportFor(v))}</span>`;
-      return { label: `<span class="kid-row"><b>${escapeHtml(v.first)}</b> <small>${kidBand(v)} · ${eduLevel(v.edu)[1].toLowerCase()} · ${upbWord(v).toLowerCase()}</small></span>${upbBar(v)}${rep}`, run: () => { Sheet.close(true); if (typeof wizApproach === 'function' && playMode()) wizApproach(v); else { selectVillager(v); focusVillager(v); } } };
+      const left = daysToComeOfAge(v), due = left === 1 ? 'comes of age tomorrow' : `of age in ${left} days`;
+      return { label: `<span class="kid-row"><b>${escapeHtml(v.first)}</b> <small>${kidBand(v)} · ${due} · ${eduLevel(v.edu)[1].toLowerCase()} · ${upbWord(v).toLowerCase()}</small></span>${upbBar(v)}${rep}`, run: () => { Sheet.close(true); if (typeof wizApproach === 'function' && playMode()) wizApproach(v); else { selectVillager(v); focusVillager(v); } } };
     }).concat([{ label: 'Close', back: true, run: () => Sheet.close(true) }]),
   });
 }

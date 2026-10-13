@@ -80,7 +80,7 @@ function roadSheet() {
 }
 // a word on who'll be grown up by the time he's back
 function growingUp(days) {
-  const kids = Game.villagers.filter((v) => v.isChild() && (Game.wizMet || {})[v.id] && v.age + days >= CHILD_DAYS && v.age < CHILD_DAYS);
+  const kids = Game.villagers.filter((v) => v.isChild() && (Game.wizMet || {})[v.id] && daysToComeOfAge(v) <= days);
   if (kids.length) return `${kids.slice(0, 2).map((v) => v.first).join(' and ')} will have come of age by then.`;
   const babies = Game.villagers.filter((v) => v.stage === 'baby' && v.age + days >= BABY_DAYS);
   return days >= 3 && babies.length ? `${babies[0].first} will be toddling about.` : '';
@@ -328,7 +328,7 @@ function watchForCalls() {
   const best = (exclude = []) => Game.villagers.filter((v) => v.isGrown() && !exclude.includes(v) && closeToHim(v)).sort((a, b) => weight(b) - weight(a))[0];
   for (const v of Game.villagers.slice().sort((a, b) => weight(b) - weight(a))) {
     // a child he knows, nearly grown
-    if (v.isChild() && (Game.wizMet || {})[v.id] && v.age >= CHILD_DAYS - 0.6 && v.age < CHILD_DAYS) call('age' + v.id, v.edu > 0.12 ? v : best(), v.edu > 0.12 ? 'I come of age tomorrow! Will you come back for it? Please?' : `${v.first} comes of age tomorrow, and keeps asking if you'll be there.`);
+    if (v.isChild() && (Game.wizMet || {})[v.id] && daysToComeOfAge(v) === 1) call('age' + v.id, v.edu > 0.12 ? v : best(), v.edu > 0.12 ? 'I come of age tomorrow! Will you come back for it? Please?' : `${v.first} comes of age tomorrow, and keeps asking if you'll be there.`);
     // a baby due among folk fond of him
     if (v.expecting && closeToHim(v) && Game.day >= (v.expecting.due || 0) - 1) call('baby' + v.id, v, 'The baby\'s due any day now. It would mean the world if you were here.');
     // an elder near the end

@@ -188,6 +188,7 @@ function renderTalk() {
   if (typeof talkView === 'function' && T.F && !T.third && !T.sub) {
     const view = talkView(T);
     Sheet.open({ kind: 'talk', title: v.name(), sub: talkSub(v), portrait: v, html: view.html, choices: view.choices, onClose: () => endTalk() });
+    typeTalk(T);
     return;
   }
   // with two of them, only what's said to both (and goodbye)
@@ -208,6 +209,7 @@ function renderTalk() {
     } })),
     onClose: () => endTalk(),
   });
+  typeTalk(T);
 }
 function talkSub(v) {
   const sub = v.stage === 'elder' ? 'an elder' : v.isChild() ? `${kidBand(v) === 'youth' ? 'a youngster' : 'a little one'}` : v.job ? JOBS[v.job].label.toLowerCase() : 'a grown-up';
@@ -316,6 +318,7 @@ addTalkOption({ id: 'bye', order: 99, label: 'Good day to you', run: (v, T) => {
 const Sheet = {
   open(o) {
     const el = $('sheet');
+    stopTyping();
     this.cur = o;
     el.hidden = false; el.className = 'card sheet ' + (o.kind || '');
     document.body.classList.add('sheet-open');
@@ -348,12 +351,90 @@ const Sheet = {
   close(quiet) {
     const o = this.cur;
     this.cur = null;
+    stopTyping();
     $('sheet').hidden = true;
     document.body.classList.remove('sheet-open');
     if (!quiet && o && o.onClose) o.onClose();
   },
   isOpen() { return !!this.cur; },
 };
+
+// --- Words spoken aloud ---------------------------------------------------------------
+// The newest lines of a talk come out at a talking pace, a letter at a time,
+// with a breath at each stop. The wizard's own words appear at once (you've
+// just chosen them), and the choices come up when the others have finished.
+// A tap on the sheet hurries it along.
+const TALK_CPS = 40;
+const Typer = { job: null };
+function stopTyping(finish) {
+  const j = Typer.job;
+  if (!j) return;
+  Typer.job = null;
+  cancelAnimationFrame(j.raf);
+  $('sheet').classList.remove('typing');
+  if (!finish) return;
+  for (const a of j.acts) a.fn();
+  const body = $('sheet-body'); body.scrollTop = body.scrollHeight;
+}
+// T.shown counts the lines said in full; a sheet drawn again before they're
+// done (or stopped short) starts them over, a tap counts them said.
+function typeTalk(T) {
+  const fresh = T.log.length - (T.shown || 0), n = T.log.length;
+  if (fresh <= 0 || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { T.shown = n; return; }
+  const body = $('sheet-body');
+  const els = [...body.querySelectorAll('.tk-log > p')].slice(-fresh);
+  if (!els.length) { T.shown = n; return; }
+  // a timeline of things to do, in milliseconds from now
+  const acts = [];
+  let t = 0, spoke = false;
+  // each line, as it starts, is brought into view (their room is kept from the first, so the sheet holds still)
+  const show = (el) => () => {
+    el.classList.remove('tk-wait');
+    const r = el.getBoundingClientRect(), b = body.getBoundingClientRect();
+    if (r.bottom > b.bottom) body.scrollTop += r.bottom - b.bottom;
+    else if (r.top < b.top) body.scrollTop -= b.top - r.top;
+  };
+  for (const el of els) {
+    el.classList.add('tk-wait');
+    if (!el.classList.contains('tk-line') || el.classList.contains('wiz')) {
+      if (spoke) t += 200;
+      acts.push({ t, fn: show(el) });
+      continue;
+    }
+    // the words go in two spans, said and still to say, so the bubble keeps its shape as it fills
+    const words = [...el.childNodes].filter((n) => n.nodeType === 3);
+    const text = words.map((n) => n.data).join('').replace(/^\s+/, '');
+    for (const n of words) n.remove();
+    const said = document.createElement('span'), unsaid = document.createElement('span');
+    unsaid.className = 'tk-unsaid'; unsaid.textContent = text;
+    el.append(' ', said, unsaid);
+    t += spoke ? 320 : 160;
+    acts.push({ t, fn: show(el) });
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i], end = i === text.length - 1 || text[i + 1] === ' ';
+      t += 1000 / TALK_CPS;
+      acts.push({ t, fn: () => { said.textContent = text.slice(0, i + 1); unsaid.textContent = text.slice(i + 1); } });
+      if (end && /[.!?…]/.test(c)) t += 260;
+      else if (end && /[,;:—]/.test(c)) t += 110;
+    }
+    spoke = true;
+  }
+  acts.push({ t, fn: () => { if ((T.shown || 0) < n) T.shown = n; } });
+  const sheet = $('sheet');
+  sheet.classList.add('typing');
+  let start = 0;
+  const job = { acts, raf: 0 };
+  const step = () => {
+    if (!start) start = performance.now();
+    const now = performance.now() - start;
+    while (acts.length && acts[0].t <= now) acts.shift().fn();
+    if (acts.length) job.raf = requestAnimationFrame(step);
+    else if (Typer.job === job) { Typer.job = null; sheet.classList.remove('typing'); body.scrollTop = body.scrollHeight; }
+  };
+  Typer.job = job;
+  // from the next frame, once anything else has had its say on the sheet
+  job.raf = requestAnimationFrame(step);
+}
 
 // --- The bar of things to do ----------------------------------------------------------
 // The pages he keeps (the family, the children, the rift-folk, the Relay, the
@@ -566,6 +647,8 @@ window.addEventListener('DOMContentLoaded', () => {
   $('log-toggle').addEventListener('click', () => setTimeout(() => { const c = $('chronicle'); if (c.classList.contains('collapsed')) c.classList.remove('wiz-open'); }, 0));
   // the sheet's own close button, and Escape
   $('sheet-close').addEventListener('click', () => Sheet.close());
+  // a tap anywhere on the sheet while someone is speaking has them say it all at once
+  $('sheet').addEventListener('click', (e) => { if (!e.target.closest('.choice')) stopTyping(true); });
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && Sheet.isOpen()) Sheet.close(); });
   // the bar keeps itself up to date
   setInterval(renderWizBar, 400);

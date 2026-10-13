@@ -961,6 +961,15 @@ body.sheet-open #wizbar, body.sheet-open #chronicle, body.sheet-open #toasts, bo
 .tk-line.wiz { align-self: flex-end; background: #dfe3ea; }
 .tk-line.third { background: #e8dcc0; }
 .sheet-choices { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; min-height: 0; flex: 1 1 auto; }
+/* in a talk the choices keep their room and what's been said gives way, down
+   to a line or two (scrolled to the newest); only past that do the choices scroll */
+.sheet.talk .sheet-body { flex: 0 1 auto; max-height: none; min-height: 84px; }
+.sheet.talk .sheet-choices { flex: 0 0.001 auto; }
+/* words still to be said hold their place; the choices wait till they're said */
+.tk-wait { visibility: hidden; }
+.tk-unsaid { visibility: hidden; }
+.sheet-choices { transition: opacity 0.15s; }
+.sheet.typing .sheet-choices { opacity: 0; pointer-events: none; transition: none; }
 .sheet-choices .choice {
   text-align: left; min-height: 42px; padding: 7px 12px; border: 2px solid var(--ink); border-radius: 6px; background: #fbf3df;
   font-size: 15px; line-height: 1.3; cursor: pointer; flex-shrink: 0;

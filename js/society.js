@@ -342,6 +342,12 @@ function welcomeTraveller(data, quiet = false, sex = null) {
 // ---------------------------------------------------------------------------
 // The daily round, at midnight.
 // ---------------------------------------------------------------------------
+// How much older someone is each midnight. Played as the wizard, childhood
+// runs at half pace (eight days, not four), so there's time to know the
+// children and have a hand in how they turn out.
+function ageStep(v) { return v.isChild() && Game.mode === 'wizard' ? 0.5 : 1; }
+// midnights until a child comes of age (1: tomorrow)
+function daysToComeOfAge(v) { return v.isChild() ? Math.max(1, Math.ceil((CHILD_DAYS - v.age) / ageStep(v) - 1e-6)) : 0; }
 function dailySociety() {
   const vs = Game.villagers;
   Village.yesterday = Village.today; Village.today = { made: {}, used: {} };
@@ -349,7 +355,7 @@ function dailySociety() {
   // ageing and coming of age
   for (const v of vs) {
     if (v.leaving) continue;
-    v.age += 1;
+    v.age += ageStep(v);
     const st = v.lifeStage();
     if (st !== v.stage) {
       const was = v.stage;
