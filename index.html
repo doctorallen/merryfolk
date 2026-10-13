@@ -140,8 +140,28 @@
   <footer id="bottom">
     <div id="tool-hint" class="tool-hint"></div>
     <nav id="toolbar" class="card" aria-label="Tools"></nav>
+    <nav id="wizbar" aria-label="What the wizard can do" hidden></nav>
     <section id="buildbar" class="card" aria-label="Build tools" hidden></section>
   </footer>
+
+  <section id="sheet" class="card sheet" hidden aria-live="polite">
+    <div class="sheet-head">
+      <canvas id="sheet-portrait" width="60" height="80" hidden></canvas>
+      <div class="sheet-who"><h2 id="sheet-title"></h2><div id="sheet-sub" class="sub"></div></div>
+      <button id="sheet-close" class="x" aria-label="Close">×</button>
+    </div>
+    <div id="sheet-body" class="sheet-body"></div>
+    <div id="sheet-choices" class="sheet-choices"></div>
+  </section>
+  <div id="skip" hidden>
+    <div class="card skip-card">
+      <h2 id="skip-title"></h2>
+      <p id="skip-text" class="sub"></p>
+      <p id="skip-clock" class="skip-clock"></p>
+      <div class="wg-progress"><div id="skip-bar"></div></div>
+      <ol id="skip-log" class="skip-log"></ol>
+    </div>
+  </div>
 
   <div id="intro">
     <div class="intro-card card">
@@ -276,6 +296,7 @@
 <script src="js/values.js"></script>
 <script src="js/manner.js"></script>
 <script src="js/wizard.js"></script>
+<script src="js/play.js"></script>
 
 <!-- Fixes and rebalancing from the playtests, patching whatever came before -->
 <script src="js/fixes2.js"></script>

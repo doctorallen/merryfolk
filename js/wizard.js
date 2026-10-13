@@ -164,7 +164,11 @@ function wizardArrive() {
 function wizardParked() {
   const w = wizard();
   w.phase = 'here'; w.x = w.camp.x; w.y = w.camp.y; w.path = null; w.doing = 'wagon'; w.fx = w.camp.x + w.face * 30; w.fy = w.camp.y + 4;
-  chronicle('Gandalf has drawn up his wagon by the party field and is staying two nights. He\'ll tell tales beneath the great tree in the afternoons, and if there\'s a party, the fireworks are his.', 'party');
+  if (typeof playMode === 'function' && playMode()) {
+    // you're the wizard: you stay as long as you like
+    w.leave = 1e9; w.doing = 'player';
+    chronicle('Gandalf has drawn up his wagon by the party field. Tap the ground to walk, and tap a hobbit to stop for a word.', 'party');
+  } else chronicle('Gandalf has drawn up his wagon by the party field and is staying two nights. He\'ll tell tales beneath the great tree in the afternoons, and if there\'s a party, the fireworks are his.', 'party');
   wizardPartyTonight();
   for (const v of Game.villagers) if (!v.inside || v.isChild()) feel(v, 'wizard_came');
 }
@@ -233,6 +237,8 @@ function wizardTick(dt, h) {
   if (!w) return;
   if (Wiz.speaker.bubble) { Wiz.speaker.bubble.t -= dt / (Game.minPerSec || 3); if (Wiz.speaker.bubble.t <= 0) Wiz.speaker.bubble = null; }
   if (w.phase !== 'here') { wizDrive(w, dt); return; }
+  // played by you: no plans of his own
+  if (typeof playMode === 'function' && playMode()) { playTick(w, dt); return; }
   const plan = wizardPlan(w, h);
   if (plan.doing === 'wander') {
     if (w.doing !== 'wander' || (!w.fpath && Game.time > (w.waitUntil || 0))) {
@@ -282,11 +288,11 @@ function summonListeners(w) {
     v.thinkDelay = R.f(0, 10);
   }
 }
-function wizardStartTale(force) {
+function wizardStartTale(force, pick) {
   const w = wizard();
   if (!w || w.phase !== 'here') return;
   const left = Object.keys(WIZARD_TALES).filter((k) => !(w.told || []).includes(k));
-  const key = R.pick(left.length ? left : Object.keys(WIZARD_TALES));
+  const key = pick && WIZARD_TALES[pick] ? pick : R.pick(left.length ? left : Object.keys(WIZARD_TALES));
   w.told = (w.told || []).concat(key);
   w.tale = key; w.line = 0; w.lineAt = 0; w.taleDay = Game.day;
   w.taleUntil = Game.time + 200; w.taleAt = Game.time;
@@ -843,6 +849,14 @@ function wizardDev(act) {
     case 'wizard': if (!w) wizardArrive(); else if (w.phase === 'coming') { w.x = w.camp.x; w.y = w.camp.y; w.path = null; wizardParked(); } break;
     case 'wizardtale': if (!w) { wizardArrive(); wizard().x = wizard().camp.x; wizard().y = wizard().camp.y; wizard().path = null; wizardParked(); } wizardStartTale(true); summonListeners(wizard()); break;
     case 'wizardshow': { const s = wizardShowSpot(); wizardShow(s.x, s.y); break; }
+    case 'playwizard': {
+      Game.mode = playMode() ? 'steward' : 'wizard';
+      document.body.classList.toggle('wizmode', playMode());
+      const ww = wizard();
+      if (playMode()) { if (!ww) wizardBegin(); else if (ww.phase === 'here') { ww.leave = 1e9; ww.doing = 'player'; ww.fpath = null; } Game.follow = true; selectVillager(null); }
+      else if (ww && ww.phase === 'here') ww.leave = Game.day + 1;
+      break;
+    }
     case 'wizardgo': if (w && w.phase === 'here') wizardDepart(); else if (w) wizardGone(); break;
   }
 }
@@ -874,10 +888,10 @@ window.addEventListener('DOMContentLoaded', () => {
   }, 'wizard');
   addHook('onHour', (h) => {
     // he comes when he pleases: never two visits too close together, and seldom in the wet or the snow
-    if (h === 9 && !wizard() && Game.day >= 3 && Game.day - Game.wizardLast >= WIZARD.gap && !Game.raining && R.chance(WIZARD.chance * (World.season === 'winter' ? 0.5 : 1))) wizardArrive();
+    if (h === 9 && !wizard() && !(typeof playMode === 'function' && playMode()) && Game.day >= 3 && Game.day - Game.wizardLast >= WIZARD.gap && !Game.raining && R.chance(WIZARD.chance * (World.season === 'winter' ? 0.5 : 1))) wizardArrive();
     // a party every night he's in town, unless one's planned anyway
     const w = wizard();
-    if (h === 12 && w && w.phase === 'here' && w.day !== Game.day && w.leave > Game.day && !Game.party.on) wizardPartyTonight();
+    if (h === 12 && w && w.phase === 'here' && w.day !== Game.day && w.leave > Game.day && w.leave < 1e9 && !Game.party.on) wizardPartyTonight();
     // and the night he arrives there's always one, rain or no rain: he sees to the rain
     if (h === 18 && w && w.day === Game.day && !Game.party.on) {
       if (Game.raining) { Game.weather = 'clear'; Game.raining = false; Game.rainUntil = Game.time; chronicle('The wizard rapped his staff on the ground, and the rain stopped as if a tap had been turned off. "There," he said. "Now we can have a party."', 'party'); }

@@ -848,7 +848,7 @@ function renderOverlay() {
   // older ones keep their place and newer ones stack above whatever they'd cover
   const items = [];
   for (const v of Game.villagers.concat(Visitors)) {
-    if (v.inside || !v.bubble || v.hidden) continue;
+    if (v.inside || !v.bubble || v.hidden || v.muteBubble) continue;
     const sx = (v.x - cx) * z;
     const sy = ((v._top ?? v.y - 16) - cy) * z - (Game.selected === v || v.iconT > 0 || v.isSick() ? 14 * z : 4);
     if (sx < -100 || sx > W + 100 || sy < -40 || sy > H + 40) continue;
