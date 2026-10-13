@@ -373,7 +373,7 @@ function threadScore(th, T) {
   if (first && first.need && !needMet(first.need, T)) fit = 0.3;
   if (b.sore[th.id] && b.sore[th.id] > Game.day) fit *= 0.1;
   const wanted = th.reveals && !(b.known && b.known[th.reveals]) ? 1.5 : 1;
-  return (th.weight || 1) * fresh * rel * fit * wanted + hash2(T.v.id * 13 + Game.day, strHash(th.id).length) * 0.2;
+  return (th.weight || 1) * fresh * rel * fit * wanted + hash2(T.v.id * 13 + Game.day, parseInt(strHash(th.id), 36) % 99991) * 0.2;
 }
 // Little ones say a word or two: a toddler gets the threads written for them.
 function forAge(th, F) {
