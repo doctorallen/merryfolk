@@ -546,5 +546,15 @@ window.addEventListener('DOMContentLoaded', () => {
     o.fn();
   }, 'play');
   patch(window, 'showAlmanac', (sa) => function (rep) { if (playMode()) { if (rep) Game.lastAlmanac = rep; return; } return sa.apply(this, arguments); }, 'play');
+  // the opening card tells a wizard's village what it's in for
+  window.addEventListener('load', () => {
+    if (!playMode()) return;
+    const card = document.querySelector('#intro .intro-card');
+    if (!card) return;
+    card.querySelector('.lede').textContent = 'You are the grey wizard, come again to Thistledown: a snug village of hobbit-holes, gardens and good ale between green hills and a slow river, where lately the sky has been tearing open. Walk its lanes, stop folk for a word, teach the children, tell tales beneath the great tree, and light the fireworks when there\'s a party.';
+    const sub = card.querySelector('p.sub'); if (sub) sub.hidden = true;
+    const how = card.querySelector('.how');
+    if (how) how.innerHTML = '<div><b>Walk</b><span>Tap the ground to walk there. Drag to look around; pinch to zoom.</span></div><div><b>Talk</b><span>Tap a hobbit to stop for a word. They remember how you treat them.</span></div><div><b>Do</b><span>The bar at the bottom: tell a tale, light the fireworks, sleep till morning, and more as the story grows.</span></div>';
+  });
   patch(window, 'load', (ld) => function () { const r = ld.apply(this, arguments); document.body.classList.toggle('wizmode', playMode()); return r; }, 'play');
 });

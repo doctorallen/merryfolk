@@ -25,6 +25,8 @@ python3 -m http.server 8000   # then visit http://localhost:8000
 | Pause / speed | `Space`, or the 1× to 16× buttons |
 | Developer mode | `` ` `` (backtick), or the Dev button |
 
+These are the Steward's controls. A village can also be played as the wizard, on foot and phone first: see [Playing as the wizard](#playing-as-the-wizard).
+
 The village saves to `localStorage` every in-game hour and when you leave the page. **?** → *Start a fresh village* resets it.
 
 **Scenarios.** The setup screen also offers a scenario, each with its own conditions and a goal:
@@ -416,6 +418,36 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 - **Little ones are minded.** Toddlers (two to four) and young children (five to seven) always have a grown-up with them: at home with someone in, toddling along beside a parent or an older brother or sister (sharing their meal at the inn, watching them at work, dancing at the party), at the nursery, or at the story circle. Parents drop them off on the way to work and collect them in the afternoon. When enough little ones need minding, the warmest soul in the village becomes the *Nanny* and runs a nursery in their own hole, with lunch, songs and an afternoon nap. A grown-up with little ones in tow skips the ale and the pipe. Schoolchildren (eight to eleven) roam the village by day but are home by dark, and nobody under twelve eats at the inn alone.
 - **Adventures.** Bold villagers take short trips and send letters home through the postie, then return with tales, trinkets or a spouse met far away. Elders eventually set off on a last great adventure, sometimes hand in hand. When the village is small, travellers from over the hills bring new blood.
 
+## Playing as the wizard
+
+A new village can be played two ways, chosen on the *Shape your valley* screen: as **the Steward**, running the village from above with build mode, the ledger and the giant hand, or as **the wizard**, walking the valley on your own two feet. (The dev drawer's Tools tab can switch a village between the two.) As the wizard the village runs itself on the Steward's defaults, settles its own Moots, and keeps the clerk's season report in the Chronicle; what you do is talk, teach and tell tales.
+
+It's made for a phone first. Held upright, the world fills the top of the screen and a sheet rises from the bottom when you talk or choose something, within reach of a thumb, with the camera keeping you and whoever you're talking to above it; turned sideways or on a wide screen, the sheet docks at the right.
+
+| Action | Phone | Desktop |
+| --- | --- | --- |
+| Walk | Tap the ground | Click the ground |
+| Talk to someone | Tap them: he walks over and the sheet comes up | Click them |
+| Knock at a door | Tap the hole or the building | Click it |
+| Look around | Drag (the *Find me* button brings the camera back) | Drag, or WASD |
+| Zoom | Pinch, or the − / + buttons | Mouse wheel, `+` / `−` |
+| Things to do | The bar at the bottom: tell a tale, light the fireworks, sleep till morning, the family, the children, the rift-folk, the Relay, take to the road | The same |
+
+- **His wagon comes in on the first morning**, the children running to meet it, and there's a party that night with his fireworks.
+- **Conversation.** Tap a hobbit and the wizard stops for a word: ask how they're keeping, what's on their mind (their wish, or their dream), and whether they've heard any news; pass the time of day, warmly, wittily or with a question, and each takes it in their own temper; give them something from your pack (a seed-cake, pipe-weed, a storybook, a squib for the children: the pack is filled again each morning). Folk remember how you treat them: the sheet says how they feel about you, from *Never met you* to *Devoted to you*. The game pauses while you talk.
+- **The third voice.** Walk up to two folk nattering and you join in: say something to both, change the subject to something they both love (which brings them closer), or, if it's a squabble, back one, back the other, or make the peace (which works if they think well enough of you).
+- **Tales.** *Tell a tale* walks him to the great tree, where you choose a tale and its moral; word goes round and most of the village comes to sit on the grass and listen.
+- **Nights.** At a party he lights the fireworks when you say (or at ten, if you don't). *Sleep till morning* passes the night quickly, in the wagon or at his hearth.
+
+- **A room with a family.** Once a household likes you well enough, ask one of its grown-ups for a room. If there's space and they're the welcoming sort, their hole becomes your hearth: you sleep there instead of the wagon, and if the family moves, your room goes with them. The **Family** button opens the family book: everyone in the house, their wishes and dreams, who they're fond of, what they'd love, and what's happened to them since you came. Of an evening, **sup with the family**: a little table talk, then draw out the quiet one, tell the children a story, raise a toast or ask your lodger about home. As a friend of the family you can **put in a good word** (go and see your mother, take him some flowers, make it up with your sister) and, if they listen, off they go. And when a stranger is sleeping under a hedge, rift-born as often as not, you can ask the family to **take them in**. The lodger gets a page in the family book, customs cross the supper table both ways, and now and then there's a sharp word for you to smooth over.
+- **Teaching and upbringing.** Stop a child for a lesson: letters, sums, the knack of a trade, a tale of the wide world, or, once the rift-folk have come, circuits, binary with acorns or the Relay's call-signs. Each child takes to some better than others, two a day. "Well done" and "Now then" work like a pat or a tut on what they were just doing. The Mind tab's Leanings strip shows what each hobbit is keen on and not, and the last few things that moved them: a pat, a tut, a lesson, a tale, a custom, someone they watched. Every child is growing up between the two peoples. Lessons, the morals of the wizard's tales (courage, kindness, cleverness, home), the festivals, time with the rift-folk and their gadgets, and what's held dear at home lean them hill or rift. At coming of age that sets the first thing they hold dear, their leaning among the trades and their looks. Brought up both ways, they become a go-between, whose natters soften wariness of the rift-folk and whose word counts double at the Long Dim. Each season every child gets a report card, read on the wizard's "The children" page.
+
+### The rifts, played as the wizard
+
+**Playing it as the wizard.** When you play as the wizard the story of the rifts is told by talking. Ask one of the rift-folk about home and, warmly asked, they tell you what they miss, who they lost and what they did in the city; each has a thread on the *Rift-folk* page (the bar) with four beats ticked off as you learn or cause them: home, the one they lost, their knack, a true friend among the hill-folk. You can walk them over to meet someone (the miller whose wheel squeaks, for a grid-tech), and that first natter starts warmer and is likelier to make friends for life. Once you know a lost one's name you keep it in mind, and a later rift is likelier to bring them through. Each clue is something somebody knows: ask a rift-born about the kettle on their sleeve, get an elder remembering old songs with one of the rift-folk nearby, ask the children what they've found by the rift scars, ask a rift-born who's had supper in a hill parlour what surprised them, sit with one at dusk and ask what they're listening to, look at a rift with someone on a night when every lamp is lit, and, with four clues, ask the oldest hobbit about a tinker who went missing. The casebook gives a hint for each; a clue nobody has asked about for four days turns up the old way. The stages that wait on machines move on friendships and time instead. Once the ledger is found the wizard remembers Mungo Fernsby, and has a tale to tell. When the Long Dim comes there's no Steward: the Moot meets two days later and every grown-up votes, leaning by what they hold dear, their wariness, their rift-born friends, the friendships and reunions they've seen and what they heard last (a tale, a post on the Relay, a word from you). You only know someone's mind once you've asked them; go-betweens count twice. If the village leans to Hearthlink, the dynamo and the turbine go up the day before as a village work party, with a feast. The Moot plays out as a short scene and the vote.
+
+**The Relay board.** Once the rift-folk have come there's a feed of short posts in rift-slang, from the rift-born, the youngsters who've taken up rift ways and the odd astonished old hobbit, picking up what the village is talking about. As the wizard you can read it, post once a day (a kind word about a wary old hobbit softens them; a word about the Long Dim sways the readers; a riddle pleases the young) and pin a post for everyone to see. The elders grumble about it.
+
 ## Files
 
 | File | Contents |
@@ -457,6 +489,12 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 | `js/values.js` | What each hobbit holds dear, inherited, bending choices, friendships and feelings about the Steward's decisions |
 | `js/manner.js` | A manner of speaking from a strong trait |
 | `js/wizard.js` | The wizard's visits: his wagon, tales beneath the great tree with the village listening, his fireworks and the fire dragon |
+| `js/play.js` | Playing as the wizard: walking where you tap, the conversation sheet, the bar of things to do, passing time quickly, and the registries other files add talk and actions to |
+| `js/natter.js` | The third voice: joining two folk's natter, steering it, settling a squabble |
+| `js/hearth.js` | The wizard's hearth: a room with a family, the family book, supper, a good word, a lodger from the rifts |
+| `js/upbringing.js` | Lessons by talk, the Leanings strip, hill/rift/both upbringing, go-betweens, tale morals, season report cards |
+| `js/riftplay.js` | The rift story played as the wizard: rift-born threads, introductions, clues found by asking, the casebook, and the Long Dim as a village vote |
+| `js/relay.js` | The Relay board: rift-folk posts, and the wizard's posts and pins |
 | `js/talk.js` | Word of mouth: messages with intents (recommendations, warnings, the inn's dish of the day, cheering up, tips, hobby sparks), and masters and apprentices |
 | `js/talklog.js` | The Talk tab of the Chronicle: every natter kept as a thread, line by line |
 | `js/converse.js` | A proper natter: topics, tempers, how long two folk talk and how it ends; the rounds at table |
