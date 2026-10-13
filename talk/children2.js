@@ -336,7 +336,7 @@ talkPack('children2', () => {
   ]);
   lines('child.treasure.start', [
     { text: ['Lots. A stone, a string, a feather, a button, a stone that\'s different, and a bit of cake.', 'Nothing! ...Some things. Treasures.', 'Don\'t look. It\'s private. ...You can look a bit.'] },
-    { if: { pastime: 'collecting', made: { min: 1 }, madeMany: has }, text: ['I\'ve got {made} {madeMany} at home. These are just the travelling ones.', 'Only the best ones. {Made} {madeMany} so far. I keep a list.'] },
+    { if: { pastime: 'collecting', made: { min: 2 }, madeMany: has }, text: ['I\'ve got {made} {madeMany} at home. These are just the travelling ones.', 'Only the best ones. {Made} {madeMany} so far. I keep a list.'] },
     { if: { season: 'autumn' }, text: ['Conkers. Fourteen. And an acorn with a hat on.', 'Conkers, a crab apple and a leaf shaped like a hand.'] },
     { if: { season: 'spring' }, text: ['A bird\'s egg. Blue. It was already broken. I didn\'t take it.', 'A snail shell with nobody in it. I checked.'] },
     { if: { season: 'summer' }, text: ['A pebble from the river that\'s see-through if you lick it.', 'Feathers. A jay one. It\'s got blue in.'] },
