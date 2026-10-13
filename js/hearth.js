@@ -420,7 +420,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const r = ch.apply(this, arguments);
     try {
       if (hearthState() && typeof text === 'string' && ['love', 'birth', 'party', 'adventure', 'letter', 'rift', 'build', 'sick'].includes(kind)) {
-        const names = hearthFolk().map((v) => v.first);
+        // their full names, and first names nobody outside the family shares
+        const fam = hearthFolk(), names = fam.map((v) => v.name()).concat(fam.filter((v) => !Game.villagers.some((o) => o.first === v.first && !fam.includes(o))).map((v) => v.first));
         if (names.some((n) => new RegExp(`\\b${n}\\b`).test(text)) && !/^Supper at/.test(text)) hearthLog(text);
       }
     } catch (e) { /* the log is a nicety */ }
