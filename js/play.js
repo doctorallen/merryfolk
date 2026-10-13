@@ -276,7 +276,7 @@ addTalkOption({
   run: (v, T) => {
     T.wiz(R.pick(['Heard any news?', 'What\'s the word in the lanes?']));
     const known = Game.wizKnows || (Game.wizKnows = []);
-    const n = newsList().find((x) => knowsNews(v, x) && !known.includes(x.id) && Game.day - x.day <= 6);
+    const n = newsList().find((x) => knowsNews(v, x) && !known.includes(x.id) && Game.day - x.day <= 6 && !x.text.includes(v.first) && !/Gandalf|the wizard|^Growing up and growing old/.test(x.text));
     if (n) { known.push(n.id); const t = n.text.replace(/\.$/, ''); T.reply(R.pick(['Did you hear? ', 'You\'ll never guess! ', 'Well, ']) + t + (/[!?]$/.test(t) ? '' : '.')); addRegard(v, 0.01); }
     else T.reply(R.pick(['Nothing you won\'t have heard already.', 'Quiet as a mouse, this week.', 'You\'d do better asking at the inn.']));
   },

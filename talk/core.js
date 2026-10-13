@@ -192,12 +192,14 @@ talkPack('core', () => {
   lines('mind.shared', [{ text: ['You? What was it?', '...And did it come true?'] }, { text: ['A baker? You? Ha! I can see it. The hat would get floury.'] }]);
 
   // --- Heard any news? ---------------------------------------------------------------
+  // news they'd pass on: fresh, not yet told you, and not about themselves or you
+  const tellable = (v, n) => knowsNews(v, n) && !(Game.wizKnows || []).includes(n.id) && Game.day - n.day <= 6 && !n.text.includes(v.first) && !/Gandalf|the wizard|^Growing up and growing old/.test(n.text);
   addThread({
     id: 'news', topic: 'the news', label: 'Heard any news?', weight: 0.9, cool: 1,
-    rel: (F, T) => (newsList().some((n) => knowsNews(T.v, n) && !(Game.wizKnows || []).includes(n.id) && Game.day - n.day <= 6) ? 1.6 : 0.4),
+    rel: (F, T) => (newsList().some((n) => tellable(T.v, n)) ? 1.6 : 0.4),
     open: { ask: 'Heard any news, {name}?' },
     beats: {
-      start: { line: 'news.start', fx: { run: (T) => { const known = Game.wizKnows || (Game.wizKnows = []); const n = newsList().find((x) => knowsNews(T.v, x) && !known.includes(x.id) && Game.day - x.day <= 6); T.newsText = T.F.newsText = n ? n.text.replace(/\.$/, '') : null; if (n) known.push(n.id); } }, go: [
+      start: { line: 'news.start', fx: { run: (T) => { const known = Game.wizKnows || (Game.wizKnows = []); const n = newsList().find((x) => tellable(T.v, x)); T.newsText = T.F.newsText = n ? n.text.replace(/[.!]+$/, '') : null; if (n) known.push(n.id); } }, go: [
         { ap: 'ask', say: 'And what do you make of that?', to: 'opinion', need: { when: (F, T) => !!T.newsText } },
         { ap: 'jest', say: 'Scandalous. Tell me more.', to: 'more', need: { when: (F, T) => !!T.newsText } },
         { ap: 'ask', say: 'Who would know more?', to: 'who' },
