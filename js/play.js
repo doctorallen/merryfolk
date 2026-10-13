@@ -361,7 +361,7 @@ const BOOK_ACTIONS = new Set(['family', 'children', 'riftfolk', 'relay', 'road',
 function renderWizBar() {
   const bar = $('wizbar');
   if (!bar) return;
-  const show = playMode() && Game.started && !Play.skipping;
+  const show = playMode() && Game.started && !Play.skipping && $('skip').hidden;
   bar.hidden = !show;
   if (!show) return;
   const all = WizardActions.filter((a) => !a.when || a.when());
