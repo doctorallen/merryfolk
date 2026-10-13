@@ -63,7 +63,7 @@ talkPack('core', () => {
   ]);
   lines('close.soon', [
     { text: ['I really ought to be getting on.', 'Is that the time?', 'I mustn\'t keep you. Or me.'] },
-    { if: { job: (j) => !!j }, text: ['The {jobWord}ing won\'t do itself, you know.', 'Work\'s waiting.'] },
+    { if: { job: (j) => !!j }, text: ['The work won\'t do itself, you know.', 'Work\'s waiting.'] },
     { if: { stage: 'child' }, text: ['Mum\'ll be calling me in a minute.', 'I\'m meant to be somewhere. I forget where.'] },
     { if: { hungry: true }, pri: 1, text: ['My stomach\'s rumbling. Sorry. It does that.'] },
   ]);
@@ -147,7 +147,7 @@ talkPack('core', () => {
 
   // --- What's on your mind? (their wish, or their dream) ------------------------------
   addThread({
-    id: 'mind', label: 'What\'s on your mind?', weight: 1.2, cool: 2, reveals: 'wish', open: { ask: 'What\'s on your mind, {name}?' },
+    id: 'mind', topic: 'what you were wishing for', label: 'What\'s on your mind?', weight: 1.2, cool: 2, reveals: 'wish', open: { ask: 'What\'s on your mind, {name}?' },
     rel: (F) => (F.wish ? 1.5 : F.dream ? 1.2 : 0.6),
     beats: {
       start: { line: 'mind.start', fx: { learn: ['wish', '{wishText}'] }, go: [
@@ -193,7 +193,7 @@ talkPack('core', () => {
 
   // --- Heard any news? ---------------------------------------------------------------
   addThread({
-    id: 'news', label: 'Heard any news?', weight: 0.9, cool: 1,
+    id: 'news', topic: 'the news', label: 'Heard any news?', weight: 0.9, cool: 1,
     rel: (F, T) => (newsList().some((n) => knowsNews(T.v, n) && !(Game.wizKnows || []).includes(n.id) && Game.day - n.day <= 6) ? 1.6 : 0.4),
     open: { ask: 'Heard any news, {name}?' },
     beats: {
@@ -215,7 +215,7 @@ talkPack('core', () => {
 
   // --- Their evenings (the thread from the research report) ---------------------------
   addThread({
-    id: 'evenings', label: 'What do you do of an evening?', about: 'pastime', reveals: 'pastime', weight: 1.1, cool: 4,
+    id: 'evenings', topic: 'your evenings', label: 'What do you do of an evening?', about: 'pastime', reveals: 'pastime', weight: 1.1, cool: 4,
     when: (F) => F.stage !== 'child' || F.band === 'youth',
     open: { ask: 'What do you do of an evening, {name}, when nobody\'s looking?' },
     beats: {
@@ -225,7 +225,7 @@ talkPack('core', () => {
         { ap: 'ask', say: 'Long enough. Out with it.', to: 'tell' },
       ] },
       tell: { line: 'evenings.tell', notice: 'evenings.notice', fx: { learn: ['hobby', '{pastimeWord}'] }, go: [
-        { ap: 'ask', say: 'Why {madeMany}?', to: 'why', need: { if: { madeMany: (m) => !!m } } },
+        { ap: 'ask', say: 'Why {madeMany}?', to: 'why', need: { if: { madeMany: (m) => !!m, made: { min: 1 } } } },
         { ap: 'jest', say: 'evenings.tease', label: 'Tease them about it', to: 'teased' },
         { ap: 'warm', say: 'And who are they all for?', to: 'secret', need: { open: 2, if: { made: { min: 3 } } }, soft: true },
         { ap: 'share', say: 'I whittle too, you know. Mostly walking sticks. Mostly badly.', to: 'swap' },
@@ -246,17 +246,19 @@ talkPack('core', () => {
   lines('evenings.start', [{ text: ['How long have you got?', 'Ooh. Now there\'s a question.'] }, { if: { temper: 'shy' }, text: ['...Nothing much. Really.'] }, { if: { temper: 'ornery' }, text: ['Why? Who\'s asking? Oh, it\'s you.'] }]);
   lines('evenings.tell', [
     { text: ['Oh, this and that. Sit by the fire. Count the spoons.', 'A cup of tea and an early night. I\'m wild, me.'] },
-    { if: { pastime: (p) => !!p }, text: ['{PastimeWord}, mostly. I\'ve made {made} {madeMany} so far.', 'I do a bit of {pastimeWord}. {Made} {madeMany}, and counting.'] },
-    { if: { pastime: 'carving' }, text: ['I whittle. {Made} {madeMany} so far, and a heron that came out a badger.'] },
+    { if: { pastime: (p) => !!p }, text: ['{PastimeWord}, mostly. I\'m only just starting.', 'I\'ve taken up {pastimeWord}. Early days.'] },
+    { if: { pastime: (p) => !!p, made: { min: 2 } }, text: ['{PastimeWord}, mostly. I\'ve made {made} {madeMany} so far.', 'I do a bit of {pastimeWord}. {Made} {madeMany}, and counting.'] },
+    { if: { pastime: 'carving', made: { min: 2 } }, text: ['I whittle. {Made} {madeMany} so far, and a heron that came out a badger.'] },
     { if: { pastime: 'carving', temper: 'proud' }, text: ['I carve. Rather well, if I\'m honest. Ask anyone on the lane.'] },
     { if: { pastime: 'carving', temper: 'shy' }, text: ['...I carve little animals. They\'re not very good.'] },
     { if: { pastime: 'knitting' }, text: ['Knitting. Everyone on the lane is getting a scarf, whether they like it or not.'] },
-    { if: { pastime: 'knitting', season: 'winter' }, text: ['Knitting, by the fire. I\'ve done {made}. Nobody\'s cold on my watch.'] },
-    { if: { pastime: 'birdwatching' }, text: ['I watch the birds settle. {Made} kinds this year. The heron\'s my favourite.'] },
-    { if: { pastime: 'painting' }, text: ['I paint. Badly, but with feeling. {Made} so far.'] },
+    { if: { pastime: 'knitting', season: 'winter', made: { min: 2 } }, text: ['Knitting, by the fire. I\'ve done {made}. Nobody\'s cold on my watch.'] },
+    { if: { pastime: 'birdwatching' }, text: ['I watch the birds settle. The heron\'s my favourite.'] },
+    { if: { pastime: 'painting' }, text: ['I paint. Badly, but with feeling.'] },
     { if: { pastime: 'pottery' }, text: ['I throw pots. Mostly at the wheel. Sometimes across the room.'] },
-    { if: { pastime: 'basketry' }, text: ['Baskets! I weave baskets. {Made} of them. We have a great many baskets.'] },
-    { if: { pastime: 'collecting' }, text: ['I collect things. {Made} so far. Don\'t ask my {spouse} about the shelf.', 'I collect. Stones, feathers, whatever catches my eye.'] },
+    { if: { pastime: 'basketry' }, text: ['Baskets! I weave baskets. We have a great many baskets.'] },
+    { if: { pastime: 'collecting' }, text: ['I collect. Stones, feathers, whatever catches my eye.'] },
+    { if: { pastime: 'collecting', spouse: (x) => !!x }, text: ['I collect things. Don\'t ask {spouse} about the shelf.'] },
     { if: { rift: true }, text: ['Back home there was no evening. Here I watch the sky go dark. Every time. It\'s wild.'] },
   ]);
   lines('evenings.notice', [{ if: { pastime: 'carving' }, text: ['There\'s sawdust in their cuffs, and a sticking plaster on one thumb.'] }, { if: { pastime: 'knitting' }, text: ['A strand of wool is caught on their button.'] }, { if: { pastime: 'painting' }, text: ['There\'s a smudge of blue on their ear.'] }, { if: { pastime: 'pottery' }, text: ['Clay under every fingernail.'] }, { text: ['They\'re smiling, now. Just a little.'] }]);

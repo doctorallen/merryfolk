@@ -124,6 +124,8 @@ function startTalk(v) {
   // if they're mid-natter, the other one stays for it too
   const third = typeof talkThird === 'function' ? talkThird(v) : null;
   const quarrel = !!(third && v.task && v.task.data && v.task.data.quarrel);
+  // what they were about when he stopped them (conversation reads it)
+  const was = v.task ? v.task.a.id : null;
   // they stop what they're doing and turn to him
   v.abort(); v.queue = v.queue.filter((q) => q.a.id !== 'wizard_chat');
   v.task = { a: ACTIONS.wizard_chat, phase: 'do', target: { x: v.x, y: v.y }, t: 9999, data: {}, before: { ...v.drives }, chatLock: true };
@@ -131,7 +133,7 @@ function startTalk(v) {
   v.facing = facingOf(w.fx - v.x, w.fy - v.y);
   w.facing = facingOf(v.x - w.fx, v.y - w.fy);
   w.fpath = null; w.goal = null; w.doing = 'player';
-  const T = { v, third, quarrel, log: [], used: new Set(), sub: null };
+  const T = { v, third, quarrel, was, log: [], used: new Set(), sub: null };
   if (third) {
     third.abort();
     third.task = { a: ACTIONS.wizard_chat, phase: 'do', target: { x: third.x, y: third.y }, t: 9999, data: {}, before: { ...third.drives }, chatLock: true };

@@ -66,6 +66,7 @@ function loadTalkPack(name) {
     TalkPacks.waiting[name] = [resolve];
     const s = document.createElement('script');
     s.src = `talk/${name}.js`;
+    s.onload = () => { if (!TalkPacks.loaded.has(name)) { console.warn(`talk pack ${name} loaded but didn't register`); TalkPacks.loaded.add(name); for (const r of TalkPacks.waiting[name] || []) r(); delete TalkPacks.waiting[name]; } };
     s.onerror = () => { console.warn(`talk pack ${name} failed to load`); TalkPacks.loaded.add(name); for (const r of TalkPacks.waiting[name] || []) r(); delete TalkPacks.waiting[name]; };
     document.head.appendChild(s);
   });
@@ -95,7 +96,7 @@ function factsOf(v, T) {
   const kids = Game.villagers.filter((o) => o.parents && o.parents.includes(v.id));
   const parents = (v.parents || []).map(personById).filter(Boolean);
   const riv = typeof rivalOf === 'function' ? rivalOf(v) : null;
-  const friends = typeof goodFriends === 'function' ? goodFriends(v) : [];
+  const friends = (typeof goodFriends === 'function' ? goodFriends(v) : []).sort((a, b) => b[1] - a[1]).map(([id]) => personById(+id)).filter(Boolean);
   const mem = (v.memories || []).find((m) => Game.day - m.d <= 3 && Math.abs(m.v || 0) >= 1) || null;
   const feeling = (typeof feelingsOf === 'function' ? feelingsOf(v) : []).find((f) => f[3] && !f[3].k.startsWith('wizard'));
   const wish = (typeof wishesOf === 'function' ? wishesOf(v) : [])[0];
@@ -119,7 +120,7 @@ function factsOf(v, T) {
     wish: wish ? wish.k : null, wishText: wish && WISHES[wish.k] ? wishText(wish).replace(/^./, (c) => c.toLowerCase()) : null,
     dream: v.dream ? v.dream.k : null, dreamText: v.dream && DREAMS[v.dream.k] ? dreamText(v.dream).replace(/^./, (c) => c.toLowerCase()) : null,
     memory: mem ? mem.t : null, memoryGood: mem ? mem.v > 0 : null,
-    feeling: feeling ? feeling[3].k : null, feelingText: feeling ? feeling[0] : null, feelingX: feeling && feeling[3].x ? feeling[3].x : null,
+    feeling: feeling ? feeling[3].k : null, feelingText: feeling ? feeling[0].replace(/[.!?]+$/, '') : null, feelingX: feeling && feeling[3].x ? feeling[3].x : null,
     home: v.homeId >= 0 ? v.home().name : null, homeless: v.homeId < 0,
     rift: v.isRiftborn && v.isRiftborn(), riftWays: v.tech > 0.35, lost: v.arc && v.arc.lost && !v.arc.lost.found ? v.arc.lost.name : null, lostRel: v.arc && v.arc.lost ? v.arc.lost.rel : null,
     goBetween: typeof isGoBetween === 'function' ? !!isGoBetween(v) : false,
@@ -133,7 +134,7 @@ function factsOf(v, T) {
     promiseOpen: (b.promises || []).find((p) => p.state === 'open') ? b.promises.find((p) => p.state === 'open').t : null,
     respectWord: (b.respect || 0) > 0.4 ? 'hangs on your word' : (b.respect || 0) > 0.15 ? 'listens to you' : (b.respect || 0) < -0.2 ? 'thinks you a meddler' : null,
     told: b.told[0] ? b.told[0].t : null, toldKey: b.told[0] ? b.told[0].k : null,
-    lastThread: b.lastThread || null, lastLabel: b.lastThread && THREADS[b.lastThread] ? threadLabel(THREADS[b.lastThread], null) : null,
+    lastThread: b.lastThread || null, lastLabel: lastTopic(b.lastThread),
     daysSince: b.last ? Game.day - b.last : null, hearth: typeof hearthFolk === 'function' && hearthFolk().includes(v),
     wiz: 'Gandalf', pet: petPhrase(v),
   };
@@ -164,6 +165,15 @@ function settlePromises() {
       else bondNote(v, `${p.t}, and nothing came of it.`);
     }
   }
+}
+// What you last talked about, as a phrase that fits "we were talking about …":
+// the thread's topic if it has one, else its label if it isn't a question.
+function lastTopic(id) {
+  const th = id && THREADS[id];
+  if (!th) return null;
+  if (th.topic) return th.topic;
+  const l = threadLabel(th, null);
+  return l && !/\?$/.test(l) && !/…$/.test(l) ? l.charAt(0).toLowerCase() + l.slice(1) : null;
 }
 function familiarity(v) { const b = bondFull(v); return (b.talks || 0) * 0.5 + Object.keys(b.known || {}).length + b.told.length * 1.5; }
 // the bond, with every field the conversation keeps (older saves lack some)
@@ -255,7 +265,7 @@ const TAKE = {
 function applyFx(fx, T) {
   if (!fx) return;
   const v = T.v, b = bondFull(v), F = T.F;
-  const note = (text) => T.log.push({ who: 'note', text });
+  const note = (text) => (T.noteBuf ? T.noteBuf.push({ who: 'note', text }) : T.log.push({ who: 'note', text }));
   if (fx.open) T.open += fx.open;
   if (fx.fond) addRegard(v, fx.fond);
   if (fx.trust) addTrust(v, fx.trust);
@@ -411,13 +421,16 @@ function runBeat(T, name) {
   const beat = th.beats[name];
   if (!beat || name === 'end') { finishThread(T, true); return; }
   T.th.beat = name; T.depth++; T.pat--;
+  T.noteBuf = [];
   applyFx(beat.fx, T);
+  const notes = T.noteBuf; T.noteBuf = null;
   // how your last remark landed, then what they say
   if (T.mixin) { T.reply(T.mixin); T.mixin = null; }
   const who = beat.who || 'them';
   const text = beat.line ? sayOf(beat.line, T.F, T, T.v) : beat.text ? sayOf(beat.text, T.F, T, T.v) : null;
   if (text) { if (who === 'wiz') T.wiz(text); else if (who === 'aside') T.log.push({ who: 'aside', text }); else if (who === 'third' && T.third) T.reply2(text); else T.reply(text); }
   // the wizard notices things, once he knows them a little
+  for (const n of notes) T.log.push(n);
   if (beat.notice && T.F.familiar >= 2) { const n = sayOf(beat.notice, T.F, T, T.v); if (n) T.log.push({ who: 'aside', text: n }); }
   if (T.feel) { T.log.push({ who: 'feel', text: T.feel === 'opening' ? R.pick([`${T.F.they.replace(/^./, (c) => c.toUpperCase())}'s warming to this.`, 'That went down well.', 'Opening up.']) : R.pick(['That didn\'t land.', 'A little stiffly.', 'Cooler, now.']) }); T.feel = null; }
   // refresh the facts: something may have been learned
@@ -478,7 +491,9 @@ function talkView(T) {
   }
   if (T.mode === 'situation' && F.situation && SITUATIONS[F.situation]) {
     const sit = SITUATIONS[F.situation];
-    for (const ap of Object.keys(sit.aps)) {
+    // four ways in at most, on a phone: the same four for this hobbit all day
+    const aps = Object.keys(sit.aps).map((ap) => [hash2(T.v.id * 7 + Game.day, ap.length * 3 + ap.charCodeAt(0)), ap]).sort((a, b) => a[0] - b[0]).slice(0, 4).map((x) => x[1]);
+    for (const ap of aps) {
       const say = sayOf(`sit.${sit.key}.${ap}`, F, T, v) || sayOf(sit.aps[ap].say, F, T, v);
       if (!say) continue;
       choices.push({ label: `${chip(ap)}${escapeHtml(say)}`, run: go(() => {
@@ -493,7 +508,7 @@ function talkView(T) {
         runBeat(T, sit.aps[ap].out[rung]);
       }) });
     }
-    choices.push({ label: 'Talk of something else', foot: true, run: go(() => { T.mode = null; }) });
+    choices.push({ label: 'Talk of something else', foot: true, run: go(() => { T.mode = null; if (sit.thread) bondFull(v).seen[sit.thread] = Game.day; }) });
     choices.push({ label: 'Good day', foot: true, run: () => byeTalk(T) });
     return { html, choices };
   }
