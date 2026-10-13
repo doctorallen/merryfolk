@@ -1043,6 +1043,7 @@ body.wizmode:has(#panel:not([hidden])) #wizbar { display: none; }
 .sh-tabs button.on { background: var(--ink); color: var(--parch); }
 .sheet.rifts, .sheet.relay-sheet, .sheet.moot { max-height: 72%; }
 .sheet.rifts .sheet-body, .sheet.relay-sheet .sheet-body, .sheet.moot .sheet-body { max-height: none; flex: 1 1 auto; }
+.sheet.rifts .sheet-choices, .sheet.relay-sheet .sheet-choices, .sheet.moot .sheet-choices { flex: 0 0 auto; }
 .thread { border: 2px solid var(--parch-3); border-left: 4px solid #a83a7a; border-radius: 6px; background: #fbf3df; padding: 7px 10px; margin-bottom: 8px; }
 .th-head { display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; }
 .th-head a { font-family: var(--font-ui); font-size: 15px; color: var(--ink); text-decoration: underline; cursor: pointer; }
