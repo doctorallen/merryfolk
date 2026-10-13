@@ -571,6 +571,10 @@ window.addEventListener('DOMContentLoaded', () => {
     return r;
   }, 'play');
   addHook('afterNewVillage', () => {
+    // a talk or a page left open in the old village closes with it
+    if (Play.talk) endTalk();
+    if (Sheet.isOpen()) Sheet.close(true);
+    Play.supper = null;
     Game.mode = GenUI && GenUI.pendingMode ? GenUI.pendingMode : 'steward';
     GenUI.pendingMode = null;
     Game.wizRel = {}; Game.wizMet = {}; Game.wizKnows = []; Game.wizPack = null; Game.wizWishes = {};
