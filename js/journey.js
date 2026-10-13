@@ -197,7 +197,9 @@ function noteEvent(text) {
   if (!J || J.phase !== 'away') return;
   const e = JOURNEY_EVENTS.find(([, re]) => re.test(text));
   if (!e) return;
-  const ids = Game.villagers.filter((v) => text.includes(v.first + ' ') || text.includes(v.first + ',') || text.includes(v.first + '\'') || text.includes(v.first + '!') || text.includes(v.first + '.')).map((v) => v.id);
+  let ids = Game.villagers.filter((v) => text.includes(v.first + ' ') || text.includes(v.first + ',') || text.includes(v.first + '\'') || text.includes(v.first + '!') || text.includes(v.first + '.')).map((v) => v.id);
+  // a send-off names friends and keepsakes too: only those before "is setting off" are going
+  if (e[0] === 'farewell') { const lead = text.split(/ (?:is|are|has|have) /)[0]; ids = ids.filter((id) => lead.includes(personById(id).first)); }
   J.events.push({ k: e[0], text, ids, day: Game.day, w: e[2], told: false });
   if (J.events.length > 60) J.events.splice(0, J.events.length - 60);
   const ev = J.events[J.events.length - 1];
