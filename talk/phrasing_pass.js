@@ -1094,7 +1094,7 @@ talkPack('phrasing_pass', () => {
     tm('cheerful', 'It\'s saying "what a day, what a day, what a day!" I agree with it.'),
     tm('shy', '...It\'s saying "here I am". Just quietly. Like me.'),
     tm('proud', 'It\'s saying my hedge is the finest in the lane. It nests there every year.'),
-    elder('It\'s saying the same as it said when I was a lad. That\'s the comfort of birds.'),
+    elder('It\'s saying the same as it said when I was young. That\'s the comfort of birds.'),
   ]);
   lines('pass.birds.wonder', [
     tm('shy', '...That\'s lovely. I\'ll listen for it.'),

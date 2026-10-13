@@ -448,7 +448,7 @@ talkPack('wizard4', () => {
     gloomy: ['Keep it. Something ought to be pointing upwards in this house.'],
     witty: ['The hat must stay. It\'s the only thing in the valley tall enough to reach the gods.'],
     dreamy: ['Keep it on. The point of it, against the sky. It looks like a blessing already.'],
-    elder: ['When I was a lad the wizard did it with the hat off, and it rained for a week. Keep it on.'],
+    elder: ['When I was young the wizard did it with the hat off, and it rained for a week. Keep it on.'],
     rift: ['Keep it. It\'s basically an antenna, right? Better reception.'],
     b_baby: ['Keep it on! {Baby} likes pointy things. Mind your beard, though. {Baby} likes pulling things too.'],
   });

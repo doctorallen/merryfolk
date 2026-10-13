@@ -192,7 +192,7 @@ talkPack('wizard', () => {
     proud: ['My family\'s been in this valley nine generations. How long have YOU been about?', 'I can trace my line back two hundred years. How far back do you go?'],
     gloomy: ['How old are you? You must have buried a lot of folk.', 'Does it ever end, for a wizard? Getting old?'],
     child: ['How old are you? A HUNDRED? A MILLION?', 'Are you older than the party tree? Are you older than the SKY?', 'How many birthdays have you had? Do you get cake at all of them?'],
-    elder: ['I\'m old, and you were old when I was a lad. How old does that make you?', 'You haven\'t aged a day since I was in short trousers. How old are you?'],
+    elder: ['I\'m old, and you were old when I was young. How old does that make you?', 'You haven\'t aged a day since I was in short trousers. How old are you?'],
     rift: ['Real question. What\'s your age? Your file must be enormous.', 'How old are you? Back home we\'d just scan you. I miss scanning.'],
     'elder+ornery': ['You were old when I was courting, and you\'re old now. It\'s not fair.'],
     'child+bright': ['How old are you? I can count to a thousand. Is that enough?'],
@@ -626,7 +626,7 @@ talkPack('wizard', () => {
     proud: ['...My father\'s medal from the show. Best barley. I polish it every Highday.'],
     gloomy: ['...My sister\'s scarf. It doesn\'t smell of her any more. I check every day.'],
     child: ['...My first tooth. It\'s in a box. The Tooth Badger never came.'],
-    elder: ['...My husband\'s reading glasses. I don\'t need them. I wear them on Sundays.', '...A lock of hair. I\'ll not say whose. Some things you keep to yourself.'],
+    elder: ['...My old dad\'s reading glasses. I don\'t need them. I wear them on Sundays.', '...A lock of hair. I\'ll not say whose. Some things you keep to yourself.'],
     rift: ['...A dead data-chip. Photos of my old crew on it. Can\'t read it here. I keep it anyway.'],
     lost: ['...Something of {lost}\'s. I\'ll not say what. I carry it everywhere.'],
   });
@@ -980,7 +980,7 @@ talkPack('wizard', () => {
     proud: ['My grandfather had a beard like that. He won prizes. Hobbits don\'t usually, you know.'],
     gloomy: ['Doesn\'t it itch? I\'d go mad.'],
     child: ['Can I pull your beard? Just a little bit? Is it real?', 'Is there anything living in your beard? Like a mouse?', 'Your beard is longer than my whole ARM!'],
-    elder: ['Your beard was grey when I was a lad. Mine\'s just started. Hobbits hardly do beards, you know.'],
+    elder: ['Your beard was grey when I was young. Mine\'s just started. Hobbits hardly do beards, you know.'],
     rift: ['How much does that beard weigh? Rough estimate. I\'m curious.', 'Back home everyone had laser-trimmed everything. That\'s a real beard. Respect.'],
     herbalist: ['That beard could do with a rinse of rosemary. I could do you a bottle.'],
   });
@@ -1624,7 +1624,7 @@ talkPack('wizard', () => {
     proud: ['Good leaf, though. The best leaf comes from here, you know.'],
     gloomy: ['Mostly stubbornness. Same.'],
     child: ['You can\'t eat SMOKE!'],
-    elder: ['That\'s how my husband lived. Eighty years on pipe-weed and stubbornness.'],
+    elder: ['That\'s how my old dad lived. Eighty years on pipe-weed and stubbornness.'],
     rift: ['Back home we\'d call that a stimulant diet. Not recommended.'],
   });
   wz('wiz.eats.accept', {

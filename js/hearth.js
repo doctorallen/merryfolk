@@ -162,7 +162,7 @@ const TABLE_TALK = {
   witty: ['If the wizard eats like last time, we\'ll be out of pie till Thursday.', 'I\'ve hidden the good jam. Don\'t look at me like that, {other}.'],
   proud: ['That\'s my own carrot, that is. Grew it myself.', 'Best stew in the lane, this. Ask anyone.'],
   gloomy: ['Rain tomorrow. I can feel it in my knee.', 'Last of the cheese. Well. All good things.'],
-  elder: ['In my day, wizards knocked.', 'When I was a lad we had a wizard to supper and he turned the soup purple. Lovely soup.'],
+  elder: ['In my day, wizards knocked.', 'When I was young we had a wizard to supper and he turned the soup purple. Lovely soup.'],
   child: ['Can we have a story? The dragon one? Please?', 'I learned my letters up to M!', '{other} kicked me under the table!', 'Is there pudding? Say there\'s pudding.'],
   rift: ['Back home, supper came out of a slot in the wall.', 'What is this green thing? It\'s... very alive.', 'We used to eat on the roof, under the neon. You could see the whole city.'],
 };

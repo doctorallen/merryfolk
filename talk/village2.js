@@ -979,7 +979,7 @@ talkPack('village2', () => {
   lines('village.rumour.open', [{ if: { hour: 'evening' }, text: ['Heard anything wild at the Badger tonight, {name}?'] }, { if: { stage: 'child' }, text: ['Heard any scary stories lately, {name}?'] }]);
   say('village.rumour.start', {
     _: ['They\'re saying {vRumour}. My aunt saw it. My aunt sees a lot of things.'],
-    elder: ['When I was a lad they said {vRumour}. Now they\'re saying it again.'],
+    elder: ['When I was young they said {vRumour}. Now they\'re saying it again.'],
   });
   say('village.rumour.tale', {
     _: ['I\'m telling everyone. You can\'t stop me. You started it.'],

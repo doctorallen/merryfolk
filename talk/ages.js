@@ -2041,7 +2041,7 @@ talkPack('ages', () => {
     end: { remember: 'The wizard and I talked about the old days, when I was young and he was the same.', rv: 2 },
   });
   L('ages.oldfriend.start', {
-    _: ['You won\'t remember. But I was at the front, the night of the dragon rocket. I was so small.', 'Do you know, you haven\'t changed one bit since I was a lad. Not one bit.'],
+    _: ['You won\'t remember. But I was at the front, the night of the dragon rocket. I was so small.', 'Do you know, you haven\'t changed one bit since I was young. Not one bit.'],
     cheerful: ['I was the one shrieking loudest! At your fireworks! Sixty years ago, near enough!', 'Do you remember me? I chased your cart all the way to the bridge. You threw me a squib!'],
     ornery: ['You set fire to our hay-rick, you know. When I was a youngster. I\'ve been meaning to mention it.', 'You came once when I was small and promised to come back next summer. You were twenty years late.'],
     shy: ['...You won\'t remember. You gave me a sparkler and I cried. You held it for me.', 'I was the one hiding under the trestle. At the party. You winked at me.'],

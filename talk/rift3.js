@@ -497,7 +497,7 @@ talkPack('rift3', () => {
   lines('rift.power.trouble', [
     { text: ['Trouble me? Not as such. I just like to know what\'s in my river.', 'A bit. Things that work and nobody knows how. That\'s how dragons start, my gran said.'] },
     { if: { temper: 'ornery' }, text: ['Trouble me? The fish have gone funny. They\'ve not, really. But they might.'] },
-    { if: { riftWary: 'none' }, text: ['Not a bit. I charge my lamp there now. Don\'t tell my wife.'] },
+    { if: { riftWary: 'none' }, text: ['Not a bit. I charge my lamp there now. Don\'t tell my mother.'] },
   ]);
   lines('rift.power.how', [
     { text: ['A coil on a turning axle, they said. Same as my mill, near enough. I nodded. I didn\'t understand.', 'Water turns a wheel, wheel turns a coil, coil makes the glow. Simple as bread, they said. Bread isn\'t simple.'] },
@@ -702,7 +702,7 @@ talkPack('rift3', () => {
     shy: ["...Oh. Thank you.", "*goes pink*"],
     curious: ["Lucky? I'd say we're both lucky. It's mutual.", "Interesting. I thought of it the other way round."],
     dreamy: ["Lucky... maybe we're all lucky. To have found each other.", "That's kind."],
-    witty: ["They're lucky in the pie department, I'll grant you.", "Lucky. Yes. Tell my wife."],
+    witty: ["They're lucky in the pie department, I'll grant you.", "Lucky. Yes. Tell my mother that."],
     gloomy: ["Lucky. Hm. I don't feel it. But thank you.", "That's kind of you."],
   });
   byTemper('rift.hill.folk.others', {
@@ -1090,7 +1090,7 @@ talkPack('rift3', () => {
     shy: ["...Brave. Really? Thank you.", "*blushes*"],
     curious: ["Brave. Or curious. Sometimes they're the same.", "Hm. I didn't think of it as bravery."],
     dreamy: ["Brave. Like a lantern in a storm.", "That's nice."],
-    witty: ["Brave. The Relay is my dragon.", "Brave. Tell my wife."],
+    witty: ["Brave. The Relay is my dragon.", "Brave. Tell my mother."],
     proud: ["Brave. Yes. I always am.", "Of course."],
     gloomy: ["Brave. Or foolish.", "Hm. Thank you."],
   });

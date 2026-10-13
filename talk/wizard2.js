@@ -817,7 +817,7 @@ talkPack('wizard2', () => {
     witty: ['*lasts a long while, then says* This is the best talk we\'ve ever had.'],
     proud: ['*smokes with great dignity, and nods once, as if something\'s been agreed*'],
     gloomy: ['*smokes, and the gloom lifts a little, like mist off the river*'],
-    elder: ['*smokes slowly, eyes half shut* ...My husband and I used to sit just like this.'],
+    elder: ['*smokes slowly, eyes half shut* ...My old dad and I used to sit just like this.'],
     rift: ['*sits, still, for once* ...Nobody\'s ever just sat with me. Here or there. Huh.'],
   });
   wz('wiz.pipe.think', {

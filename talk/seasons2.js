@@ -657,7 +657,7 @@ talkPack('seasons2', () => {
     { if: { temper: 'gloomy' }, text: ['It was over so quickly. ...But it was lovely. While it lasted.'] },
     { if: { temper: 'curious' }, text: ['How do you make them burst in a shape? The heart! How do you do a heart?'] },
     { if: { stage: 'child' }, text: ['THE DRAGON! It went ROAR and then BOOM and then it was ALL STARS!', 'Can you do it again? Tonight? Now? Please please please?'] },
-    { if: { stage: 'elder' }, text: ['I saw your fireworks once before, when I was a lad. They were good then. They\'re better now.'] },
+    { if: { stage: 'elder' }, text: ['I saw your fireworks once before, when I was young. They were good then. They\'re better now.'] },
     { if: { rift: true }, text: ['In Neverdark we had holo-shows every night. They never once made me cry. Yours did.'] },
     { if: { likes: 'quiet' }, pri: 1, text: ['Very... loud. Beautiful. I had my fingers in my ears and my mouth open.'] },
     { if: { job: 'herder' }, pri: 1, text: ['The cows have forgiven you. The sheep have not. ...Worth it.'] },

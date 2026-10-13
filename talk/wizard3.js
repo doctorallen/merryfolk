@@ -403,7 +403,7 @@ talkPack('wizard3', () => {
     proud: ["Our front door's very fine, you know. Round, green, brass knob. Dwarf-standard, I'd say.", "Craft is everything. I've always said so. I'd get on with dwarves."],
     gloomy: ["Loud. I don't like loud.", "Dwarves. Always digging. Never finding what they want, I expect."],
     child: ["Do dwarves have REALLY long beards? Longer than yours?", "Can a dwarf make me a door for my den?"],
-    elder: ["A dwarf came through when I was a lad. Mended our kettle and ate four pies.", "Dwarves. Hard folk, but fair. My father did business with one."],
+    elder: ["A dwarf came through when I was young. Mended our kettle and ate four pies.", "Dwarves. Hard folk, but fair. My father did business with one."],
     rift: ["Dwarves are engineers? Doors that open to a whisper? That's voice activation. Respect.", "Finest doors. So they do hardware. I'd love to see their workshops."],
     woodwright: ["The finest doors! What wood do they use? How do they hang them? I need to know."],
     mountain: ["The dwarves from your Mountain tale? Digging and singing? I knew it!"],
@@ -464,7 +464,7 @@ talkPack('wizard3', () => {
     proud: ["My grandfather had a beard. Very rare in a hobbit. Very distinguished.", "A folk who respect their pies. I'd get on with dwarves."],
     gloomy: ["I'd get it wrong. I'd touch the pie by accident.", "I'd only be thrown out of the mountain."],
     child: ["I'm going to touch a dwarf's beard! Just a little bit!", "What about a dwarf's cake? Can you touch the cake?"],
-    elder: ["The dwarf who mended our kettle. I asked for a bite of his pie. I was six. He's still cross, I expect.", "Wise words. My husband was the same about his pies. Not his beard. He hadn't one."],
+    elder: ["The dwarf who mended our kettle. I asked for a bite of his pie. I was six. He's still cross, I expect.", "Wise words. My old dad was the same about his pies. Not his beard. He hadn't one."],
     rift: ["Got it. Beard, pie. Two hard rules. Logging that.", "Respect the beard, respect the pie. Sounds like a fair social protocol."],
     baker: ["Their pies must be something special, if they guard them. What's in them? I'd love to know."],
   });
@@ -746,7 +746,7 @@ talkPack('wizard3', () => {
     proud: ["That's an honest thing to say. Thank you for saying it to me.", "We all lose folk. It's how you carry it."],
     gloomy: ["I know. I know that one. It never goes.", "Then you're like me. Always waiting for the next goodbye."],
     child: ["I lost my friend when she moved to the next lane. I was so sad. Is it like that?", "I'll be your friend. I'll be your friend for ever. Then you won't lose me."],
-    elder: ["At my age, it's most of them. You learn to keep them by remembering.", "I've buried my husband and three friends. You never get used to it."],
+    elder: ["At my age, it's most of them. You learn to keep them by remembering.", "I've buried my mother and three friends. You never get used to it."],
     rift: ["Yeah. I left everyone. Didn't even get to say goodbye.", "Losing people. That's the whole rift, isn't it. That's all it is."],
     lost: ["I lost {lost}. In the crossing. I know exactly what you mean."],
   });
@@ -834,7 +834,7 @@ talkPack('wizard3', () => {
     proud: ["I don't usually admit to it. But. Thank you.", "Well. Shared, then. Between equals."],
     gloomy: ["...I'd not thought of sharing it. I always kept it.", "That helps. That actually helps."],
     child: ["Then we'll be scared together! And then we won't be!", "Will you come and look in the larder with me?"],
-    elder: ["Together. My husband used to say that. I'd forgotten how it helps.", "Thank you, old friend. At our age, it's all together or nothing."],
+    elder: ["Together. My old mum used to say that. I'd forgotten how it helps.", "Thank you, old friend. At our age, it's all together or nothing."],
     rift: ["Shared load. Yeah. That's how we did it back home, too.", "Okay. Thanks. That actually lands."],
   });
   wz('wiz.afraid.advice', {
@@ -920,7 +920,7 @@ talkPack('wizard3', () => {
     proud: ["A wizard of your standing shouldn't be eating alone in a wagon.", "You ought to have a proper household. Someone to see to you."],
     gloomy: ["Do you ever get lonely? I do. All the time.", "It must be lonely. The road. Even lonelier than here."],
     child: ["Don't you have a family? Who tucks you in?", "Are you lonely in the wagon? I can come and sleep in it with you!"],
-    elder: ["I've been on my own since my husband went. Do you get used to it? You'd know.", "Old men on their own. I know the look. Is it lonely, wizard?"],
+    elder: ["I've been on my own a long while now. Do you get used to it? You'd know.", "Old men on their own. I know the look. Is it lonely, wizard?"],
     rift: ["You're always on your own. Doesn't the quiet get to you? It gets to me.", "No network, no signal, no one. How do you stand it out there?"],
     lonely: ["Do you get lonely? Only I've been on my own a lot lately. I wondered."],
     evening: ["It's getting dark. You'll be going back to that wagon alone. Doesn't it bother you?"],
@@ -932,7 +932,7 @@ talkPack('wizard3', () => {
     shy: ["*smiles* ...But really?", "Does she listen? Even a little?"],
     curious: ["Do you talk to her? What do you tell her?", "Does a horse know when you're sad? I think they do."],
     dreamy: ["The two of you, snoring under the stars. It's almost sweet.", "I bet she knows you better than anyone."],
-    witty: ["A terrible listener and a fine snorer. That's my husband to the life.", "So she's the perfect companion. Never interrupts."],
+    witty: ["A terrible listener and a fine snorer. That's my uncle to the life.", "So she's the perfect companion. Never interrupts."],
     proud: ["A wizard ought to have better company than a horse.", "Well, I suppose she's a good horse."],
     gloomy: ["At least you've got the horse.", "A horse who snores. That's more than I've got."],
     child: ["Does she snore REALLY loud? Louder than Grandad?", "I'd talk to the horse for you! I'm a good talker!"],
@@ -964,7 +964,7 @@ talkPack('wizard3', () => {
     proud: ["I keep myself busy. ...It doesn't always help.", "A hobbit of my standing has many acquaintances. Few friends, perhaps."],
     gloomy: ["Yes. Always. Even in a crowd.", "Yes. I didn't think anyone could tell."],
     child: ["Sometimes nobody plays with me. That's lonely.", "When everybody's busy I sit on the step. That's lonely, I think."],
-    elder: ["Since my husband went, yes. The chair across from me's very empty.", "Most of my friends are under the hill. So yes. Yes, I am."],
+    elder: ["Since my old friends went, yes. The chair across from me's very empty.", "Most of my friends are under the hill. So yes. Yes, I am."],
     rift: ["Lonely? I'm the only one from my block on this whole side of the sky. Yeah.", "Every day. Everyone's nice. Nobody gets it."],
     spouse: ["Not with {Spouse} about. But before {Spouse}, oh, I was."],
     lonely: ["...Yes. I haven't had a proper talk in days. Until now."],
@@ -1010,7 +1010,7 @@ talkPack('wizard3', () => {
     proud: ["Second supper is a speciality of this house.", "Our second supper is spoken of on three lanes."],
     gloomy: ["Two suppers. I can just about manage two.", "There's always enough. Somehow."],
     child: ["SECOND SUPPER! Can I stay up for it?", "I want second supper too! And third! And fourth!"],
-    elder: ["Second supper. My husband would never miss it. You remind me of him.", "Of course. Supper without second supper's just a snack."],
+    elder: ["Second supper. My old dad would never miss it. You remind me of him.", "Of course. Supper without second supper's just a snack."],
     rift: ["Second dinner. Hobbits invented the best idea in any world.", "Yeah, there's second supper. I've already gained a stone here."],
   });
   wz('wiz.lonely.lamp', {
@@ -1579,7 +1579,7 @@ talkPack('wizard3', () => {
     proud: ["A good tale takes its time. That's proper.", "I'd not want it rushed."],
     gloomy: ["I'd not mind long. The days are long anyway.", "Long is fine. It's better than nothing."],
     child: ["LONG IS GOOD! Longer than bedtime!", "Go on a LOT! Please!"],
-    elder: ["At my age, a long tale is a kindness. It fills the afternoon.", "My husband went on a bit. I miss it, now."],
+    elder: ["At my age, a long tale is a kindness. It fills the afternoon.", "My old dad went on a bit. I miss it, now."],
     rift: ["Long-form content. Old school. I'm into it.", "Back home everything was ten seconds. Long sounds great."],
   });
   wz('wiz.want.why', {

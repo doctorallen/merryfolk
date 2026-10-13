@@ -714,7 +714,7 @@ talkPack('moods2', () => {
     cheerful: ["Oh, I love a story! Even now! Go on!"],
     shy: ["*goes very still, listening*"],
     gloomy: ["...Did they get away? Go on. Did they?"],
-    elder: ["Ha. I heard that one when I was a lad. Tell it the way you tell it."],
+    elder: ["Ha. I heard that one when I was young. Tell it the way you tell it."],
     rift: ["Goblins. Like the gangs in the low city? ...Go on."],
   });
   A('mood.fright.rapt', {
@@ -959,7 +959,7 @@ talkPack('moods2', () => {
   A('mood.hungry.reverie', {
     cheerful: ["Roast chicken! With crispy taters! And gravy! And then pudding! And then another pudding!"],
     shy: ["...My mum's apple pie. With custard. I can almost smell it."],
-    elder: ["A Yule dinner like we had when I was a lad. Goose, and chestnuts, and plum pudding."],
+    elder: ["A Yule dinner like we had when I was young. Goose, and chestnuts, and plum pudding."],
     rift: ["Hot noodles from the night market. Spicy. Steaming. With a fried egg on top."],
   });
   A('mood.hungry.rumble', {
