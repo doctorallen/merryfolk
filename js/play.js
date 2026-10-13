@@ -105,7 +105,7 @@ function arriveGoal(w, g) {
   if (g.kind === 'enter' && g.home != null) { const h = World.homes[g.home]; if (h) openInterior(h); }
   else if (g.kind === 'building' && World.buildings[g.key]) openInterior(World.buildings[g.key]);
   else if (g.kind === 'tale') chooseTale();
-  else if (g.kind === 'show') { const s = wizardShowSpot(); w.facing = 'up'; w.doing = 'show'; wizardShow(s.x, s.y); }
+  else if (g.kind === 'show') { if (w.showDay === Game.day) return; const s = wizardShowSpot(); w.facing = 'up'; w.doing = 'show'; wizardShow(s.x, s.y); }
   else if (g.kind === 'sleep') sleepTillMorning();
   else if (g.kind === 'depart' && typeof driveOff === 'function') driveOff(w);
   else if (g.run) g.run(w);
