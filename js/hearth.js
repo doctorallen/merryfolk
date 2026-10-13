@@ -60,8 +60,10 @@ function takeRoom(v) {
   const h = v.home();
   Game.hearth = { home: h.id, since: Game.day, family: residentsOf(h).map((o) => o.id), log: [], supDay: 0, lodger: null, asked: {}, lodgerAsked: 0 };
   chronicle(`The household at ${h.name} has made up the spare room for the wizard. ${v.first} has aired the sheets twice.`, 'love');
-  for (const o of residentsOf(h)) { feel(o, 'wizard_lodges'); addRegard(o, 0.05); }
+  for (const o of residentsOf(h)) { feel(o, 'wizard_lodges'); addRegard(o, 0.05); metAtHearth(o); }
 }
+// living under one roof, he has met everyone in it
+function metAtHearth(o) { const m = Game.wizMet || (Game.wizMet = {}); if (!m[o.id]) m[o.id] = Game.day; }
 addTalkOption({
   id: 'room', order: 70, label: 'Might I trouble you for a room?',
   when: (v) => playMode() && !hearthHome() && v.isGrown() && v.homeId >= 0 && v.home().built && regardOf(v) >= 0.12 && ((Game.hearthAsked || {})[v.homeId] || 0) !== Game.day,
@@ -185,6 +187,7 @@ function startSupper() {
   H.supDay = Game.day;
   const res = hearthFolk().filter((v) => v.stage !== 'baby' && !v.leaving);
   if (!res.length) return;
+  for (const v of res) metAtHearth(v);
   w.fpath = null; w.doing = 'indoors'; w.fx = h.stepX; w.fy = h.stepY; h.doorAnim = 6;
   Play.heldSpeed = Game.speedIdx || Play.heldSpeed || 1; setSpeed(0);
   const host = res.filter((v) => v.isGrown()).sort((a, b) => b.age - a.age)[0] || res[0];
@@ -364,6 +367,7 @@ addTalkOption({
       moveHome(g, h);
       H.lodger = g.id;
       if (!H.family.includes(g.id)) H.family.push(g.id);
+      metAtHearth(g);
       g.bond(v, 0.15); v.bond(g, 0.08);
       feel(g, 'taken_in', v.surname); addRegard(g, 0.1);
       g.remember(`The ${v.surname}s took me in. The wizard asked them to.`, 3);
