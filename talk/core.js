@@ -147,7 +147,7 @@ talkPack('core', () => {
 
   // --- What's on your mind? (their wish, or their dream) ------------------------------
   addThread({
-    id: 'mind', topic: 'what you were wishing for', label: 'What\'s on your mind?', weight: 1.2, cool: 2, reveals: 'wish', open: { ask: 'What\'s on your mind, {name}?' },
+    id: 'mind', topic: 'what I was wishing for', label: 'What\'s on your mind?', weight: 1.2, cool: 2, reveals: 'wish', open: { ask: 'What\'s on your mind, {name}?' },
     rel: (F) => (F.wish ? 1.5 : F.dream ? 1.2 : 0.6),
     beats: {
       start: { line: 'mind.start', fx: { learn: ['wish', '{wishText}'] }, go: [
@@ -215,7 +215,7 @@ talkPack('core', () => {
 
   // --- Their evenings (the thread from the research report) ---------------------------
   addThread({
-    id: 'evenings', topic: 'your evenings', label: 'What do you do of an evening?', about: 'pastime', reveals: 'hobby', weight: 1.1, cool: 4,
+    id: 'evenings', topic: 'my evenings', label: 'What do you do of an evening?', about: 'pastime', reveals: 'hobby', weight: 1.1, cool: 4,
     when: (F) => F.stage !== 'child' || F.band === 'youth',
     open: { ask: 'What do you do of an evening, {name}, when nobody\'s looking?' },
     beats: {

@@ -168,13 +168,18 @@ function settlePromises() {
   }
 }
 // What you last talked about, as a phrase that fits "we were talking about …":
-// the thread's topic if it has one, else its label if it isn't a question.
+// the thread's topic if it has one, else its label if it reads as a subject
+// (not a question, not one of theirs, a pastime or a mood, which are labelled
+// as what happens, and not one put to them: "Your rival", "Tell me a story").
+// It's said by them, so a topic is written their way round ("my evenings").
 function lastTopic(id) {
   const th = id && THREADS[id];
   if (!th) return null;
   if (th.topic) return th.topic;
+  if (th.theirs || th.light || th.situation) return null;
   const l = threadLabel(th, null);
-  return l && !/\?$/.test(l) && !/…$/.test(l) ? l.charAt(0).toLowerCase() + l.slice(1) : null;
+  if (!l || /[?!…]$/.test(l) || /^(about|tell me|ask|say|sing|try|pass)\b|\b(you|yours?|they|them|their)\b|, I (hear|see)$/i.test(l)) return null;
+  return /^(Yule|Mayday|Midsummer|Lantern Night|Founders)/.test(l) ? l : l.charAt(0).toLowerCase() + l.slice(1);
 }
 function familiarity(v) { const b = bondFull(v); return (b.talks || 0) * 0.5 + Object.keys(b.known || {}).length + b.told.length * 1.5; }
 // the bond, with every field the conversation keeps (older saves lack some)
