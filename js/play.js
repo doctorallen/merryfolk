@@ -327,26 +327,43 @@ const Sheet = {
 };
 
 // --- The bar of things to do ----------------------------------------------------------
+// The pages he keeps (the family, the children, the rift-folk, the Relay, the
+// road, the Chronicle) live behind one More button, so on a phone the bar is
+// a single row of what can be done right here and now.
+const BOOK_ACTIONS = new Set(['family', 'children', 'riftfolk', 'relay', 'road', 'chronicle']);
 function renderWizBar() {
   const bar = $('wizbar');
   if (!bar) return;
   const show = playMode() && Game.started && !Play.skipping;
   bar.hidden = !show;
   if (!show) return;
-  const acts = WizardActions.filter((a) => !a.when || a.when());
-  const key = acts.map((a) => a.id + (typeof a.label === 'function' ? a.label() : a.label)).join('|');
+  const all = WizardActions.filter((a) => !a.when || a.when());
+  const now = all.filter((a) => !BOOK_ACTIONS.has(a.id)), book = all.filter((a) => BOOK_ACTIONS.has(a.id));
+  const label = (a) => (typeof a.label === 'function' ? a.label() : a.label);
+  const key = now.map((a) => a.id + label(a)).join('|') + '#' + book.length;
   if (bar.dataset.key === key) return;
   bar.dataset.key = key;
   bar.innerHTML = '';
-  for (const a of acts) {
+  const add = (icon, text, run, primary) => {
     const b = document.createElement('button');
-    b.className = 'wact' + (a.primary && a.primary() ? ' primary' : '');
-    b.innerHTML = `${a.icon ? iconHTML(a.icon) : ''}<span>${typeof a.label === 'function' ? a.label() : a.label}</span>`;
-    b.addEventListener('click', () => { Sound.click(); a.run(); renderWizBar(); });
+    b.className = 'wact' + (primary ? ' primary' : '');
+    b.innerHTML = `${icon ? iconHTML(icon) : ''}<span>${text}</span>`;
+    b.addEventListener('click', () => { Sound.click(); run(); renderWizBar(); });
     bar.appendChild(b);
-  }
+  };
+  for (const a of now) add(a.icon, label(a), a.run, a.primary && a.primary());
+  if (book.length) add('pack', 'More', () => moreSheet());
   hydrateIcons(bar);
 }
+function moreSheet() {
+  const book = WizardActions.filter((a) => BOOK_ACTIONS.has(a.id) && (!a.when || a.when()));
+  Sheet.open({
+    kind: 'pick', title: 'The wizard\'s pack', sub: 'Pages and plans',
+    choices: book.map((a) => ({ label: `${a.icon ? iconHTML(a.icon) : ''} ${typeof a.label === 'function' ? a.label() : a.label}`, run: () => { Sheet.close(true); a.run(); } }))
+      .concat([{ label: 'Close', back: true, run: () => Sheet.close(true) }]),
+  });
+}
+addWizardAction({ id: 'chronicle', order: 98, icon: 'letter', label: () => 'The Chronicle', run: () => { const c = $('chronicle'); c.classList.remove('collapsed'); c.classList.add('wiz-open'); } });
 const nearTree = (w) => dist(w.fx, w.fy, wizardTaleSpot().x, wizardTaleSpot().y) < 40;
 addWizardAction({
   id: 'tale', order: 10, icon: 'book', label: () => 'Tell a tale',
@@ -501,6 +518,8 @@ window.addEventListener('DOMContentLoaded', () => {
   } };
   Visitors.push(Play.markerVis);
 
+  // the Chronicle, opened from the More page, goes away again when it's folded
+  $('log-toggle').addEventListener('click', () => setTimeout(() => { const c = $('chronicle'); if (c.classList.contains('collapsed')) c.classList.remove('wiz-open'); }, 0));
   // the sheet's own close button, and Escape
   $('sheet-close').addEventListener('click', () => Sheet.close());
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && Sheet.isOpen()) Sheet.close(); });

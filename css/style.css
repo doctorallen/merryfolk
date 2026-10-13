@@ -1103,3 +1103,9 @@ body.wizmode:has(#panel:not([hidden])) #wizbar { display: none; }
 .since-arrow { font-family: var(--font-ui); color: var(--ink-3); }
 .since-text { flex: 1; min-width: 0; font-size: 15px; line-height: 1.35; }
 .since-go { display: block; margin-top: 4px; min-height: 36px; padding: 2px 12px; border: 2px solid var(--ink); border-radius: 6px; background: #fbf3df; cursor: pointer; }
+
+/* playing as the wizard on a phone: the Chronicle opens from the More page instead of sitting under the bar */
+body.wizmode.phone #chronicle:not(.wiz-open) { display: none; }
+body.wizmode.phone #chronicle.wiz-open { z-index: 7; }
+.sheet-choices .choice canvas { width: 18px; height: 18px; image-rendering: pixelated; vertical-align: -3px; margin-right: 6px; }
+body.wizmode.phone #bottom { left: 50%; right: auto; transform: translateX(-50%); align-items: center; }
