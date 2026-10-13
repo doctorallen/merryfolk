@@ -921,7 +921,7 @@ function wizardDev(act) {
       introForMode();
       const ww = wizard();
       if (playMode()) { if (!ww) wizardBegin(); else if (ww.phase === 'here') { ww.leave = 1e9; ww.doing = 'player'; ww.fpath = null; } Game.follow = true; selectVillager(null); startTalkLoading(); }
-      else if (ww && ww.phase === 'here') ww.leave = Game.day + 1;
+      else { if (ww && ww.phase === 'here') ww.leave = Game.day + 1; if (Game.panelTab === 'you') Game.panelTab = 'life'; }
       break;
     }
     case 'wizardgo': if (w && w.phase === 'here') wizardDepart(); else if (w) wizardGone(); break;
