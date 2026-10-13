@@ -275,11 +275,11 @@ function letterFrom(v, kind, { e }) {
     case 'toddle': text = `Little ${and(ids.map(jName))} is toddling about now and getting into everything.`; break;
     case 'goodbye': text = 'By the time this reaches you I\'ll be over the hills, on my last adventure. Thank you for the tales. Look after the little ones for me.'; break;
     case 'farewell': { if (me) return; const gone = ids.map(jName).filter((x) => x !== 'someone'); text = gone.length ? `Old ${and(gone)} set off on a last great adventure, and asked me to say goodbye to you.` : 'One of the old folk set off on a last great adventure, and asked me to say goodbye to you.'; break; }
-    case 'trip': text = `${and(ids.map(jName))} has gone off to see the world, like a certain wizard I could name.`; break;
-    case 'back': text = `${and(ids.map(jName))} is back from adventuring, with tales nearly as tall as yours.`; break;
+    case 'trip': text = `${and(ids.map(jName))} ${ids.length > 1 ? 'have' : 'has'} gone off to see the world, like a certain wizard I could name.`; break;
+    case 'back': text = `${and(ids.map(jName))} ${ids.length > 1 ? 'are' : 'is'} back from adventuring, with tales nearly as tall as yours.`; break;
     case 'rift': text = `Another one came through the rift: ${and(ids.map(jName)) || 'a stranger'}. Blinking, poor thing, and no idea what a scone is.`; break;
     case 'home': text = `There's a new hole finished on the knoll. The door's painted and the kettle's on.`; break;
-    case 'trade': text = me ? `I've taken up a trade! ${v.job ? `I'm ${aAn(JOBS[v.job].label.toLowerCase())} now.` : ''}` : `${and(ids.map(jName))} has taken up a trade.`; break;
+    case 'trade': text = me ? `I've taken up a trade! ${v.job ? `I'm ${aAn(JOBS[v.job].label.toLowerCase())} now.` : ''}` : `${and(ids.map(jName))} ${ids.length > 1 ? 'have' : 'has'} taken up a trade.`; break;
     case 'party': text = 'We had a party. The fireworks weren\'t a patch on yours.'; drawing = 'fireworks, in every colour of crayon'; break;
     case 'clue': text = 'Something odd about the rifts. The rift-folk are all whispering about it. Come back and make sense of it?'; break;
     case 'child': text = R.pick(['I learned my letters up to M!', 'I found a frog. I called it Gandalf.', 'When are you coming back? Mum says soon.', 'I can skim a stone four times now.', 'We had a party and I stayed up til ten.']); drawing = R.pick(['a frog with a pointed hat', 'you, riding a dragon', 'the wagon, with too many wheels']); break;
