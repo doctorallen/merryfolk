@@ -268,7 +268,7 @@ function letterFrom(v, kind, { e }) {
     case 'age': text = me ? R.pick(['I\'ve come of age! There was a party and everything. I wish you\'d seen it.', 'I\'m grown up now. Officially. I\'ve a waistcoat and everything.', 'Came of age on the first fine day of the week. Everyone said I\'d grown. I said, that\'s rather the point.']) : `${and(ids.map(jName))} came of age. Where do the years go?`; drawing = 'a party, with you in it even though you weren\'t'; break;
     case 'toddle': text = `Little ${and(ids.map(jName))} is toddling about now and getting into everything.`; break;
     case 'goodbye': text = 'By the time this reaches you I\'ll be over the hills, on my last adventure. Thank you for the tales. Look after the little ones for me.'; break;
-    case 'farewell': text = `Old ${and(ids.map(jName))} set off on a last great adventure. ${ids.length > 1 ? 'They' : 'They'} asked me to say goodbye to you.`; break;
+    case 'farewell': { if (me) return; const gone = ids.map(jName).filter((x) => x !== 'someone'); text = gone.length ? `Old ${and(gone)} set off on a last great adventure, and asked me to say goodbye to you.` : 'One of the old folk set off on a last great adventure, and asked me to say goodbye to you.'; break; }
     case 'trip': text = `${and(ids.map(jName))} has gone off to see the world, like a certain wizard I could name.`; break;
     case 'back': text = `${and(ids.map(jName))} is back from adventuring, with tales nearly as tall as yours.`; break;
     case 'rift': text = `Another one came through the rift: ${and(ids.map(jName)) || 'a stranger'}. Blinking, poor thing, and no idea what a scone is.`; break;
@@ -280,8 +280,10 @@ function letterFrom(v, kind, { e }) {
     case 'roundup': { const f = feelingsOf(v).find((x) => x[3] && MOODLETS[x[3].k] && MOODLETS[x[3].k][3] && !x[3].k.startsWith('wizard')); text = `All's well here. ${f ? MOODLETS[f[3].k][3][0].replace('{x}', f[3].x || '') : 'Nothing much has happened, and I mean that kindly.'}`; break; }
     default: return;
   }
+  // nobody writes twice about the same kind of thing, nor sends the same letter twice
+  if (kind !== 'child' && J.letters.some((x) => (x.id === v.id && x.kind === kind) || (x.kind === kind && e && x.ev === e.text))) return;
   const temper = v.isChild() ? null : temperOf(v);
-  const l = { id: v.id, from: v.first, kind, day: Game.day, body: inHand(v, text, drawing), sign: v.isChild() ? (v.edu < 0.12 ? '' : 'from') : SIGN[temper] || 'Yours,' };
+  const l = { id: v.id, ev: e ? e.text : null, from: v.first, kind, day: Game.day, body: inHand(v, text, drawing), sign: v.isChild() ? (v.edu < 0.12 ? '' : 'from') : SIGN[temper] || 'Yours,' };
   J.letters.push(l);
   J.sent[v.id] = (J.sent[v.id] || 0) + 1;
   showLetter(l);
@@ -338,7 +340,9 @@ function journeyHome() {
   $('skip-text').textContent = Journey.cut ? 'Back down the road, as fast as the horse will go.' : 'The road turns for home, and Thistledown is over the next hill.';
   const card = document.querySelector('#skip .skip-card');
   let b = $('journey-home');
-  if (!b) { b = document.createElement('button'); b.id = 'journey-home'; b.className = 'primary'; card.appendChild(b); }
+  // up by the road picture, where it can't be scrolled out of reach by a long post-bag
+  if (!b) { b = document.createElement('button'); b.id = 'journey-home'; b.className = 'primary'; }
+  card.insertBefore(b, $('skip-log'));
   b.hidden = false; b.textContent = 'Drive into Thistledown';
   b.onclick = () => {
     b.hidden = true;

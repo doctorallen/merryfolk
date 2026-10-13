@@ -1082,7 +1082,10 @@ body.wizmode:has(#panel:not([hidden])) #wizbar { display: none; }
 .post.wizard .pt { color: #fff; }
 .post.pinned { outline: 2px solid var(--brass); }
 /* ---------- the wizard's journeys (journey.js): the journal page and "since you were last here" ---------- */
-.skip-card.journey { width: min(460px, 100%); max-height: calc(100% - 24px); display: flex; flex-direction: column; }
+.skip-card.journey { width: min(460px, 100%); max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); display: flex; flex-direction: column; overflow: hidden; }
+/* away on the road, the village isn't shown: just the journal */
+#skip:has(.skip-card.journey) { background: #1a1f16; }
+.skip-card.journey #journey-home { flex: none; margin: 8px 0 4px; }
 .skip-card.journey .skip-log { max-height: none; flex: 1 1 auto; min-height: 0; }
 #journey-road { width: 100%; aspect-ratio: 10 / 3; image-rendering: pixelated; border: 2px solid var(--ink); border-radius: 4px; margin: 6px 0 2px; background: var(--parch-2); }
 #journey-road[hidden] { display: none; }

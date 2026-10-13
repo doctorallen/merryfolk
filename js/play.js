@@ -461,7 +461,8 @@ function sleepTillMorning() {
 function wizardBegin() {
   if (!playMode()) return;
   Game.wizRel = Game.wizRel || {}; Game.wizMet = Game.wizMet || {};
-  if (!wizard()) wizardArrive();
+  // (not while he's away on the road: the journey brings him home itself)
+  if (!wizard() && !(typeof journeyOf === 'function' && journeyOf())) wizardArrive();
   Game.follow = true;
 }
 
