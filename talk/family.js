@@ -131,7 +131,7 @@ talkPack('family', () => {
     const NUM = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
     const words = (n) => (n == null ? null : NUM[n] || (n > 30 ? 'dozens of' : 'a score of'));
     F.householdWord = words(F.household); F.kidCountWord = words(F.kidCount); F.littleCountWord = words(F.littleCount);
-    F.grandCountWord = words(F.grandCount); F.jarsWord = words(F.jars); F.roughWord = words(F.roughNights); F.passedWord = words(F.mathomPassed);
+    F.grandCountWord = words(F.grandCount); F.famJarsWord = words(F.jars); F.roughWord = words(F.roughNights); F.passedWord = words(F.mathomPassed);
     F.rowKin = row ? row.first : null;
     F.rowRel = row ? (row.id === v.spouse ? sexWord(row, 'wife', 'husband') : (v.parents || []).includes(row.id) ? sexWord(row, 'mother', 'father') : row.parents.includes(v.id) ? sexWord(row, 'daughter', 'son') : row.parents.some((p) => (v.parents || []).includes(p)) ? sexWord(row, 'sister', 'brother') : sexWord(row, 'cousin', 'cousin')) : null;
   });

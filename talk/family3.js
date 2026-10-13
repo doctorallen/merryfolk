@@ -250,7 +250,7 @@ talkPack('family3', () => {
     W({ larder: 'full' }, 'Full! Shelves to the ceiling! I can hardly shut the door!', 'Bursting. I had to move the jam into the bedroom.'),
     W({ larder: 'fair' }, 'Fair enough. Enough for a week. Two, if nobody\'s hungry. Somebody\'s always hungry.'),
     W({ larder: 'bare' }, '...Bare, if I\'m honest. A heel of bread and some optimism.', 'Don\'t ask. There\'s a mouse in there looking for something too.'),
-    W({ jars: { min: 6 } }, 'There are {jarsWord} jars on the top shelf. I count them at night. It helps me sleep.'),
+    W({ jars: { min: 6 } }, 'There are {famJarsWord} jars on the top shelf. I count them at night. It helps me sleep.'),
     W({ larder: 'full', temper: C }, 'Full to bursting! Come for supper! Come for three suppers!'),
     W({ larder: 'bare', temper: O }, 'Empty. And I know who\'s been at it. It\'s the one who lives here. It\'s me.'),
     W({ larder: 'bare', temper: S }, '...There\'s not much. It\'s all right. I don\'t eat much. ...I eat quite a lot, really.'),
@@ -291,7 +291,7 @@ talkPack('family3', () => {
   ]);
   L('family.lar.jars', HM, [
     FB('A few. Never enough. Never, ever enough.', 'Some. I start in autumn and eat them in autumn. It\'s a problem.'),
-    W({ jars: { min: 10 } }, '{JarsWord} jars, top shelf. Jam, pickles, a side of smoked fish. Let the snow come.'),
+    W({ jars: { min: 10 } }, '{FamJarsWord} jars, top shelf. Jam, pickles, a side of smoked fish. Let the snow come.'),
     W({ jars: { max: 0 } }, 'Not one. I meant to. Every year I mean to.'),
     W({ season: 'autumn' }, 'I\'m at it now! The whole hole smells of vinegar and apples.'),
     W({ season: 'winter' }, 'We\'re eating them now. One jar a day. I\'ve got it worked out to the last week.'),
