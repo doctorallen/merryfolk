@@ -505,8 +505,9 @@ window.addEventListener('DOMContentLoaded', () => {
     if (h && h.built) { wizWalkTo(h.stepX, h.stepY + 4, { kind: 'enter', home: World.homes.indexOf(h) }); return; }
     const bd = buildingAt(wx, wy);
     if (bd) { const key = Object.keys(World.buildings).find((k) => World.buildings[k] === bd); wizWalkTo(bd.stepX, bd.stepY + 4, { kind: 'building', key }); return; }
-    const t = nearestWalkable(Math.floor(wx / 16), Math.floor(wy / 16));
-    if (t) wizWalkTo(wx, wy + 0, null);
+    // on water, a wall or a tree he stops at the nearest spot he can stand on
+    const tx = Math.floor(wx / 16), ty = Math.floor(wy / 16), t = nearestWalkable(tx, ty);
+    if (t) { if (t[0] === tx && t[1] === ty) wizWalkTo(wx, wy, null); else wizWalkTo(t[0] * 16 + 8, t[1] * 16 + 12, null); }
   }, 'play');
   // the camera stays with him (and, while the sheet's up in a tall window, keeps him above it)
   patch(window, 'updateCamera', (uc) => function (dt) {
