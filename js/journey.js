@@ -452,7 +452,12 @@ function sinceCards(J, newIds, newHomes, forgot, found) {
   for (const id in J.snap) {
     if (personById(+id)) continue;
     const was = J.snap[id], away = (Game.away || []).find((a) => a.id === +id);
-    add(away ? 1.5 : 5 * (was.r > 0.2 ? 2 : 1), away ? { name: was.first, head: `${was.first} is off adventuring`, text: `Back around day ${away.back}.` } : { name: was.first, grew: 'gone', many: 'have gone on a last great adventure', head: `${was.first} has gone on a last great adventure`, text: 'over the hills and far away.' });
+    // gone for good: over the hills, off to Bree, or home through the rift
+    const why = (Game.archive && Game.archive[id] && Game.archive[id].reason) || 'adventure';
+    const gone = why === 'bree' ? { grew: 'bree', many: 'have moved away to Bree', head: `${was.first} has moved away to Bree`, text: 'for good, and won\'t be back.' }
+      : why === 'home' ? { grew: 'home', many: 'have gone home through the rift', head: `${was.first} has gone home through the rift`, text: 'back to Neverdark, and the neon.' }
+      : { grew: 'gone', many: 'have gone on a last great adventure', head: `${was.first} has gone on a last great adventure`, text: 'over the hills and far away.' };
+    add(away ? 1.5 : 5 * (was.r > 0.2 ? 2 : 1), away ? { name: was.first, head: `${was.first} is off adventuring`, text: `Back around day ${away.back}.` } : { name: was.first, ...gone });
   }
   if (newHomes.length) add(1, { head: `${newHomes.length === 1 ? 'A new hobbit-hole' : `${newHomes.length} new hobbit-holes`}`, text: newHomes.map((id) => (World.homes[id] || {}).name).filter(Boolean).slice(0, 2).join(' and ') + ', dug while you were away.', home: newHomes[0] });
   if (typeof story === 'function' && story().stage > J.stage) add(3, { head: 'The rifts', text: `The story of the rifts has moved on: ${RIFT_STAGES[story().stage].name}.` });
