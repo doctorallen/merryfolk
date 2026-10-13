@@ -84,7 +84,7 @@ function playTick(w, dt) {
   const g = w.goal;
   if (g && g.kind === 'talk') {
     const v = Game.villagers.find((o) => o.id === g.id);
-    if (!v || v.inside || v.leaving) { w.goal = null; w.fpath = null; }
+    if (!v || v.inside || v.leaving) { w.goal = null; w.fpath = null; if (v && v.inside) toast(`${v.first} has gone indoors.`, 'info'); }
     else if (dist(v.x, v.y, w.fx, w.fy) < 24) { w.fpath = null; w.goal = null; startTalk(v); }
     else if ((g.repath = (g.repath || 0) - dt) <= 0) { g.repath = 3; const p = wizPath({ x: w.fx, y: w.fy }, { x: v.x, y: v.y + 2 }); if (p) { w.fpath = p; w.fpi = 0; } }
   }
