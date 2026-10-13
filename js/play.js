@@ -387,16 +387,19 @@ function skipTime(mins, o = {}) {
     const total = mins, start = Game.time;
     let lastDay = Game.day;
     renderWizBar();
+    // o.stop() can cut it short; o.budget is milliseconds of simulation a frame;
+    // o.hold leaves the card up when it's done, for whoever called to close
+    const going = () => Game.time - start < total && !(o.stop && o.stop());
     const step = () => {
       const t0 = performance.now();
-      while (Game.time - start < total && performance.now() - t0 < 24) {
+      while (going() && performance.now() - t0 < (o.budget || 24)) {
         simulate(0.5);
         if (Game.day !== lastDay) { lastDay = Game.day; if (o.onDay) o.onDay(Game.day); }
       }
       $('skip-bar').style.width = `${Math.min(100, ((Game.time - start) / total) * 100)}%`;
       $('skip-clock').textContent = `${weekday(Game.day)}, day ${Game.day} · ${fmtTime(Game.time)}`;
-      if (Game.time - start < total) requestAnimationFrame(step);
-      else { el.hidden = true; Play.skipping = false; renderWizBar(); resolve(); }
+      if (going()) requestAnimationFrame(step);
+      else { if (!o.hold) el.hidden = true; Play.skipping = false; renderWizBar(); resolve(); }
     };
     requestAnimationFrame(step);
   });
