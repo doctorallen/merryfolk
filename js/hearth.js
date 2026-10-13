@@ -413,7 +413,7 @@ window.addEventListener('DOMContentLoaded', () => {
     label: () => { const h = hearthHome(); return h && nearHearth(wizardOf()) ? 'Sup with the family' : 'Home for supper'; },
     primary: () => true,
     when: () => { const w = wizardOf(), H = hearthState(); return !!w && !!hearthHome() && H.supDay !== Game.day && Game.hour >= 17.5 && Game.hour < 20.5 && !(Game.party.on && Game.party.feast); },
-    run: () => { const w = wizardOf(), h = hearthHome(); if (nearHearth(w)) startSupper(); else wizWalkTo(h.stepX, h.stepY, { kind: 'supper', run: () => startSupper() }); },
+    run: () => { const w = wizardOf(), h = hearthHome(); if (nearHearth(w)) startSupper(); else wizWalkTo(h.stepX, h.stepY, { kind: 'supper' }); },
   });
   addWizardAction({ id: 'family', order: 85, icon: 'house', label: () => 'Family', when: () => !!wizardOf() && !!hearthHome(), run: openFamilyBook });
   // the milestones of his family, as the Chronicle tells them
