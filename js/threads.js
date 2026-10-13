@@ -207,7 +207,7 @@ function noteSaid(v, text) { (Game.wizSaid || (Game.wizSaid = {}))[saidKey(v.id,
 // Fills {placeholders} from the facts; null if one can't be filled.
 function fillTalkLine(text, F) {
   let ok = true;
-  const out = text.replace(/\{([a-zA-Z.:]+)\}/g, (m, k) => {
+  const out = text.replace(/\{([a-zA-Z0-9.:]+)\}/g, (m, k) => {
     if (k.startsWith('frag:')) { const P = FRAGS[k.slice(5)]; if (!P || !P.length) { ok = false; return ''; } return fillTalkLine(R.pick(P), F) ?? (ok = false, ''); }
     const cap = k[0] === k[0].toUpperCase() && k[0] !== k[0].toLowerCase();
     const key = cap ? k[0].toLowerCase() + k.slice(1) : k;
@@ -288,7 +288,7 @@ function applyFx(fx, T) {
   if (fx.promise) { const t = fillTalkLine(fx.promise.t, F); if (t && !b.promises.some((x) => x.k === fx.promise.k && x.state === 'open')) { b.promises.unshift({ k: fx.promise.k, t, d: Game.day, due: Game.day + (fx.promise.days || 3), state: 'open' }); note(`${v.first} will remember that.`); } }
   if (fx.sore) { b.sore[fx.sore.k || T.th?.id] = Game.day + (fx.sore.days || 2); }
   if (fx.hook) b.hooks.unshift({ k: fx.hook.k || fx.hook, thread: T.th ? T.th.id : null, d: Game.day });
-  if (fx.feel) feel(v, fx.feel, fx.feelX || '');
+  if (fx.feel) feel(v, fx.feel, fx.feelX ? (fillTalkLine(fx.feelX, F) || '') : '');
   if (fx.remember) { const t = fillTalkLine(fx.remember, F); if (t) v.remember(t, fx.rv || 1); }
   if (fx.note) { const t = fillTalkLine(fx.note, F); if (t) bondNote(v, t); }
   if (fx.news && typeof addNews === 'function') { const t = fillTalkLine(fx.news, F); if (t) addNews(t, 'love'); }
@@ -387,7 +387,7 @@ function maybeTheirTurn(T, chance) {
   const cands = Object.values(THREADS).filter((th) => th.theirs && !T.done.has(th.id) && !(bondFull(T.v).seen[th.id] >= Game.day - (th.cool || 3) + 1) && (!th.when || safeWhen(th, T)));
   if (!cands.length || !R.chance(chance)) return false;
   const th = R.pick(cands);
-  T.log.push({ who: 'aside', text: fillTalkLine(th.ask || `${T.v.first} has something to say.`, T.F) || `${T.v.first} has something to say.` });
+  T.log.push({ who: 'aside', text: (th.ask && sayOf(th.ask, T.F, T, T.v)) || `${T.v.first} has something to say.` });
   enterThread(T, th, null, true);
   return true;
 }
@@ -410,7 +410,7 @@ function takeApproach(T, ap) {
   if (d <= -2) { (T.flags || (T.flags = {})).misjudged = true; addRegard(T.v, -0.02); }
   if (d >= 2) addRegard(T.v, 0.015);
   // a word of how it landed, when it landed strongly
-  if (Math.abs(d) >= 2) {
+  if (Math.abs(d) >= 2 || (d !== 0 && Math.random() < 0.3)) {
     const mix = pickLine(`mix.${ap}.${d > 0 ? 'good' : 'bad'}`, T.F, T, T.v, true) || pickLine(`mix.${d > 0 ? 'good' : 'bad'}`, T.F, T, T.v, true);
     if (mix) T.mixin = mix;
   }

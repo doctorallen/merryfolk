@@ -215,7 +215,7 @@ talkPack('core', () => {
 
   // --- Their evenings (the thread from the research report) ---------------------------
   addThread({
-    id: 'evenings', topic: 'your evenings', label: 'What do you do of an evening?', about: 'pastime', reveals: 'pastime', weight: 1.1, cool: 4,
+    id: 'evenings', topic: 'your evenings', label: 'What do you do of an evening?', about: 'pastime', reveals: 'hobby', weight: 1.1, cool: 4,
     when: (F) => F.stage !== 'child' || F.band === 'youth',
     open: { ask: 'What do you do of an evening, {name}, when nobody\'s looking?' },
     beats: {

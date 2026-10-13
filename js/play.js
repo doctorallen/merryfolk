@@ -146,7 +146,7 @@ function startTalk(v) {
   v.muteBubble = true; Wiz.speaker.muteBubble = true;
   Play.talk = T;
   Play.heldSpeed = Game.speedIdx; setSpeed(0);
-  T.wiz = (text) => { wizSay(text, v); T.log.push({ who: 'wiz', text }); };
+  T.wiz = (text) => { wizSay(text, v); T.log.push({ who: 'wiz', text }); if (T.said) T.said.add(text); };
   T.reply = (text) => { v.say(text, Math.max(3, text.length * 0.06), { to: Wiz.speaker }); T.log.push({ who: 'them', text }); };
   T.reply2 = (text) => { if (!third) return; third.say(text, Math.max(3, text.length * 0.06), { to: Wiz.speaker }); T.log.push({ who: 'third', text }); };
   T.choices = (list) => { T.sub = list; };
@@ -315,7 +315,12 @@ const Sheet = {
     $('sheet-title').textContent = o.title || '';
     $('sheet-sub').textContent = o.sub || '';
     const cv = $('sheet-portrait');
-    if (o.portrait) { cv.hidden = false; drawPortrait(cv, o.portrait.genes, o.portrait.stage, false, o.portrait.look ? o.portrait.look() : {}); } else cv.hidden = true;
+    // the portrait is only drawn again when it's someone else, or they've changed (it's the slow part)
+    if (o.portrait) {
+      cv.hidden = false;
+      const key = o.portrait.id + ':' + (typeof portraitKey === 'function' ? portraitKey(o.portrait) : o.portrait.stage);
+      if (cv._key !== key) { drawPortrait(cv, o.portrait.genes, o.portrait.stage, false, o.portrait.look ? o.portrait.look() : {}); cv._key = key; }
+    } else { cv.hidden = true; cv._key = null; }
     $('sheet-body').innerHTML = o.html || '';
     const box = $('sheet-choices');
     box.innerHTML = '';

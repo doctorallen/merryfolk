@@ -33,7 +33,7 @@ const { launch, openGame, finish } = require('./lib');
         if (seen.has(t)) bad.push(`line "${key}" says "${t.slice(0, 40)}" twice`); seen.add(t);
         if (t.length > 170) bad.push(`line "${key}" is too long for a phone (${t.length}): "${t.slice(0, 50)}…"`);
         if (AMERICAN.test(t)) bad.push(`line "${key}" isn't British: "${t.match(AMERICAN)[0]}" in "${t.slice(0, 50)}"`);
-        for (const m of t.matchAll(/\{([a-zA-Z.:]+)\}/g)) {
+        for (const m of t.matchAll(/\{([a-zA-Z0-9.:]+)\}/g)) {
           const k = m[1];
           if (k.startsWith('frag:')) { if (!FRAGS[k.slice(5)]) bad.push(`line "${key}" uses an unknown fragment {${k}}`); continue; }
           const base = k[0].toLowerCase() + k.slice(1);
@@ -94,7 +94,7 @@ const { launch, openGame, finish } = require('./lib');
           out.beats += T.depth || 0;
           const said = new Map();
           for (const l of T.log) {
-            if (/\{[a-zA-Z.:]+\}/.test(l.text)) out.bad.push(`unfilled placeholder: "${l.text}"`);
+            if (/\{[a-zA-Z0-9.:]+\}/.test(l.text)) out.bad.push(`unfilled placeholder: "${l.text}"`);
             if (!l.text || !l.text.trim()) out.bad.push('an empty line was said');
             if (l.who === 'them' && l.text.length > 12) { if (said.has(l.text)) out.bad.push(`${v.first} said "${l.text.slice(0, 40)}" twice in one talk`); said.set(l.text, 1); }
           }
