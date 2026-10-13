@@ -30,11 +30,13 @@ talkPack('village', () => {
   const jobWord = (o) => (o && o.job && JOBS[o.job] ? JOBS[o.job].label.toLowerCase() : null);
   const visit = (T, v, k, kind) => { const o = who(T, k); if (o && ACTIONS.whisper_visit && !o.leaving) { v.queue.push({ a: ACTIONS.whisper_visit, extra: { to: o, kind } }); v.noteDecision && v.noteDecision('whisper_visit', 'the wizard suggested it', []); } };
   // carrying word: a promise kept when the wizard passes it on (village.regards)
-  const promiseRegards = (T, v, o) => {
+  const promiseRegards = (T, v, o, sorry) => {
     if (!o) return;
     const b = bondFull(v), k = 'village.regards:' + o.id;
-    if (b.promises.some((p) => p.k === k && p.state === 'open')) return;
-    b.promises.unshift({ k, t: `You said you'd pass ${v.first}'s regards to ${o.first}`, d: Game.day, due: Game.day + 5, state: 'open' });
+    const t = sorry ? `You said you'd tell ${o.first} that ${v.first} is sorry` : `You said you'd pass ${v.first}'s regards to ${o.first}`;
+    const old = b.promises.find((p) => p.k === k && p.state === 'open');
+    if (old) { if (sorry && !old.sorry) { old.sorry = true; old.t = t; } return; }
+    b.promises.unshift({ k, t, d: Game.day, due: Game.day + 5, state: 'open', sorry: !!sorry });
     if (b.promises.length > 12) b.promises.length = 12;
     T.log.push({ who: 'note', text: `${v.first} will remember that.` });
   };
@@ -49,7 +51,7 @@ talkPack('village', () => {
   };
   const PEOPLE = ['vFriend', 'vFriendId', 'vFriendJob', 'vFriendRift', 'vFriendMood', 'vFriendWhy', 'vFriendSeen', 'vFoe', 'vFoeId', 'vFoeWhy', 'vFoeTag', 'vFoeJob',
     'vHero', 'vHeroId', 'vHeroJob', 'vHeroWhy', 'vHeroElder', 'vNext', 'vNextId', 'vNextJob', 'vNextHome', 'vNextKind', 'vRivalPrize', 'vRivalThing', 'vRivalLead', 'vRivalJob',
-    'vRegardsFrom', 'vRegardsFromId', 'vAsked', 'vAskedId', 'vAskedMood', 'vAskedSick', 'vSpat', 'vSpatId', 'vSpatKey', 'vSpatWhat', 'vSpatThing'];
+    'vRegardsFrom', 'vRegardsFromId', 'vRegardsSorry', 'vAsked', 'vAskedId', 'vAskedMood', 'vAskedSick', 'vSpat', 'vSpatId', 'vSpatKey', 'vSpatWhat', 'vSpatThing'];
   function pickPeople(v) {
     const P = {};
     const others = Game.villagers.filter((o) => o !== v && !o.leaving && o.stage !== 'baby');
@@ -74,7 +76,8 @@ talkPack('village', () => {
     for (const id in Game.wizBond || {}) {
       const b = Game.wizBond[id];
       if (!b.promises) continue;
-      if (b.promises.some((p) => p.state === 'open' && !p.done && p.k === 'village.regards:' + v.id)) { const o = personById(+id); if (o && !o.leaving) { P.regards = o; break; } }
+      const pr = b.promises.find((p) => p.state === 'open' && !p.done && p.k === 'village.regards:' + v.id);
+      if (pr) { const o = personById(+id); if (o && !o.leaving) { P.regards = o; P.regardsSorry = !!pr.sorry; break; } }
     }
     // someone they'd ask the wizard after: a friend he's met, else anyone they're fond of he's met
     const metW = (o) => !!(Game.wizMet || {})[o.id];
@@ -112,7 +115,7 @@ talkPack('village', () => {
       Object.assign(F, { vRivalPrize: c[0], vRivalThing: c[1], vRivalLead: a > b ? 'ahead' : a < b ? 'behind' : 'level', vRivalJob: jobWord(ri) });
     }
     const rg = alive(P.regards) ? P.regards : null;
-    if (rg) Object.assign(F, { vRegardsFrom: rg.first, vRegardsFromId: rg.id });
+    if (rg) Object.assign(F, { vRegardsFrom: rg.first, vRegardsFromId: rg.id, vRegardsSorry: !!P.regardsSorry });
     const as = alive(P.asked) ? P.asked : null;
     if (as) Object.assign(F, { vAsked: as.first, vAskedId: as.id, vAskedMood: moodWord(as), vAskedSick: as.isSick() });
     const sp = alive(P.spat) ? P.spat : null;
@@ -382,12 +385,19 @@ talkPack('village', () => {
         if (!o) return;
         const b = bondFull(o), p = b.promises.find((x) => x.k === 'village.regards:' + v.id && x.state === 'open');
         if (p) p.done = true;
-        v.bond(o, 0.04); addSentiment(v, o, 'fond', 'sending word by the wizard'); feel(v, 'cheered', o.first);
-        v.remember(`${o.first} sent me their regards, by the wizard.`, 1);
+        if (T.F.vRegardsSorry) {
+          if (v.sent && v.sent[o.id]) v.sent[o.id] = v.sent[o.id].filter((s) => SENT[s.tag][1] > 0);
+          v.bond(o, 0.07); addSentiment(v, o, 'touched', 'saying sorry, by the wizard');
+          v.remember(`${o.first} sent word by the wizard to say sorry.`, 1);
+        } else {
+          v.bond(o, 0.04); addSentiment(v, o, 'fond', 'sending word by the wizard'); feel(v, 'cheered', o.first);
+          v.remember(`${o.first} sent me their regards, by the wizard.`, 1);
+        }
       } }, go: [
+        { ap: 'advise', say: 'Go and see {vRegardsFrom}. Put it behind you both.', to: 'mend', need: { if: { vRegardsSorry: true } } },
         { ap: 'ask', say: 'Anything you\'d like me to carry back?', to: 'back' },
         { ap: 'listen', say: '*You wait. They look as if there\'s more.*', label: 'Wait', to: 'more' },
-        { ap: 'jest', say: 'I\'m a wizard, not a postie. But for you, I made an exception.', to: 'postie' },
+        { ap: 'jest', say: 'I\'m a wizard, not a postie. But for you, I made an exception.', to: 'postie', need: { if: { vRegardsSorry: false } } },
       ] },
       back: { line: 'village.regards.back', fx: { run: (T, v) => promiseRegards(T, v, who(T, 'vRegardsFromId')) }, go: [
         { ap: 'warm', say: 'I\'ll see it gets there.', to: 'end' },
@@ -395,6 +405,7 @@ talkPack('village', () => {
       ] },
       more: { line: 'village.regards.more', fx: { trust: 0.02 }, go: [
         { ap: 'comfort', say: 'Then tell {vRegardsFrom} yourself. It\'s not far.', to: 'go' },
+        { ap: 'advise', say: 'Go and see {vRegardsFrom}. Put it behind you both.', to: 'mend', need: { if: { vRegardsSorry: true } } },
         { ap: 'warm', say: 'I think {vRegardsFrom} knows.', to: 'end' },
       ] },
       postie: { line: 'village.regards.postie', go: [
@@ -403,10 +414,37 @@ talkPack('village', () => {
       ] },
       satchel: { line: 'village.regards.satchel', end: true },
       go: { line: 'village.regards.go', fx: { run: (T, v) => visit(T, v, 'vRegardsFromId', 'kin') }, end: true },
+      mend: { line: 'village.regards.mend', fx: { respect: 0.03, run: (T, v) => visit(T, v, 'vRegardsFromId', 'mend') }, end: true },
     },
     end: { fond: 0.03, trust: 0.02 },
   });
-  lines('village.regards.open', [{ text: ['I bring regards from {vRegardsFrom}, {name}. Particular regards.', '{VRegardsFrom} asked me to say hello to you, {name}. So: hello, from {vRegardsFrom}.', 'A word from {vRegardsFrom}, {name}. Warmly sent.'] }]);
+  lines('village.regards.open', [
+    { text: ['I bring regards from {vRegardsFrom}, {name}. Particular regards.', '{VRegardsFrom} asked me to say hello to you, {name}. So: hello, from {vRegardsFrom}.', 'A word from {vRegardsFrom}, {name}. Warmly sent.'] },
+    { if: { vRegardsSorry: true }, pri: 2, text: ['I\'ve a word from {vRegardsFrom}, {name}. {VRegardsFrom} is sorry. Truly sorry.', '{VRegardsFrom} asked me to tell you something, {name}. That {vRegardsFrom} is sorry, and misses you.', 'A message, {name}, from {vRegardsFrom}. It\'s an apology. A heartfelt one.'] },
+  ]);
+  const SORRY = { if: { vRegardsSorry: true }, pri: 2 };
+  lines('village.regards.start', [
+    { ...SORRY, text: ['Sorry? {VRegardsFrom} said that? ...Well. Well, I never.', '...Oh. I wasn\'t expecting that. I don\'t know what to say.', 'Did {vRegardsFrom}? Truly? Oh, that takes a weight off.'] },
+    { ...SORRY, if: { vRegardsSorry: true, temper: 'ornery' }, text: ['Sorry, is it. Hmph. ...About time. ...Thank you for bringing it.', 'Took {vRegardsFrom} long enough. ...I\'m glad, mind. Don\'t tell {vRegardsFrom} I\'m glad.'] },
+    { ...SORRY, if: { vRegardsSorry: true, temper: 'proud' }, text: ['An apology. Well. I accept it. Graciously. ...I was a little at fault too.'] },
+    { ...SORRY, if: { vRegardsSorry: true, temper: 'shy' }, text: ['...{VRegardsFrom} is sorry? I thought {vRegardsFrom} hated me. Oh.'] },
+    { ...SORRY, if: { vRegardsSorry: true, temper: 'gloomy' }, text: ['Sorry? For me? ...I\'d given up. I\'d quite given up.'] },
+    { ...SORRY, if: { vRegardsSorry: true, temper: 'cheerful' }, text: ['Oh, the daft thing! Of course I forgive {vRegardsFrom}! I was never really cross. I was a bit cross.'] },
+    { ...SORRY, if: { vRegardsSorry: true, temper: 'witty' }, text: ['An apology by wizard. That\'s the most dramatic sorry this village has ever seen.'] },
+    { ...SORRY, if: { vRegardsSorry: true, temper: 'dreamy' }, text: ['Like the first rain after a dry spell. That\'s what that is.'] },
+    { ...SORRY, if: { vRegardsSorry: true, temper: 'curious' }, text: ['Sorry for which part, exactly? No. Don\'t answer. I\'ll take all of it.'] },
+    { ...SORRY, if: { vRegardsSorry: true, stage: 'child' }, text: ['{VRegardsFrom} said SORRY? Then we can play again! Can we?'] },
+    { ...SORRY, if: { vRegardsSorry: true, rift: true }, text: ['Apology received. Connection... restored. That\'s actually really nice.'] },
+  ]);
+  lines('village.regards.mend', [
+    { text: ['Put it behind us. Yes. I\'ll go round. With a pie, so we\'ve something to do with our hands.', 'All right. I\'ll go. We\'ll both say sorry and then argue about who said it first.'] },
+    { if: { temper: 'ornery' }, text: ['Fine. I\'ll go. I\'ll be gracious. I can be gracious. Watch me.'] },
+    { if: { temper: 'shy' }, text: ['...I\'ll go. I\'ll knock. If I lose my nerve, I\'ll leave a note.'] },
+    { if: { temper: 'proud' }, text: ['I shall call on {vRegardsFrom} this afternoon. It\'s the proper thing.'] },
+    { if: { stage: 'child' }, text: ['I\'m going to find {vRegardsFrom} RIGHT NOW!'] },
+  ]);
+  lines('village.regards.more', [{ ...SORRY, text: ['I said things too. Worse things. I hope {vRegardsFrom} knows I didn\'t mean them.', 'We\'ve been friends too long for this. I\'m glad. I\'m so glad.'] }]);
+  lines('village.regards.back', [{ ...SORRY, text: ['Tell {vRegardsFrom}... I\'m sorry too. And the kettle\'s on.', 'Say it\'s forgotten. No, say it\'s forgiven. Forgotten takes longer.'] }]);
   say('village.regards.start', {
     _: ['From {vRegardsFrom}? Oh! How lovely. How is {vRegardsFrom}?', 'Did {vRegardsFrom} really? Well, that\'s brightened my morning.', '{VRegardsFrom}! I was only thinking of {vRegardsFrom} yesterday.'],
     cheerful: ['Oh, that\'s wonderful! Regards! I love a regard!', 'Ha! {VRegardsFrom}, the old dear. Sending a wizard, no less!'],
@@ -1122,6 +1160,99 @@ talkPack('village', () => {
   });
 
   // =================================================================================
+  // Their turn: an apology they can't carry themselves
+  // =================================================================================
+  addThread({
+    id: 'village.ask.sorry', theirs: true, label: 'They ask you to carry an apology', cool: 5, ask: '{Name} has a favour to ask.',
+    when: (F) => F.met && F.talks >= 2 && F.trust >= 0.15 && has(F.vFoe),
+    beats: {
+      start: { line: 'village.ask.sorry.q', go: [
+        { ap: 'warm', say: 'Of course. What shall I say?', to: 'what' },
+        { ap: 'advise', say: 'It would mean more coming from you.', to: [{ need: { open: 2 }, to: 'brave' }, 'cant'] },
+        { ap: 'ask', say: 'Are you sure you\'re ready to say it?', to: 'ready' },
+      ] },
+      what: { line: 'village.ask.sorry.what', fx: { trust: 0.03, run: (T, v) => promiseRegards(T, v, who(T, 'vFoeId'), true) }, go: [
+        { ap: 'warm', say: 'I\'ll see it gets there. Word for word.', to: 'thanks' },
+        { ap: 'jest', say: 'Shall I sing it? I\'ve a terrible voice. Very moving.', to: 'sing' },
+      ] },
+      brave: { line: 'village.ask.sorry.brave', fx: { respect: 0.04, run: (T, v) => visit(T, v, 'vFoeId', 'mend') }, end: true },
+      cant: { line: 'village.ask.sorry.cant', go: [
+        { ap: 'warm', say: 'Then I\'ll carry it for you.', to: 'what' },
+        { ap: 'comfort', say: 'Take your time. It\'ll keep.', to: 'keep' },
+      ] },
+      ready: { line: 'village.ask.sorry.ready', go: [
+        { ap: 'warm', say: 'Then I\'ll carry it.', to: 'what' },
+        { ap: 'advise', say: 'Then say it yourself. Today, while you mean it.', to: [{ need: { open: 1 }, to: 'brave' }, 'cant'] },
+      ] },
+      thanks: { line: 'village.ask.sorry.thanks', end: true },
+      sing: { line: 'village.ask.sorry.sing', end: true },
+      keep: { line: 'village.ask.sorry.keep', end: true },
+    },
+    end: { fond: 0.02 },
+  });
+  say('village.ask.sorry.q', {
+    _: ['Would you... tell {vFoe} something for me? I can\'t face {vFoe}. Not yet.', 'Can I ask a favour? It\'s about {vFoe}. I want to say sorry and I can\'t.', 'You talk to everyone. Would you take a word to {vFoe} for me?'],
+    cheerful: ['Oh, wizard, I\'ve been silly with {vFoe}. Would you tell {vFoe} I\'m sorry? I\'d go myself but I\'d cry.'],
+    ornery: ['Don\'t make a fuss. Tell {vFoe}... tell {vFoe} I was wrong. There. Don\'t make me say it twice.'],
+    shy: ['...Could you tell {vFoe} something? I\'d write it, but my hand shakes.'],
+    curious: ['If someone wanted to apologise without actually being in the room, how would they? Asking for me.'],
+    dreamy: ['I keep writing it in my head. "Dear {vFoe}, I\'m sorry." Would you take it? The words, I mean.'],
+    witty: ['Wizard. Professional favour. I need an apology delivered. Discreetly. Ideally with flourish.'],
+    proud: ['I find I owe {vFoe} an apology. I would like it delivered. Properly.'],
+    gloomy: ['{VFoe} won\'t want to hear it from me. Would you say I\'m sorry?'],
+    child: ['Can you tell {vFoe} I\'m sorry? I said a bad word. Not a rude one. A mean one.'],
+    rift: ['Need a relay. Message for {vFoe}: sorry. Can you route it?'],
+  });
+  say('village.ask.sorry.what', {
+    _: ['Say I\'m sorry. That I didn\'t mean it. Well, I meant it then. I don\'t now.', 'Tell {vFoe} I\'m sorry, and that I miss the way things were.', 'Just "sorry". And "I was a fool". {VFoe} will like that bit.'],
+    cheerful: ['Say sorry, and that I\'ll bring a cake. A sorry cake. With icing.'],
+    ornery: ['"Sorry". One word. Don\'t embroider it.'],
+    shy: ['...That I\'m sorry. And that I think about it every night.'],
+    curious: ['That I\'m sorry, and that I\'d like to understand what went wrong. Properly.'],
+    dreamy: ['That I\'m sorry, and the lane\'s been grey without {vFoe} in it.'],
+    witty: ['Tell {vFoe} I\'m sorry and I\'ll never do it again. Whatever it was. I\'ve lost track.'],
+    proud: ['That I regret my words. Use those exact words. "Regret".'],
+    gloomy: ['That I\'m sorry. That\'s all. {VFoe} won\'t believe it.'],
+    child: ['Say SORRY. And I\'ll share my conkers.'],
+    rift: ['Sorry, full stop. No emoji. You don\'t have those here. Good.'],
+  }, [
+    { if: { vFoeWhy: (w) => has(w) }, pri: 1, text: ['Say I\'m sorry. About {vFoeWhy}. I\'ve thought about it every day.'] },
+  ]);
+  say('village.ask.sorry.brave', {
+    _: ['...You\'re right. It should be me. I\'ll go now, before my knees give out.', 'From me. Yes. All right. I\'ll go.'],
+    ornery: ['Hmph. You\'re right. I hate that you\'re right. I\'m going.'],
+    shy: ['...I\'ll try. Walk me to the corner? No. I\'ll go. I\'ll go.'],
+    proud: ['Quite so. One apologises in person. I\'ll go.'],
+    child: ['Okay. I\'ll say it. In a quiet voice.'],
+  });
+  say('village.ask.sorry.cant', {
+    _: ['I can\'t. Not to {vFoe}\'s face. I\'d make it worse.', 'I tried. I got to the gate and turned round.'],
+    ornery: ['I can\'t. I\'d start arguing again. I know me.'],
+    shy: ['I can\'t. I go all hot and nothing comes out.'],
+    proud: ['It\'s not that I won\'t. It\'s that I... won\'t. Not yet.'],
+    gloomy: ['{VFoe} would shut the door. I know it.'],
+  });
+  say('village.ask.sorry.ready', {
+    _: ['Ready? I\'ve been ready for a week. I just haven\'t been brave.', 'Yes. I lie awake with it. I\'d like to sleep.'],
+    ornery: ['Ready? I wouldn\'t be asking otherwise, would I?'],
+    curious: ['I think so. I\'ve examined it from every side. Sorry is the only side left.'],
+    dreamy: ['As ready as the blossom is in spring. Which is to say, a bit early, but there.'],
+  });
+  say('village.ask.sorry.thanks', {
+    _: ['Thank you. I owe you. A pie, at least.', 'Word for word. Thank you, wizard. Truly.'],
+    shy: ['...Thank you. I feel lighter already.'],
+    ornery: ['Hmph. Thank you. Don\'t mention it. To anyone.'],
+  });
+  say('village.ask.sorry.sing', {
+    _: ['Sing it! Don\'t you dare! ...Actually, {vFoe} might laugh. That\'d help.', 'Ha! No singing. A normal, dignified apology, please.'],
+    witty: ['Sing it. To the tune of the Bath Song. That\'s an order.'],
+  });
+  say('village.ask.sorry.keep', {
+    _: ['It\'ll keep. It\'s kept this long.', 'Thank you for not pushing.'],
+    gloomy: ['It\'ll keep. Like a stone in my shoe.'],
+  });
+
+  // =================================================================================
   // Their turn: settle a squabble
   // =================================================================================
   const spatAgree = (T, v) => {
@@ -1259,5 +1390,284 @@ talkPack('village', () => {
   say('village.ask.settle.refuse', {
     _: ['Not even for you. Not this time.', 'I like you, wizard. I like being right more.'],
     ornery: ['For you? Ha. Nice try.'],
+    proud: ['I\'m afraid my mind is made up. It usually is.'],
+    witty: ['For you, I\'d do almost anything. This falls in the gap.'],
+    gloomy: ['It wouldn\'t work anyway. Nothing does with {vSpat}.'],
+    cheerful: ['Oh, I couldn\'t! Well. Not today. Ask me after cake.'],
+  });
+
+  // =================================================================================
+  // More to say: variety for every moment above, by temper, season and the hour
+  // =================================================================================
+  lines('village.friend.jest', [{ text: ['I\'ve seen you and {vFriend} whispering by the well. Conspiring, I\'d say.', 'You and {vFriend}. Like two peas in a pod. A pod with a secret.'] }]);
+  lines('village.friend.open', [
+    { if: { season: 'winter' }, text: ['Have you seen much of {vFriend} this winter, {name}? Snow keeps friends apart.'] },
+    { if: { hour: 'evening' }, text: ['Will you be seeing {vFriend} tonight, {name}? At the Badger, perhaps?'] },
+  ]);
+  say('village.friend.start', {
+    cheerful: ['Oh, {vFriend}\'s the best! I\'d give {vFriend} my last scone. My second-last, anyway.'],
+    ornery: ['{VFriend}? Only one in the village I can stand for a whole afternoon.'],
+    shy: ['{VFriend} is... the one person I don\'t have to practise talking to.'],
+    curious: ['{VFriend}! We\'re halfway through counting the frogs in the mill-pond. It\'s a long project.'],
+    dreamy: ['{VFriend}\'s the sort you can be quiet with. Those are the best sort.'],
+    witty: ['{VFriend}? Still my favourite audience. Laughs in all the right places and some wrong ones.'],
+    proud: ['{VFriend} and I go back a long way. A distinguished friendship.'],
+    gloomy: ['{VFriend} is the only one who still knocks. Bless {vFriend}.'],
+    child: ['{VFriend} can climb higher than ANYONE. Except me. Nearly.'],
+    rift: ['{VFriend}\'s good people. Asked me what a city smells like. Nobody asks that.'],
+  }, [
+    { if: { season: 'winter' }, text: ['{VFriend}? Snowed in, last I heard. I\'ve been meaning to dig a path over.'] },
+    { if: { season: 'summer' }, text: ['{VFriend}\'s brown as a nut. Out in the sun all day. We swam in the river on Highday.'] },
+    { if: { season: 'autumn' }, text: ['{VFriend}? We were blackberrying together all last week. Purple to the elbows, both of us.'] },
+    { if: { season: 'spring' }, text: ['{VFriend}\'s been out in the garden since the first thaw. Digs like a badger.'] },
+  ]);
+  say('village.friend.best', {
+    _: ['{VFriend} remembers my birthday. Every year. Even the year I forgot it.', 'When I\'m wrong, {vFriend} lets me find out on my own. Kindly.'],
+    cheerful: ['{VFriend} can make a game out of anything. Washing up. Rain. Anything.'],
+    ornery: ['{VFriend} never once said "cheer up". Not once. That\'s a true friend.'],
+    proud: ['{VFriend} has never once spoken ill of me behind my back. I\'ve checked.'],
+    dreamy: ['{VFriend} hums when {vFriend}\'s happy. I don\'t think {vFriend} knows.'],
+    witty: ['{VFriend} can keep a straight face through anything. Very useful in a friend.'],
+    shy: ['{VFriend} speaks for me when I can\'t. Not over me. For me.'],
+  });
+  say('village.friend.plot', {
+    _: ['There may be a plan. It may involve the Badger\'s cellar. That\'s all I\'m saying.', 'Plotting is a big word for a small thing involving geese.'],
+    dreamy: ['We\'re going to watch the sunrise from the top of the far hill. We keep oversleeping.'],
+    proud: ['Our plans are strictly above board. Mostly above board.'],
+  });
+  say('village.friend.asked', {
+    _: ['Did {vFriend} really? I thought {vFriend} had forgotten me this week.', 'Well, that\'s put the kettle on in my heart, that has.'],
+    ornery: ['Hmph. Well. I suppose I\'ll have to ask after {vFriend} now. Fair\'s fair.'],
+    proud: ['How very good of {vFriend}. I shall reciprocate.'],
+  });
+  say('village.friend.regards', {
+    _: ['Yes. Tell {vFriend} I\'ll save a seat by the fire on Mersday.', 'Would you? Say I said the garden misses {vFriend}. So do I.'],
+    shy: ['...And say thank you. For last time. {VFriend} will know.'],
+    witty: ['Pass on my regards, my respects and my best joke about badgers.'],
+  });
+  say('village.friend.met', {
+    _: ['On the bridge. We both stopped to look at the same fish. It got away. We didn\'t.', 'Our mothers sat us in the same pram. We\'ve been arguing about elbow room since.'],
+    proud: ['At the Founders\' Day games. We came first and second. I\'ll leave you to guess who was first.'],
+    witty: ['We were both hiding from the same aunt. A bond for life.'],
+  });
+  say('village.friend.since', {
+    _: ['Since then, yes. Every season.', 'And not one week gone by without a word between us.'],
+    dreamy: ['Since then. Like the river. It just keeps going.'],
+    proud: ['A long and honourable friendship.'],
+    curious: ['Ever since. I\'ve still not worked out why {vFriend} puts up with me.'],
+  });
+  say('village.friend.toldthem', {
+    _: ['I should. I should, shouldn\'t I.', 'Not out loud. Folk don\'t, round here. We bake instead.'],
+    gloomy: ['No. I keep meaning to. Then I think I\'ll sound daft.'],
+    curious: ['Do you think {vFriend} would like to hear it? I genuinely wonder.'],
+  });
+  say('village.friend.deeper', {
+    _: ['{VFriend} hasn\'t been sleeping. I can tell by the curtains. Open at all hours.'],
+    curious: ['I\'ve noticed {vFriend} stopped going to the Badger. I don\'t know why. I want to know why.'],
+    witty: ['I make jokes so {vFriend} doesn\'t notice I\'m worried. Mostly I make jokes.'],
+    elder: ['We\'re neither of us young. Every winter I count us both and hope.'],
+  });
+  say('village.friend.scheme', {
+    _: ['We\'re going to put a hat on the party tree. A very big hat. On Midsummer.'],
+    ornery: ['We\'re going to fix the mill bridge ourselves, since nobody else will. Quietly.'],
+    gloomy: ['We were going to plant a whole hedge of roses. They\'ll die. We\'re doing it anyway.'],
+  });
+  say('village.friend.watched', {
+    curious: ['From under your hat? What else can you see from there?'],
+    cheerful: ['Watch away! You can join in, if you\'re good!'],
+    proud: ['We have nothing to hide. Very little to hide.'],
+  });
+  say('village.friend.visit', {
+    _: ['I\'ll go round with a cake. Any excuse.', 'You\'re right. I\'ve been putting it off for no reason at all.'],
+    curious: ['I will. And I\'ll ask about the tin. I\'ll finally ask about the tin.'],
+    dreamy: ['I\'ll go the long way, by the river. {VFriend} likes it when I bring a flower.'],
+    witty: ['I\'ll go. I\'ll pretend I was passing. {VFriend} will pretend to believe it.'],
+  });
+  say('village.friend.pining', {
+    cheerful: ['Ha! Maybe a little bit! Don\'t tell!'],
+    proud: ['I have never pined in my life. I may have mused.'],
+    dreamy: ['Pining. What a lovely sad word. I might be.'],
+  });
+  say('village.friend.message', {
+    _: ['Say I\'ll bring the cards on Highday. And this time I won\'t cheat.'],
+    shy: ['Just... that I think of {vFriend}. That\'s all. That\'s a lot.'],
+    proud: ['Tell {vFriend} I expect a visit. Soon.'],
+    child: ['Tell {vFriend} the frog\'s name is Sir Hopsalot now. We voted.'],
+  });
+  say('village.friend.fallen', {
+    curious: ['Once. Over whether fish sleep. They do. I was right. It didn\'t help.'],
+    dreamy: ['A long time ago. I don\'t remember why. I remember how cold it was.'],
+    cheerful: ['Oh, once or twice! We always laugh about it after.'],
+  });
+  say('village.friend.madeup', {
+    _: ['Neither of us said a word. We just started talking about the weather again.'],
+    cheerful: ['We bumped into each other at the fair and burst out laughing. That was that.'],
+    shy: ['{VFriend} came and sat with me. Didn\'t say anything. That was the sorry.'],
+    witty: ['We agreed we were both wrong, which was a lie, but a friendly one.'],
+  });
+
+  lines('village.regards.open', [{ if: { season: 'winter' }, text: ['A warm word from {vRegardsFrom}, {name}, to keep the cold off.'] }]);
+  say('village.regards.start', {
+    _: ['Oh, how kind. I\'ll keep that all day.'],
+    shy: ['...That\'s the nicest thing that\'s happened this week.'],
+    curious: ['What made {vRegardsFrom} think of me, do you suppose?'],
+    child: ['Can I send one back? Can I? Like a letter but with a WIZARD?'],
+  });
+  say('village.regards.satchel', {
+    ornery: ['A satchel! You\'d look like the postie\'s grandfather.'],
+    proud: ['A satchel would suit you. Leather. With a buckle.'],
+  });
+  say('village.regards.postie', {
+    cheerful: ['Ha! A wizard postie! I\'d write every day!'],
+    shy: ['...Thank you for making an exception.'],
+  });
+  say('village.regards.go', {
+    cheerful: ['Oh, I will! Right now! Hold my basket. No, I\'ll take it.'],
+    proud: ['A personal visit. Yes. That would be proper.'],
+    gloomy: ['It isn\'t far. I always think it\'s further.'],
+  });
+
+  lines('village.foe.open', [{ if: { vFoeWhy: (w) => has(w) }, text: ['Still smarting over {vFoeWhy}, {name}? I hear {vFoe} is too.'] }]);
+  say('village.foe.start', {
+    _: ['{VFoe} and I aren\'t... we\'re not... let\'s say we\'re having weather.'],
+    cheerful: ['Oh, it\'ll blow over. It\'s blowing. It\'s just taking its time.'],
+    curious: ['I\'ve been trying to work out what {vFoe} meant by it. I can\'t.'],
+    dreamy: ['I passed {vFoe}\'s door this morning and the window was dark. I didn\'t like that.'],
+  });
+  say('village.foe.side', {
+    _: ['{VFoe} took something I said the wrong way. And then I took it the wrong way back.'],
+    ornery: ['I said what I thought. {VFoe} said what {vFoe} thought. Only one of us was right.'],
+    witty: ['{VFoe} and I disagreed about something. Then about the disagreement. Then about the weather.'],
+  });
+  say('village.foe.tea', {
+    ornery: ['Tea. You\'d think wizards had better tricks.'],
+    proud: ['A small cup. I can manage a small cup.'],
+    child: ['Can it be juice?'],
+  });
+  say('village.foe.beat', {
+    ornery: ['A race. Hmph. I don\'t run. ...I might walk briskly.'],
+    proud: ['I shall be first. I\'m always first.'],
+  });
+  say('village.foe.softer', {
+    curious: ['Forgivable. Do you know, I hadn\'t looked at it that way.'],
+    dreamy: ['Being a bit wrong. It\'s lighter, put like that.'],
+    gloomy: ['Forgivable. If {vFoe} forgives. Which {vFoe} won\'t.'],
+  });
+  say('village.foe.notyet', {
+    curious: ['Make it up? How? I\'ve thought of eleven ways and they all end in shouting.'],
+    gloomy: ['It\'s gone too far. You don\'t know.'],
+    rift: ['Not ready to reconnect. Need a reboot first.'],
+  });
+
+  lines('village.rival.open', [
+    { if: { season: 'autumn' }, text: ['The fair\'s coming, {name}. Is {rival} worried yet?'] },
+    { if: { vRivalLead: 'behind' }, text: ['I hear {rival} beat you last time, {name}. Revenge planned?'] },
+  ]);
+  say('village.rival.start', {
+    _: ['{Rival}? We nod. We smile. We plot.', 'Still at it. {Rival} knows I\'m coming for {vRivalPrize}.'],
+    curious: ['{Rival} has changed something. I can tell by the way {rival} walks. I need to know what.'],
+    shy: ['{Rival} said "good effort" last time. I\'ve been thinking about it ever since.'],
+  }, [{ if: { season: 'autumn' }, text: ['The fair\'s nearly here. {Rival} and I have stopped speaking. It\'s tradition.'] }]);
+  say('village.rival.grudge', {
+    cheerful: ['A grudge! No, it\'s a game! A long, silly game!'],
+    dreamy: ['A long grudge for a {vRivalThing}. Isn\'t it funny what we hold on to?'],
+  });
+  say('village.rival.nextyear', {
+    ornery: ['Of course it is. It was this year\'s too, if the judges had eyes.'],
+    shy: ['...Do you think so? Really?'],
+    witty: ['Next time is mine. I\'ve booked it.'],
+  });
+  say('village.rival.safe', {
+    proud: ['I trust your discretion completely. Do not disappoint it.'],
+    cheerful: ['Thank you! Oh, it\'s a relief to say it to someone!'],
+  });
+  say('village.rival.shake', {
+    curious: ['Hm. What would we talk about, if not {vRivalThing}s? I\'d like to find out.'],
+    gloomy: ['{Rival} would laugh. ...{Rival} wouldn\'t, actually. {Rival} isn\'t like that.'],
+  });
+
+  lines('village.hero.open', [{ if: { stage: 'elder' }, text: ['Is there anyone left you look up to, {name}, at your time of life?'] }]);
+  say('village.hero.sulk', {
+    cheerful: ['Ha! Come out for supper, though. Sulking\'s hungry work.'],
+    witty: ['Sulk away. I\'ll tell {vHero} you were jealous.'],
+  });
+  say('village.hero.shown', {
+    shy: ['...Shown. I can do shown. Shown\'s easier.'],
+    ornery: ['Shown. Hmph. A loaf on the step. That\'s shown.'],
+  });
+  say('village.hero.tell', {
+    cheerful: ['I will! I\'ll tell {vHero} at the Badger and buy a round!'],
+    proud: ['I shall tell {vHero}. Once. Formally.'],
+  });
+  say('village.hero.teach', {
+    cheerful: ['Ooh! I\'ll ask! I\'ll ask today!'],
+    curious: ['I\'ve a list of questions already. This is just the excuse.'],
+  });
+  say('village.hero.blush', {
+    proud: ['I have been told so. Not often enough.'],
+    cheerful: ['Oh! That\'s the nicest thing! I\'m going to tell everyone!'],
+  });
+
+  lines('village.next.open', [
+    { if: { season: 'summer' }, text: ['Long evenings, {name}. Do you hear much of the neighbours over the hedge?'] },
+    { if: { weather: 'rain' }, text: ['Wet day to be indoors with the neighbours through the wall, {name}. How are they?'] },
+  ]);
+  say('village.next.fond', {
+    cheerful: ['Fond! Of course! They\'re lovely! Loud, but lovely!'],
+    shy: ['...I suppose I am. I wave more than I used to.'],
+  });
+  say('village.next.cart', {
+    cheerful: ['Ha! A cart! I\'d have to borrow one first!'],
+    proud: ['I\'d never stoop to it. It is tempting.'],
+  });
+
+  say('village.ask.howsx.q', {
+    _: ['Is {vAsked} well, do you know? I keep meaning to call.'],
+  }, [{ if: { vAskedSick: true }, text: ['I heard {vAsked} was poorly. Is it bad? You\'d know.'] }]);
+  say('village.ask.howsx.busy', {
+    shy: ['Busy. I shouldn\'t disturb {vAsked}, then.'],
+    proud: ['Busy is good. Busy is respectable.'],
+  });
+  say('village.ask.howsx.go', {
+    cheerful: ['I will! I\'ll take a pie! And a song!'],
+    proud: ['I shall call this afternoon.'],
+    gloomy: ['I\'ll go. If {vAsked} doesn\'t want me, I\'ll come straight back.'],
+  });
+  say('village.ask.howsx.regards', {
+    ornery: ['If you must. Say I asked. Don\'t say I worried.'],
+    dreamy: ['Tell {vAsked} the evening light made me think of {vAsked}.'],
+  });
+
+  say('village.ask.sorry.sing', {
+    child: ['Yes! Sing it! Sing it like a dragon!'],
+    shy: ['Please don\'t sing it. Please.'],
+  });
+  say('village.ask.sorry.keep', {
+    ornery: ['It\'ll keep. So will I.'],
+    shy: ['Thank you. I\'ll be braver next week.'],
+  });
+  say('village.ask.sorry.thanks', {
+    cheerful: ['Oh, thank you! I could hug you! I won\'t. I might.'],
+    proud: ['I\'m obliged to you, wizard.'],
+  });
+  say('village.ask.settle.gracious', {
+    cheerful: ['Gracious! Yes! I\'ll take {vSpat} a basket of something nice!'],
+    shy: ['I\'ll leave something on {vSpat}\'s step. Gracious and quiet.'],
+  });
+  say('village.ask.settle.accept', {
+    shy: ['...I know. Thank you for not fibbing.'],
+    gloomy: ['Honest. That\'s the worst kind of answer.'],
+  });
+  say('village.ask.settle.crow', {
+    ornery: ['I\'ll crow if I like. Quietly.'],
+    cheerful: ['No crowing! Just a small happy dance. Indoors.'],
+  });
+  say('village.ask.settle.only', {
+    ornery: ['ONLY a {vSpatThing}! You\'ve never owned a {vSpatThing}, clearly.'],
+    witty: ['It\'s only a {vSpatThing} in the way the sea is only some water.'],
+  });
+  say('village.ask.settle.scoff', {
+    curious: ['Share it? Hm. How would that even work?'],
+    gloomy: ['{VSpat} wouldn\'t share. {VSpat} never shares.'],
   });
 });

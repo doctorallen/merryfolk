@@ -914,5 +914,216 @@ talkPack('village2', () => {
     _: ['The bottom of the lane after rain. You lose a boot. Some folk have lost two.', 'Behind the Badger, by the barrels. Don\'t ask.'],
     witty: ['The Badger\'s back step on a Sterday morning. Don\'t ask why.'],
     child: ['Bath time. That\'s not a place. It still counts.'],
+    ornery: ['Wherever the geese are. Which is everywhere.'],
+    gloomy: ['The ford in winter. Cold to the knees and no way round.'],
+    dreamy: ['The dark bit of the lane by the old oak. I always walk faster there. I like it, though.'],
+  });
+
+  // =================================================================================
+  // More to say: variety for every moment above
+  // =================================================================================
+  lines('village.gossip.open', [
+    { if: { hour: 'evening' }, text: ['What\'s the Badger saying tonight, {name}?'] },
+    { if: { hour: 'morning' }, text: ['What did the well have to say this morning, {name}?'] },
+  ]);
+  say('village.gossip.start', {
+    _: ['Have you heard? {VNews}. I nearly dropped my basket.'],
+    cheerful: ['Ooh, you\'ll never guess! {VNews}! I\'ve been grinning all day!'],
+    ornery: ['{VNews}. And now everyone\'s an expert.'],
+    shy: ['...You won\'t say I told you? {VNews}.'],
+    dreamy: ['{VNews}. It feels like the start of something.'],
+    proud: ['{VNews}. I heard it before the innkeeper did, which is a first.'],
+  });
+  say('village.gossip.opinion', {
+    _: ['I think it\'ll do the village good. Something to talk about besides the weather.'],
+    curious: ['I want to know what happens next. That\'s my opinion. I\'m an opinion of questions.'],
+    shy: ['I\'m glad, I think. I hope everyone\'s kind about it.'],
+    elder: ['I\'ve seen a lot of news come and go. This one\'s better than most.'],
+  }, [
+    { if: { vNewsKind: 'birth', temper: 'ornery' }, text: ['A baby. More crying at night. ...Bless it, though.'] },
+    { if: { vNewsKind: 'quarrel', temper: 'curious' }, text: ['A quarrel! I\'d like to know who said what first. Purely for the record.'] },
+    { if: { vNewsKind: 'learn' }, text: ['Learning something new! Good. More of that, I say.'] },
+    { if: { vNewsKind: 'work' }, text: ['Hard work rewarded. That\'s the sort of news I like.'] },
+  ]);
+  say('village.gossip.embroider', {
+    _: ['With dragons! Don\'t let the children hear that version.', 'Three more! There weren\'t any to start with!'],
+    curious: ['Three more than what? Were there dragons in the first version? I\'ve missed something.'],
+  });
+  say('village.gossip.careful', {
+    _: ['It has grown a leg or two already, I\'ll admit.'],
+    dreamy: ['Tales are like rivers. They pick up everything on the way.'],
+  });
+  say('village.gossip.source', {
+    _: ['I heard it over the hedge. Hedges are very good for news.'],
+    dreamy: ['I don\'t remember. It was just in the air, like blossom.'],
+    elder: ['My grandson. He hears everything at the Badger and tells me half of it.'],
+  });
+  say('village.gossip.tellall', {
+    curious: ['I\'ll tell it, and I\'ll find out the bits I don\'t know as I go.'],
+    gloomy: ['I\'ll tell it. They\'ll have heard already.'],
+    dreamy: ['I\'ll tell it gently. Good news should be told gently.'],
+  });
+  say('village.gossip.hush', {
+    dreamy: ['Some things are prettier kept quiet.'],
+    rift: ['Message muted. Respect.'],
+  });
+  say('village.gossip.spread', {
+    curious: ['I\'ll tell it with dragons and see who believes it. For science.'],
+    proud: ['I don\'t embroider. ...Just this once.'],
+  });
+  say('village.gossip.teatime', {
+    cheerful: ['Ha! Teatime! It\'ll be at the Badger before the kettle\'s boiled!'],
+    ornery: ['By teatime? By elevenses. This village.'],
+  });
+
+  lines('village.rumour.open', [{ if: { hour: 'evening' }, text: ['Heard anything wild at the Badger tonight, {name}?'] }, { if: { stage: 'child' }, text: ['Heard any scary stories lately, {name}?'] }]);
+  say('village.rumour.start', {
+    _: ['They\'re saying {vRumour}. My aunt saw it. My aunt sees a lot of things.'],
+    elder: ['When I was a lad they said {vRumour}. Now they\'re saying it again.'],
+  });
+  say('village.rumour.tale', {
+    _: ['I\'m telling everyone. You can\'t stop me. You started it.'],
+    elder: ['My grandmother always said so. I owe her an apology.'],
+  });
+  say('village.rumour.deny', {
+    _: ['Ah well. There\'ll be another rumour along by Trewsday.'],
+    elder: ['Nonsense, eh? Well. It was nonsense when I was young, too.'],
+  });
+  say('village.rumour.who', {
+    dreamy: ['It came on the wind. Rumours do.'],
+    proud: ['I don\'t name my sources. I have standards.'],
+    gloomy: ['Somebody who wanted to frighten folk. It worked.'],
+  });
+  say('village.rumour.believe', {
+    rift: ['I\'ve seen the sky open. I\'ll believe almost anything now.'],
+    elder: ['At my age you stop believing and start remembering.'],
+  });
+  say('village.rumour.address', {
+    cheerful: ['Ha! I\'ll send it a card!'],
+    ornery: ['Bree. Of course. Everything odd ends up in Bree.'],
+  });
+  say('village.rumour.polite', {
+    child: ['Polite like saying please? Did it say please?'],
+    witty: ['A polite one. Better manners than the geese.'],
+  });
+  say('village.rumour.wonder', {
+    cheerful: ['Oh, there is! The swallows came back this week. That\'s wonder.'],
+    rift: ['There is. Rain is wonder enough, honestly. We didn\'t have rain.'],
+  });
+  say('village.rumour.badgers', {
+    ornery: ['The badgers know what they did.'],
+    witty: ['The badgers have been suspiciously quiet. That\'s what they want you to think.'],
+  });
+
+  lines('village.values.open', [{ if: { stage: 'elder' }, text: ['After all these years, {name}, what do you hold to most?'] }]);
+  say('village.values.agree', {
+    _: ['Well, there you are. Great minds.'],
+    elder: ['It\'s good to hear a younger voice say so. Even if you\'re older than me.'],
+  });
+  say('village.values.second', {
+    curious: ['And {vValue2}. I\'m still working out how the two fit together.'],
+    dreamy: ['And {vValue2}. They hold hands, the two of them.'],
+    gloomy: ['{VValue2}, too. Not that it\'s done me much good.'],
+  });
+  say('village.values.bristle', {
+    curious: ['Has it? Hmph. I\'d need convincing. You haven\'t convinced me.'],
+    witty: ['A place for {vClashValue}? Yes. Far away. With a door.'],
+    cheerful: ['Oh! Well. I don\'t agree. But I like you anyway.'],
+  });
+  say('village.values.debate', {
+    _: ['Fair point. Annoyingly fair.'],
+    shy: ['...You might be right. I hadn\'t thought of it like that.'],
+    gloomy: ['You\'re right. I\'m usually wrong. ...Not about everything, though.'],
+  });
+  say('village.values.smooth', {
+    cheerful: ['Oh, no harm! I get carried away. Everyone does.'],
+    shy: ['It\'s all right. I was too sharp.'],
+    curious: ['It\'s fine. I like a disagreement, really. It keeps me thinking.'],
+  });
+  say('village.values.talkover', {
+    proud: ['A conversation with {vClash}. I shall be magnanimous.'],
+    cheerful: ['Over a pie! With {vClash}! Why not? We might laugh.'],
+  });
+  say('village.values.pie', {
+    cheerful: ['Ha! A pie and a lid! I love it!'],
+    curious: ['Which of us is the lid, though? That\'s the question.'],
+  });
+  say('village.values.kindness', {
+    cheerful: ['Kindness and fireworks! That\'s the best creed I ever heard!'],
+    proud: ['A fine pairing. I approve.'],
+  });
+  say('village.values.small', {
+    shy: ['...A hobbit\'s courage. I\'d like to think I have some.'],
+    proud: ['A hobbit\'s courage. Yes. We\'ve more than folk think.'],
+  });
+  say('village.values.breakfast', {
+    cheerful: ['Ha! And third breakfast, on a good day!'],
+    witty: ['Second breakfast is the foundation on which all other values rest.'],
+  });
+
+  lines('village.changes.open', [{ if: { stage: 'elder' }, text: ['You\'ve seen a great deal come and go, {name}. Is Thistledown still Thistledown?'] }]);
+  say('village.changes.louder', {
+    cheerful: ['Louder and merrier! I don\'t mind louder.'],
+    gloomy: ['Louder. And I can\'t hear the river any more.'],
+  });
+  say('village.changes.river', {
+    curious: ['What would I put in it, I wonder? I\'ll have to think.'],
+    proud: ['Then I shall put in only good things. Naturally.'],
+  });
+  say('village.changes.remember', {
+    _: ['Younger and less grey, both of us. Well. You were already grey.'],
+    rift: ['You were here before the rifts? What was it like, all quiet?'],
+  });
+  say('village.changes.keep', {
+    cheerful: ['Then I\'ll keep the old dances going! Hopping and all!'],
+    elder: ['I\'ll keep what I can. And tell the young ones the rest.'],
+  });
+  say('village.changes.fiddles', {
+    cheerful: ['The fiddles! Ha! Never blame a fiddle.'],
+    ornery: ['Yes. Blame the fiddles. And the fiddlers.'],
+  });
+  say('village.changes.far', {
+    shy: ['...I hadn\'t thought of them being lonely. I might say hello.'],
+    proud: ['Then they shall be made welcome. Properly.'],
+  });
+  say('village.changes.tea', {
+    gloomy: ['Tea. I\'ll try. They probably won\'t like my tea.'],
+    dreamy: ['I\'ll ask {vRiftName} about their home. I\'d like to hear.'],
+  });
+
+  say('village.ask.opinion.agreed', {
+    _: ['Good. I\'ll tell them at the Badger. "The wizard agrees with me."'],
+    elder: ['Good. It\'s nice to be agreed with at my age. It\'s rarer than you\'d think.'],
+  });
+  say('village.ask.opinion.crossed', {
+    _: ['Well, I asked. I suppose I must listen.'],
+    elder: ['When you\'re my age you\'ll know better. Oh. You are my age. Older.'],
+  });
+  say('village.ask.opinion.mulled', {
+    cheerful: ['Oh! Well then, maybe I\'m for it too! Or against! I\'ll decide by teatime!'],
+    proud: ['A considered view. I\'ll give it due weight.'],
+  });
+  say('village.ask.opinion.fair', {
+    shy: ['...They\'d say I\'m too timid. They\'d be right.'],
+    gloomy: ['They\'d say I\'m a misery. They do say that.'],
+    cheerful: ['They\'d say it\'s all lovely either way! And it is, really.'],
+  });
+  say('village.ask.opinion.differ', {
+    cheerful: ['Of course we can! Come to tea and disagree with me properly!'],
+    proud: ['We can. Respectfully. You\'re mistaken, but respectfully.'],
+    shy: ['...I\'m glad. I don\'t like falling out.'],
+  });
+  say('village.ask.opinion.moot', {
+    shy: ['Both halves? At the Moot? In front of everyone? ...I\'ll write it down first.'],
+    ornery: ['Both halves. Hmph. I\'ll say my half twice as loud.'],
+  });
+  say('village.ask.opinion.debate', {
+    witty: ['Gladly. I\'ve been rehearsing this argument in the bath for a week.'],
+    gloomy: ['You really want to hear? Nobody ever does.'],
+  });
+  lines('village.pass.lane.open', [{ if: { season: 'autumn' }, text: ['The valley\'s gold this week, {name}. Every hedge.'] }, { if: { season: 'spring' }, text: ['Blossom on every tree in the lane, {name}. It\'s showing off.'] }]);
+  say('village.pass.lane.geese', {
+    curious: ['Do you know, they march in order of age? I\'ve watched.'],
+    witty: ['The geese are the real Moot. We just vote.'],
   });
 });

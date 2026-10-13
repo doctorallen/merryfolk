@@ -1302,5 +1302,242 @@ talkPack('village3', () => {
   say('village.well.came', {
     _: ['...A bit. Not the way I meant. But a bit.', 'Not yet. I\'m patient.'],
     child: ['NO. Still no pony.'],
+    dreamy: ['It\'s still coming true. Slowly. Like a tree grows.'],
+    ornery: ['Course not. Wells are for water.'],
   });
+
+  // =================================================================================
+  // More to say: variety for every moment above
+  // =================================================================================
+  lines('village.store.open', [{ if: { season: 'autumn' }, text: ['Putting by for winter, {name}? How\'s the Store looking?'] }, { if: { season: 'winter' }, text: ['Will the Store last till spring, {name}, do you think?'] }]);
+  say('village.store.start', {
+    curious: ['Did you know the honey jars go first, every year? Then the cheese. I\'ve no idea why.'],
+    shy: ['It\'s nice to know it\'s there. Even if I don\'t go in.'],
+  }, [
+    { if: { season: 'winter' }, text: ['It\'s winter, wizard. The shelves are going down like snow melting.'] },
+    { if: { season: 'autumn' }, text: ['Filling up nicely. Harvest\'s in. Everyone\'s bringing something.'] },
+  ]);
+  say('village.store.takers', {
+    _: ['Whoever\'s been working hardest, which is fair. And the innkeeper, which is less so.'],
+    elder: ['When I was young we took a turnip and said thank you. Now they take cheese.'],
+  });
+  say('village.store.winter', {
+    _: ['Long arms. Yes. And it always reaches for the jam first.'],
+    elder: ['I\'ve seen four hard winters. Every one of them came after a careless summer.'],
+  });
+  say('village.store.crumpets', {
+    witty: ['Magic crumpets. Now you\'re talking my language.'],
+    ornery: ['Crumpets. Fine. With butter. Real butter.'],
+  });
+  say('village.store.gather', {
+    cheerful: ['Ooh, a gathering trip! I\'ll bring the little ones!'],
+    shy: ['I know a quiet patch of blackberries. I\'ll go there.'],
+  });
+  say('village.store.sharing', {
+    shy: ['...Yes. I should take more, really. I always feel guilty.'],
+    proud: ['Sharing, yes. Fairly. That\'s the important part.'],
+  });
+  say('village.store.confess', {
+    cheerful: ['Me! Biscuits! For the children! Mostly for the children!'],
+    gloomy: ['Me. A jar of pickles. I was sad. They helped.'],
+  });
+
+  lines('village.inn.open', [{ if: { hour: 'evening' }, text: ['Off to the Badger tonight, {name}?'] }, { if: { weather: 'rain' }, text: ['A wet day like this, {name}, the Badger must be heaving.'] }]);
+  say('village.inn.start', {
+    _: ['The Badger? Packed on Mersdays, quiet on Mondays, and the pies are always good.'],
+    curious: ['Did you know the Badger\'s cellar goes further back than the hill? Nobody\'s been to the end.'],
+  }, [{ if: { weather: 'rain' }, text: ['On a day like this? Heaving. Every coat dripping by the fire.'] }]);
+  say('village.inn.tuesday', {
+    cheerful: ['Ha! Trewsday, wizard! Trewsday!'],
+    ornery: ['There\'s no such day. You\'ve been in Bree too long.'],
+  });
+  say('village.inn.verse', {
+    cheerful: ['Oh, teach me! I\'ll sing it loudest!'],
+    shy: ['...I know the second verse. I mouth it.'],
+  });
+  say('village.inn.chair', {
+    ornery: ['The tall one. Hmph. You\'d block the fire.'],
+    proud: ['The best chair is spoken for. By me.'],
+  });
+  say('village.inn.stool', {
+    cheerful: ['Yes! A stool for the wizard! I\'ll carve your name on it!'],
+    witty: ['I\'ll save it with my hat. Nobody touches the hat.'],
+  });
+  say('village.inn.company', {
+    cheerful: ['Anyone who\'ll laugh! Which is everybody, by the third pint!'],
+    curious: ['Different folk every night. I like to sit by whoever I don\'t know.'],
+  });
+
+  lines('village.market.open', [{ if: { vMarketDay: true }, text: ['Market day, {name}! Been down to the square yet?'] }]);
+  say('village.market.beard', {
+    cheerful: ['Ha! For a friend! I\'ll buy your friend some!'],
+    curious: ['Does it work? What\'s it made of? I need to know.'],
+  });
+  say('village.market.trust', {
+    curious: ['I trust the ones who come back. The ones who don\'t, I wonder about.'],
+    gloomy: ['No. They always win.'],
+  });
+  say('village.market.change', {
+    witty: ['Count twice, smile once. Charge thrice.'],
+    cheerful: ['Ha! I\'ll smile twice, though. I can\'t help it.'],
+  });
+  say('village.market.pea', {
+    cheerful: ['Ha! A magic pea! Did it do anything?'],
+    curious: ['Was it a magic pea, though? Did you test it?'],
+  });
+
+  lines('village.board.open', [{ if: { vPetitionTitle: (x) => has(x) }, text: ['There\'s a petition on the board, {name}. Have you read it?'] }]);
+  say('village.board.notice', {
+    ornery: ['Pin that up and I\'ll pin one under it: "Wizards, mind your manners."'],
+    curious: ['Would you? I\'d love to see what folk replied.'],
+  });
+  say('village.board.against', {
+    cheerful: ['Oh, a few grumblers. There are always a few grumblers.'],
+    ornery: ['Everyone with sense. And me.'],
+  });
+  say('village.board.heard', {
+    cheerful: ['Oh, that\'s nice! I\'ll keep shouting, then!'],
+    proud: ['I should hope so.'],
+  });
+  say('village.board.reward', {
+    cheerful: ['A firework! I\'d bring you three breakfasts for one!'],
+    witty: ['A firework for a breakfast. That\'s the best rate in the Shire.'],
+  });
+  say('village.board.speak', {
+    proud: ['I always speak. Folk expect it.'],
+    gloomy: ['I\'ll speak. They won\'t hear. But I\'ll speak.'],
+  });
+
+  say('village.moot.home', {
+    cheerful: ['Home! Yes! Best word there is!'],
+    proud: ['Home. With a certain standing.'],
+  });
+  say('village.moot.longest', {
+    ornery: ['Anyone who says "and another thing".'],
+    cheerful: ['Ha! Old so-and-so. We bring cushions.'],
+  });
+  say('village.moot.mayor', {
+    cheerful: ['Mayor! I\'d declare every Highday a holiday!'],
+    witty: ['Mayor. I\'d need a bigger hat. Yours, perhaps.'],
+  });
+  say('village.moot.need', {
+    proud: ['More folk like me. Hard-working. Sensible.'],
+    cheerful: ['More of everything! More parties, especially!'],
+  });
+
+  say('village.building.movein', {
+    cheerful: ['Ha! Do! We\'d have fireworks every night!'],
+    ornery: ['Not next to me, you won\'t.'],
+  });
+  say('village.building.where', {
+    ornery: ['Not where they put it. That\'s all I know.'],
+    dreamy: ['Up by the old oak. Where you can see the sunset from the round window.'],
+  });
+  say('village.building.pointing', {
+    ornery: ['Pointing. Hmph. They\'ve a foreman for that.'],
+    cheerful: ['Ha! Come and point! Point at the tea, mostly!'],
+  });
+  say('village.building.hopeful', {
+    cheerful: ['Hopeful! Yes! I love a hopeful thing!'],
+    proud: ['It is. A sign of a thriving village.'],
+  });
+  say('village.building.wrights', {
+    cheerful: ['Everybody! I carried a beam yesterday! Well, the end of one!'],
+    ornery: ['Not enough people. Never enough people.'],
+  });
+
+  lines('village.lamps.open', [{ if: { hour: 'evening' }, text: ['The lamps are coming on, {name}. Who goes round, these days?'] }]);
+  say('village.lamps.kind', {
+    shy: ['...A kindness to a stranger. I was a stranger once. I remember the lamps.'],
+    rift: ['A lit lane on my first night. You\'re right. It mattered.'],
+  });
+  say('village.lamps.stars', {
+    shy: ['I go out past the last lamp sometimes. Just to see them.'],
+    curious: ['You lose about half of them under the lamps. I\'ve counted.'],
+  });
+  say('village.lamps.craft', {
+    proud: ['A proper craft. Done by hand. As it should be.'],
+    witty: ['A craft. And a very long stick.'],
+  });
+  say('village.lamps.bridge', {
+    witty: ['That lamp has a grudge. Against everyone.'],
+    child: ['The bridge one! It goes FFT and then nothing!'],
+  });
+
+  lines('village.hazard.open', [{ if: { vHazard: 'frost' }, text: ['Cold enough for you, {name}? How\'s the woodpile?'] }, { if: { vHazard: 'flood' }, text: ['The river\'s high, {name}. Are you above the water?'] }]);
+  say('village.hazard.through', {
+    shy: ['...That helps. Thank you.'],
+    gloomy: ['Always comes through. Until it doesn\'t. ...I\'ll hope it does.'],
+    rift: ['The village is resilient. Low-tech, high-heart.'],
+  });
+  say('village.hazard.needs', {
+    cheerful: ['A cup of tea and a sing-song! That\'ll see us right!'],
+    proud: ['Nothing. We\'ll manage. ...Some help with the woodpile would be welcome.'],
+  });
+  say('village.hazard.do', {
+    cheerful: ['Yes! Everyone together! It\'ll be like a party, but wetter!'],
+    shy: ['I\'ll help. I\'ll carry things. I\'m good at carrying things.'],
+  });
+
+  lines('village.newcomer.open', [{ if: { vNewcomerRough: true }, text: ['Somebody\'s sleeping under a hedge, {name}. {VNewcomer}, I think. Have you seen?'] }]);
+  say('village.newcomer.always', {
+    cheerful: ['It does! Someone\'ll have a spare bed. I\'ll ask round!'],
+    ornery: ['Thistledown always does. Thistledown grumbles about it first.'],
+  });
+  say('village.newcomer.new', {
+    witty: ['You\'ve been new so often you\'re practically old.'],
+    curious: ['You were new? What did you do first? I\'d like to know.'],
+  });
+  say('village.newcomer.pie', {
+    witty: ['A wizard with no pie. That\'s how legends start.'],
+    ornery: ['Quite right too. Never sell a pie to a stranger with a staff.'],
+  });
+  lines('village.newme.open', [{ if: { rift: true }, text: ['How\'s the hill-world treating you, {name}? Any less strange?'] }]);
+  say('village.newme.badger', {
+    cheerful: ['The Badger! I\'ve found it! Twice!'],
+    shy: ['...I\'m too shy to go in alone. Would you... no. I\'ll go.'],
+  });
+  say('village.newme.belong', {
+    cheerful: ['I hope so! I\'d like that more than anything!'],
+    shy: ['...That would be nice. I\'d like that.'],
+  });
+  say('village.newme.unkind', {
+    ornery: ['One old fellow told me to get off his step. I wasn\'t on his step.'],
+    shy: ['...Nobody\'s unkind. They just don\'t look at me.'],
+  });
+  say('village.newme.small', {
+    rift: ['Ask a favour. Social engineering, hill-style. I like it.'],
+    shy: ['Something small. I can do something small.'],
+  });
+
+  lines('village.mill.open', [{ if: { season: 'autumn' }, text: ['Harvest in, {name}. Is the mill keeping up?'] }]);
+  say('village.mill.miller', {
+    _: ['{VMiller}? Up before the birds, and covered in flour by breakfast.'],
+    shy: ['{VMiller} lets me sit by the wheel. Never asks why.'],
+  });
+  say('village.mill.pond', {
+    curious: ['There are perch, roach, an eel I\'ve named Gerald, and something I can\'t identify.'],
+    ornery: ['Full of ducks. Noisy ducks.'],
+  });
+  say('village.mill.oil', {
+    witty: ['A greasy spell. I\'ll pay to watch.'],
+    child: ['Do it! Make it squeak backwards!'],
+  });
+  say('village.mill.homely', {
+    dreamy: ['A squeak and a splash. The village\'s heartbeat, really.'],
+    ornery: ['Homely! It\'s a racket. A homely racket.'],
+  });
+  say('village.well.hope', {
+    shy: ['...Thank you. I\'d almost stopped hoping.'],
+    child: ['Me too! I really want that pony!'],
+  });
+  say('village.well.meet', {
+    cheerful: ['Everybody! It\'s like a little party, every morning!'],
+    ornery: ['Chatterers. All of them. Me included.'],
+  });
+  say('village.well.spoon', {
+    curious: ['Do you know, I\'ve been meaning to lower a lamp and look. For the spoon.'],
+    ornery: ['Your spoon\'s been poisoning the water for years, I expect.'],
+  });
+  lines('village.well.open', [{ if: { hour: 'morning' }, text: ['Busy at the well this morning, {name}. Do you go every day?'] }]);
 });
