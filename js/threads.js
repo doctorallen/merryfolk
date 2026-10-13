@@ -38,7 +38,7 @@ const TALK_LINES = {};
 const FRAGS = {};
 const SITUATIONS = {};
 // every pack, in the order it's worth having (the core first)
-const TALK_MANIFEST = ['core', 'wizard', 'wizard2', 'wizard3', 'wizard4', 'ages', 'ages2', 'ages3', 'work', 'work2', 'work3', 'work4', 'family', 'family2', 'family3', 'family4', 'seasons', 'seasons2', 'seasons3', 'seasons4', 'moods', 'moods2', 'moods3', 'moods4', 'children', 'children2', 'children3', 'children4', 'pastimes', 'pastimes2', 'pastimes3', 'pastimes4', 'phrasing', 'phrasing_bye', 'phrasing_pass', 'phrasing_pass2'];
+const TALK_MANIFEST = ['core', 'wizard', 'wizard2', 'wizard3', 'wizard4', 'ages', 'ages2', 'ages3', 'work', 'work2', 'work3', 'work4', 'family', 'family2', 'family3', 'family4', 'seasons', 'seasons2', 'seasons3', 'seasons4', 'moods', 'moods2', 'moods3', 'moods4', 'children', 'children2', 'children3', 'children4', 'pastimes', 'pastimes2', 'pastimes3', 'pastimes4', 'phrasing', 'phrasing_bye', 'phrasing_pass', 'phrasing_pass2', 'village', 'village2', 'village3', 'village4'];
 const TalkPacks = { loaded: new Set(), waiting: {}, current: null, started: false };
 
 function addThread(t) { THREADS[t.id] = { weight: 1, cool: 3, start: 'start', beats: {}, ...t, pack: TalkPacks.current }; }
