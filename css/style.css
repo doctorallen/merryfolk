@@ -985,3 +985,35 @@ body.landscape .sheet { left: auto; right: 8px; top: 8px; bottom: 8px; width: mi
 .skip-log { list-style: none; margin: 8px 0 0; padding: 0; max-height: 40vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
 .skip-log li { background: #fbf3df; border: 1px solid var(--parch-3); border-radius: 6px; padding: 6px 9px; font-size: 14px; }
 .wg-note { margin: 0 0 8px; font-size: 14px; color: var(--ink-2); }
+
+/* ---------- teaching and upbringing (upbringing.js) ---------- */
+.upb { display: flex; align-items: center; gap: 6px; margin: 2px 0 6px; font-size: 12px; }
+.upb-k { font-family: var(--font-ui); color: var(--ink-2); width: 26px; }
+.upb-k:last-child { text-align: right; }
+.upb-bar { position: relative; flex: 1; height: 10px; border: 2px solid var(--ink); border-radius: 4px; background: var(--parch-2); overflow: hidden; }
+.upb-bar i { position: absolute; top: 0; bottom: 0; }
+.upb-bar i.h { right: 50%; background: var(--moss-2); }
+.upb-bar i.r { left: 50%; background: #b45aff; }
+.upb-bar::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--ink); opacity: 0.5; }
+.lean-log { list-style: none; margin: 4px 0 8px; padding: 0; font-size: 13px; display: flex; flex-direction: column; gap: 2px; }
+.lean-log li { padding-left: 10px; border-left: 3px solid var(--parch-3); }
+.lean-log li[data-k="hill"] { border-color: var(--moss-2); } .lean-log li[data-k="rift"] { border-color: #b45aff; }
+.lean-log li[data-k="pat"] { border-color: var(--brass); } .lean-log li[data-k="tut"] { border-color: var(--berry); }
+.lean-log time { font-family: var(--font-ui); font-size: 11px; color: var(--ink-3); margin-right: 4px; }
+.upb-word { margin-top: 8px; font-size: 14px; }
+/* the wizard's bar steps aside while a villager's panel is open over it */
+body.wizmode:has(#panel:not([hidden])) #wizbar { display: none; }
+.habit.flash, .upb-word.flash, .lean-strip.flash { animation: lean-flash 1.4s ease-out 2; }
+@keyframes lean-flash { 0%, 100% { background: transparent; } 30% { background: rgba(201, 162, 39, 0.45); } }
+@media (prefers-reduced-motion: reduce) { .upb-word { margin-top: 8px; font-size: 14px; }
+/* the wizard's bar steps aside while a villager's panel is open over it */
+body.wizmode:has(#panel:not([hidden])) #wizbar { display: none; }
+.habit.flash, .upb-word.flash, .lean-strip.flash { animation: none; outline: 2px solid var(--brass); } }
+.lean-strip { padding: 4px 8px; border-radius: 6px; background: var(--parch-2); margin-bottom: 6px; font-size: 13px; }
+.lean-strip .upb { margin: 2px 0 0; }
+.ls-row { display: flex; justify-content: space-between; gap: 8px; }
+.ls-last { font-size: 12px; color: var(--ink-2); font-style: italic; }
+.tone.hill { background: var(--moss); } .tone.rift { background: #6a3a9a; }
+.kid-row { display: block; }
+.kid-row small { color: var(--ink-3); }
+.kid-rep { display: block; font-size: 13px; color: var(--ink-2); margin-top: 2px; }
