@@ -423,7 +423,9 @@ window.addEventListener('DOMContentLoaded', () => {
       const lodger = v.homeId >= 0 && Game.villagers.find((o) => o.isRiftborn() && o.homeId === v.homeId && !v.parents.includes(o.id));
       if (lodger) nudgeOnce(v, 'lodger', 47, 'rift', 0.015, `${lodger.first}, rift-born, lives under the same roof`);
     }
-    if (Game.upbSeason !== World.season) { if (Game.upbSeason) writeReports(Game.upbSeason); else for (const v of Game.villagers) if (v.isChild()) upbOf(v).snap = snapOf(v, upbOf(v)); Game.upbSeason = World.season; }
+    // (by the day's own season: the clock's season turns over just after this)
+    const season = seasonKey(Game.day);
+    if (Game.upbSeason !== season) { if (Game.upbSeason) writeReports(Game.upbSeason); else for (const v of Game.villagers) if (v.isChild()) upbOf(v).snap = snapOf(v, upbOf(v)); Game.upbSeason = season; }
     return r;
   }, 'upbringing');
   // the hour's doings: festivals, the story circle, gadgets and the rift-folk
