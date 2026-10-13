@@ -135,7 +135,7 @@ function factsOf(v, T) {
     promiseOpen: (b.promises || []).find((p) => p.state === 'open') ? b.promises.find((p) => p.state === 'open').t : null,
     respectWord: (b.respect || 0) > 0.4 ? 'hangs on your word' : (b.respect || 0) > 0.15 ? 'listens to you' : (b.respect || 0) < -0.2 ? 'thinks you a meddler' : null,
     told: b.told[0] ? b.told[0].t : null, toldKey: b.told[0] ? b.told[0].k : null,
-    lastThread: b.lastThread || null, lastLabel: lastTopic(b.lastThread),
+    lastThread: b.lastThread || null, lastLabel: lastTopic(b.lastThread), lastAsked: lastAsked(b.lastThread),
     daysSince: b.last ? Game.day - b.last : null, hearth: typeof hearthFolk === 'function' && hearthFolk().includes(v),
     wiz: 'Gandalf', pet: petPhrase(v),
   };
@@ -180,6 +180,13 @@ function lastTopic(id) {
   const l = threadLabel(th, null);
   if (!l || /[?!…]$/.test(l) || /^(about|tell me|ask|say|sing|try|pass)\b|\b(you|yours?|they|them|their)\b|, I (hear|see)$/i.test(l)) return null;
   return /^(Yule|Mayday|Midsummer|Lantern Night|Founders)/.test(l) ? l : l.charAt(0).toLowerCase() + l.slice(1);
+}
+// What you last asked them, word for word, when the last thread was your question.
+function lastAsked(id) {
+  const th = id && THREADS[id];
+  if (!th || th.theirs || th.light || th.situation) return null;
+  const l = threadLabel(th, null);
+  return l && /\?$/.test(l) ? l : null;
 }
 function familiarity(v) { const b = bondFull(v); return (b.talks || 0) * 0.5 + Object.keys(b.known || {}).length + b.told.length * 1.5; }
 // the bond, with every field the conversation keeps (older saves lack some)

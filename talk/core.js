@@ -13,7 +13,7 @@
 //   factsOf() in js/threads.js: {name} {Name} {they} {them} {their} {jobWord}
 //   {pastimeWord} {made} {madeOne} {madeMany} {spouse} {kid} {kids} {parent}
 //   {rival} {friend} {like} {dislike} {wishText} {dreamText} {home} {season}
-//   {weather} {hour} {lost} {lostRel} {joke} {told} {lastLabel} {pet} {wiz},
+//   {weather} {hour} {lost} {lostRel} {joke} {told} {lastLabel} {lastAsked} {pet} {wiz},
 //   and {frag:key} for a random fragment. A line with a placeholder that
 //   can't be filled is skipped, so only use one where its `if` guarantees it.
 // Facts of your own: addFacts((v, F, T) => { F.myFact = ... ?? null; }) — set the key
