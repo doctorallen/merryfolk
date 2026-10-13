@@ -424,7 +424,7 @@ function sleepTillMorning() {
   const mins = ((7 * 60 - (Game.time % 1440)) + 1440) % 1440 || 1440;
   w.doing = 'sleep'; w.fpath = null;
   Wiz.speaker.hidden = true;
-  skipTime(mins, { title: 'The wizard sleeps', text: 'The village settles down for the night, and the lamps go out one by one.' }).then(() => {
+  return skipTime(mins, { title: 'The wizard sleeps', text: 'The village settles down for the night, and the lamps go out one by one.' }).then(() => {
     const ww = wizardOf();
     if (!ww) return;
     ww.doing = 'player'; Wiz.speaker.hidden = false;
