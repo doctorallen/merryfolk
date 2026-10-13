@@ -18,13 +18,13 @@
 
 MOODLETS.relay_kind = ['Somebody said something kind about me on the Relay', 0.1, 1440, ['They said a kind word about me on that Relay thing. Fancy.']];
 
-function relay() { return Game.relay || (Game.relay = { posts: [], seq: 0, mine: null, today: 0, day: 0 }); }
+// (the day's count of posts starts afresh each day, whoever's asking)
+function relay() { const R0 = Game.relay || (Game.relay = { posts: [], seq: 0, mine: null, today: 0, day: 0 }); if (R0.day !== Game.day) { R0.day = Game.day; R0.today = 0; } return R0; }
 const relayOpen = () => typeof riftBorn === 'function' && (riftBorn().length > 0 || (Game.riftStory && Game.riftStory.stage >= 2));
 const relayReader = (v) => v.stage !== 'baby' && (v.isRiftborn() || v.tech >= RIFT_TIERS[0] || v.isChild());
 function short(t, n = 72) { t = t.replace(/\s+/g, ' ').trim(); return t.length <= n ? t : t.slice(0, n).replace(/\s\S*$/, '') + '…'; }
 function postRelay(who, text, kind = 'rift') {
   const R0 = relay();
-  if (R0.day !== Game.day) { R0.day = Game.day; R0.today = 0; }
   R0.today++;
   const p = { id: ++R0.seq, day: Game.day, time: fmtTime(Game.time), who: who ? who.first : 'the wizard', whoId: who ? who.id : null, text, kind };
   R0.posts.unshift(p);
