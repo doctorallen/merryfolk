@@ -183,8 +183,7 @@ function swapCustom(a, b) {
 const nearHearth = (w) => { const h = hearthHome(); return !!h && dist(w.fx, w.fy, h.stepX, h.stepY) < 40; };
 function startSupper() {
   const w = wizardOf(), h = hearthHome(), H = hearthState();
-  if (!w || !h || H.supDay === Game.day) return;
-  H.supDay = Game.day;
+  if (!w || !h || H.supDay === Game.day || Play.supper) return;
   const res = hearthFolk().filter((v) => v.stage !== 'baby' && !v.leaving);
   if (!res.length) return;
   for (const v of res) metAtHearth(v);
@@ -266,6 +265,8 @@ function endSupper() {
   const S = Play.supper;
   if (!S) return;
   Play.supper = null;
+  // (counted as had once it's eaten, so a supper cut short by leaving the page can be had again)
+  const H = hearthState(); if (H) H.supDay = Game.day;
   for (const v of S.res) {
     v.drives.hunger = Math.max(0, v.drives.hunger - 0.3); v.drives.lonely = Math.max(0, v.drives.lonely - 0.2);
     feel(v, 'hearth_supper'); addRegard(v, 0.02);
