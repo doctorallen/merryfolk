@@ -172,7 +172,7 @@ function praise(v, T, good) {
     v.drives.lonely = Math.max(0, v.drives.lonely - 0.1);
     T.wiz(R.pick([`Well done, ${v.first}. I saw you at it. ${ACTION_NAMES[a] ? 'Keep it up.' : ''}`, `That's the way, ${v.first}. Very good indeed.`]));
     T.reply(v.isChild() ? R.pick(['Really? You saw?', 'Hee! Thank you!']) : R.pick(['Why, thank you.', 'Oh, it\'s nothing.']));
-    leanLog(v, `The wizard praised them for ${name}`, 'pat', a);
+    leanLog(v, `The wizard praised ${v.pron.them} for ${name}`, 'pat', a);
     if (RIFT_ACTS.has(a)) nudgeUp(v, 'rift', 0.025, null, true); else if (HILL_ACTS.has(a)) nudgeUp(v, 'hill', 0.025, null, true);
     addRegard(v, 0.02);
   } else {
