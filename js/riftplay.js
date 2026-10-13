@@ -70,7 +70,7 @@ function homeAsk(v, T, tone) {
     return;
   }
   if (!k.home || open < 0.12) {
-    T.reply(`${a.home.charAt(0).toUpperCase() + a.home.slice(1)}. I dream about ${a.home} most nights.`);
+    T.reply(`${a.home.charAt(0).toUpperCase() + a.home.slice(1)}. I dream about it most nights.`);
     knowArc(v, 'home'); addRegard(v, 0.05);
     if (open < 0.12) T.reply('...I don\'t talk about the rest. Not yet.');
     return;
