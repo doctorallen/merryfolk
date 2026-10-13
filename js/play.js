@@ -488,6 +488,19 @@ function wizardBegin() {
   Game.follow = true;
 }
 
+// The opening card (and How to play) in the words of the way this village is
+// played: the Steward's, as written in the page, or the wizard's.
+function introForMode() {
+  const card = document.querySelector('#intro .intro-card');
+  if (!card) return;
+  const lede = card.querySelector('.lede'), sub = card.querySelector('p.sub'), how = card.querySelector('.how');
+  if (!card._steward) card._steward = { lede: lede.textContent, how: how ? how.innerHTML : '' };
+  const wiz = playMode();
+  lede.textContent = wiz ? 'You are the grey wizard, come again to Thistledown: a snug village of hobbit-holes, gardens and good ale between green hills and a slow river, where lately the sky has been tearing open. Walk its lanes, stop folk for a word, teach the children, tell tales beneath the great tree, and light the fireworks when there\'s a party.' : card._steward.lede;
+  if (sub) sub.hidden = wiz;
+  if (how) how.innerHTML = wiz ? '<div><b>Walk</b><span>Tap the ground to walk there. Drag to look around; pinch to zoom.</span></div><div><b>Talk</b><span>Tap a hobbit to stop for a word. They remember how you treat them.</span></div><div><b>Do</b><span>The bar at the bottom: tell a tale, light the fireworks, sleep till morning, and more as the story grows.</span></div>' : card._steward.how;
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   registerField('mode', 'steward');
   registerField('wizRel', {}); registerField('wizMet', {}); registerField('wizKnows', []); registerField('wizPack', null, { nullish: true }); registerField('wizWishes', {});
@@ -579,6 +592,7 @@ window.addEventListener('DOMContentLoaded', () => {
     GenUI.pendingMode = null;
     Game.wizRel = {}; Game.wizMet = {}; Game.wizKnows = []; Game.wizPack = null; Game.wizWishes = {};
     document.body.classList.toggle('wizmode', playMode());
+    introForMode();
   });
   patch(window, 'runWorldGen', (rwg) => function () { GenUI.pendingMode = GenUI.mode || 'wizard'; return rwg.apply(this, arguments); }, 'play');
   patch(window, 'startGame', (sg) => function () {
@@ -597,14 +611,6 @@ window.addEventListener('DOMContentLoaded', () => {
   }, 'play');
   patch(window, 'showAlmanac', (sa) => function (rep) { if (playMode()) { if (rep) Game.lastAlmanac = rep; return; } return sa.apply(this, arguments); }, 'play');
   // the opening card tells a wizard's village what it's in for
-  window.addEventListener('load', () => {
-    if (!playMode()) return;
-    const card = document.querySelector('#intro .intro-card');
-    if (!card) return;
-    card.querySelector('.lede').textContent = 'You are the grey wizard, come again to Thistledown: a snug village of hobbit-holes, gardens and good ale between green hills and a slow river, where lately the sky has been tearing open. Walk its lanes, stop folk for a word, teach the children, tell tales beneath the great tree, and light the fireworks when there\'s a party.';
-    const sub = card.querySelector('p.sub'); if (sub) sub.hidden = true;
-    const how = card.querySelector('.how');
-    if (how) how.innerHTML = '<div><b>Walk</b><span>Tap the ground to walk there. Drag to look around; pinch to zoom.</span></div><div><b>Talk</b><span>Tap a hobbit to stop for a word. They remember how you treat them.</span></div><div><b>Do</b><span>The bar at the bottom: tell a tale, light the fireworks, sleep till morning, and more as the story grows.</span></div>';
-  });
+  window.addEventListener('load', introForMode);
   patch(window, 'load', (ld) => function () { const r = ld.apply(this, arguments); document.body.classList.toggle('wizmode', playMode()); return r; }, 'play');
 });
