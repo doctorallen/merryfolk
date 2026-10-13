@@ -17,11 +17,14 @@ const path = require('path');
     Game.mode = 'wizard'; document.body.classList.add('wizmode'); wizardBegin(); setSpeed(1);
     for (let i = 0; i < 2000 && Game.wizard.phase === 'coming'; i++) simulate(0.5);
     if (Game.wizard.phase !== 'here') out.bad.push('the wagon never drew up');
-    // walk over to the nearest grown-up and talk
+    // walk over to the nearest grown-up and talk (if they go indoors first, the next nearest)
     const w = Game.wizard;
-    const v = Game.villagers.filter((o) => !o.inside && o.isGrown()).sort((a, b) => dist(a.x, a.y, w.fx, w.fy) - dist(b.x, b.y, w.fx, w.fy))[0];
-    wizApproach(v);
-    for (let i = 0; i < 4000 && !Play.talk; i++) simulate(0.5);
+    let v;
+    for (let tries = 0; tries < 4 && !Play.talk; tries++) {
+      v = Game.villagers.filter((o) => !o.inside && o.isGrown()).sort((a, b) => dist(a.x, a.y, w.fx, w.fy) - dist(b.x, b.y, w.fx, w.fy))[0];
+      wizApproach(v);
+      for (let i = 0; i < 4000 && !Play.talk && (w.goal || w.fpath); i++) simulate(0.5);
+    }
     if (!Play.talk) out.bad.push(`never reached ${v.first} to talk`);
     else {
       const click = (text) => { const b = [...document.querySelectorAll('#sheet-choices .choice')].find((x) => x.textContent.includes(text)); if (b) b.click(); return !!b; };

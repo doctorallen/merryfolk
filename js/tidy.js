@@ -33,6 +33,8 @@ function uniqueFirst(v) {
   const wt = welcomeTraveller;
   welcomeTraveller = function (data, quiet, sex) { const r = wt(data, quiet, sex); if (r && r.v && !data) { const old = r.v.first; uniqueFirst(r.v); renamed(r.v, old); } return r; };
 }
+// the founding families too: two Burdocks from day one would muddle every letter and natter
+addHook('afterNewVillage', () => { for (const v of Game.villagers) uniqueFirst(v); });
 // the morning digest
 const DIGEST = /(is toddling about now|has come of age!|is getting on a bit, and has gone a little grey)/;
 window.addEventListener('DOMContentLoaded', () => {
