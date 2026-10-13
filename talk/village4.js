@@ -47,7 +47,7 @@ talkPack('village4', () => {
     stars: 'The wizard says his fireworks are only borrowed stars, and he always puts them back.',
   };
   const KEYS = ['vFeudA', 'vFeudAId', 'vFeudB', 'vFeudBId', 'vFeudWhat', 'vFeudKind', 'vFeudFav', 'vFeudFavId', 'vContestPrize', 'vContestThing', 'vContestGood', 'vContestWon',
-    'vWishFor', 'vSecretAbout', 'vSecretAboutId', 'vSecretKey', 'vSecretText', 'vWizRumour', 'vWizRumourKey', 'vWizNews'];
+    'vWishFor', 'vWishKey', 'vSecretAbout', 'vSecretAboutId', 'vSecretKey', 'vSecretText', 'vWizRumour', 'vWizRumourKey', 'vWizNews'];
   addFacts((v, F, T) => {
     for (const k of KEYS) F[k] = null;
     if (v.stage === 'baby') return;
@@ -84,7 +84,7 @@ talkPack('village4', () => {
       if (sk && CONTESTS[sk]) Object.assign(F, { vContestPrize: CONTESTS[sk][0], vContestThing: CONTESTS[sk][1], vContestGood: (v.skills[sk] || 0) >= 45, vContestWon: (v.memories || []).some((m) => /^Won /.test(m.t)) });
     }
     const vals = typeof valuesOf === 'function' ? valuesOf(v) : [];
-    if (vals[0] && WISH_FOR[vals[0]]) F.vWishFor = WISH_FOR[vals[0]];
+    if (vals[0] && WISH_FOR[vals[0]]) { F.vWishFor = WISH_FOR[vals[0]]; F.vWishKey = vals[0]; }
     if (live(P.secret)) Object.assign(F, { vSecretAbout: P.secret.first, vSecretAboutId: P.secret.id, vSecretKey: P.secretKey, vSecretText: SECRETS[P.secretKey].replace('{X}', P.secret.first) });
     if (P.wizKey) Object.assign(F, { vWizRumour: WIZRUMOURS[P.wizKey], vWizRumourKey: P.wizKey, vWizNews: WIZNEWS[P.wizKey] });
   });
@@ -354,7 +354,7 @@ talkPack('village4', () => {
     end: { fond: 0.01 },
   });
   lines('village.wishlist.open', [{ text: ['If you could change one thing about Thistledown, {name}, what would it be?', 'What\'s missing from this village, {name}? There must be something.', 'Give me one wish for the village, {name}. Not for you. For the village.'] }]);
-  const VW = (k) => ({ if: { values: k } });
+  const VW = (k) => ({ if: { vWishKey: k } });
   say('village.wishlist.start', {
     _: ['{VWishFor}. That\'s what I\'d have. I\'ve said it for years.', 'Oh, I know exactly. {VWishFor}.', 'Change? {VWishFor}. That\'s all. Not much to ask.'],
     cheerful: ['Ooh! {VWishFor}! Wouldn\'t that be lovely?'],

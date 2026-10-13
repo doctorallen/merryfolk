@@ -49,6 +49,17 @@ talkPack('village', () => {
     mushrooms: ['the mushroom ring by the old oak', 'mushroom'], cat: ['the ginger cat that sleeps at mine', 'cat'], ladder: ['a ladder lent at Yule and kept till now', 'ladder'],
     recipe: ['Grandmother\'s seed-cake recipe', 'recipe'], path: ['the short cut across the bottom of my garden', 'path'],
   };
+  // a sentiment's reason, as something you could say "I still think about ..." of (null if it won't read)
+  const WHY = {
+    'brought me flowers': 'the flowers', 'a present': 'that present', 'supper together': 'our supper together', 'a true friendship': 'all we\'ve been through', 'a letter': 'that letter',
+    'the keepsake': 'the keepsake', 'finding each other again': 'finding each other again', 'a good natter': 'our last good natter', 'nursed me when I was poorly': 'the nursing, when I was poorly',
+    'came to see me': 'that visit', 'making it up': 'making it up', 'giving me a good run': 'the run we had at the fair', 'a good recommendation': 'a good word put in',
+    'soup when I had the flu': 'the soup, when I had the flu', 'understanding when I was homesick': 'the kindness, when I was homesick', 'all those contests': 'all those contests',
+    'listening to my dream': 'that evening, talking about dreams', 'made me feel at home': 'being made to feel at home', 'an evening under the lanterns': 'that evening under the lanterns',
+    'being such a good apprentice': 'the apprenticeship', 'sending word by the wizard': 'the word sent by the wizard', 'saying sorry, by the wizard': 'the apology', 'settling it fairly': 'settling things fairly',
+    'a kind word from a rival': 'a kind word, from a rival', 'that squabble': 'that squabble', 'the wizard\'s say-so': 'the wizard\'s say-so',
+  };
+  const whyOf = (w) => (w == null ? null : WHY[w] ? WHY[w] : /^winning /.test(w) ? 'the business with ' + w.slice(8) : null);
   const PEOPLE = ['vFriend', 'vFriendId', 'vFriendJob', 'vFriendRift', 'vFriendMood', 'vFriendWhy', 'vFriendSeen', 'vFoe', 'vFoeId', 'vFoeWhy', 'vFoeTag', 'vFoeJob',
     'vHero', 'vHeroId', 'vHeroJob', 'vHeroWhy', 'vHeroElder', 'vNext', 'vNextId', 'vNextJob', 'vNextHome', 'vNextKind', 'vRivalPrize', 'vRivalThing', 'vRivalLead', 'vRivalJob',
     'vRegardsFrom', 'vRegardsFromId', 'vRegardsSorry', 'vAsked', 'vAskedId', 'vAskedMood', 'vAskedSick', 'vSpat', 'vSpatId', 'vSpatKey', 'vSpatWhat', 'vSpatThing'];
@@ -98,15 +109,15 @@ talkPack('village', () => {
     if (fr) {
       const wb = (Game.wizBond || {})[fr.id];
       const s = sentimentsOf(v, fr).find((x) => SENT[x.tag] && SENT[x.tag][1] > 0);
-      Object.assign(F, { vFriend: fr.first, vFriendId: fr.id, vFriendJob: jobWord(fr), vFriendRift: fr.isRiftborn(), vFriendMood: moodWord(fr), vFriendWhy: s ? s.why : null, vFriendSeen: !!(wb && wb.talks && wb.last >= Game.day - 1) });
+      Object.assign(F, { vFriend: fr.first, vFriendId: fr.id, vFriendJob: jobWord(fr), vFriendRift: fr.isRiftborn(), vFriendMood: moodWord(fr), vFriendWhy: s ? whyOf(s.why) : null, vFriendSeen: !!(wb && wb.talks && wb.last >= Game.day - 1) });
     }
     const fo = alive(P.foe) ? P.foe : null;
     if (fo) {
       const s = sentimentsOf(v, fo).find((x) => SENT[x.tag] && SENT[x.tag][1] < 0);
-      Object.assign(F, { vFoe: fo.first, vFoeId: fo.id, vFoeWhy: s ? s.why : null, vFoeTag: s ? s.tag : 'sour', vFoeJob: jobWord(fo) });
+      Object.assign(F, { vFoe: fo.first, vFoeId: fo.id, vFoeWhy: s ? whyOf(s.why) : null, vFoeTag: s ? s.tag : 'sour', vFoeJob: jobWord(fo) });
     }
     const he = alive(P.hero) ? P.hero : null;
-    if (he) { const s = sentimentsOf(v, he).find((x) => x.tag === 'admiring'); Object.assign(F, { vHero: he.first, vHeroId: he.id, vHeroJob: jobWord(he), vHeroWhy: s ? s.why : null, vHeroElder: he.stage === 'elder' }); }
+    if (he) { const s = sentimentsOf(v, he).find((x) => x.tag === 'admiring'); Object.assign(F, { vHero: he.first, vHeroId: he.id, vHeroJob: jobWord(he), vHeroWhy: s ? whyOf(s.why) : null, vHeroElder: he.stage === 'elder' }); }
     const ne = alive(P.next) ? P.next : null;
     if (ne) Object.assign(F, { vNext: ne.first, vNextId: ne.id, vNextJob: jobWord(ne), vNextHome: P.nextHome || null, vNextKind: relKind(v, ne) });
     const ri = rivalOf(v);
@@ -207,7 +218,7 @@ talkPack('village', () => {
     { if: { vFriendMood: 'merry' }, text: ['{VFriend}\'s as merry as a lark this week. It\'s catching.', 'On top of the world, {vFriend}. Whistling at breakfast, I heard.'] },
     { if: { vFriendRift: true, rift: false }, text: ['{VFriend}? From the other side, you know. Talks in riddles. Lovely riddles.', 'Funny, a friend from through the sky. {VFriend} taught me what a battery is. Sort of.'] },
     { if: { vFriendJob: (j) => has(j) }, text: ['{VFriend}\'s well. Worked off {vFriend}\'s feet, mind. {VFriendJob}s never get a sit-down.'] },
-    { if: { vFriendWhy: (w) => has(w) }, pri: 1, text: ['{VFriend}? Oh, the best. I still think about {vFriendWhy}.', 'Grand, I hope. We had {vFriendWhy} not long ago. I\'ve been smiling since.'] },
+    { if: { vFriendWhy: (w) => has(w) }, pri: 1, text: ['{VFriend}? Oh, the best. I still think about {vFriendWhy}.', 'Grand, I hope. There was {vFriendWhy}, not long ago. I\'ve been smiling since.'] },
   ]);
   lines('village.friend.jest', [{ text: ['Thick as thieves, you two. What are you plotting?', 'Every time I see you and {vFriend} together, a pie goes missing. I\'m only saying.'] }]);
   say('village.friend.best', {
@@ -895,7 +906,7 @@ talkPack('village', () => {
     rift: ['{VHero} took me seriously when I first came through. Nobody else did.'],
   }, [
     { if: { vHeroJob: (j) => has(j) }, text: ['{VHero} is the best {vHeroJob} we\'ve ever had. And never boasts about it.'] },
-    { if: { vHeroWhy: (w) => has(w) }, pri: 1, text: ['Do you know, {vHero} thanked me once for {vHeroWhy}. Me! I still glow.'] },
+    { if: { vHeroWhy: (w) => has(w) }, pri: 1, text: ['Do you know, I still think about {vHeroWhy}. {VHero} was so gracious about it. I still glow.'] },
     { if: { vHeroJob: 'baker' }, pri: 1, text: ['{VHero}\'s bread. Have you had {vHero}\'s bread? It\'s a kind of goodness you can eat.'] },
     { if: { vHeroJob: 'herbalist' }, pri: 1, text: ['{VHero} sat up three nights with my mother when she was ill. Never took a penny.'] },
     { if: { vHeroJob: 'storyteller' }, pri: 1, text: ['{VHero} tells stories that make the room go quiet. I\'d give anything for that.'] },
@@ -982,7 +993,7 @@ talkPack('village', () => {
         { ap: 'ask', say: 'And what are they like, close to?', to: 'habits' },
       ] },
       habits: { line: 'village.next.habits', go: [
-        { ap: 'jest', say: 'There are worse things than a singing neighbour. A silent one, for a start.', to: 'end' },
+        { ap: 'jest', say: 'There are worse things than a noisy neighbour. A silent one, for a start.', to: 'end' },
         { ap: 'warm', say: 'You sound fond of them, under it all.', to: 'fond' },
       ] },
       cart: { line: 'village.next.cart', fx: { joke: { k: 'village.cart', t: 'Lend {vNext} a cart and ask for it back daily.' } }, end: true },

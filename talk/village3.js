@@ -852,10 +852,11 @@ talkPack('village3', () => {
         { ap: 'jest', say: 'Just the one, then. The awkward one by the bridge.', to: 'bridge' },
       ] },
       dark: { line: 'village.lamps.dark', go: [
-        { ap: 'share', say: 'I\'ve walked a great deal of dark. A lamp at the end is the best thing in the world.', to: 'end', fx: { trust: 0.02 } },
+        { ap: 'share', say: 'I\'ve walked a great deal of dark. A lamp at the end is the best thing in the world.', to: 'lampend', fx: { trust: 0.02 } },
         { ap: 'ask', say: 'And the stars?', to: 'stars' },
       ] },
       stars: { line: 'village.lamps.stars', end: true },
+      lampend: { line: 'village.lamps.lampend', end: true },
       kind: { line: 'village.lamps.kind', fx: { fond: 0.02 }, end: true },
       craft: { line: 'village.lamps.craft', fx: { respect: 0.02 }, end: true },
       bridge: { line: 'village.lamps.bridge', end: true },
@@ -906,6 +907,14 @@ talkPack('village3', () => {
     dreamy: ['Deep and soft. Like a blanket with holes for the stars.'],
     gloomy: ['Frightening. It\'s still frightening. The lamps just hide it.'],
     rift: ['Before? I\'ve never seen real dark in my life till I came here.'],
+  });
+  say('village.lamps.lampend', {
+    _: ['A lamp at the end. Yes. I\'ll think of that, next time I see one lit.', 'You\'ve walked a lot of roads, haven\'t you. I can tell.'],
+    shy: ['...I\'ll leave my lamp in the window tonight. In case.'],
+    dreamy: ['The best thing in the world. A lamp at the end. I might cry.'],
+    ornery: ['Hmph. Fine. The lamps are good. I\'ll stop grumbling. Tomorrow.'],
+    rift: ['A lamp at the end of the dark. That\'s what this place was for me.'],
+    child: ['I\'ll keep a lamp for you! A little one!'],
   });
   say('village.lamps.stars', {
     _: ['The stars still come. You just have to walk past the last lamp.', 'You lose a few. You gain the walk home.'],
