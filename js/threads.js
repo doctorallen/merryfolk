@@ -379,8 +379,10 @@ function forAge(th, F) {
   return !!rules && rules.some((r) => r.if && r.if.band && testCond('toddler', r.if.band, F));
 }
 function salientThreads(T, n) {
-  return Object.values(THREADS).map((th) => [threadScore(th, T), th]).filter(([s]) => s > 0.05).sort((a, b) => b[0] - a[0]).slice(0, n).map(([, th]) => th);
+  return byLabel(Object.values(THREADS).map((th) => [threadScore(th, T), th]).filter(([s]) => s > 0.05).sort((a, b) => b[0] - a[0]), T).slice(0, n).map(([, th]) => th);
 }
+// two packs may write a thread for the same thing ("Happy birthday!"): the better one is offered
+function byLabel(list, T, seen = new Set()) { return list.filter(([, th]) => { const l = threadLabel(th, T.F); if (seen.has(l)) return false; seen.add(l); return true; }); }
 
 // --- Running a talk -----------------------------------------------------------------
 // Called when a talk opens (play.js startTalk), once the greeting's been said.
@@ -416,6 +418,8 @@ function safeWhen(th, T) { try { return th.when(T.F, T); } catch (e) { return fa
 function enterThread(T, th, ap, theirs) {
   T.th = { id: th.id, beat: th.start, label: threadLabel(th, T.F) };
   T.done.add(th.id);
+  // and its namesakes in other packs, so the same thing isn't raised twice in a talk
+  for (const o of Object.values(THREADS)) if (o !== th && !o.light && !o.theirs && !o.situation && threadLabel(o, T.F) === T.th.label) T.done.add(o.id);
   if (!theirs) {
     const opener = th.open && ((ap && th.open[ap]) || th.open.say || th.open[Object.keys(th.open)[0]]);
     const said = opener ? sayOf(opener, T.F, T, T.v) : threadLabel(th, T.F);
@@ -553,8 +557,8 @@ function enterThreadSaying(T, th, ap, said) {
 // everything else there is to say: the rest of the topics, and what other files add
 function somethingElse(T) {
   const F = T.F, out = [];
-  const top = new Set(salientThreads(T, 3).map((th) => th.id));
-  const rest = Object.values(THREADS).map((th) => [threadScore(th, T), th]).filter(([s, th]) => s > 0.05 && !top.has(th.id)).sort((a, b) => b[0] - a[0]).slice(0, 6);
+  const top = salientThreads(T, 3);
+  const rest = byLabel(Object.values(THREADS).map((th) => [threadScore(th, T), th]).filter(([s]) => s > 0.05).sort((a, b) => b[0] - a[0]), T, new Set(top.map((th) => threadLabel(th, F)))).slice(0, 6);
   for (const [, th] of rest) out.push({ label: escapeHtml(threadLabel(th, F)), run: () => { T.sub = null; enterThread(T, th, th.ap || null); } });
   for (const o of TalkOptions) {
     if (['how', 'mind', 'news', 'chat', 'bye'].includes(o.id) || T.used.has(o.id)) continue;
