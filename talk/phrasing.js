@@ -57,6 +57,8 @@ talkPack('phrasing', () => {
   });
   const MEAL = ['breakfast', 'second breakfast', 'elevenses', 'luncheon', 'afternoon tea', 'dinner', 'supper'];
   const askedLast = (x) => typeof x === 'string' && /\?$/.test(x);
+  // an open promise they can say back to you: one of yours, not about themselves by name, and no secret
+  const sayPromise = (p, F) => typeof p === 'string' && /^You (said|promised) /.test(p) && !p.includes(F.name) && !/secret|never to tell|not to tell|say nothing|keep quiet/.test(p);
 
   // --- A phrase of their own: one each, picked by id. Said trailing, after a comma ----
   frags('pet', [
@@ -261,12 +263,12 @@ talkPack('phrasing', () => {
     at(4.9, { told: (t) => !!t, trust: { min: 0.2 }, phrRoll: { min: 0.14, max: 0.28 }, temper: 'shy' }, ['*whispers* Hello. ...Our secret\'s still a secret?']),
     at(4.9, { told: (t) => !!t, trust: { min: 0.2 }, phrRoll: { min: 0.14, max: 0.28 }, stage: 'child' }, ['*whispering* Wizard. You know the thing. Did you tell? You didn\'t tell.']),
     at(4.95, { toldKey: 'evenings.project', phrRoll: { min: 0.14, max: 0.28 } }, ['Another one done. Don\'t ask what. You know what.']),
-    at(4.8, { promiseOpen: (p) => !!p, phrRoll: { min: 0.28, max: 0.42 } }, ['Hello! I\'ve not forgotten. {PromiseOpen}.', 'Any news? {PromiseOpen}, and I\'m holding you to it.']),
-    at(4.9, { promiseOpen: (p) => !!p, phrRoll: { min: 0.28, max: 0.42 }, temper: 'ornery' }, ['{PromiseOpen}. I\'m waiting, wizard. Patiently. Ish.']),
-    at(4.9, { promiseOpen: (p) => !!p, phrRoll: { min: 0.28, max: 0.42 }, temper: 'gloomy' }, ['{PromiseOpen}. I expect it\'s too much bother. It\'s all right.']),
-    at(4.9, { promiseOpen: (p) => !!p, phrRoll: { min: 0.28, max: 0.42 }, temper: 'cheerful' }, ['{PromiseOpen}! I\'ve been looking forward to it all week.']),
-    at(4.9, { promiseOpen: (p) => !!p, phrRoll: { min: 0.28, max: 0.42 }, temper: 'shy' }, ['...Hello. I was only wondering. About the thing. {PromiseOpen}.']),
-    at(4.9, { promiseOpen: (p) => !!p, phrRoll: { min: 0.28, max: 0.42 }, stage: 'child' }, ['{PromiseOpen}! Have you done it yet? Have you?']),
+    at(4.8, { promiseOpen: sayPromise, phrRoll: { min: 0.28, max: 0.42 } }, ['Hello! I\'ve not forgotten. {PromiseOpen}.', 'Any news? {PromiseOpen}, and I\'m holding you to it.']),
+    at(4.9, { promiseOpen: sayPromise, phrRoll: { min: 0.28, max: 0.42 }, temper: 'ornery' }, ['{PromiseOpen}. I\'m waiting, wizard. Patiently. Ish.']),
+    at(4.9, { promiseOpen: sayPromise, phrRoll: { min: 0.28, max: 0.42 }, temper: 'gloomy' }, ['{PromiseOpen}. I expect it\'s too much bother. It\'s all right.']),
+    at(4.9, { promiseOpen: sayPromise, phrRoll: { min: 0.28, max: 0.42 }, temper: 'cheerful' }, ['{PromiseOpen}! I\'ve been looking forward to it all week.']),
+    at(4.9, { promiseOpen: sayPromise, phrRoll: { min: 0.28, max: 0.42 }, temper: 'shy' }, ['...Hello. I was only wondering. About the thing. {PromiseOpen}.']),
+    at(4.9, { promiseOpen: sayPromise, phrRoll: { min: 0.28, max: 0.42 }, stage: 'child' }, ['{PromiseOpen}! Have you done it yet? Have you?']),
     at(4.8, { lastLabel: askedLast, daysSince: { min: 1, max: 6 }, phrRoll: { min: 0.42, max: 0.56 } }, ['You again! I\'ve been chewing on what you asked. "{lastLabel}" I\'ve a better answer now.', 'Last time it was "{lastLabel}" What\'ll it be today?']),
     at(4.9, { lastLabel: askedLast, daysSince: { min: 1, max: 6 }, phrRoll: { min: 0.42, max: 0.56 }, temper: 'ornery' }, ['If it\'s "{lastLabel}" again, I\'ve said all I\'m saying.']),
     at(4.9, { lastLabel: askedLast, daysSince: { min: 1, max: 6 }, phrRoll: { min: 0.42, max: 0.56 }, temper: 'witty' }, ['"{lastLabel}" you asked. I\'ve been composing my reply ever since.']),
