@@ -472,7 +472,7 @@ talkPack('rift', () => {
         { ap: 'ask', say: 'Do you think {riftLostThey} got out?', to: 'hope' },
       ] },
       who: { line: 'rift.lost.who', notice: 'rift.lost.notice', go: [
-        { ap: 'warm', say: '{RiftLost} sounds like someone worth waiting for.', to: 'hope' },
+        { ap: 'warm', say: 'Someone like that finds a way through. Don\'t you think?', to: 'hope' },
         { ap: 'jest', say: 'Sounds like trouble. I like {riftLostThem} already.', to: 'laugh' },
       ] },
       sorry: { line: 'rift.lost.sorry', go: [
@@ -1386,7 +1386,7 @@ talkPack('rift', () => {
     ornery: ["Course {riftLostThey} got out. {RiftLost}'s too stubborn not to.", "If anyone could argue their way out of a rift, it's {riftLost}."],
     shy: ["...I hope so. I hope so every night.", "...I think so. I have to."],
     dreamy: ["I feel it. Somewhere. Like a light left on in another room.", "Yes. In some other valley, eating some other bread. Missing me."],
-    witty: ["Got out? {RiftLost}'s probably running a city by now. And complaining about it.", "If {riftLostThey} didn't, {riftLostThey}'ll never let me hear the end of it."],
+    witty: ["{RiftLost}'s probably running a city somewhere by now. And complaining about it.", "If {riftLostThey} didn't, {riftLostThey}'ll never let me hear the end of it."],
     proud: ["Yes. {RiftLost}'s as strong as I am. Stronger.", "I know {riftLostThey} did. I'd know if not. I'd feel it."],
   });
   byTemper('rift.lost.laugh', {
@@ -1783,7 +1783,7 @@ talkPack('rift', () => {
     shy: ["...I don't know. I don't want to know.", "...I'd stand at the door a very long time."],
     curious: ["I'd want to see what's changed. Then decide. Data first.", "That depends on what's on the other side now. I'd look first."],
     dreamy: ["I'd step halfway through and stand in the doorway, one foot each side.", "I think I'd wave through it. And stay."],
-    witty: ["Would I go? I'd want a return ticket first.", "Only if it had a cat flap."],
+    witty: ["Would I go? I'd want a return ticket first.", "I'd go, look, complain about the lighting, and come back for supper."],
     proud: ["I'd decide when I saw it. On my terms.", "I'd go if I was needed. I'd stay if I wasn't."],
     gloomy: ["I'd want to. And I'd stay anyway. That's what scares me.", "I don't know. Either way, I'd lose something."],
   });

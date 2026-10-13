@@ -487,12 +487,12 @@ talkPack('rift2', () => {
         { ap: 'listen', say: '*You wait for the rest.*', label: 'Wait for the rest', to: 'fading' },
       ] },
       song: { line: 'rift.lamp.song', go: [
-        { ap: 'warm', say: 'Perhaps lamps everywhere sing the same song.', to: 'fading' },
+        { ap: 'warm', say: 'Perhaps lamps everywhere sing the same song. And how is yours, now?', to: 'fading' },
         { ap: 'ask', say: 'Who built your Lamplighter?', to: 'built' },
       ] },
       kettle: { line: 'rift.lamp.kettle', go: [
         { ap: 'ask', say: 'And now? How is it now?', to: 'fading' },
-        { ap: 'jest', say: 'A city founded on tea. I knew I liked it.', to: 'fading' },
+        { ap: 'jest', say: 'A city founded on tea. I knew I liked it. Is it still brewing?', to: 'fading' },
       ] },
       mungo: { line: 'rift.lamp.mungo', fx: { trust: 0.03 }, go: [
         { ap: 'warm', say: 'Then you\'re not strangers here. You\'re a long way round from home.', to: 'sent' },
@@ -704,8 +704,9 @@ talkPack('rift2', () => {
       ] },
       dark: { line: 'rift.kids.dark', go: [
         { ap: 'ask', say: 'What\'s your favourite game, then?', to: 'game' },
-        { ap: 'warm', say: 'Then you can lead me home at night.', to: 'fine' },
+        { ap: 'warm', say: 'Then you can lead me home at night.', to: 'lead' },
       ] },
+      lead: { line: 'rift.kids.lead', fx: { fond: 0.03 }, end: true },
       play: { line: 'rift.kids.play', fx: { fond: 0.04, lean: 'rift' }, end: true },
       hillgame: { line: 'rift.kids.hillgame', fx: { fond: 0.02, lean: 'hill' }, end: true },
       comfort: { line: 'rift.kids.comfort', fx: { fond: 0.03 }, end: true },
@@ -738,6 +739,12 @@ talkPack('rift2', () => {
   lines('rift.kids.dark', [
     { text: ['A bit! My eye goes green. I can find the biscuit tin at night. That\'s the main use.', 'YOU walk into trees? But you\'re a WIZARD. Wizards shouldn\'t walk into trees.'] },
     { if: { rift: false }, text: ['I can\'t, but my cousin can. She leads us home from the pond. She\'s like a lantern with legs.'] },
+  ]);
+  lines('rift.kids.lead', [
+    { text: ['Deal! I\'ll go first and say "tree!" before every tree.', 'Okay! Hold my hand. Mind the pond. Mind the OTHER pond.'] },
+    { if: { rift: true }, text: ['Yes! My eye goes green and I\'ll shout which way! Left! Tree! Left!', 'Deal! I can see the path glow. Sort of. Follow me!'] },
+    { if: { band: 'young' }, text: ['I\'ll be the lantern! Beep beep! This way!', 'Okay! But you have to carry me when I get tired.'] },
+    { if: { band: 'youth' }, text: ['Ha. Sure. I\'ll walk the wizard home. That\'s a story for the Relay.', 'Fine. Don\'t walk into anything. People will think it\'s my fault.'] },
   ]);
   lines('rift.kids.play', [
     { text: ['YES! You can be the dragon! You\'re the biggest dragon! Tomorrow, after lessons!', 'You can play but you have to say "beep" when you\'re offline. Even wizards.'] },

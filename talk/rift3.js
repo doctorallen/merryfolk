@@ -200,7 +200,7 @@ talkPack('rift3', () => {
       ] },
       gran: { line: 'rift.hill.ways.gran', go: [
         { ap: 'ask', say: 'And the rest of your family?', to: 'family' },
-        { ap: 'jest', say: 'Get her a visor. See what happens.', to: 'suits' },
+        { ap: 'jest', say: 'Get her a visor. She\'d suit one as well as you do.', to: 'suits' },
       ] },
       family: { line: 'rift.hill.ways.family', go: [
         { ap: 'advise', say: 'Show them. Don\'t argue. Show them.', to: 'show' },
@@ -208,7 +208,7 @@ talkPack('rift3', () => {
       ] },
       old: { line: 'rift.hill.ways.old', go: [
         { ap: 'warm', say: 'Two kinds of ways, one hobbit. That\'s not a bad thing to be.', to: 'both' },
-        { ap: 'jest', say: 'Second breakfast with a visor on. The future is strange.', to: 'suits' },
+        { ap: 'jest', say: 'Second breakfast with a visor on. It suits you, mind.', to: 'suits' },
       ] },
       suits: { line: 'rift.hill.ways.suits', fx: { fond: 0.02 }, end: true },
       show: { line: 'rift.hill.ways.show', fx: { respect: 0.02 }, end: true },
@@ -402,7 +402,7 @@ talkPack('rift3', () => {
       ] },
       eat: { line: 'rift.hill.supper.eat', go: [
         { ap: 'advise', say: 'One supper. You\'ll not regret it.', to: 'invite', need: { if: { riftNeighbour: (x) => !!x } } },
-        { ap: 'warm', say: 'They\'d help with the washing up, I\'ll wager.', to: 'table' },
+        { ap: 'warm', say: 'A full table\'s the best kind. And they\'d help with the washing up.', to: 'table' },
       ] },
       invite: { line: 'rift.hill.supper.invite', fx: { respect: 0.03, run: askToSupper }, end: true },
       scones: { line: 'rift.hill.supper.scones', fx: { fond: 0.02 }, end: true },
@@ -635,4 +635,538 @@ talkPack('rift3', () => {
     { text: ['Worry? No. They\'ll take what\'s good from both. Young ones always do.', 'A little. They forget the old songs. But they learn new ones. It\'s a fair swap, I suppose.'] },
   ]);
   lines('rift.hill.old.steady', [{ text: ['Steady. Ha. I was steady once. Now I\'m just slow.', 'Gently. Yes. I\'d not thought of it like that. Gently.'] }]);
+
+  // --- Every temper, every beat: more ways of saying it ------------------------------------
+  const byTemper = (key, o) => lines(key, Object.keys(o).map((temper) => ({ if: { temper }, text: o[temper] })));
+  byTemper('rift.hill.folk.fear', {
+    cheerful: ["I try to like them, I do! But the eyes at night give me the collywobbles.", "Oh, it's silly. They're so bright. Everything about them's bright. I'm used to candles."],
+    curious: ["What they might know that we don't. What might follow them through. I want to know and I'm scared to.", "That I can't work them out. I can work out anyone. Not them. Not yet."],
+    dreamy: ["They're like something from a story. And stories aren't always kind, are they?", "They came out of the sky. Things that come out of the sky can go back into it. Take things with them."],
+    witty: ["They talk to their sleeves. I talk to my sleeves too, but mine don't answer.", "It's the hair. Nobody's hair should be that colour without a fight involved."],
+  });
+  byTemper('rift.hill.folk.like', {
+    ornery: ["They work hard and they don't moan. That's more than I can say for my cousins.", "They're all right. They mind their business. Mostly. They fix things. I'll give them that."],
+    shy: ["...One of them helped me carry my basket. Didn't say anything. Just carried it.", "...They're kind. Quietly. I like quiet kind."],
+    witty: ["They make the Badger's gossip twice as good. Fresh material.", "They think our pies are a miracle. Anyone who thinks that is a friend of mine."],
+    proud: ["They've learned our ways respectfully. I've seen to that, mostly.", "They admire what we've built here. Rightly."],
+    gloomy: ["They're sad, underneath. I know sad. We get on.", "They lost everything and they still say thank you. Shames the rest of us."],
+  });
+  byTemper('rift.hill.folk.friend', {
+    cheerful: ["{RiftFriend}! My favourite! We sing together at the Badger! Badly! Loudly!", "Oh, {riftFriend} is a treasure! I'd be lost without {riftFriend} now!"],
+    curious: ["{RiftFriend} teaches me things and I teach {riftFriend} things. It's an exchange. A wonderful one.", "{RiftFriend} answers all my questions. Nobody else has the patience."],
+    dreamy: ["{RiftFriend} sees the valley like it's new. Through {riftFriend}, I see it new too.", "{RiftFriend} and I sit on the hill and watch the sky. Different skies, same sky."],
+    gloomy: ["{RiftFriend} gets it. The missing things. We miss things together.", "{RiftFriend}'s the only one who doesn't tell me to cheer up."],
+  });
+  byTemper('rift.hill.folk.notspoken', {
+    cheerful: ["Not yet! I keep meaning to! I'll do it tomorrow! I always say that!", "Not properly! I wave! They wave! It's a lovely wave!"],
+    curious: ["Not yet. I've watched, mostly. Taking notes. I should probably just ask.", "Not properly. I've so many questions I don't know where to start."],
+    dreamy: ["Not yet. I keep imagining what I'd say. The imagining's lovely. The doing's harder.", "Only in my head. I've had some wonderful conversations in my head."],
+    witty: ["We've exchanged nods. Very meaningful nods. Practically a friendship.", "Not yet. I'm waiting for an introduction. Proper form."],
+    gloomy: ["No. I'm not good with new folk. I'm not good with old folk either.", "No. They wouldn't want to talk to me."],
+  });
+  byTemper('rift.hill.folk.feet', {
+    cheerful: ["Ha! Our feet! They're lovely feet! Furry and warm!", "They're jealous of the fur! Who wouldn't be?"],
+    shy: ["*looks down at feet, embarrassed*", "...Oh. I hadn't thought."],
+    curious: ["Our feet? What do they say? I want to know what they think of us!", "Really? I've never thought of our feet as odd. Interesting."],
+    dreamy: ["Ha. Maybe to them we're the strange ones. From the strange green world.", "To them, we're the story. I like that."],
+    proud: ["Our feet are perfectly respectable. Finest feet in the Shire.", "They can say what they like. Our feet have walked these hills for generations."],
+    gloomy: ["Hm. Fair enough. We're all strange to someone.", "They're probably right. We are odd."],
+  });
+  byTemper('rift.hill.folk.vent', {
+    cheerful: ["...Oh, I hate being frightened. I'm not made for it. I'm made for parties.", "I don't like being scared. It doesn't suit me. That's it. That's all."],
+    shy: ["...It's all so much. So many new faces. I hide. I'm ashamed of hiding.", "...I just want things to stay the same. Is that so bad?"],
+    curious: ["...I want to know, and I'm scared to know. Both at once. It's maddening.", "...What frightens me is what I don't understand. And I don't understand them."],
+    dreamy: ["...It's like the world got bigger overnight and I'm still the same size.", "...I keep dreaming the sky falls. And it does. Every week."],
+    witty: ["...Truth? I'm scared. It's not funny. I'll make it funny later.", "...I'm frightened. Write that down. It won't happen again."],
+  });
+  byTemper('rift.hill.folk.hello', {
+    cheerful: ["Good morning! I can do that! I'll do it with a pie!", "Yes! Good morning! I'll go now!"],
+    curious: ["Good morning. And then maybe a question. Just one. Two.", "Yes. I'll say good morning. And watch what happens."],
+    dreamy: ["Good morning. Just that. Like opening a window.", "A good morning. That's a beginning, isn't it?"],
+    witty: ["Good morning. Bold. Radical. I'll do it.", "A whole good morning? Steady on."],
+    proud: ["Good morning. Properly. With a nod. As one should.", "I'll say it. I'm no coward."],
+    gloomy: ["Good morning. ...I'll try. They might not answer.", "All right. Good morning. If they say it back, I'll be surprised."],
+  });
+  byTemper('rift.hill.folk.children', {
+    cheerful: ["Children! Oh! Then we must look after them!", "Sent somewhere safe! And they chose us! Oh, that's lovely!"],
+    shy: ["...Children. Oh. I didn't think of them like that.", "*softens visibly*"],
+    curious: ["Sent here? On purpose? By whom? That changes everything.", "Children sent somewhere safe. That's a hypothesis. A good one."],
+    dreamy: ["Children of light, looking for a soft place. Oh, wizard.", "Like a lullaby. Somebody sang them here."],
+    witty: ["Children. So I've been rude to someone's babies. Marvellous.", "Children sent somewhere safe. And they picked the place with the best pies."],
+    proud: ["If they were sent here, then we were chosen. That's an honour.", "Then we'll do right by them."],
+    gloomy: ["Children sent away from home. Poor things.", "Safe. I hope we are. I hope we're safe enough."],
+  });
+  byTemper('rift.hill.folk.glad', {
+    cheerful: ["Aw! You're lovely! They're lovely! Everyone's lovely!", "Lucky! Ha! I'll tell them you said!"],
+    ornery: ["Hmph. Lucky. I do what's decent, that's all.", "Don't make a fuss."],
+    shy: ["...Oh. Thank you.", "*goes pink*"],
+    curious: ["Lucky? I'd say we're both lucky. It's mutual.", "Interesting. I thought of it the other way round."],
+    dreamy: ["Lucky... maybe we're all lucky. To have found each other.", "That's kind."],
+    witty: ["They're lucky in the pie department, I'll grant you.", "Lucky. Yes. Tell my wife."],
+    gloomy: ["Lucky. Hm. I don't feel it. But thank you.", "That's kind of you."],
+  });
+  byTemper('rift.hill.folk.others', {
+    cheerful: ["Mostly! The young ones love them! The old ones are coming round!", "Half and half! But the happy half is louder!"],
+    ornery: ["Agree? This lane's never agreed on anything. Not the weather. Not the time.", "Some do. The rest are fools."],
+    shy: ["...I don't know. I don't ask.", "...Some of them do."],
+    curious: ["It's split. By age, mostly. And by who's met one.", "I've noticed: anyone who's eaten with them likes them."],
+    dreamy: ["Slowly, I think. Like a field turning green.", "More every day. You can feel it."],
+    witty: ["The lane agrees about one thing only: everyone else is wrong.", "About as much as they agree on anything. Which is never."],
+    proud: ["Those with sense agree with me.", "The ones who matter do."],
+    gloomy: ["Not all. Some never will.", "Some. The rest will grumble till they're buried."],
+  });
+  byTemper('rift.hill.folk.met', {
+    cheerful: ["The best story! {RiftFriend} fell into my pond! I fished {riftFriend} out! We laughed for an hour!", "At a party! {RiftFriend} taught me a dance! I taught {riftFriend} a better one!"],
+    ornery: ["{RiftFriend} broke my fence. Then fixed it. Better than before. Annoying.", "{RiftFriend} wouldn't stop talking. Eventually I listened."],
+    shy: ["...{RiftFriend} sat by me at the Badger. Didn't say anything. Then said something kind.", "...{RiftFriend} just kept saying hello. Every day. Till I said it back."],
+    curious: ["I asked {riftFriend} a question. {RiftFriend} asked me two back. We've not stopped since.", "At the mill. We were both watching the wheel. Same questions."],
+    dreamy: ["Under the party tree, at dusk. Like a story.", "On the hill, watching a rift close. We both said 'oh' at the same time."],
+    witty: ["{RiftFriend} insulted my scones. I insulted {riftFriend}'s eye. Friends instantly.", "We met fighting over the last pie. I won. We shared it."],
+    proud: ["I welcomed {riftFriend} properly. Someone had to.", "I took {riftFriend} under my wing the first week."],
+    gloomy: ["{RiftFriend} found me crying by the river. Sat with me. Never asked why.", "We were both on our own at the Badger. Two lonely ones."],
+  });
+  byTemper('rift.hill.folk.worry', {
+    cheerful: ["Oh, don't! I try not to think about it! {RiftFriend} would visit, wouldn't {riftFriend}?", "A bit! But I'd throw such a leaving party!"],
+    ornery: ["Worry? If {riftFriend} goes I'll go and fetch {riftFriend} back. Rift or no rift.", "Don't talk about it."],
+    shy: ["...Every time the sky opens.", "...I don't say. But yes."],
+    curious: ["I've asked. {RiftFriend} doesn't know. I respect that. I hate it.", "It depends on the door. Whether it's both ways."],
+    dreamy: ["I dream {riftFriend} walks into the light and waves. Then I wake up and check.", "If {riftFriend} went, I'd leave a lamp in the window forever."],
+    witty: ["If {riftFriend} goes, who'll eat my terrible cooking?", "Worry? I've already started hiding {riftFriend}'s boots."],
+    proud: ["{RiftFriend} has a home here now. I've made sure of it.", "I'd understand. I'd still be proud of {riftFriend}."],
+  });
+  byTemper('rift.hill.folk.whatsay', {
+    cheerful: ["I'd say welcome! With a hug! A big one!", "I'd say hello and give them a cake! Everyone likes cake!"],
+    shy: ["...Hello. Just hello.", "...I'd probably just nod."],
+    dreamy: ["I'd ask what their home was like. And just listen.", "I'd say you're welcome here, and mean it."],
+    witty: ["'Lovely weather for falling out of the sky.'", "I'd start with an apology for my neighbours."],
+    proud: ["I'd welcome them properly, as is right.", "I'd tell them how things are done here."],
+    gloomy: ["I'd say sorry. For the staring.", "Something kind. Nobody said anything kind to me when I needed it."],
+  });
+  byTemper('rift.hill.folk.weather', {
+    cheerful: ["The weather! Of course! I love talking about the weather!", "Ha! Yes! Weather! Easy!"],
+    ornery: ["Weather. Fine. It's always bad. I'll tell them that.", "Weather. Safe ground."],
+    shy: ["...The weather. I can manage the weather.", "*smiles* Yes."],
+    curious: ["Weather! I wonder what their weather was like!", "Good idea. And then I'll ask about theirs."],
+    dreamy: ["The weather. The clouds today look like ships.", "The weather. Then the stars. Then everything."],
+    witty: ["Weather. The hobbit's opening move.", "The weather. Then rain. Then a pint."],
+    proud: ["I know the weather better than anyone.", "Weather. I'm good at weather."],
+    gloomy: ["The weather. It's going to rain.", "Weather. Always grey. Something to say."],
+  });
+  byTemper('rift.hill.folk.kind', {
+    cheerful: ["Kind! Yes! I'll be kind! It's easy!", "Kind it is! Thank you, wizard!"],
+    shy: ["...Kind. I'll try.", "*nods*"],
+    curious: ["Kind change. I hadn't thought change could be kind.", "Hm. Kindness as the measure. Yes."],
+    dreamy: ["Change, but kind. Like spring.", "That's lovely. I'll keep it."],
+    witty: ["Kind change. Rarer than kind cats.", "I'll try kind. If it doesn't work I'll try pie."],
+    proud: ["Kind. Yes. That's how I was raised.", "I'll be kind. I always am."],
+    gloomy: ["Kind. Maybe. I hope so.", "That would be nice."],
+  });
+  byTemper('rift.hill.folk.tellthem', {
+    cheerful: ["Tell {riftFriend}! Yes! Right now! With a cake!", "I will! I'll tell {riftFriend} everything!"],
+    ornery: ["Tell {riftFriend}? Ugh. Fine. Quickly.", "I'll say it once."],
+    shy: ["...I'll try. Maybe I'll write it down.", "...Okay. Over tea."],
+    curious: ["I've never said it out loud. I wonder what {riftFriend}'ll say.", "Good idea. I'll ask {riftFriend} back."],
+    dreamy: ["I'll tell {riftFriend} on the hill, at sunset.", "I'll tell {riftFriend}. Like letting a bird go."],
+    witty: ["Feelings. Out loud. In a hobbit-hole. Unprecedented.", "Fine. I'll tell {riftFriend}. Then I'll hide."],
+    proud: ["I'll tell {riftFriend}. Properly.", "Of course. A friend should know."],
+    gloomy: ["I'll tell {riftFriend}. Before it's too late.", "Yes. You never know how long you've got."],
+  });
+  byTemper('rift.hill.ways.start', {
+    curious: ["I wanted to understand it. So I wear it. Then I understand a little more each day.", "Just experimenting! A strip of neon, a gadget. Seeing how it changes things."],
+    dreamy: ["The glow reminds me of fireflies. I always loved fireflies.", "A little light about me. Like carrying a star."],
+    gloomy: ["Something new. I needed something new. Things were grey.", "It cheers me up. Not much cheers me up."],
+  });
+  byTemper('rift.hill.ways.why', {
+    cheerful: ["It's fun! It glows! Everyone smiles at me!", "Why not? It's lovely! Everything's more fun with a glow!"],
+    ornery: ["I wanted to annoy my brother. It worked. Then I liked it.", "Because everyone said I couldn't."],
+    shy: ["...It makes me feel brave. Like I'm someone new.", "...A friend gave it to me. I wear it for them."],
+    witty: ["The neon was free and the waistcoat was dull.", "It's the only way to find me at night after the Badger."],
+    proud: ["I'm not afraid of new things. Somebody has to show the way.", "Because it's the future. I'd rather lead than follow."],
+    gloomy: ["It made me feel less stuck.", "I wanted to belong to something. Anything."],
+  });
+  byTemper('rift.hill.ways.gran', {
+    cheerful: ["She did! She screamed! Then she asked for one! Pink!", "Ha! She's coming round! She asked if it comes in lavender!"],
+    shy: ["...She doesn't know. I take it off when I visit.", "...I hide it in my pocket at hers."],
+    curious: ["She did! And then asked how it worked. Gran's more curious than she lets on.", "She had a fit, then asked how the battery worked. Classic Gran."],
+    dreamy: ["Gran said I looked like a will-o'-the-wisp. Then she smiled.", "She cried a bit. Then said Grandad would've worn it."],
+    witty: ["Gran's been having fits since the invention of trousers.", "She did. She also had a fit about forks. Gran fits are constant."],
+    proud: ["She'll come round. I always win Gran over.", "Gran'll be proud eventually."],
+    gloomy: ["She won't speak to me. It's been a week.", "She said I'd forgotten where I came from."],
+  });
+  byTemper('rift.hill.ways.family', {
+    cheerful: ["They love it! Well, half of them do! The other half will!", "My little sister wants one! Mum's furious! It's brilliant!"],
+    ornery: ["Family can mind its own business.", "They grumble. They grumble about everything."],
+    shy: ["...They don't say much. I can tell they don't like it.", "...Mum keeps asking if I'm all right."],
+    curious: ["Split down the middle. The young ones want to try it. The old ones want to ban it.", "It's divided us neatly by age. I'm studying it."],
+    dreamy: ["They look at me like I've gone somewhere. I haven't. I'm right here.", "They'll understand one day."],
+    witty: ["Dad says I glow like a pub sign. He means it as an insult. I take it as a compliment.", "Mum calls it my 'phase'. It's been a year."],
+    proud: ["They'll see I'm right.", "My family respects my choices. Eventually."],
+  });
+  byTemper('rift.hill.ways.old', {
+    cheerful: ["Never! I love both! Neon and second breakfast! Perfect!", "Both! I've both! The best of everything!"],
+    ornery: ["Put away? I still smoke my pipe. With a light on it.", "Gone? Never. I'm not daft."],
+    shy: ["...I still sing the old songs. Quietly.", "...I keep the old waistcoat. Just in case."],
+    curious: ["I'm keeping both and watching which wins. So far it's a draw.", "Interesting question. The old ways have deeper roots."],
+    dreamy: ["The old ways are in my bones. The new ones are on my sleeve.", "Both. Like two tunes in one song."],
+    witty: ["I've added neon. I haven't subtracted pie.", "Old ways, new lights. Same appetite."],
+    gloomy: ["Some. I miss them more than I let on.", "A bit. It's hard to hold both."],
+  });
+  byTemper('rift.hill.ways.suits', {
+    cheerful: ["It does! I knew it! Thank you!", "Hooray! The wizard likes it!"],
+    ornery: ["Of course it suits me. Everything suits me.", "Hmph. I didn't ask. ...Thanks."],
+    curious: ["Suits me? Interesting. Why do you think?", "Does it? I'll ask a few more people. For a sample."],
+    dreamy: ["Like a star on a hobbit. Thank you.", "That's lovely of you."],
+    witty: ["It suits me. Tell that to my gran.", "Suits me. Unlike my sense of rhythm."],
+    proud: ["It does. I chose well.", "I know. But it's nice to hear."],
+    gloomy: ["Does it? ...Thank you. I needed that.", "Really? Okay."],
+  });
+  byTemper('rift.hill.ways.show', {
+    cheerful: ["Show them! Yes! I'll light up the whole supper table!", "Yes! Actions! Not words!"],
+    ornery: ["Show them. Fine. They'll still moan.", "I'm not arguing. I'm glowing."],
+    shy: ["...Show them. Quietly. I can do that.", "*nods*"],
+    curious: ["Show, not argue. A good strategy. I'll test it.", "Hm. Demonstration over debate. Sound."],
+    dreamy: ["I'll light the way home for Mum one night. Then she'll see.", "Show them the glow on a dark night."],
+    witty: ["Show them. Silently. Glowingly.", "No arguing. Just very bright passive aggression."],
+    proud: ["They'll see. I'll make sure of it.", "Show, don't argue. My father's advice too."],
+    gloomy: ["I'll try. They might never see.", "Show them. If they look."],
+  });
+  byTemper('rift.hill.ways.both', {
+    cheerful: ["Both! I love being both!", "Two ways, one me! Brilliant!"],
+    ornery: ["Both. Fine. As long as nobody makes me choose.", "Both. Don't tell my gran."],
+    shy: ["...Both. That feels right.", "*small smile*"],
+    curious: ["Both. A hybrid. I'm a new kind of hobbit.", "Two ways, one hobbit. That's a good thesis."],
+    dreamy: ["Both. Like dusk. Day and night together.", "Both. That's the nicest thing."],
+    witty: ["Both. Twice the traditions. Twice the excuses.", "One hobbit, two ways, three breakfasts."],
+    proud: ["Both. And I do both well.", "That's me. Proudly."],
+    gloomy: ["Both. Or neither. Some days.", "I hope that's enough."],
+  });
+  // the hill children, by age
+  lines('rift.hill.young.start', [
+    { if: { band: 'young' }, text: ['They have SHINY BOOTS. I want shiny boots.', 'There\'s a lady with BLUE HAIR. Real blue! Like a bird!'] },
+    { if: { band: 'school' }, text: ['They know about circuits. I\'m learning. I made a light go on. Once.', 'One of them showed me binary with acorns. I can count to eleven in ones and noughts.'] },
+    { if: { mood: 'merry' }, text: ['They\'re the BEST. Everything\'s the best today.'] },
+  ]);
+  lines('rift.hill.young.best', [
+    { if: { band: 'young' }, text: ['The glowy bits! And they let you hold the beepy thing!', 'They talk funny! "Ping!" Ping! I say ping now!'] },
+    { if: { band: 'school' }, text: ['They know how things work inside. I want to know how things work inside.', 'They don\'t tell you off for asking questions. They LIKE questions.'] },
+    { if: { temper: 'child', mood: ['low', 'miserable'] }, text: ['They don\'t laugh at me. Some kids laugh at me. They don\'t.'] },
+  ]);
+  lines('rift.hill.young.mum', [
+    { if: { band: 'young' }, text: ['Mum holds my hand tight when they walk past. Too tight.', 'Mum says be polite! I\'m always polite! Mostly!'] },
+    { if: { band: 'school' }, text: ['Mum says they\'re "very interesting" in a voice that means no.', 'Mum doesn\'t mind. Dad minds. Dad minds everything.'] },
+    { if: { band: 'youth' }, text: ['Mum minds. I\'m nearly grown. I can talk to who I like.', 'Mum worries I\'ll go rift. Maybe I will.'] },
+  ]);
+  lines('rift.hill.young.where', [
+    { if: { band: 'young' }, text: ['From the moon! No! From a star! A big star!', 'From behind the sky! There\'s another sky back there!'] },
+    { if: { band: 'youth' }, text: ['A city called Neverdark. It\'s running out of power. They don\'t like talking about it.', 'From another world. A dying one, they say. Quietly.'] },
+  ]);
+  lines('rift.hill.young.go', [
+    { if: { band: 'young' }, text: ['Now? NOW! Bye! I\'ll say please!', 'I\'m going! I\'m going! Wait for me, wizard!'] },
+    { if: { band: 'youth' }, text: ['All right. I\'ll ask. Properly. Don\'t follow me.', 'Okay. I\'ve been meaning to. Thanks.'] },
+  ]);
+  lines('rift.hill.young.hillbest', [
+    { if: { band: 'young' }, text: ['The pond! And the ducks! And the cake!', 'Puddles! The best puddles are here!'] },
+    { if: { band: 'youth' }, text: ['The old stories. And knowing everyone. I\'d miss that.', 'The fields at harvest. Everyone together. I like that.'] },
+  ]);
+  lines('rift.hill.young.askinstead', [
+    { if: { band: 'young' }, text: ['Ask! Okay! What\'s your NAME? Like that?', 'I\'ll ask! I\'ll ask SO much!'] },
+    { if: { band: 'youth' }, text: ['Ask. Fair. Staring\'s rude. I knew that.', 'Ask instead. Right. I\'ll try.'] },
+  ]);
+  lines('rift.hill.young.both', [
+    { if: { band: 'young' }, text: ['Both! Hee! Both right! Everyone\'s right!', 'BOTH! That\'s the best answer!'] },
+    { if: { band: 'youth' }, text: ['Both a bit right. That\'s what grown-ups say when they don\'t know.', 'Both. Hm. Maybe. That\'s actually fair.'] },
+  ]);
+  lines('rift.hill.kidask.q', [
+    { if: { band: 'young' }, text: ['Wizard! Is the sky BROKEN?', 'Did the sky get a hole? Who did it? Was it a dragon?'] },
+    { if: { band: 'school' }, text: ['Mister Wizard, my teacher doesn\'t know what the rifts are. Do you?', 'Why do the rifts make that humming noise? Is it a song?'] },
+    { if: { mood: ['low', 'miserable'] }, pri: 1, text: ['Wizard? Will the sky fall on us? I had a bad dream.'] },
+  ]);
+  lines('rift.hill.kidask.door', [
+    { if: { band: 'young' }, text: ['A door! Knock knock! Who\'s there? HEE!', 'A DOOR! Can I knock back?'] },
+    { if: { band: 'school' }, text: ['A door. Then the people who come out are visitors! Not monsters!', 'Knocking. Huh. Like they want to come in.'] },
+  ]);
+  lines('rift.hill.kidask.sat', [
+    { if: { band: 'young' }, text: ['A BOTTOM! Hahaha! On the SKY!', 'Who? A giant? A cow?'] },
+    { if: { band: 'school' }, text: ['Ha. Very funny. Now tell me properly.', 'That\'s silly. ...Was it a giant?'] },
+    { if: { band: 'youth' }, text: ['Ha. Right. Seriously, though.', 'Very funny. Not.'] },
+  ]);
+  lines('rift.hill.kidask.think', [
+    { if: { band: 'young' }, text: ['I think it\'s a door to Biscuit Land.', 'I think a star fell and made a hole.'] },
+    { if: { band: 'youth' }, text: ['Gran says bad luck. The rift-folk say it\'s home calling them. I think the rift-folk are right.', 'I think it\'s something trying to reach us. On purpose.'] },
+  ]);
+  lines('rift.hill.kidask.both', [
+    { if: { band: 'youth' }, text: ['Both a bit right. Fine. That\'s a grown-up answer, but fine.', 'Both. Okay. I\'ll tell them both. They\'ll both be smug.'] },
+  ]);
+  lines('rift.hill.kidask.riftside', [
+    { if: { band: 'young' }, text: ['The sky people! I\'ll ask the sky people!', 'They know! They came THROUGH!'] },
+    { if: { band: 'youth' }, text: ['Makes sense. They\'ve been there. I\'ll ask.', 'Fair. They\'d know best.'] },
+  ]);
+  lines('rift.hill.kidask.hillside', [
+    { if: { band: 'young' }, text: ['Mum knows everything! Mostly!', 'Okay! Mum!'] },
+    { if: { band: 'youth' }, text: ['Mum. Hm. She\'s never been through a rift, though.', 'Fine. Mum. But I\'ll ask the others too.'] },
+  ]);
+  byTemper('rift.hill.supper.start', {
+    curious: ["Not yet! But I've planned the menu. Seven dishes, to see what they like best.", "I'm dying to. What do they eat? I'll ask them. Over supper. There."],
+    dreamy: ["I keep imagining it. A rift-born at my table, lamp-light on their eye. I should just do it.", "Not yet. I've set an extra place a few times. In case."],
+    witty: ["Not yet. I'm still recovering from having my cousins.", "Supper with a stranger. The Proudfoots had one. They're still talking about it. So am I."],
+    proud: ["My table's open to anyone. Nobody's asked.", "Of course. My hospitality is well known."],
+    gloomy: ["No. My table's too small. And so am I, these days.", "No. Nobody comes to supper any more."],
+  });
+  byTemper('rift.hill.supper.menu', {
+    cheerful: ["Everything! I made everything! We ate till we couldn't move!", "Pie! And more pie! And then pudding!"],
+    ornery: ["What I always make. If it's good enough for me it's good enough for them.", "Stew. They ate it. No complaints."],
+    shy: ["...Just soup. And bread. I was nervous.", "...Something simple. I didn't want to get it wrong."],
+    curious: ["A tasting! A little of everything! I took notes on what they liked!", "Our oldest recipes. I wanted to see their faces."],
+    dreamy: ["Mushrooms and honey and fresh bread, by candle-light.", "A summer supper. In the garden. Under the stars."],
+  });
+  byTemper('rift.hill.supper.reaction', {
+    cheerful: ["They loved it! They said it was the best meal ever! I cried!", "They couldn't stop eating! I was so happy!"],
+    ornery: ["They ate everything. Didn't leave a scrap. Respect.", "They complained about nothing. Good guests."],
+    shy: ["...They said thank you so many times. I didn't know what to do.", "...They were quiet. Then they smiled. That was enough."],
+    curious: ["They asked about every dish. Where it came from. How long it took. I loved it.", "They were fascinated. Everything was new. Even salt."],
+    witty: ["They thought the gravy was a sauce. Then a soup. Then a religion.", "They called my pie a 'masterpiece'. I'm having that carved on my door."],
+    proud: ["They were impressed. As they should be.", "They said it was the best they'd ever had. I believe them."],
+    gloomy: ["They were grateful. Too grateful. It broke my heart a little.", "They ate like they hadn't eaten in years. Maybe they hadn't."],
+  });
+  byTemper('rift.hill.supper.eat', {
+    cheerful: ["Ha! Let them! There's always more!", "Eat me out of house? I'd love that!"],
+    shy: ["...A little afraid. Not of eating. Of talking.", "...It's not the food. It's the talking."],
+    curious: ["I'd like to see how much they can eat. For science.", "Their appetites are fascinating. Have you seen them?"],
+    dreamy: ["Let them eat. They've had little enough.", "A full table. I'd like that."],
+    witty: ["My pantry has survived three cousins and a goat. It'll survive.", "They can try. My larder's legendary."],
+    proud: ["My pantry can feed anyone.", "Afraid? Of a guest? Never."],
+    gloomy: ["My pantry's half empty anyway.", "There's not much to eat me out of."],
+  });
+  byTemper('rift.hill.supper.invite', {
+    cheerful: ["Yes! Tonight! I'll make everything!", "Brilliant! I'll invite them now!"],
+    ornery: ["Fine. One supper. If they're late, they get it cold.", "All right. Don't make me regret it."],
+    curious: ["One supper. And many questions. I'll prepare.", "Yes. I'll make a list of things to ask."],
+    dreamy: ["Tonight, with candles. Yes.", "I'll lay the extra place. Like I always meant to."],
+    witty: ["One supper. Then I'll know if they snore at the table.", "Fine. If they hate the pie, I'll blame you."],
+    proud: ["I'll make it a proper welcome.", "Yes. My best table."],
+    gloomy: ["Maybe. If they'd want to.", "All right. It might be nice."],
+  });
+  byTemper('rift.hill.supper.scones', {
+    cheerful: ["They loved the scones! They had five!", "Survived and thrived! Scone champions!"],
+    ornery: ["They survived. My scones aren't that hard.", "Of course they did. My scones are perfect."],
+    shy: ["*laughs* Just about.", "...They liked them. I think."],
+    curious: ["They studied the crumb structure. Then ate it.", "They asked how they were made. I told them. They looked worried."],
+    dreamy: ["They held one up to the light like a jewel.", "They said it tasted like a sunny morning."],
+    witty: ["Survived, chipped a tooth, asked for seconds. Proper hobbit.", "They thought it was a doorstop. Then a delicacy."],
+    proud: ["My scones are famous. They survived just fine.", "They loved them. Naturally."],
+    gloomy: ["They did. Barely. I should make softer ones.", "Just about."],
+  });
+  byTemper('rift.hill.supper.learned', {
+    cheerful: ["Loads! Songs! Words! A game with acorns!", "That they're lovely! And they count funny!"],
+    ornery: ["That they hold forks wrong. And that it doesn't matter.", "That they're not so different. Don't tell anyone."],
+    shy: ["...That they miss their families too.", "...That they're shy too, sometimes."],
+    curious: ["How their city works! The power, the trains! Fascinating!", "That their stars are lights! No real stars! Imagine!"],
+    dreamy: ["About a city that never sleeps. I dreamed of it after.", "That we're all looking for the same thing. A warm table."],
+    witty: ["That rift-folk can't hold their ale. Valuable intelligence.", "That 'full signal' means happy. I said it at breakfast. My husband choked."],
+    proud: ["That they respect good cooking.", "That they're decent folk. As I suspected."],
+    gloomy: ["That they've lost so much. More than I knew.", "That their city's dying. They didn't say it like that, but I heard."],
+  });
+  byTemper('rift.hill.supper.table', {
+    cheerful: ["The best kind! Yes! Full and loud!", "A full table! I love it!"],
+    ornery: ["A full table. And a lot of washing up.", "Hm. Yes. Full's better than empty."],
+    shy: ["...Yes. It was nice. Not lonely.", "*smiles*"],
+    curious: ["A full table. Every chair a different story.", "Full and interesting. The best combination."],
+    dreamy: ["A full table, under the lamp. Like it should be.", "Yes. Like a painting."],
+    witty: ["A full table. And an empty pantry.", "Best kind. Worst for the dishes."],
+    proud: ["My table's always full. Now it's fuller.", "Yes. And mine's the best."],
+    gloomy: ["A full table. It's been a long time.", "Yes. I'd forgotten."],
+  });
+  byTemper('rift.power.start', {
+    cheerful: ["Oh, they're lovely! All that glowing! Like Midsummer every night!", "I love the hum! It sounds like the river's purring!"],
+    shy: ["...I don't go near them. But they're pretty from far off.", "...They hum. I like the hum, actually."],
+    witty: ["A machine that turns water into light. Next they'll turn ale into wisdom.", "The Humming Nuisance. Best thing to happen to the riverbank."],
+    proud: ["I helped with the stonework. Best part of the whole thing.", "They're well built. I'll give them that."],
+    gloomy: ["More noise. More change. The river used to be quiet.", "They glow. Everything glows now."],
+  });
+  byTemper('rift.power.trouble', {
+    cheerful: ["Not at all! I love them! The river's happy too, I think!", "Trouble? No! It's exciting!"],
+    shy: ["...A bit. Things I don't understand.", "...Sometimes. At night, when they hum."],
+    curious: ["Trouble? No. Puzzle me, yes. I've been studying the coil.", "Not trouble. Intrigue."],
+    dreamy: ["They sound like sleeping creatures. Breathing. I wonder what they dream.", "Not trouble. They're like the river's new song."],
+    witty: ["They trouble me less than my neighbours.", "Not much. The fish seem to have opinions."],
+    proud: ["Nothing troubles me. I've seen floods.", "Not at all. I understand them better than most."],
+    gloomy: ["A bit. Everything new troubles me.", "They're not ours. That's all."],
+  });
+  byTemper('rift.power.how', {
+    cheerful: ["Yes! Wheel, coil, glow! I understood one bit! The glow bit!", "They showed me! It's magic! It's not magic! It's lovely!"],
+    ornery: ["They explained. I nodded. I didn't follow a word. Don't tell them.", "Water, wheel, wire. Simple, they said. Nothing's simple."],
+    shy: ["...I watched from the bank. It's clever.", "...A bit. They're very patient explaining."],
+    curious: ["The coil spins inside a magnet! The motion makes the current! I've drawn diagrams!", "Rotational energy converted to electrical! Like the mill, but the grain is light!"],
+    dreamy: ["The river turns the wheel and the wheel makes light. Like the river's thinking.", "It's like the water is giving its dreams away."],
+    witty: ["I asked how it worked. They said 'induction'. I said 'bless you'.", "It's like a mill, but it grinds darkness."],
+    proud: ["I understand it perfectly. Mostly. Enough to explain it badly to others.", "I could build one. Given time."],
+    gloomy: ["They explained. It's beyond me. Like most things lately.", "Wheels and wires. I'll stick to wheels."],
+  });
+  byTemper('rift.power.next', {
+    cheerful: ["Talking hedges! I'd love a talking hedge!", "Ha! Don't tempt them!"],
+    ornery: ["Don't joke. They'd do it.", "Talking hedges. Over my dead body."],
+    shy: ["*laughs* Oh, I hope not.", "...Would they talk back?"],
+    curious: ["A talking hedge. Actually, with the Relay, it's possible.", "Ha! Technically, they could wire one."],
+    dreamy: ["A talking hedge would know all the secrets of the lane.", "Ha. I'd ask it about the birds."],
+    proud: ["My hedges speak for themselves. Neatly trimmed.", "Next they'll want to improve my garden. No."],
+    gloomy: ["Next? Everything. Nothing'll be left the same.", "Hedges with opinions. That's all we need."],
+  });
+  byTemper('rift.power.lights', {
+    cheerful: ["I love them! The lane looks like a party every night!", "Yes! I can see where I'm going after the Badger!"],
+    ornery: ["They're useful. That's all I'll say. They're very useful.", "Fine. They're pretty. Happy?"],
+    shy: ["...Yes. I feel safer walking home.", "...They're pretty. Blue and pink."],
+    curious: ["Yes! I've been reading by them! At night! Whole books!", "I've noticed the moths love them. I'm studying the moths."],
+    dreamy: ["They look like fallen stars on the lane.", "Like glow-worms that decided to stay."],
+    witty: ["The lights mean I can see my neighbours' faces. Not always an improvement.", "Pretty. And now I can't pretend I didn't see who left the Badger with whom."],
+    proud: ["The lane looks well. I'll grant them that.", "They've done a good job. I'll say so."],
+  });
+  byTemper('rift.power.river', {
+    cheerful: ["The river's lending a hand! I love that!", "Yes! Kind river!"],
+    ornery: ["Still the river. Hm. All right.", "Lending. It better get it back."],
+    shy: ["...That's nice. The river's kind.", "*nods*"],
+    curious: ["The river as a lender. An interesting idea.", "It's not losing anything. It's sharing. Fascinating."],
+    dreamy: ["The river sharing its strength. Like an old friend.", "That's lovely."],
+    witty: ["The river's always been generous. Ask the fish.", "Lending. With no interest. The river's a terrible banker."],
+    proud: ["Our river. Generous, like us.", "Of course. Our river's the best."],
+    gloomy: ["Still the river. For now.", "I hope it doesn't mind."],
+  });
+  byTemper('rift.power.taught', {
+    cheerful: ["Have I? Oh! That's lovely!", "We've taught each other! Brilliant!"],
+    ornery: ["Taught them? I told them to get off my bank. Same thing.", "Hm. Maybe."],
+    shy: ["...Have I? I didn't mean to.", "...Oh. That's nice."],
+    curious: ["We've exchanged knowledge. A fair trade.", "Mutual teaching. The best kind."],
+    dreamy: ["Like two rivers meeting.", "That's a nice thought."],
+    witty: ["I taught them how to complain about the weather. Vital skill.", "Taught them? Mostly where not to stand."],
+    proud: ["I have. I'm a good teacher.", "Of course I have."],
+    gloomy: ["Maybe. It doesn't feel like much.", "I suppose."],
+  });
+  byTemper('rift.hill.relay.start', {
+    shy: ["...I read it, at the camp. I don't post. Everyone would see.", "...It's a lot. All those little messages."],
+    dreamy: ["Little lines of light. Like messages in bottles, floating by.", "It's like a well you shout into, and the whole village shouts back."],
+    witty: ["A box that tells you what your neighbour had for breakfast. Revolutionary.", "It's gossip that glows."],
+    proud: ["I don't need it. I tell people things to their faces.", "A box. I prefer a well-written letter."],
+    gloomy: ["Folk looking at boxes instead of each other.", "More noise. Less talk."],
+  });
+  byTemper('rift.hill.relay.wiz', {
+    cheerful: ["You posted? Ha! That's brilliant! What did you say?", "A wizard on the Relay! I love it!"],
+    ornery: ["You? Posting? Disgraceful. ...What did you post?", "A wizard. On a box. Whatever next."],
+    shy: ["...I saw. It was nice.", "*giggles*"],
+    curious: ["What was your post? How many pings did you get?", "Did it work? Did people respond?"],
+    dreamy: ["A wizard's words on the Relay, glowing in the dark. Lovely.", "It must have looked like a spell."],
+    proud: ["I saw. Not bad, for a beginner.", "Hm. I could do better."],
+    gloomy: ["You too. Everyone's on it now.", "So even the wizard's gone that way."],
+  });
+  byTemper('rift.hill.relay.tried', {
+    cheerful: ["Yes! I wrote 'HELLO!' Everyone pinged! I was so happy!", "Once! It was fun! I'll do it again!"],
+    curious: ["Yes! I've posted questions. The answers are fascinating.", "I've tested it. Response time's very fast."],
+    dreamy: ["I wrote a little poem. Two lines. Someone pinged it at midnight.", "Once. 'Stars are lovely tonight.' Forty pings."],
+    witty: ["Once. I posted 'Who stole my turnip?' Three confessions.", "I tried. I wrote a limerick. It was banned."],
+    proud: ["Once. I posted the harvest figures. Everyone needed them.", "I've posted. Properly spelled, unlike most."],
+    gloomy: ["Once. Nobody pinged. I haven't tried again.", "No. Nobody would read it."],
+  });
+  byTemper('rift.hill.relay.hedge', {
+    cheerful: ["A hedge! Ha! I love a hedge!", "Yes! A long hedge! I'll shout!"],
+    ornery: ["A hedge. Hm. I've shouted over worse.", "Fine. A hedge. Still daft."],
+    shy: ["...A hedge. That's less scary.", "*smiles*"],
+    curious: ["A hedge with infinite length. Interesting.", "Hm. A hedge. The principle holds."],
+    dreamy: ["A hedge in the sky. I like that.", "A long hedge, glowing at night."],
+    witty: ["A hedge with spelling mistakes.", "A hedge that never needs trimming."],
+    proud: ["My hedge is better.", "I'll stick to my own hedge, thank you."],
+    gloomy: ["A hedge. With strangers on the other side.", "Maybe."],
+  });
+  byTemper('rift.hill.relay.turnips', {
+    cheerful: ["Ha! Yes! My turnips deserve fame!", "Please! My turnips need fans!"],
+    ornery: ["My turnips don't need a wizard's help.", "Leave my turnips out of it."],
+    shy: ["*laughs* Thank you.", "...They are nice turnips."],
+    curious: ["How many pings would turnips get? I'd like to know.", "An experiment! Turnip popularity!"],
+    dreamy: ["My turnips, glowing on the Relay. Ha.", "Turnips in lights. Lovely."],
+    witty: ["My turnips will be famous. Finally.", "Turnip celebrity. I've waited for this."],
+    proud: ["My turnips are the finest. Tell everyone.", "Please do. They're excellent."],
+    gloomy: ["Nobody cares about turnips.", "Ha. Maybe."],
+  });
+  byTemper('rift.hill.relay.brave', {
+    cheerful: ["Brave! Ha! I'll be braver! I'll post again!", "I'm brave! Hooray!"],
+    ornery: ["Brave. Hm. I just wanted to complain.", "Braver than my neighbours. That's not hard."],
+    shy: ["...Brave. Really? Thank you.", "*blushes*"],
+    curious: ["Brave. Or curious. Sometimes they're the same.", "Hm. I didn't think of it as bravery."],
+    dreamy: ["Brave. Like a lantern in a storm.", "That's nice."],
+    witty: ["Brave. The Relay is my dragon.", "Brave. Tell my wife."],
+    proud: ["Brave. Yes. I always am.", "Of course."],
+    gloomy: ["Brave. Or foolish.", "Hm. Thank you."],
+  });
+  byTemper('rift.hill.old.start', {
+    shy: ["...It has. So fast. I can't keep up.", "...Yes. Everything's different."],
+    curious: ["It has! Isn't it fascinating? I never thought I'd see so much change in one life!", "Changed? Wonderfully. I'm learning things at eighty."],
+    witty: ["Changed? The sky falls in weekly and the young ones say 'ping'. Business as usual.", "It's changed. I've changed. My hip has definitely changed."],
+    proud: ["Changed. But we've held our own. Thistledown is still Thistledown.", "Changed, yes. And we've managed well."],
+  });
+  byTemper('rift.hill.old.better', {
+    cheerful: ["Better! Definitely better! More parties!", "Better! More people! More cake!"],
+    ornery: ["Worse. ...Mostly worse. Some bits are better. Not many.", "Better and worse. Mostly louder."],
+    shy: ["...Different. I don't know.", "...Better, I think. Harder, too."],
+    curious: ["Better! Life's more interesting! I'll never be bored again!", "Better, on balance. I've done the sums."],
+    dreamy: ["Better. Like a window opened in a stuffy room.", "Better. Stranger. Brighter."],
+    witty: ["Better. The gossip's improved enormously.", "Better. Worse. More interesting. Pick one."],
+    proud: ["Better, because we've handled it well.", "Better. We've risen to it."],
+    gloomy: ["Worse. Or maybe I'm just old.", "Hard to say. Everything feels worse at my age."],
+  });
+  byTemper('rift.hill.old.miss', {
+    cheerful: ["The quiet evenings. But the new ones are lovely too!", "Oh, the old songs. But we still sing them!"],
+    ornery: ["The quiet. And knowing where everyone was. And who.", "The way it was. Isn't that enough?"],
+    shy: ["...The dark nights. I liked the dark.", "...Knowing every face."],
+    curious: ["The simplicity. Though I'd never go back.", "Knowing what tomorrow would bring. That's gone."],
+    dreamy: ["The stars, bright and close. Before the lamps.", "Long evenings with nothing but the fire and the owls."],
+    witty: ["Being the oldest thing in the valley. Now the sky is.", "Knowing everyone's business. Now there's too much business."],
+    proud: ["The respect for the old ways.", "When everyone knew their place."],
+  });
+  byTemper('rift.hill.old.wiz', {
+    cheerful: ["Have you! Tell me! Do they all get happy in the end?", "Lots of valleys! Ooh! Which was your favourite?"],
+    ornery: ["A few, have you. And did they all have holes in the sky?", "Hm. And what did you learn?"],
+    shy: ["...Do they settle? I hope so.", "...Were they all right? In the end?"],
+    curious: ["Every valley changes? How? What patterns?", "Tell me about the others. How did they change?"],
+    dreamy: ["Valleys changing like seasons. That's comforting.", "You've watched so many. Like a gardener."],
+    witty: ["A connoisseur of changing valleys. Marvellous.", "And you came back to ours. Brave man."],
+    proud: ["Ours will handle it best. You'll see.", "And how does ours compare?"],
+    gloomy: ["Every valley changes. And every one loses something.", "I suppose they do."],
+  });
+  byTemper('rift.hill.old.storms', {
+    cheerful: ["Oh! My grandad told stories! Green lightning! We loved being scared!", "Green storms! The old ones loved telling it!"],
+    ornery: ["There were tales. Nobody believed them. Now look.", "Green weather. Nobody listened."],
+    shy: ["...There was a story. About green lightning. It frightened me.", "...My nan wouldn't speak of it."],
+    curious: ["Yes! Green lightning! The Long Meadow! I always wondered if it was real!", "There are records, if you know where to look. Green storms."],
+    dreamy: ["Green lightning on summer evenings. Like a door opening.", "My grandad said the sky turned green and sang."],
+    witty: ["Green lightning. My grandad said it was the cheese. It wasn't the cheese.", "Green storms. The old folk were right about something."],
+    proud: ["My family remembered. We always remember.", "There were tales. My family kept them."],
+    gloomy: ["Green lightning. And folk who never came home.", "Storms that took things."],
+  });
+  byTemper('rift.hill.old.green', {
+    cheerful: ["Green like spring! But scary! That's all I know!", "Someone walked into it! Brave or daft!"],
+    ornery: ["That's all I know. And it's enough.", "Somebody walked into it. Daft."],
+    shy: ["...That's all. I didn't want to know more.", "...It frightened me as a child."],
+    curious: ["Someone walked into it! Who? When? I've wondered all my life!", "That's all I know. I'd love to know more."],
+    dreamy: ["Someone walked into the green and never came back. Like a fairy tale.", "Green and quiet. And someone gone."],
+    witty: ["Someone walked into green lightning. Our family motto ever since: don't.", "That's the whole tale. Short but memorable."],
+    proud: ["My family kept that story safe. It mattered.", "That's the tale. As told to me."],
+    gloomy: ["Someone gone. That's all the old tales are. Someone gone.", "Never came back. That's the end of it."],
+  });
+  byTemper('rift.hill.old.young', {
+    cheerful: ["Worry? No! They'll be fine! They're clever!", "The young ones will love it! They do already!"],
+    ornery: ["They don't listen. They never did. They'll be fine anyway.", "Worry? Constantly. It's my job."],
+    shy: ["...A little. They're so trusting.", "...I hope they'll be all right."],
+    curious: ["I'm fascinated by them. They're growing up between two worlds.", "They'll be the cleverest generation yet. I'm sure of it."],
+    dreamy: ["They'll grow up with stars and neon both. Lucky things.", "They'll have two worlds to dream about."],
+    witty: ["Worry? They'll be running the place by next week.", "They'll be fine. It's us old ones who need minding."],
+    proud: ["They'll be fine. They come from good stock.", "They'll do us proud."],
+    gloomy: ["A bit. They don't know what they're losing.", "Always."],
+  });
+  byTemper('rift.hill.old.steady', {
+    cheerful: ["Gently! Yes! That's how I like it!", "Steady! Ha! I'm steady as a pudding!"],
+    ornery: ["Steady. Or stubborn. Same thing.", "Hm. Thank you."],
+    shy: ["...Thank you.", "*smiles quietly*"],
+    curious: ["Gently. Interesting. Gentle change is rare?", "Steady eye. I'll take that."],
+    dreamy: ["Gently. Like a leaf falling.", "That's lovely."],
+    witty: ["Steady. My hands disagree.", "Steady eye, wobbly knees."],
+    proud: ["Steady. Yes. I've always been.", "Thank you. I have."],
+    gloomy: ["Gently. I hope it stays gentle.", "Steady. Or just tired."],
+  });
 });
