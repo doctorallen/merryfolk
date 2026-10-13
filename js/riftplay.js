@@ -289,8 +289,14 @@ function workParty() {
     built.push(lot.def && lot.def.name ? lot.def.name : key);
   }
   chronicle(`A petition went round the village with ${names} names on it, and this morning the whole of Thistledown turned out: hill-folk with spades and rift-folk with spanners${built.length ? `, and by sunset ${built.join(' and ')} stood finished by the river` : ', rigging the old mill to feed the Relay'}. There's a feast tonight to thank everyone.`, 'rift');
-  if (Game.schedulePartyTonight && typeof PARTY_KINDS !== 'undefined' && PARTY_KINDS.feast) Game.schedulePartyTonight('feast');
+  if (Game.schedulePartyTonight && typeof PARTY_KINDS !== 'undefined' && PARTY_KINDS.workparty) Game.schedulePartyTonight('workparty');
 }
+// the work party's own feast (the Steward's feast is the Steward's, and there's no Steward)
+addPartyKind('workparty', { rank: 4,
+  label: 'The work party\'s feast', hud: 'Village feast!', feast: true, paid: true,
+  note: 'The long tables are out in the party field for everyone who dug and wired and carried today, hill-folk and rift-folk side by side.',
+  toast: () => 'To spades and spanners, and everyone who held one!',
+});
 // The Moot itself: a couple of speeches, then the vote.
 function riftMoot() {
   const P = rp(), S = story();
