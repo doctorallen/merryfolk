@@ -237,10 +237,12 @@ function writeLetters() {
   }
 }
 // who'd write to him about it: one of the people it's about, if they're fond of him; else his hearth or best friend
+const SAID_OF = new Set(['toddle', 'rift', 'trip', 'back']);
 function writerFor(e) {
   const J = journeyOf();
   const about = e.ids.map(personById).filter((v) => v && v.stage !== 'baby' && !v.leaving);
-  const own = about.filter((v) => (closeToHim(v) || (Game.wizMet || {})[v.id]) && (v.isGrown() || kidBand(v) !== 'toddler')).sort((a, b) => weight(b) - weight(a))[0];
+  // (some news is only ever told by someone else: "little X is toddling", "X came through the rift")
+  const own = SAID_OF.has(e.k) ? null : about.filter((v) => (closeToHim(v) || (Game.wizMet || {})[v.id]) && (v.isGrown() || kidBand(v) !== 'toddler')).sort((a, b) => weight(b) - weight(a))[0];
   if (own) return own;
   const fond = Game.villagers.filter((v) => v.isGrown() && !v.leaving && closeToHim(v) && !about.includes(v)).sort((a, b) => (J.sent[a.id] || 0) - (J.sent[b.id] || 0) || weight(b) - weight(a));
   return fond[0] || null;
