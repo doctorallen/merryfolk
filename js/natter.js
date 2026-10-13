@@ -82,7 +82,10 @@ addTalkOption({
       { label: 'Make the peace', run: () => {
         T.wiz(R.pick(SIDE_LINES.peace));
         // the more they think of him, the more likely they listen
-        const sway = (regardOf(a) + regardOf(b)) / 2 + 0.35;
+        const resp = (x) => (typeof bondFull === 'function' ? bondFull(x).respect || 0 : 0);
+        const sway = (regardOf(a) + regardOf(b)) / 2 * 0.6 + (resp(a) + resp(b)) / 2 * 0.8 + 0.35;
+        // making the peace earns their respect, whichever way it goes in the end
+        if (typeof bondFull === 'function') { bondFull(a).respect = clamp((bondFull(a).respect || 0) + 0.03, -1, 1); bondFull(b).respect = clamp((bondFull(b).respect || 0) + 0.03, -1, 1); }
         if (Math.random() < clamp(sway, 0.15, 0.9)) {
           T.quarrel = false; if (a.task) a.task.data.quarrel = false;
           a.bond(b, 0.08); unfeel(a, 'squabble'); unfeel(b, 'squabble');

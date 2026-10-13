@@ -39,6 +39,8 @@ talkPack('core', () => {
     { if: { met: true, joke: (j) => !!j }, pri: 1, text: ['Ah, it\'s you. "{joke}" I still laugh at that.', 'If it isn\'t the wizard. {Joke}'] },
     { if: { met: true, lastLabel: (x) => !!x, daysSince: { min: 1, max: 4 } }, text: ['Back again! We were talking about {lastLabel}, last time.', 'I\'ve been thinking about what we said. About {lastLabel}.'] },
     { if: { met: true, told: (x) => !!x, trust: { min: 0.3 } }, pri: 1, text: ['You haven\'t told anyone, have you? About... you know.', 'Hello, you. Still keeping my secret?'] },
+    { if: { met: true, promiseKept: true }, pri: 2, text: ['You kept your word! I knew you would.', 'There he is. A wizard of his word.'] },
+    { if: { met: true, promiseBroken: true }, pri: 2, text: ['Oh. You. I waited, you know.', 'Hmph. You said you would, and you didn\'t.'] },
     { if: { met: true, daysSince: { min: 5 } }, text: ['Well! I thought you\'d forgotten us.', 'Look who it is! Where\'ve you been hiding?'] },
     { if: { weather: 'rain' }, text: ['Mind the puddle. Well, too late.', 'Wet enough for you, wizard?'] },
     { if: { weather: 'snow' }, text: ['You\'ve snow on your hat. A great deal of snow.', 'Brr! Isn\'t it a day?'] },

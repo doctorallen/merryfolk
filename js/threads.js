@@ -129,6 +129,9 @@ function factsOf(v, T) {
     fond: r, trust: b.trust || 0, respect: b.respect || 0, talks: b.talks || 0, familiar: familiarity(v),
     known: Object.keys(b.known || {}), seen: b.seen, met: !!(Game.wizMet || {})[v.id], metToday: (Game.wizMet || {})[v.id] === Game.day,
     joke: b.jokes[0] ? b.jokes[0].t : null, jokeKey: b.jokes[0] ? b.jokes[0].k : null,
+    promiseKept: (b.promises || []).some((p) => p.state === 'kept' && Game.day - p.settled <= 3), promiseBroken: (b.promises || []).some((p) => p.state === 'broken' && Game.day - p.settled <= 5),
+    promiseOpen: (b.promises || []).find((p) => p.state === 'open') ? b.promises.find((p) => p.state === 'open').t : null,
+    respectWord: (b.respect || 0) > 0.4 ? 'hangs on your word' : (b.respect || 0) > 0.15 ? 'listens to you' : (b.respect || 0) < -0.2 ? 'thinks you a meddler' : null,
     told: b.told[0] ? b.told[0].t : null, toldKey: b.told[0] ? b.told[0].k : null,
     lastThread: b.lastThread || null, lastLabel: b.lastThread && THREADS[b.lastThread] ? threadLabel(THREADS[b.lastThread], null) : null,
     daysSince: b.last ? Game.day - b.last : null, hearth: typeof hearthFolk === 'function' && hearthFolk().includes(v),
@@ -137,6 +140,30 @@ function factsOf(v, T) {
   for (const fn of FACT_FNS) { try { fn(v, F, T); } catch (e) { console.warn('talk facts:', e); } }
   F.situation = situationOf(F);
   return F;
+}
+// --- Promises: kept or broken by what happens ---------------------------------------
+// A pack can say how a kind of promise is settled: fn(v, p) → 'kept' | 'broken' | null (not yet).
+const PROMISE_CHECKS = [];
+function addPromiseCheck(prefix, fn) { PROMISE_CHECKS.push([prefix, fn]); }
+// a wish you said you'd see to is kept when it comes true
+addPromiseCheck('wish', (v, p) => (v.memories || []).some((m) => m.d >= p.d && /^Got my wish/.test(m.t)) ? 'kept' : null);
+function settlePromises() {
+  if (!playMode()) return;
+  for (const v of Game.villagers) {
+    const b = (Game.wizBond || {})[v.id];
+    if (!b || !b.promises) continue;
+    for (const p of b.promises) {
+      if (p.state !== 'open') continue;
+      const chk = PROMISE_CHECKS.find(([pre]) => p.k.startsWith(pre));
+      let st = chk ? chk[1](v, p) : null;
+      if (!st && Game.day > p.due) st = p.k.startsWith('secret') ? 'kept' : 'lapsed';
+      if (!st) continue;
+      p.state = st; p.settled = Game.day;
+      if (st === 'kept') { addTrust(v, 0.06); addRegard(v, 0.03); bondNote(v, `You kept your word: ${p.t.replace(/^You (said|promised) /, '').replace(/^you'd /, '')}.`); }
+      else if (st === 'broken') { addTrust(v, -0.1); bondNote(v, `You broke your word: ${p.t}.`); }
+      else bondNote(v, `${p.t}, and nothing came of it.`);
+    }
+  }
 }
 function familiarity(v) { const b = bondFull(v); return (b.talks || 0) * 0.5 + Object.keys(b.known || {}).length + b.told.length * 1.5; }
 // the bond, with every field the conversation keeps (older saves lack some)
@@ -524,5 +551,6 @@ window.addEventListener('DOMContentLoaded', () => {
   // what's said in a talk is noted, so it isn't said again too soon
   patch(Villager.prototype, 'say', (say) => function (text) { if (Play.talk && (Play.talk.v === this || Play.talk.third === this) && text) { Play.talk.said && Play.talk.said.add(text); noteSaid(this, text); } return say.apply(this, arguments); }, 'threads');
   // a day's turn: old "said lately" marks are let go
+  addHook('onHour', (h) => { if (h === 8 || h === 20) settlePromises(); });
   addHook('onHour', (h) => { if (h !== 4 || !Game.wizSaid) return; for (const k in Game.wizSaid) if (Game.day - Game.wizSaid[k] > 14) delete Game.wizSaid[k]; });
 });
