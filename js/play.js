@@ -121,6 +121,9 @@ function greeting(v) {
 function startTalk(v) {
   const w = wizardOf();
   if (!w || Play.talk || v.inside || v.carried) return;
+  // if they're mid-natter, the other one stays for it too
+  const third = typeof talkThird === 'function' ? talkThird(v) : null;
+  const quarrel = !!(third && v.task && v.task.data && v.task.data.quarrel);
   // they stop what they're doing and turn to him
   v.abort(); v.queue = v.queue.filter((q) => q.a.id !== 'wizard_chat');
   v.task = { a: ACTIONS.wizard_chat, phase: 'do', target: { x: v.x, y: v.y }, t: 9999, data: {}, before: { ...v.drives }, chatLock: true };
@@ -128,16 +131,26 @@ function startTalk(v) {
   v.facing = facingOf(w.fx - v.x, w.fy - v.y);
   w.facing = facingOf(v.x - w.fx, v.y - w.fy);
   w.fpath = null; w.goal = null; w.doing = 'player';
-  const T = { v, log: [], used: new Set(), sub: null };
+  const T = { v, third, quarrel, log: [], used: new Set(), sub: null };
+  if (third) {
+    third.abort();
+    third.task = { a: ACTIONS.wizard_chat, phase: 'do', target: { x: third.x, y: third.y }, t: 9999, data: {}, before: { ...third.drives }, chatLock: true };
+    third.pose = 'stand'; third.path = null; third.muteBubble = true;
+    third.facing = facingOf(w.fx - third.x, w.fy - third.y);
+    if (!(Game.wizMet || {})[third.id]) { Game.wizMet[third.id] = Game.day; addRegard(third, 0.03); }
+    feel(third, 'wizard_talk');
+  }
   // what's said shows on the sheet, not in bubbles over their heads
   v.muteBubble = true; Wiz.speaker.muteBubble = true;
   Play.talk = T;
   Play.heldSpeed = Game.speedIdx; setSpeed(0);
   T.wiz = (text) => { wizSay(text, v); T.log.push({ who: 'wiz', text }); };
   T.reply = (text) => { v.say(text, Math.max(3, text.length * 0.06), { to: Wiz.speaker }); T.log.push({ who: 'them', text }); };
+  T.reply2 = (text) => { if (!third) return; third.say(text, Math.max(3, text.length * 0.06), { to: Wiz.speaker }); T.log.push({ who: 'third', text }); };
   T.choices = (list) => { T.sub = list; };
   T.end = () => endTalk();
   T.reply(greeting(v));
+  if (third) T.reply2(quarrel ? R.pick(['Oh good, a witness. Tell them they\'re wrong.', 'Don\'t you start as well.']) : R.pick(['Join us! We were just saying...', 'Ah! Pull up a stool.']));
   if (!Game.wizMet[v.id]) { Game.wizMet[v.id] = Game.day; addRegard(v, v.isChild() ? 0.1 : 0.04); }
   feel(v, 'wizard_talk');
   selectVillager(null);
@@ -150,6 +163,8 @@ function endTalk() {
   Play.talk = null;
   const v = T.v;
   v.muteBubble = false; Wiz.speaker.muteBubble = false; v.bubble = null; Wiz.speaker.bubble = null;
+  const t3 = T.third;
+  if (t3) { t3.muteBubble = false; t3.bubble = null; if (t3.task && t3.task.a.id === 'wizard_chat') t3.task.t = 0.01; t3.drives.lonely = Math.max(0, t3.drives.lonely - 0.12); }
   if (v.task && v.task.a.id === 'wizard_chat') v.task.t = 0.01;
   v.drives.lonely = Math.max(0, v.drives.lonely - 0.15);
   setSpeed(Play.heldSpeed || 1);
@@ -159,14 +174,15 @@ function renderTalk() {
   const T = Play.talk;
   if (!T) return;
   const v = T.v;
-  const opts = T.sub || TalkOptions.filter((o) => !o.when || o.when(v, T)).map((o) => ({ label: typeof o.label === 'function' ? o.label(v, T) : o.label, run: () => o.run(v, T), id: o.id, dim: T.used.has(o.id) }));
+  // with two of them, only what's said to both (and goodbye)
+  const opts = T.sub || TalkOptions.filter((o) => (!T.third || o.pair || o.id === 'bye') && (!o.when || o.when(v, T))).map((o) => ({ label: typeof o.label === 'function' ? o.label(v, T) : o.label, run: () => o.run(v, T), id: o.id, dim: T.used.has(o.id) }));
   if (T.sub) opts.push({ label: 'Never mind', run: () => {}, back: true });
-  const log = T.log.slice(-2).map((l) => `<p class="tk-line ${l.who}"><b>${l.who === 'wiz' ? 'You' : escapeHtml(v.first)}</b> ${escapeHtml(l.text)}</p>`).join('');
+  const log = T.log.slice(T.third ? -3 : -2).map((l) => `<p class="tk-line ${l.who}"><b>${l.who === 'wiz' ? 'You' : escapeHtml(l.who === 'third' ? T.third.first : v.first)}</b> ${escapeHtml(l.text)}</p>`).join('');
   const sub = v.stage === 'elder' ? 'an elder' : v.isChild() ? `${kidBand(v) === 'youth' ? 'a youngster' : 'a little one'}` : v.job ? JOBS[v.job].label.toLowerCase() : 'a grown-up';
   Sheet.open({
     kind: 'talk',
-    title: v.name(),
-    sub: `${sub}${v.isRiftborn && v.isRiftborn() ? ', rift-born' : ''} · ${regardWord(v)}`,
+    title: T.third ? `${v.first} and ${T.third.first}` : v.name(),
+    sub: T.third ? (T.quarrel ? 'in the middle of a squabble' : 'having a natter') : `${sub}${v.isRiftborn && v.isRiftborn() ? ', rift-born' : ''} · ${regardWord(v)}`,
     portrait: v,
     html: `<div class="tk-log">${log}</div>`,
     choices: opts.map((o) => ({ label: o.label, dim: o.dim, back: o.back, run: () => {
@@ -181,7 +197,7 @@ function renderTalk() {
 ACTIONS.wizard_chat = {
   label: 'Talking with the wizard', icon: 'chat', sat: { lonely: -0.3, bored: -0.25 }, dur: 10, pose: 'stand', queued: true, stages: AWAKE,
   target: (v) => ({ x: v.x, y: v.y }),
-  tick: (v) => { const w = wizardOf(); if (w) v.facing = facingOf(w.fx - v.x, w.fy - v.y); if (!Play.talk || Play.talk.v !== v) v.task.t = Math.min(v.task.t, 0.01); },
+  tick: (v) => { const w = wizardOf(); if (w) v.facing = facingOf(w.fx - v.x, w.fy - v.y); if (!Play.talk || (Play.talk.v !== v && Play.talk.third !== v)) v.task.t = Math.min(v.task.t, 0.01); },
 };
 ACTIONS.wizard_chat.id = 'wizard_chat';
 ACTION_NAMES.wizard_chat = 'Talking with the wizard';
