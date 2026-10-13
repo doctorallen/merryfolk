@@ -561,4 +561,4 @@ Every commit is stamped with a version made of the day of the year and the numbe
 `npm test` runs the checks CI runs before deploying (`test/`): a syntax and type check, the world-generation golden hashes, a two-day smoke run on desktop and phone with a save round-trip, and the valley layout's reachability. It needs Node and the installed Chrome (`CHROME` points at the binary if it isn't in the usual place).
 
 
-Every push to `main` runs `.github/workflows/pages.yml`. It checks the JavaScript syntax and that every script in `index.html` exists, then publishes `index.html`, `css/` and `js/` to GitHub Pages. Pull requests run the checks without deploying.
+Every push to `main` runs `.github/workflows/pages.yml`. It checks the JavaScript syntax and that every script in `index.html` exists, then publishes `index.html`, `css/`, `js/` and the talk packs in `talk/` to GitHub Pages. Pull requests run the checks without deploying.
