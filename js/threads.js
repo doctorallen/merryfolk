@@ -45,6 +45,10 @@ function addThread(t) { THREADS[t.id] = { weight: 1, cool: 3, start: 'start', be
 function lines(key, rules) { const list = TALK_LINES[key] || (TALK_LINES[key] = []); for (const r of rules) list.push(typeof r === 'string' ? { text: [r] } : { ...r, text: Array.isArray(r.text) ? r.text : [r.text] }); }
 function frags(key, list) { (FRAGS[key] || (FRAGS[key] = [])).push(...list); }
 function addSituation(key, s) { SITUATIONS[key] = { pri: 1, ...s, key }; }
+// A pack may compute facts of its own: fn(v, F, T) sets keys on F. Set every
+// key you add (null when it doesn't apply), so the lint knows it's a fact.
+const FACT_FNS = [];
+function addFacts(fn) { FACT_FNS.push(fn); }
 
 // A pack registers itself by calling this from its own file.
 function talkPack(name, fn) {
@@ -130,6 +134,7 @@ function factsOf(v, T) {
     daysSince: b.last ? Game.day - b.last : null, hearth: typeof hearthFolk === 'function' && hearthFolk().includes(v),
     wiz: 'Gandalf', pet: petPhrase(v),
   };
+  for (const fn of FACT_FNS) { try { fn(v, F, T); } catch (e) { console.warn('talk facts:', e); } }
   F.situation = situationOf(F);
   return F;
 }

@@ -16,6 +16,8 @@
 //   {weather} {hour} {lost} {lostRel} {joke} {told} {lastLabel} {pet} {wiz},
 //   and {frag:key} for a random fragment. A line with a placeholder that
 //   can't be filled is skipped, so only use one where its `if` guarantees it.
+// Facts of your own: addFacts((v, F, T) => { F.myFact = ... ?? null; }) — set the key
+//   even when it doesn't apply (null), so the lint knows it exists.
 // Threads: see addThread in js/threads.js. Keep their lines short (a phone
 //   screen: 140 characters at most), British English, cosy and gently funny.
 // ---------------------------------------------------------------------------
