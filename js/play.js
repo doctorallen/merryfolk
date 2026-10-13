@@ -615,6 +615,8 @@ window.addEventListener('DOMContentLoaded', () => {
     o.fn();
   }, 'play');
   patch(window, 'showAlmanac', (sa) => function (rep) { if (playMode()) { if (rep) Game.lastAlmanac = rep; return; } return sa.apply(this, arguments); }, 'play');
+  // petitions are for a Steward to answer: with none, they'd only ever be left a day and taken as a no
+  patch(window, 'petitionDue', (pd) => function () { if (playMode()) return; return pd.apply(this, arguments); }, 'play');
   // the opening card tells a wizard's village what it's in for
   window.addEventListener('load', introForMode);
   patch(window, 'load', (ld) => function () { const r = ld.apply(this, arguments); document.body.classList.toggle('wizmode', playMode()); return r; }, 'play');

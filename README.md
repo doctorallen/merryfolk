@@ -420,7 +420,7 @@ A green or red ghost previews every stroke, with the cost or the reason it won't
 
 ## Playing as the wizard
 
-A new village can be played two ways, chosen on the *Shape your valley* screen: as **the Steward**, running the village from above with build mode, the ledger and the giant hand, or as **the wizard**, walking the valley on your own two feet. (The dev drawer's Tools tab can switch a village between the two.) As the wizard the village runs itself on the Steward's defaults, settles its own Moots, and keeps the clerk's season report in the Chronicle; what you do is talk, teach and tell tales.
+A new village can be played two ways, chosen on the *Shape your valley* screen: as **the Steward**, running the village from above with build mode, the ledger and the giant hand, or as **the wizard**, walking the valley on your own two feet. (The dev drawer's Tools tab can switch a village between the two.) As the wizard the village runs itself on the Steward's defaults, settles its own Moots, brings no petitions, and keeps the clerk's season report in the Chronicle; what you do is talk, teach and tell tales.
 
 It's made for a phone first. Held upright, the world fills the top of the screen and a sheet rises from the bottom when you talk or choose something, within reach of a thumb, with the camera keeping you and whoever you're talking to above it; turned sideways or on a wide screen, the sheet docks at the right.
 
