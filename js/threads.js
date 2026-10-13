@@ -38,7 +38,7 @@ const TALK_LINES = {};
 const FRAGS = {};
 const SITUATIONS = {};
 // every pack, in the order it's worth having (the core first)
-const TALK_MANIFEST = ['core'];
+const TALK_MANIFEST = ['core', 'wizard', 'wizard2', 'wizard3', 'wizard4'];
 const TalkPacks = { loaded: new Set(), waiting: {}, current: null, started: false };
 
 function addThread(t) { THREADS[t.id] = { weight: 1, cool: 3, start: 'start', beats: {}, ...t, pack: TalkPacks.current }; }
