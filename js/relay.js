@@ -85,7 +85,7 @@ function wizardPosts() {
   }
   out.push({ key: 'welcome', text: 'To all who came through the sky: Thistledown is glad of you. Second breakfast is at half past nine.', run: () => { for (const v of riftBorn()) addRegard(v, 0.04); } });
   out.push({ key: 'joke', text: 'Riddle for the Relay: what has roots nobody sees, is taller than trees, and yet never grows? (Answers to the wizard.)', run: () => { for (const v of Game.villagers) if (relayReader(v)) addRegard(v, v.isChild() ? 0.04 : 0.02); } });
-  if (typeof voteOpen === 'function' && voteOpen()) out.push({ key: 'vote', text: 'On the Long Dim: a door kept open is a lamp kept lit. Think about it before the Moot.', run: () => { for (const v of Game.villagers) if (v.isGrown() && relayReader(v)) heard(v, riftWary(v) > 0.4 ? -0.03 : 0.1); } });
+  if (typeof voteOpen === 'function' && voteOpen()) out.push({ key: 'vote', text: 'On the Long Dim: a door kept open is a lamp kept lit. Think about it before the Moot.', run: () => { for (const v of Game.villagers) if (v.isGrown() && relayReader(v)) heard(v, riftWary(v) > 0.4 ? -0.03 : 0.05); } });
   return out;
 }
 function wizardPost(o) {
@@ -103,7 +103,7 @@ function pinPost(p) {
   p.pinned = true;
   // pinned, it's read by everyone, not just the rift-minded
   if (/kind word|A word for/.test(p.text) || p.kind === 'wizard') for (const v of Game.villagers) if (v.isGrown() && !relayReader(v)) addRegard(v, 0.01);
-  if (/Long Dim/.test(p.text)) for (const v of Game.villagers) if (v.isGrown() && !relayReader(v)) heard(v, riftWary(v) > 0.4 ? -0.02 : 0.06);
+  if (/Long Dim/.test(p.text)) for (const v of Game.villagers) if (v.isGrown() && !relayReader(v)) heard(v, riftWary(v) > 0.4 ? -0.02 : 0.03);
   toast('Pinned to the Relay board for all to see.', 'info');
 }
 

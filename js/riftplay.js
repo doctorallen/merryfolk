@@ -215,7 +215,8 @@ function riftLean(v) {
   return clamp(s, -1, 1);
 }
 const goBetween = (v) => (typeof isGoBetween === 'function' ? !!isGoBetween(v) : false);
-const leanSide = (l) => (l > 0.08 ? 'hearthlink' : l < -0.08 ? 'softclose' : 'undecided');
+// a fair band of the undecided, so one tale or one post doesn't carry the village
+const leanSide = (l) => (l > 0.12 ? 'hearthlink' : l < -0.12 ? 'softclose' : 'undecided');
 function voters() { return Game.villagers.filter((v) => v.isGrown() && !v.leaving); }
 function tally(onlyKnown) {
   const t = { hearthlink: 0, softclose: 0, undecided: 0, unknown: 0 };
@@ -244,7 +245,7 @@ function argue(v, T, side) {
   if (P.argued[v.id] === Game.day) { T.reply('You\'ve said your piece today. I\'m thinking about it.'); return; }
   P.argued[v.id] = Game.day;
   const r = regardOf(v), open = OPEN_TO[temperOf(v)] || 1;
-  let d = (side === 'hearthlink' ? 1 : -1) * 0.14 * open * (0.5 + Math.max(0, r));
+  let d = (side === 'hearthlink' ? 1 : -1) * 0.1 * open * (0.5 + Math.max(0, r));
   if (r < -0.1) d *= -0.5; // nobody likes being told by someone they can't abide
   P.sway[v.id] = clamp((P.sway[v.id] || 0) + d, -0.6, 0.6);
   T.reply(Math.abs(d) < 0.03 ? 'Hmph. We\'ll see.' : d * (side === 'hearthlink' ? 1 : -1) < 0 ? 'Don\'t lecture me, wizard.' : R.pick(['You may have something there.', 'I hadn\'t thought of it like that.', 'Hm. Let me sleep on that.']));
@@ -393,7 +394,7 @@ window.addEventListener('DOMContentLoaded', () => {
   patch(window, 'longDimMoot', (ldm) => function () { if (riftWiz()) return startVoteCampaign(); return ldm.apply(this, arguments); }, 'riftplay');
   // a tale heard during the run-up stays with them; the tinker's tale most of all
   patch(window, 'feel', (fe) => function (v, key, x) {
-    if (key === 'wizard_tale' && v && riftWiz() && story().stage >= 6 && !story().finale) heard(v, x === WIZARD_TALES.mungo.x ? 0.25 : 0.08);
+    if (key === 'wizard_tale' && v && riftWiz() && story().stage >= 6 && !story().finale) heard(v, x === WIZARD_TALES.mungo.x ? 0.12 : 0.04);
     return fe.apply(this, arguments);
   }, 'riftplay');
   // the Rifts tab shows the threads and the casebook in the wizard's game
