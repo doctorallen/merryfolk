@@ -1081,3 +1081,25 @@ body.wizmode:has(#panel:not([hidden])) #wizbar { display: none; }
 .post.wizard { border-left-color: #e8eef8; }
 .post.wizard .pt { color: #fff; }
 .post.pinned { outline: 2px solid var(--brass); }
+/* ---------- the wizard's journeys (journey.js): the journal page and "since you were last here" ---------- */
+.skip-card.journey { width: min(460px, 100%); max-height: calc(100% - 24px); display: flex; flex-direction: column; }
+.skip-card.journey .skip-log { max-height: none; flex: 1 1 auto; min-height: 0; }
+#journey-road { width: 100%; aspect-ratio: 10 / 3; image-rendering: pixelated; border: 2px solid var(--ink); border-radius: 4px; margin: 6px 0 2px; background: var(--parch-2); }
+#journey-road[hidden] { display: none; }
+.skip-log li.letter { font-family: var(--font-body); font-size: 15px; line-height: 1.4; background: #fdf7e8; border: 1px solid var(--parch-3); border-left: 4px solid var(--parch-3); }
+.skip-log li.letter.call { border-left-color: var(--berry); }
+.skip-log .j-day { display: block; font-family: var(--font-ui); font-size: 11px; color: var(--ink-3); margin-bottom: 2px; }
+.skip-log .j-sign { display: block; text-align: right; font-style: italic; color: var(--ink-2); margin-top: 4px; }
+.skip-log .j-come { display: block; margin-top: 6px; min-height: 40px; width: 100%; border: 2px solid var(--ink); border-radius: 6px; background: var(--brass); font-family: var(--font-ui); cursor: pointer; }
+#journey-home { margin-top: 10px; min-height: 46px; width: 100%; border: 2px solid var(--ink); border-radius: 6px; background: var(--brass); font-family: var(--font-ui); font-size: 15px; cursor: pointer; }
+#journey-home[hidden] { display: none; }
+.j-hint { margin: 0 0 4px; font-size: 14px; color: var(--ink-2); }
+.sheet.since .sheet-body { max-height: none; flex: 1 1 auto; }
+.sheet.since .sheet-choices { flex: 0 0 auto; }
+.since-card { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--parch-3); }
+.since-card:last-child { border-bottom: 0; }
+.since-pics { display: flex; align-items: center; gap: 2px; flex: none; }
+.since-pics canvas { width: 36px; height: 48px; image-rendering: pixelated; background: var(--parch-2); border: 2px solid var(--ink); border-radius: 4px; }
+.since-arrow { font-family: var(--font-ui); color: var(--ink-3); }
+.since-text { flex: 1; min-width: 0; font-size: 15px; line-height: 1.35; }
+.since-go { display: block; margin-top: 4px; min-height: 36px; padding: 2px 12px; border: 2px solid var(--ink); border-radius: 6px; background: #fbf3df; cursor: pointer; }

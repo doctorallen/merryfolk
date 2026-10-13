@@ -84,7 +84,7 @@ Object.assign(ACTIONS.work_post, {
   const gp = givePresent;
   givePresent = function (giver, to, how) {
     const what = gp(giver, to, how);
-    if (to.homeId !== giver.homeId && to.edu >= 0.3 && R.chance(0.7)) (to.owesThanks || (to.owesThanks = [])).push({ id: giver.id, what: what.replace(/^(a|an) /, '').replace(/ \(.*\)$/, '').replace(/ (he|she|they) made$/, '') });
+    if (typeof what === 'string' && to.homeId !== giver.homeId && to.edu >= 0.3 && R.chance(0.7)) (to.owesThanks || (to.owesThanks = [])).push({ id: giver.id, what: what.replace(/^(a|an) /, '').replace(/ \(.*\)$/, '').replace(/ (he|she|they) made$/, '') });
     return what;
   };
 }

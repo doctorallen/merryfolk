@@ -109,8 +109,8 @@ function giveArc(v) {
     if (!v) return v;
     // sometimes it's the very person someone's been missing (of the right sex, and age)
     const waiting = riftBorn().filter((o) => o !== v && o.arc && !o.arc.lost.found && (o.arc.lost.sex || v.genes.sex) === v.genes.sex && v.isGrown() && o.isGrown() && !Game.villagers.some((x) => x !== v && x.first === o.arc.lost.name));
-    // (a name the wizard keeps in mind is likelier to come through: riftplay.js)
-    if (waiting.length && R.chance(0.35 + (typeof reunionBoost === 'function' ? reunionBoost() : 0))) {
+    // (a name the wizard keeps in mind is likelier to come through: riftplay.js; a trip to Neverdark sets r.reunite: journey.js)
+    if (waiting.length && R.chance((r.reunite ?? 0.35) + (typeof reunionBoost === 'function' ? reunionBoost() : 0))) {
       const kept = typeof keptNames === 'function' ? waiting.filter((x) => keptNames().includes(x.arc.lost.name)) : [];
       const o = R.pick(kept.length ? kept : waiting), rel = o.arc.lost.rel, oldName = v.first;
       v.first = o.arc.lost.name; o.arc.lost.found = true;

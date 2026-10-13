@@ -57,6 +57,20 @@ const path = require('path');
     sleepTillMorning();
     await new Promise((res) => { const t = setInterval(() => { if (!Play.skipping) { clearInterval(t); res(); } }, 50); });
     if (Game.hour < 6.9 || Game.hour > 7.2) out.bad.push(`woke at ${Game.hour.toFixed(2)}`);
+    // a short trip over the hills and back
+    while (Game.hour < 9) simulate(0.5);
+    farewell('hills');
+    for (let i = 0; i < 4000 && !(Game.journey && Game.journey.phase !== 'leaving'); i++) simulate(0.5);
+    for (let t = 0; t < 1200 && Play.skipping; t++) await new Promise((res) => setTimeout(res, 50));
+    // the journal ends with a button to drive home
+    const home = $('journey-home');
+    if (!home || home.hidden) out.bad.push('no way home from the journal'); else home.click();
+    for (let i = 0; i < 4000 && Game.journey; i++) simulate(0.5);
+    if (Game.journey) out.bad.push(`still away (${Game.journey.phase})`);
+    for (let i = 0; i < 2000 && !(Game.wizard && Game.wizard.phase === 'here'); i++) simulate(0.5);
+    if (!Game.wizard || Game.wizard.phase !== 'here') out.bad.push('never came back from the hills');
+    if (Sheet.isOpen()) Sheet.close();
+    out.trip = Game.day;
     // the save
     save(); const before = JSON.stringify([Game.mode, Game.wizRel, Game.wizMet, Game.wizard.leave]);
     load(); const after = JSON.stringify([Game.mode, Game.wizRel, Game.wizMet, Game.wizard.leave]);
@@ -68,7 +82,7 @@ const path = require('path');
   await page.screenshot({ path: path.join(outDir(), 'wizard-phone.png') });
   for (const b of r.bad) failures.push(b);
   for (const e of errors) failures.push('page error: ' + e);
-  console.log(`wizard: talked ${r.lines || 0} lines, ${r.listened} heard the tale, day ${r.day}`);
+  console.log(`wizard: talked ${r.lines || 0} lines, ${r.listened} heard the tale, back from the hills on day ${r.trip}, day ${r.day}`);
   await browser.close();
   finish('wizard', failures);
 })();
