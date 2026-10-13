@@ -300,7 +300,7 @@ function applyFx(fx, T) {
   if (fx.joke) { const t = fillTalkLine(fx.joke.t, F); if (t && !b.jokes.some((x) => x.k === fx.joke.k)) { b.jokes.unshift({ k: fx.joke.k, t, d: Game.day }); b.jokes.length = Math.min(b.jokes.length, 8); note(`A joke between you: ${t}`); } }
   if (fx.promise) { const t = fillTalkLine(fx.promise.t, F); if (t && !b.promises.some((x) => x.k === fx.promise.k && x.state === 'open')) { b.promises.unshift({ k: fx.promise.k, t, d: Game.day, due: Game.day + (fx.promise.days || 3), state: 'open' }); note(`${v.first} will remember that.`); } }
   if (fx.sore) { b.sore[fx.sore.k || T.th?.id] = Game.day + (fx.sore.days || 2); }
-  if (fx.hook) b.hooks.unshift({ k: fx.hook.k || fx.hook, thread: T.th ? T.th.id : null, d: Game.day });
+  if (fx.hook) { b.hooks.unshift({ k: fx.hook.k || fx.hook, thread: T.th ? T.th.id : null, d: Game.day }); b.hooks.length = Math.min(b.hooks.length, 12); }
   if (fx.feel) feel(v, fx.feel, fx.feelX ? (fillTalkLine(fx.feelX, F) || '') : '');
   if (fx.remember) { const t = fillTalkLine(fx.remember, F); if (t) v.remember(t, fx.rv || 1); }
   if (fx.note) { const t = fillTalkLine(fx.note, F); if (t) bondNote(v, t); }
@@ -461,6 +461,8 @@ function finishThread(T, reached) {
   if (!T.th) return;
   const th = THREADS[T.th.id], b = bondFull(T.v);
   b.seen[th.id] = Game.day; b.stage[th.id] = T.th.beat; b.lastThread = th.id;
+  // a thread left hanging on an earlier day has now been taken up again
+  b.hooks = b.hooks.filter((h) => !(h.thread === th.id && Game.day > h.d));
   if (reached && th.end) applyFx(th.end, T);
   T.th = null;
   if (T.pat <= 0) { closeKindly(T); return; }
