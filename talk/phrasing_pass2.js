@@ -124,7 +124,7 @@ talkPack('phrasing_pass2', () => {
     kid('DEAL! Spit-shake! No? Ordinary shake. Deal!'),
     rift('Bet logged. Timestamped. In my head.'),
   ]);
-  lines('pass.rainbet.trust', [{ text: ['Wise. My knees are older than your hat.', 'Ha! Good. Knees are never wrong.'] }, tm('proud', 'Very wise. Few people do.')]);
+  lines('pass.rainbet.trust', [{ text: ['Ha! Good. Knees are never wrong.'] }, { if: { stage: 'elder' }, text: ['Wise. My knees are older than your hat.'] }, tm('proud', 'Very wise. Few people do.')]);
 
   // =====================================================================================
   // Shapes in the clouds
