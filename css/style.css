@@ -910,7 +910,8 @@ body.phone .modal-card .tabs button { flex: 0 0 auto; min-height: 36px; }
 body.phone #interior { left: 6px; right: 6px; top: var(--hud-top) !important; max-height: calc(100% - var(--hud-top) - 70px); padding: 8px; z-index: 12; }
 body.phone #minimap { display: none; }
 /* the ledger and the other sheets have the floor while they're open */
-body.phone:has(.modal:not([hidden])) #bottom, body.phone:has(#roster:not([hidden])) #bottom, body.phone:has(#interior:not([hidden])) #bottom { display: none; }
+body.phone:has(.modal:not([hidden])) #bottom, body.phone:has(#roster:not([hidden])) #bottom, body.phone:has(#interior:not([hidden])) #bottom,
+body.phone:has(#intro:not([hidden])) #bottom, body.phone:has(#worldgen:not([hidden])) #bottom { display: none; }
 body.phone .gear-menu { position: fixed; right: 6px; left: auto; z-index: 30; }
 /* short landscape screens: the villager sheet stands to the right and the cards squeeze */
 body.phone.landscape #panel { left: auto; right: 6px; width: min(46vw, 360px); top: var(--hud-top) !important; bottom: 6px; max-height: none; }
