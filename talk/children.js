@@ -102,7 +102,7 @@ talkPack('children', () => {
   // Toddlers: hello, little one
   // =====================================================================================
   addThread({
-    id: 'child.tot.hello', label: 'Say hello to the little one', weight: 1.6, cool: 1,
+    id: 'child.tot.hello', tot: true, label: 'Say hello to the little one', weight: 1.6, cool: 1,
     when: (F) => F.band === 'toddler',
     open: { warm: 'child.tot.hello.open' },
     beats: {
@@ -277,7 +277,7 @@ talkPack('children', () => {
 
   // --- A toddler shows you something (theirs) ----------------------------------------------
   addThread({
-    id: 'child.tot.show', theirs: true, label: 'A little one shows you something', cool: 2,
+    id: 'child.tot.show', tot: true, theirs: true, label: 'A little one shows you something', cool: 2,
     ask: '{Name} toddles up with something held out in both hands.',
     when: (F) => F.band === 'toddler',
     beats: {

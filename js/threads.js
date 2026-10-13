@@ -25,8 +25,9 @@
 // tag, so the game still works opened straight from the folder.
 //
 // Authoring, in a pack:
-//   addThread({ id, label, about, when(F), weight, cool, theirs, light, rel(F),
+//   addThread({ id, label, about, when(F), weight, cool, theirs, light, tot, rel(F),
 //               reveals, open: { warm: '...' }, beats: { start: {...}, ... }, end: { fx } })
+//   (a toddler is only offered threads marked tot, or whose first line has words for one)
 //   a beat: { line: 'key' | text: '...', who: 'them'|'wiz'|'aside', fx, notice,
 //             go: [ { ap, say, label, to, need, fx, soft } ], end: true }
 //   lines('key', [ { if: { temper: 'witty' }, not: {...}, pri, text: ['...'] } ])
@@ -317,6 +318,7 @@ function needMet(need, T) {
 
 // --- Situations: reading the mood ------------------------------------------------------
 function situationOf(F) {
+  if (F.band === 'toddler') return null;
   let best = null;
   for (const k in SITUATIONS) { const s = SITUATIONS[k]; try { if (s.read(F) && (!best || s.pri > best.pri)) best = s; } catch (e) { /* a bad reader just doesn't fire */ } }
   return best ? best.key : null;
@@ -344,7 +346,7 @@ function rungFor(sit, ap, T) {
 // --- Salience: what the hub offers --------------------------------------------------
 function threadScore(th, T) {
   const F = T.F, b = bondFull(T.v);
-  if (th.light || th.theirs || th.situation) return 0;
+  if (th.light || th.theirs || th.situation || !forAge(th, F)) return 0;
   try { if (th.when && !th.when(F, T)) return 0; } catch (e) { return 0; }
   if (T.done.has(th.id)) return 0;
   const seen = b.seen[th.id];
@@ -357,6 +359,12 @@ function threadScore(th, T) {
   if (b.sore[th.id] && b.sore[th.id] > Game.day) fit *= 0.1;
   const wanted = th.reveals && !(b.known && b.known[th.reveals]) ? 1.5 : 1;
   return (th.weight || 1) * fresh * rel * fit * wanted + hash2(T.v.id * 13 + Game.day, strHash(th.id).length) * 0.2;
+}
+// Little ones say a word or two: a toddler gets the threads written for them.
+function forAge(th, F) {
+  if (F.band !== 'toddler' || th.tot) return true;
+  const b = th.beats[th.start], rules = b && b.line && TALK_LINES[b.line];
+  return !!rules && rules.some((r) => r.if && r.if.band && testCond('toddler', r.if.band, F));
 }
 function salientThreads(T, n) {
   return Object.values(THREADS).map((th) => [threadScore(th, T), th]).filter(([s]) => s > 0.05).sort((a, b) => b[0] - a[0]).slice(0, n).map(([, th]) => th);
@@ -384,7 +392,7 @@ function talkBegin(T) {
 // They come to you with something: a thread flagged theirs whose moment it is.
 function maybeTheirTurn(T, chance) {
   if (T.th || T.ended) return false;
-  const cands = Object.values(THREADS).filter((th) => th.theirs && !T.done.has(th.id) && !(bondFull(T.v).seen[th.id] >= Game.day - (th.cool || 3) + 1) && (!th.when || safeWhen(th, T)));
+  const cands = Object.values(THREADS).filter((th) => th.theirs && forAge(th, T.F) && !T.done.has(th.id) && !(bondFull(T.v).seen[th.id] >= Game.day - (th.cool || 3) + 1) && (!th.when || safeWhen(th, T)));
   if (!cands.length || !R.chance(chance)) return false;
   const th = R.pick(cands);
   T.log.push({ who: 'aside', text: (th.ask && sayOf(th.ask, T.F, T, T.v)) || `${T.v.first} has something to say.` });
@@ -514,7 +522,7 @@ function talkView(T) {
   }
   // the hub: three things worth talking about, passing the time, something else, good day
   for (const th of salientThreads(T, 3)) choices.push({ label: escapeHtml(threadLabel(th, F)), run: go(() => enterThread(T, th, th.ap || null)) });
-  const light = Object.values(THREADS).filter((th) => th.light && !T.done.has(th.id) && (!th.when || safeWhen(th, T)));
+  const light = Object.values(THREADS).filter((th) => th.light && forAge(th, F) && !T.done.has(th.id) && (!th.when || safeWhen(th, T)));
   if (light.length) choices.push({ label: 'Pass the time of day…', run: go(() => { T.sub = shuffleArr(light).slice(0, 3).map((th) => { const ap = th.ap || Object.keys(th.open || {})[0]; const said = sayOf(th.open[ap], F, T, v) || threadLabel(th, F); return { label: `${chip(ap)}${escapeHtml(said)}`, run: () => { T.sub = null; enterThreadSaying(T, th, ap, said); } }; }); }) });
   choices.push({ label: 'Something else…', run: go(() => { T.sub = somethingElse(T); }) });
   choices.push({ label: 'Good day', foot: true, run: () => byeTalk(T) });

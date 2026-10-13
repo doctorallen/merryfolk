@@ -457,7 +457,7 @@ talkPack('phrasing_pass2', () => {
   // =====================================================================================
   // Peekaboo, with the very small
   addThread({
-    id: 'pass.peekaboo', light: true, ap: 'jest', label: 'Peekaboo', when: (F) => F.band === 'toddler', open: { jest: 'pass.peekaboo.open' },
+    id: 'pass.peekaboo', tot: true, light: true, ap: 'jest', label: 'Peekaboo', when: (F) => F.band === 'toddler', open: { jest: 'pass.peekaboo.open' },
     beats: {
       start: { line: 'pass.peekaboo.start', go: [
         { ap: 'jest', say: '*Peekaboo!*', label: 'Peekaboo!', to: 'boo' },

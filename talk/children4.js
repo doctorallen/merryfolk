@@ -644,7 +644,7 @@ talkPack('children4', () => {
   // The littlest: a nursery rhyme, and peekaboo
   // =====================================================================================
   addThread({
-    id: 'child.tot.rhyme', label: 'Sing them a rhyme', weight: 1.3, cool: 2,
+    id: 'child.tot.rhyme', tot: true, label: 'Sing them a rhyme', weight: 1.3, cool: 2,
     when: (F) => F.band === 'toddler',
     open: { warm: 'child.tot.rhyme.open' },
     beats: {
@@ -691,7 +691,7 @@ talkPack('children4', () => {
   ]);
 
   addThread({
-    id: 'child.tot.peekaboo', light: true, ap: 'jest', label: 'Peekaboo', open: { jest: 'child.tot.peekaboo.open' },
+    id: 'child.tot.peekaboo', tot: true, light: true, ap: 'jest', label: 'Peekaboo', open: { jest: 'child.tot.peekaboo.open' },
     when: (F) => F.band === 'toddler',
     beats: {
       start: { line: 'child.tot.peekaboo.start', go: [
