@@ -406,7 +406,8 @@ function settleHome() {
     if (waiting.length && R.chance(0.7)) {
       const w = wizardOf();
       found = arriveFromRift({ x: w.camp.x + w.face * 40, y: w.camp.y, sent: 0, crew: 1, reunite: 1 });
-      if (found) { const l = Game.log.find((x) => x.text.includes('stepped out of the rift')); if (l) l.text = `${found.name()} came back with the wizard from Neverdark, and stood blinking in the sunshine of the Shire.`; renderLog(); }
+      // (the arrival line itself, not the reunion that follows it)
+      if (found) { const l = Game.log.find((x) => x.text.startsWith(`${found.name()} stepped out of the rift`)); if (l) l.text = `${found.name()} came back with the wizard from Neverdark, and stood blinking in the sunshine of the Shire.`; renderLog(); }
     }
   }
   const newIds = Game.villagers.filter((v) => !J.snap[v.id]).map((v) => v.id);
@@ -434,7 +435,7 @@ function sinceCards(J, newIds, newHomes, forgot, found) {
     const was = J.snap[v.id];
     if (!was) {
       if (v.stage === 'baby' || v.isChild()) { const ps = v.parents.map(jName).filter((x) => x !== 'someone'); add(4 * Math.max(...v.parents.map(imp), 1), { id: v.id, grew: 'born', many: 'were born', head: `${v.first} was born`, text: ps.length ? `to ${ps.join(' and ')}. You've never met.` : 'You\'ve never met.', now: true }); }
-      else if (found && v === found) add(9, { id: v.id, head: `${v.first} came home with you`, text: 'from Neverdark, to someone who\'d been waiting a long time.', now: true });
+      else if (found && v === found) { const kin = Game.villagers.find((o) => o.arc && o.arc.lost && o.arc.lost.found && o.arc.lost.name === v.first); add(9, { id: v.id, head: `${v.first} came home with you`, text: kin ? `from Neverdark, to ${kin.first}, who'd been waiting a long time.` : 'from Neverdark, to start again in the Shire.', now: true }); }
       else add(2, { id: v.id, head: `${v.first} is new in the village`, text: v.isRiftborn() ? 'Came through a rift while you were away.' : 'Came up the West Road while you were away.', now: true });
       continue;
     }
