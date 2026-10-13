@@ -19,9 +19,11 @@ const quarrelling = (T) => !!T.quarrel;
 // Both answer in their own way: a remark warms or cools each by their temper.
 function sayToBoth(T, tone, text) {
   T.wiz(text);
+  // the same kind of remark twice does less, and a third grates (as it does with one)
+  const n = (T.tones = T.tones || {})[tone] = (T.tones[tone] || 0) + 1;
   for (const who of [T.v, T.third]) {
     const tm = who.isChild() ? 'child' : temperOf(who), [d, lines] = TONE_TAKE[tone][tm] || [0.02, ['Ha.']];
-    addRegard(who, d * 0.8);
+    addRegard(who, n === 1 ? d * 0.8 : n === 2 ? d * 0.32 : -0.02);
     if (who === T.v) T.reply(R.pick(lines)); else T.reply2(R.pick(lines));
   }
 }
@@ -46,13 +48,16 @@ addTalkOption({
 });
 addTalkOption({
   id: 'pair_topic', pair: true, order: 36, label: 'Change the subject…',
-  when: (v, T) => !!T.third,
+  when: (v, T) => !!T.third && likesOf(T.v).concat(likesOf(T.third)).some((k) => !(T.topics || []).includes(k)),
   run: (v, T) => {
     const a = likesOf(T.v), b = likesOf(T.third), shared = a.filter((k) => b.includes(k));
-    const picks = (shared.length ? shared : []).concat(a.filter((k) => !shared.includes(k)).slice(0, 1), b.filter((k) => !shared.includes(k)).slice(0, 1)).slice(0, 3);
+    // (a subject once talked over isn't brought up again in the same natter)
+    const fresh = (k) => !(T.topics || []).includes(k);
+    const picks = shared.filter(fresh).concat(a.filter((k) => !shared.includes(k) && fresh(k)).slice(0, 1), b.filter((k) => !shared.includes(k) && fresh(k)).slice(0, 1)).slice(0, 3);
     T.choices(picks.map((k) => ({
       label: `Talk about ${LIKES[k]}${shared.includes(k) ? ' <small>(they both love it)</small>' : ''}`,
       run: () => {
+        (T.topics || (T.topics = [])).push(k);
         T.wiz(R.pick([`Tell me, what do you two make of ${LIKES[k]}?`, `I find myself thinking about ${LIKES[k]} lately.`]));
         const both = shared.includes(k);
         if (both) {
