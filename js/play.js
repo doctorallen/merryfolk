@@ -537,5 +537,14 @@ window.addEventListener('DOMContentLoaded', () => {
     if (playMode()) wizardBegin();
     return r;
   }, 'play');
+  // the village runs its own Moots while you're the wizard: the hall decides
+  // (taking in strangers a household at a time, as a rule), and the clerk's
+  // season report stays in the Chronicle instead of opening over the screen
+  patch(window, 'askMoot', (am) => function (title, text, options) {
+    if (!playMode() || /Long Dim/.test(title)) return am.apply(this, arguments);
+    const o = options.find((x) => /Sponsor/.test(x.label)) || R.pick(options);
+    o.fn();
+  }, 'play');
+  patch(window, 'showAlmanac', (sa) => function (rep) { if (playMode()) { if (rep) Game.lastAlmanac = rep; return; } return sa.apply(this, arguments); }, 'play');
   patch(window, 'load', (ld) => function () { const r = ld.apply(this, arguments); document.body.classList.toggle('wizmode', playMode()); return r; }, 'play');
 });
