@@ -1126,13 +1126,15 @@ function setupInput() {
     const k = e.key.toLowerCase();
     keys.add(k);
     if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
-    if (k >= '1' && k <= String(TOOLS.length)) setTool(TOOLS[+k - 1].id);
+    // the tools, the hand and the ledger are the Steward's, not the wizard's
+    const steward = !(typeof playMode === 'function' && playMode());
+    if (steward && k >= '1' && k <= String(TOOLS.length)) setTool(TOOLS[+k - 1].id);
     if (k === ' ') setSpeed(Game.speedIdx === 0 ? (Game.prevSpeed || 1) : 0);
-    if (k === 'p' && Game.selected) doPat();
-    if (k === 't' && Game.selected) doTut();
-    if (k === 'e' && Game.selected) doTeach();
+    if (steward && k === 'p' && Game.selected) doPat();
+    if (steward && k === 't' && Game.selected) doTut();
+    if (steward && k === 'e' && Game.selected) doTeach();
     if (k === 'f' && Game.selected) toggleFollow();
-    if (k === 'v') toggleVillage();
+    if (steward && k === 'v') toggleVillage();
     if (k === 'escape') { selectVillager(null); closeModals(); }
     if (k === '+' || k === '=') zoomStep(1);
     if (k === '-' || k === '_') zoomStep(-1);

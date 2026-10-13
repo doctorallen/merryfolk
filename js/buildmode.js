@@ -540,7 +540,7 @@ window.addEventListener('DOMContentLoaded', () => {
   view.addEventListener('pointerup', cap('up'), { capture: true });
   window.addEventListener('keydown', (e) => {
     if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
-    if (e.key.toLowerCase() === 'b' && !e.ctrlKey && !e.metaKey) setBuildMode(!Build.on);
+    if (e.key.toLowerCase() === 'b' && !e.ctrlKey && !e.metaKey && !(typeof playMode === 'function' && playMode())) setBuildMode(!Build.on);
     if (Build.on && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undoPlan(); }
     if (Build.on && e.key === 'Escape') setBuildMode(false);
   });
