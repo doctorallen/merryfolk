@@ -40,7 +40,11 @@ const path = require('path');
     wizWalkTo(s.x, s.y, { kind: 'tale' });
     for (let i = 0; i < 4000 && !Sheet.isOpen(); i++) simulate(0.5);
     if (!Sheet.isOpen()) out.bad.push('the tale picker never opened');
-    else document.querySelector('#sheet-choices .choice').click();
+    else {
+      document.querySelector('#sheet-choices .choice').click();
+      // then its moral
+      if (Sheet.isOpen()) document.querySelector('#sheet-choices .choice').click();
+    }
     let listened = 0;
     for (let i = 0; i < 480; i++) { simulate(0.5); listened = Math.max(listened, Game.villagers.filter((o) => o.task && o.task.a.id === 'wizard_tale' && o.task.phase === 'do').length); }
     out.listened = listened;
