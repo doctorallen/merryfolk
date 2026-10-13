@@ -409,6 +409,9 @@ window.addEventListener('DOMContentLoaded', () => {
   patch(window, 'dailySociety', (ds) => function () {
     const kids = Game.villagers.filter((v) => v.isChild()).map((v) => v.id);
     const r = ds.apply(this, arguments);
+    // the records of those gone for good are let go (those off on a trip are kept)
+    const here = new Set(Game.villagers.map((v) => v.id).concat((Game.away || []).map((a) => a.id)));
+    for (const k of ['upb', 'upbSoft']) for (const id in Game[k] || {}) if (!here.has(+id)) delete Game[k][id];
     for (const v of Game.villagers) if (kids.includes(v.id) && v.stage === 'adult') comingOfAge(v);
     // home life, a day at a time
     for (const v of Game.villagers) {
