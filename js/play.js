@@ -290,7 +290,8 @@ addTalkOption({
 });
 addTalkOption({
   id: 'give', order: 60, label: 'Give them something from your pack…',
-  when: () => Object.values(packOf()).some((n) => n > 0),
+  // only when there's something in it for them (no pipe-weed for a child), not already given this talk
+  when: (v, T) => Object.keys(PACK).some((k) => packOf()[k] > 0 && (!PACK[k].ok || PACK[k].ok(v)) && !(T.given || []).includes(k)),
   run: (v, T) => {
     const pk = packOf();
     // one of each kind of present in a talk
