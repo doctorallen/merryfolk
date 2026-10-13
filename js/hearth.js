@@ -407,6 +407,7 @@ function hearthDaily() {
 window.addEventListener('DOMContentLoaded', () => {
   registerField('hearth', null, { nullish: true });
   registerField('hearthAsked', {});
+  registerField('hearthHinted', false, { bool: true });
   addWizardAction({
     id: 'supper', order: 14, icon: 'stew',
     label: () => { const h = hearthHome(); return h && nearHearth(wizardOf()) ? 'Sup with the family' : 'Home for supper'; },
@@ -449,5 +450,5 @@ window.addEventListener('DOMContentLoaded', () => {
       if (!(v.task && v.task.a.id === 'whisper_visit') && !v.queue.some((q) => q.a.id === 'whisper_visit')) v.queue.push({ a: ACTIONS.whisper_visit, extra: { to: o, kind: d.kind } });
     }
   });
-  addHook('newVillage', () => { Game.hearth = null; Game.hearthAsked = {}; });
+  addHook('newVillage', () => { Game.hearth = null; Game.hearthAsked = {}; Game.hearthHinted = false; });
 });
