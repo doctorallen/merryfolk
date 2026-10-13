@@ -1112,7 +1112,7 @@ body.wizmode:has(#panel:not([hidden])) #wizbar { display: none; }
 body.wizmode.phone #chronicle:not(.wiz-open) { display: none; }
 body.wizmode.phone #chronicle.wiz-open { z-index: 7; }
 .sheet-choices .choice canvas { width: 18px; height: 18px; image-rendering: pixelated; vertical-align: -3px; margin-right: 6px; }
-body.wizmode.phone #bottom { left: 50%; right: auto; transform: translateX(-50%); align-items: center; }
+body.wizmode.phone #bottom { left: 50%; right: auto; transform: translateX(-50%); align-items: center; width: max-content; }
 
 /* you and them (bond.js): how a hobbit feels about the wizard */
 body:not(.wizmode) .wiz-only { display: none; }
