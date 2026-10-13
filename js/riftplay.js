@@ -423,7 +423,8 @@ function riftGate(next, S) {
   const rb = riftBorn(), since = Game.day - (S.stageDay || 0);
   if (next === 4) return builtCivic('dynamo') || builtCivic('turbine') || (rb.filter((v) => hasRiftFriendOf(v)).length >= 2 && since >= 1) || since >= 4;
   if (next === 5) return builtCivic('relay') || (rb.some((v) => v.arc && v.arc.turned) && since >= 1) || since >= 4;
-  if (next === 6) return S.frags.includes('ledger') || (clueCount() >= 4 && since >= 3);
+  // (the ledger is yours to ask after; after four quiet days it turns up the old way)
+  if (next === 6) return S.frags.includes('ledger') || (clueCount() >= 4 && Game.day - (rp().lastClue ?? S.stageDay ?? Game.day) >= 4);
   return null;
 }
 function hasRiftFriendOf(v) { return Game.villagers.some((o) => !o.isRiftborn() && (o.rel[v.id] || 0) > 0.45); }
