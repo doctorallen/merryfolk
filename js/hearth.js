@@ -240,7 +240,7 @@ function renderSupper() {
       S.done = true; renderSupper();
     } });
     if (kids.length) choices.push({ label: 'A story for the children', run: () => {
-      const k = R.pick(Object.keys(WIZARD_TALES));
+      const k = R.pick(Object.keys(WIZARD_TALES).filter(taleOpen));
       S.lines.push({ who: 'You', text: `Very well. Have I told you ${WIZARD_TALES[k].x.replace(/^of /, 'about ')}?` });
       for (const c of kids) { c.drives.bored = Math.max(0, c.drives.bored - 0.4); learn(c, 0.008, 'school'); addRegard(c, 0.05); feel(c, 'wizard_tale', WIZARD_TALES[k].x); }
       S.lines.push({ who: R.pick(kids).first, text: R.pick(['Again! Tell it again!', 'Was it a REALLY big one?', 'I wasn\'t scared. Much.']) });
