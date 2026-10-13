@@ -220,7 +220,11 @@ function noteSaid(v, text) { (Game.wizSaid || (Game.wizSaid = {}))[saidKey(v.id,
 // Fills {placeholders} from the facts; null if one can't be filled.
 function fillTalkLine(text, F) {
   let ok = true;
-  const out = text.replace(/\{([a-zA-Z0-9.:]+)\}/g, (m, k) => {
+  const out = text.replace(/\{([a-zA-Z0-9.:]+)\}/g, (m, k, at) => an(text, at, fillOne(k)));
+  // "a {jobWord}" for an innkeeper is "an innkeeper" (marked by an() below)
+  return ok ? out.replace(/\b([Aa]) \u0001/g, '$1n ').replace(/\u0001/g, '').replace(/\s+([,!?]|\.(?!\.))/g, '$1').replace(/\s{2,}/g, ' ').trim() : null;
+  function an(src, at, val) { return val && /\b[Aa] $/.test(src.slice(0, at)) && /^(?!uni|use|usu|eu|one)[aeiou]|^(hour|honest)/i.test(val) ? '\u0001' + val : val; }
+  function fillOne(k) {
     if (k.startsWith('frag:')) { const P = FRAGS[k.slice(5)]; if (!P || !P.length) { ok = false; return ''; } return fillTalkLine(R.pick(P), F) ?? (ok = false, ''); }
     const cap = k[0] === k[0].toUpperCase() && k[0] !== k[0].toLowerCase();
     const key = cap ? k[0].toLowerCase() + k.slice(1) : k;
@@ -229,8 +233,7 @@ function fillTalkLine(text, F) {
     if (val == null || val === '' || val === false) { ok = false; return ''; }
     val = String(val);
     return cap ? val.charAt(0).toUpperCase() + val.slice(1) : val;
-  });
-  return ok ? out.replace(/\s+([,!?]|\.(?!\.))/g, '$1').replace(/\s{2,}/g, ' ').trim() : null;
+  }
 }
 // Picks what's said for a key: the best-fitting rules, a line not said lately,
 // filled. If every line at the most specific level has been said, a broader
