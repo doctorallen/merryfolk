@@ -501,7 +501,8 @@ function talkView(T) {
   if (T.ended) { choices.push({ label: 'Good day', foot: true, run: () => endTalk() }); return { html, choices }; }
   if (T.th) {
     const th = THREADS[T.th.id], beat = th.beats[T.th.beat];
-    const opts = (beat.go || []).filter((g) => needMet(g.need, T) || g.soft).slice(0, 3);
+    // (a beat come round again doesn't offer what you've already said)
+    const opts = (beat.go || []).filter((g) => (needMet(g.need, T) || g.soft) && !(g.say && !TALK_LINES[g.say] && T.said.has(fillTalkLine(g.say, F)))).slice(0, 3);
     for (const g of opts) {
       const met = needMet(g.need, T);
       const text = sayOf(g.say, F, T, v) || '…';
