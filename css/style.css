@@ -1109,3 +1109,16 @@ body.wizmode.phone #chronicle:not(.wiz-open) { display: none; }
 body.wizmode.phone #chronicle.wiz-open { z-index: 7; }
 .sheet-choices .choice canvas { width: 18px; height: 18px; image-rendering: pixelated; vertical-align: -3px; margin-right: 6px; }
 body.wizmode.phone #bottom { left: 50%; right: auto; transform: translateX(-50%); align-items: center; }
+
+/* you and them (bond.js): how a hobbit feels about the wizard */
+body:not(.wizmode) .wiz-only { display: none; }
+.bond-strip { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 13px; margin: 0 0 6px; }
+.bond-bar { display: inline-block; width: 64px; height: 8px; border: 2px solid var(--ink); border-radius: 4px; background: var(--parch-2); overflow: hidden; vertical-align: middle; }
+.bond-bar.big { width: 100%; height: 10px; }
+.bond-bar i { display: block; height: 100%; background: var(--berry); }
+.bond-bar i.cool { background: #5a6a8a; }
+.bond-bar i.trust { background: var(--moss-2); }
+.bond-row { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 4px 8px; align-items: center; margin: 4px 0; font-size: 14px; }
+.bond-row b { grid-column: 2; font-weight: 600; font-size: 13px; color: var(--ink-2); }
+.bond-said { font-style: italic; color: var(--ink-2); margin: 6px 0; font-size: 14px; }
+.bond-list { margin: 0 0 8px; padding-left: 18px; font-size: 14px; line-height: 1.4; }

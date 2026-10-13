@@ -257,7 +257,7 @@ function renderPanel(full) {
   }
   if (!full) return;
   body.dataset.for = v.id; body.dataset.tab = tab;
-  body.innerHTML = ({ life: panelLife, nature: panelNature, mind: panelMind, kin: panelKin, work: panelWork }[tab] || panelLife)(v);
+  body.innerHTML = ({ life: panelLife, nature: panelNature, mind: panelMind, kin: panelKin, work: panelWork, you: typeof panelYou === 'function' ? panelYou : panelLife }[tab] || panelLife)(v);
   hydrateIcons(body);
   body.querySelectorAll('a[data-v]').forEach((a) => a.addEventListener('click', () => { const o = Game.villagers.find((x) => x.id === +a.dataset.v); if (o) { selectVillager(o); focusVillager(o); } }));
   const tb = body.querySelector('[data-tree]'); if (tb) tb.addEventListener('click', () => openTree(v));

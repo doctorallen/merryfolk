@@ -58,12 +58,14 @@ addTalkOption({
         if (both) {
           T.reply(R.pick(['Oh! Don\'t get me started.', 'Now you\'re talking!'])); T.reply2(R.pick(['We were only saying the other day!', 'Ha! Same as me.']));
           T.v.bond(T.third, 0.05); addRegard(T.v, 0.03); addRegard(T.third, 0.03);
+          if (typeof learnAbout === 'function') { learnAbout(T.v, 'likes', k); learnAbout(T.third, 'likes', k); }
           if (T.quarrel) { T.quarrel = false; if (T.v.task) T.v.task.data.quarrel = false; T.reply(R.pick(['...Well. I suppose we can agree on that.'])); }
         } else {
           const fan = likesOf(T.v).includes(k) ? T.v : T.third, other = fan === T.v ? T.third : T.v;
           (fan === T.v ? T.reply : T.reply2)(R.pick(['Oh, I love that!', 'Now that I could talk about all day.']));
           (other === T.v ? T.reply : T.reply2)(R.pick(['Hm. Each to their own.', 'Can\'t see the appeal myself.']));
           addRegard(fan, 0.04); T.v.bond(T.third, 0.01);
+          if (typeof learnAbout === 'function') { learnAbout(fan, 'likes', k); if (dislikes(other, k)) learnAbout(other, 'dislikes', k); }
         }
       },
     })));

@@ -435,6 +435,7 @@ It's made for a phone first. Held upright, the world fills the top of the screen
 
 - **His wagon comes in on the first morning**, the children running to meet it, and there's a party that night with his fireworks.
 - **Conversation.** Tap a hobbit and the wizard stops for a word: ask how they're keeping, what's on their mind (their wish, or their dream), and whether they've heard any news; pass the time of day, warmly, wittily or with a question, and each takes it in their own temper; give them something from your pack (a seed-cake, pipe-weed, a storybook, a squib for the children: the pack is filled again each morning). Folk remember how you treat them: the sheet says how they feel about you, from *Never met you* to *Devoted to you*. The game pauses while you talk.
+- **You and them.** Every hobbit has a history with you: how fond of you they are and how far they trust you, when you met and how often you've talked, what you've given them, the tales they've heard you tell, and what you've learned about them (their wish and dream, what they love and can't abide, and for the rift-born, home and the one they lost). A strip on the conversation sheet sums it up, and their panel opens on a **You** tab with the whole of it.
 - **The third voice.** Walk up to two folk nattering and you join in: say something to both, change the subject to something they both love (which brings them closer), or, if it's a squabble, back one, back the other, or make the peace (which works if they think well enough of you).
 - **Tales.** *Tell a tale* walks him to the great tree, where you choose a tale and its moral; word goes round and most of the village comes to sit on the grass and listen.
 - **Nights.** At a party he lights the fireworks when you say (or at ten, if you don't). *Sleep till morning* passes the night quickly, in the wagon or at his hearth.
@@ -492,6 +493,7 @@ It's made for a phone first. Held upright, the world fills the top of the screen
 | `js/wizard.js` | The wizard's visits: his wagon, tales beneath the great tree with the village listening, his fireworks and the fire dragon |
 | `js/play.js` | Playing as the wizard: walking where you tap, the conversation sheet, the bar of things to do, passing time quickly, and the registries other files add talk and actions to |
 | `js/natter.js` | The third voice: joining two folk's natter, steering it, settling a squabble |
+| `js/bond.js` | You and them: each hobbit's history with the wizard (fondness, trust, gifts, what you've learned), the strip on the talk sheet and the You tab |
 | `js/hearth.js` | The wizard's hearth: a room with a family, the family book, supper, a good word, a lodger from the rifts |
 | `js/upbringing.js` | Lessons by talk, the Leanings strip, hill/rift/both upbringing, go-betweens, tale morals, season report cards |
 | `js/riftplay.js` | The rift story played as the wizard: rift-born threads, introductions, clues found by asking, the casebook, and the Long Dim as a village vote |
