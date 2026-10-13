@@ -195,6 +195,8 @@ const JOURNEY_EVENTS = [
 function noteEvent(text) {
   const J = journeyOf();
   if (!J || J.phase !== 'away') return;
+  // (the morning digest only gathers up lines already noted one by one)
+  if (/^Growing up and growing old:/.test(text)) return;
   const e = JOURNEY_EVENTS.find(([, re]) => re.test(text));
   if (!e) return;
   let ids = Game.villagers.filter((v) => text.includes(v.first + ' ') || text.includes(v.first + ',') || text.includes(v.first + '\'') || text.includes(v.first + '!') || text.includes(v.first + '.')).map((v) => v.id);
