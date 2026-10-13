@@ -4,7 +4,7 @@
   "private": true,
   "description": "Merryfolk, a browser village sim in plain JavaScript. The game itself needs nothing installed: these are the test tools only.",
   "scripts": {
-    "test": "sh test/check.sh && node test/golden.js && node test/sprites.js && node test/smoke.js && node test/valley.js && node test/wizard.js",
+    "test": "sh test/check.sh && node test/golden.js && node test/sprites.js && node test/smoke.js && node test/valley.js && node test/wizard.js && node test/talk.js",
     "check": "sh test/check.sh",
     "golden": "node test/golden.js",
     "golden:update": "node test/golden.js --update",
@@ -12,7 +12,8 @@
     "sprites:update": "node test/sprites.js --update",
     "smoke": "node test/smoke.js",
     "valley": "node test/valley.js",
-    "wizard": "node test/wizard.js"
+    "wizard": "node test/wizard.js",
+    "talk": "node test/talk.js"
   },
   "devDependencies": {
     "puppeteer-core": "^25.13.0",

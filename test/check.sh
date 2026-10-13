@@ -13,6 +13,12 @@ for f in js/*.js; do
   grep -q "src=\"$f\"" index.html || { echo "$f is not loaded by index.html"; exit 1; }
 done
 
+# the talk packs: each parses, and the engine's manifest names exactly the files there are
+for f in talk/*.js; do node --check "$f"; done
+manifest=$(grep -o "TALK_MANIFEST = \[[^]]*\]" js/threads.js | grep -o "'[a-z0-9_]*'" | tr -d "'" | sort)
+files=$(ls talk/*.js 2>/dev/null | sed 's#talk/##; s#\.js$##' | sort)
+if [ "$manifest" != "$files" ]; then echo "talk packs and TALK_MANIFEST disagree: manifest [$manifest] files [$files]"; exit 1; fi
+
 # every file shares one global scope, so a function or top-level const declared
 # in two files silently replaces the first (as a journey's presentFor once
 # replaced the birthday one)

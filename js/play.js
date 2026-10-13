@@ -149,7 +149,9 @@ function startTalk(v) {
   T.reply2 = (text) => { if (!third) return; third.say(text, Math.max(3, text.length * 0.06), { to: Wiz.speaker }); T.log.push({ who: 'third', text }); };
   T.choices = (list) => { T.sub = list; };
   T.end = () => endTalk();
+  T.said = new Set();
   T.reply(greeting(v));
+  if (typeof talkBegin === 'function' && !third && TalkPacks.loaded.has('core')) talkBegin(T);
   if (third) T.reply2(quarrel ? R.pick(['Oh good, a witness. Tell them they\'re wrong.', 'Don\'t you start as well.']) : R.pick(['Join us! We were just saying...', 'Ah! Pull up a stool.']));
   if (!Game.wizMet[v.id]) { Game.wizMet[v.id] = Game.day; addRegard(v, v.isChild() ? 0.1 : 0.04); }
   feel(v, 'wizard_talk');
@@ -174,17 +176,22 @@ function renderTalk() {
   const T = Play.talk;
   if (!T) return;
   const v = T.v;
+  // the conversation engine (threads.js) runs the talk once its words are in
+  if (typeof talkView === 'function' && T.F && !T.third && !T.sub) {
+    const view = talkView(T);
+    Sheet.open({ kind: 'talk', title: v.name(), sub: talkSub(v), portrait: v, html: view.html, choices: view.choices, onClose: () => endTalk() });
+    return;
+  }
   // with two of them, only what's said to both (and goodbye)
   const opts = T.sub || TalkOptions.filter((o) => (!T.third || o.pair || o.id === 'bye') && (!o.when || o.when(v, T))).map((o) => ({ label: typeof o.label === 'function' ? o.label(v, T) : o.label, run: () => o.run(v, T), id: o.id, dim: T.used.has(o.id) }));
   if (T.sub) opts.push({ label: 'Never mind', run: () => {}, back: true });
-  const log = T.log.slice(T.third ? -3 : -2).map((l) => `<p class="tk-line ${l.who}"><b>${l.who === 'wiz' ? 'You' : escapeHtml(l.who === 'third' ? T.third.first : v.first)}</b> ${escapeHtml(l.text)}</p>`).join('');
-  const sub = v.stage === 'elder' ? 'an elder' : v.isChild() ? `${kidBand(v) === 'youth' ? 'a youngster' : 'a little one'}` : v.job ? JOBS[v.job].label.toLowerCase() : 'a grown-up';
+  const log = T.F && typeof talkView === 'function' ? null : T.log.slice(T.third ? -3 : -2).map((l) => `<p class="tk-line ${l.who}"><b>${l.who === 'wiz' ? 'You' : escapeHtml(l.who === 'third' ? T.third.first : v.first)}</b> ${escapeHtml(l.text)}</p>`).join('');
   Sheet.open({
     kind: 'talk',
     title: T.third ? `${v.first} and ${T.third.first}` : v.name(),
-    sub: T.third ? (T.quarrel ? 'in the middle of a squabble' : 'having a natter') : `${sub}${v.isRiftborn && v.isRiftborn() ? ', rift-born' : ''} · ${regardWord(v)}`,
+    sub: T.third ? (T.quarrel ? 'in the middle of a squabble' : 'having a natter') : talkSub(v),
     portrait: v,
-    html: `<div class="tk-log">${log}</div>`,
+    html: log === null ? talkView(T).html : `<div class="tk-log">${log}</div>`,
     choices: opts.map((o) => ({ label: o.label, dim: o.dim, back: o.back, run: () => {
       if (!o.back && o.id) T.used.add(o.id);
       const wasSub = !!T.sub; T.sub = null;
@@ -193,6 +200,10 @@ function renderTalk() {
     } })),
     onClose: () => endTalk(),
   });
+}
+function talkSub(v) {
+  const sub = v.stage === 'elder' ? 'an elder' : v.isChild() ? `${kidBand(v) === 'youth' ? 'a youngster' : 'a little one'}` : v.job ? JOBS[v.job].label.toLowerCase() : 'a grown-up';
+  return `${sub}${v.isRiftborn && v.isRiftborn() ? ', rift-born' : ''} · ${regardWord(v)}`;
 }
 ACTIONS.wizard_chat = {
   label: 'Talking with the wizard', icon: 'chat', sat: { lonely: -0.3, bored: -0.25 }, dur: 10, pose: 'stand', queued: true, stages: AWAKE,
@@ -275,10 +286,11 @@ addTalkOption({
   when: () => Object.values(packOf()).some((n) => n > 0),
   run: (v, T) => {
     const pk = packOf();
-    T.choices(Object.keys(PACK).filter((k) => pk[k] > 0 && (!PACK[k].ok || PACK[k].ok(v))).map((k) => ({
+    // one of each kind of present in a talk
+    T.choices(Object.keys(PACK).filter((k) => pk[k] > 0 && (!PACK[k].ok || PACK[k].ok(v)) && !(T.given || []).includes(k)).map((k) => ({
       label: `${PACK[k].label} <small>(${pk[k]} left)</small>`,
       run: () => {
-        pk[k]--;
+        pk[k]--; (T.given || (T.given = [])).push(k);
         T.wiz(R.pick([`Here. I saved you ${PACK[k].label}.`, `I believe this is for you, ${v.first}.`]));
         T.reply(PACK[k].give(v));
         feel(v, 'wizard_gift', PACK[k].label.replace(/^a (pouch of )?/, ''));
@@ -305,14 +317,17 @@ const Sheet = {
     $('sheet-body').innerHTML = o.html || '';
     const box = $('sheet-choices');
     box.innerHTML = '';
+    let foot = null;
     for (const c of o.choices || []) {
       const b = document.createElement('button');
       b.className = 'choice' + (c.dim ? ' dim' : '') + (c.back ? ' back' : '') + (c.primary ? ' primary' : '');
       b.innerHTML = c.label;
       if (c.disabled) b.disabled = true;
       b.addEventListener('click', () => { Sound.click(); c.run(); });
-      box.appendChild(b);
+      if (c.foot) { if (!foot) { foot = document.createElement('div'); foot.className = 'choice-foot'; } b.classList.add('foot'); foot.appendChild(b); }
+      else box.appendChild(b);
     }
+    if (foot) box.appendChild(foot);
     hydrateIcons(el);
     const body = $('sheet-body'); body.scrollTop = body.scrollHeight;
   },
