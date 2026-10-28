@@ -1497,13 +1497,12 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
 }
 
 // ---------------------------------------------------------------------------
-// Pathfinding (A*, 8 directions, no corner cutting)
+// Pathfinding: Tycho's A* (world.md), 8 directions, no corner cutting, a
+// diagonal 1.414 times a step; the game says what's walkable and what each
+// step costs. At most `cap` tiles a search, scaled with the map.
 // ---------------------------------------------------------------------------
-const PF = {
-  g: new Float32Array(MAP_W * MAP_H), f: new Float32Array(MAP_W * MAP_H),
-  from: new Int32Array(MAP_W * MAP_H), stamp: new Uint32Array(MAP_W * MAP_H), closed: new Uint32Array(MAP_W * MAP_H), gen: 0,
-  cap: 30000, // how far one search may spread, scaled with the map
-};
+const pathCap = (n) => Math.round((30000 * n) / (128 * 96));
+let PF = new Tycho.path.AStar(MAP_W, MAP_H, { cap: pathCap(MAP_W * MAP_H), diag: 1.414 });
 // Sets the map's size in tiles, before a world is built on it: every array
 // sized from the map is made afresh (and so is cleared).
 function setMapSize(w, h) {
@@ -1513,76 +1512,24 @@ function setMapSize(w, h) {
   World.tiles = new Uint8Array(n); World.block = new Uint8Array(n); World.reserved = new Uint8Array(n);
   World.px = null; World.land = null; World.tileLevel = null; Ground.chunks.clear(); World.paintJob = null;
   World.cliffMask = null; World.cliffZone = null; World.cliff = null; World._mini = null;
-  PF.g = new Float32Array(n); PF.f = new Float32Array(n); PF.from = new Int32Array(n); PF.stamp = new Uint32Array(n); PF.closed = new Uint32Array(n); PF.gen = 0;
-  PF.cap = Math.round((30000 * n) / (128 * 96));
+  PF = new Tycho.path.AStar(w, h, { cap: pathCap(n), diag: 1.414 });
 }
-function nearestWalkable(tx, ty) {
-  if (walkable(tx, ty)) return [tx, ty];
-  for (let r = 1; r < 8; r++) for (let j = -r; j <= r; j++) for (let i = -r; i <= r; i++) {
-    if (Math.max(Math.abs(i), Math.abs(j)) !== r) continue;
-    if (walkable(tx + i, ty + j)) return [tx + i, ty + j];
-  }
-  return null;
+// The nearest walkable tile within 7 of x, y (rings outward), or null.
+function nearestWalkable(tx, ty) { return PF.near(tx, ty, walkable, 7); }
+// What stepping from fx, fy onto x, y costs before the diagonal's share: the
+// ground's own, and a terrace bank's climb (a gentle ramp where a road or a
+// cliff's way crosses it).
+function stepCost(x, y, fx, fy) {
+  const ni = tIdx(x, y), cur = tIdx(fx, fy);
+  let c = TILE_COST[World.tiles[ni]];
+  const lv = World.tileLevel;
+  if (lv && lv[ni] !== lv[cur]) c += isRoadTile(World.tiles[ni]) || isRoadTile(World.tiles[cur]) || cliffTile(x, y) === 2 || cliffTile(fx, fy) === 2 ? RAMP_COST : BANK_COST * Math.abs(lv[ni] - lv[cur]);
+  return c;
 }
-function findPath(sx, sy, tx, ty) {
-  const s = nearestWalkable(sx, sy), t = nearestWalkable(tx, ty);
-  if (!s || !t) return null;
-  [sx, sy] = s; [tx, ty] = t;
-  if (sx === tx && sy === ty) return [[tx, ty]];
-  PF.gen++;
-  const gen = PF.gen;
-  const heap = [];
-  const push = (n) => {
-    heap.push(n); let i = heap.length - 1;
-    while (i > 0) { const p = (i - 1) >> 1; if (PF.f[heap[p]] <= PF.f[heap[i]]) break; [heap[p], heap[i]] = [heap[i], heap[p]]; i = p; }
-  };
-  const pop = () => {
-    const top = heap[0]; const last = heap.pop();
-    if (heap.length) {
-      heap[0] = last; let i = 0;
-      for (;;) {
-        const l = i * 2 + 1, r = l + 1; let m = i;
-        if (l < heap.length && PF.f[heap[l]] < PF.f[heap[m]]) m = l;
-        if (r < heap.length && PF.f[heap[r]] < PF.f[heap[m]]) m = r;
-        if (m === i) break; [heap[m], heap[i]] = [heap[i], heap[m]]; i = m;
-      }
-    }
-    return top;
-  };
-  const hfn = (x, y) => { const dx = Math.abs(x - tx), dy = Math.abs(y - ty); return (dx + dy + (1.414 - 2) * Math.min(dx, dy)) * 1.0; };
-  const si = tIdx(sx, sy), ti = tIdx(tx, ty);
-  PF.g[si] = 0; PF.f[si] = hfn(sx, sy); PF.stamp[si] = gen; PF.from[si] = -1;
-  push(si);
-  let found = false, iter = 0;
-  while (heap.length && iter++ < PF.cap) {
-    const cur = pop();
-    if (PF.closed[cur] === gen) continue;
-    PF.closed[cur] = gen;
-    if (cur === ti) { found = true; break; }
-    const cx = cur % MAP_W, cy = (cur / MAP_W) | 0;
-    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
-      if (!dx && !dy) continue;
-      const nx = cx + dx, ny = cy + dy;
-      if (!walkable(nx, ny)) continue;
-      if (dx && dy && (!walkable(cx + dx, cy) || !walkable(cx, cy + dy))) continue;
-      const ni = tIdx(nx, ny);
-      if (PF.closed[ni] === gen) continue;
-      let c = TILE_COST[World.tiles[ni]];
-      const lv = World.tileLevel;
-      if (lv && lv[ni] !== lv[cur]) c += isRoadTile(World.tiles[ni]) || isRoadTile(World.tiles[cur]) || cliffTile(nx, ny) === 2 || cliffTile(cx, cy) === 2 ? RAMP_COST : BANK_COST * Math.abs(lv[ni] - lv[cur]);
-      c *= dx && dy ? 1.414 : 1;
-      const g = PF.g[cur] + c;
-      if (PF.stamp[ni] !== gen || g < PF.g[ni]) {
-        PF.stamp[ni] = gen; PF.g[ni] = g; PF.f[ni] = g + hfn(nx, ny); PF.from[ni] = cur; push(ni);
-      }
-    }
-  }
-  if (!found) return null;
-  const out = [];
-  for (let n = ti; n !== si && n !== -1; n = PF.from[n]) out.push([n % MAP_W, (n / MAP_W) | 0]);
-  out.reverse();
-  return out;
-}
+const PATH_FIND = { walkable, cost: stepCost, snap: 7 };
+// The way from one tile to another: its tiles after the start, the goal last
+// (both moved to the nearest walkable tile first), or null.
+function findPath(sx, sy, tx, ty) { return PF.find(sx, sy, tx, ty, PATH_FIND); }
 
 // ---------------------------------------------------------------------------
 // Per-step world simulation: crops, critters, mill wheel
