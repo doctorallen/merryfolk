@@ -39,70 +39,19 @@ const GS = 2; // the painted ground, likewise
 let MAP_W = 128;
 let MAP_H = 96;
 
-function mulberry32(a) {
-  return function () {
-    a |= 0; a = (a + 0x6D2B79F5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+// Seeded randomness, math and colors come from Tycho's core (vendor/tycho/
+// dist/tycho.js, loaded first): the same functions this file used to hold,
+// bit for bit. mulberry32 is a seeded generator, hash2 a hash of two numbers
+// to 0..1, makeNoise fractal value noise from a seed.
+const { mulberry32, hash2, makeNoise } = Tycho.seed;
 
-const R = {
-  f: (a = 1, b) => (b === undefined ? Math.random() * a : a + Math.random() * (b - a)),
-  i: (a, b) => Math.floor(a + Math.random() * (b - a + 1)),
-  pick: (arr) => arr[Math.floor(Math.random() * arr.length)],
-  chance: (p) => Math.random() < p,
-  // weighted pick from [[weight, value], ...]
-  weighted: (list) => {
-    let total = 0;
-    for (const [w] of list) total += Math.max(0, w);
-    let r = Math.random() * total;
-    for (const [w, v] of list) { r -= Math.max(0, w); if (r <= 0) return v; }
-    return list.length ? list[list.length - 1][1] : null;
-  },
-};
+// Randomness for life and effects, not for anything generated (Math.random,
+// with a seeded stream's shape: f, i, pick, chance, weighted from [[weight,
+// value], ...]).
+const R = Tycho.seed.fxRand;
 
-const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
-const lerp = (a, b, t) => a + (b - a) * t;
-const dist = (ax, ay, bx, by) => Math.hypot(ax - bx, ay - by);
-
-function hexToRgb(h) {
-  h = h.replace('#', '');
-  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
-}
-function rgbToHex(r, g, b) {
-  return '#' + [r, g, b].map((v) => clamp(Math.round(v), 0, 255).toString(16).padStart(2, '0')).join('');
-}
-function shade(hex, amt) {
-  const [r, g, b] = hexToRgb(hex);
-  if (amt < 0) return rgbToHex(r * (1 + amt), g * (1 + amt), b * (1 + amt));
-  return rgbToHex(r + (255 - r) * amt, g + (255 - g) * amt, b + (255 - b) * amt);
-}
-function mix(h1, h2, t) {
-  const a = hexToRgb(h1), b = hexToRgb(h2);
-  return rgbToHex(lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t));
-}
-
-function hash2(x, y) {
-  let h = (x * 374761393 + y * 668265263) | 0;
-  h = Math.imul(h ^ (h >>> 13), 1274126177);
-  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
-}
-
-function makeNoise(seed) {
-  const rng = mulberry32(seed);
-  const P = new Float32Array(256 * 256);
-  for (let i = 0; i < P.length; i++) P[i] = rng();
-  const g = (i, j) => P[((j & 255) << 8) | (i & 255)];
-  const sm = (t) => t * t * (3 - 2 * t);
-  function v(x, y) {
-    const xi = Math.floor(x), yi = Math.floor(y);
-    const u = sm(x - xi), w = sm(y - yi);
-    return lerp(lerp(g(xi, yi), g(xi + 1, yi), u), lerp(g(xi, yi + 1), g(xi + 1, yi + 1), u), w);
-  }
-  return (x, y) => v(x, y) * 0.6 + v(x * 2.1 + 17, y * 2.1 + 9) * 0.3 + v(x * 4.3 + 3, y * 4.3 + 41) * 0.1;
-}
+const { clamp, lerp, dist } = Tycho.math;
+const { hexToRgb, rgbToHex, shade, mix } = Tycho.color;
 
 // A canvas to work on: kept in ordinary memory, so reading its pixels back
 // while a sprite is built or a chunk of ground painted costs nothing much.

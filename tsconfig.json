@@ -12,5 +12,5 @@
     "types": [],
     "skipLibCheck": true
   },
-  "include": ["js/**/*.js", "types/*.d.ts"]
+  "include": ["js/**/*.js", "types/*.d.ts", "vendor/tycho/dist/tycho.global.d.ts"]
 }
