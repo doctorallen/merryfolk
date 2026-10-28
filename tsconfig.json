@@ -8,7 +8,7 @@
     "noImplicitAny": false,
     "target": "es2022",
     "lib": ["dom", "es2022"],
-    "module": "none",
+    "module": "preserve",
     "types": [],
     "skipLibCheck": true
   },

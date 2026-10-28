@@ -4,7 +4,7 @@
 // window and once as a phone, where it also takes a screenshot.
 const fs = require('fs');
 const path = require('path');
-const { launch, openGame, outDir, finish } = require('./lib');
+const { launch, openGame, outDir, finish, waitFor, READY } = require('./lib');
 
 // Runs in the page: a seeded two days with checks as it goes.
 function runDays(days) {
@@ -85,7 +85,7 @@ async function run(browser, label, opts, failures) {
   for (const b of new Set(r.bad)) failures.push(`${label}: ${b}`);
   if (opts.mobile) await page.screenshot({ path: path.join(outDir(), 'phone.png') });
   await page.reload();
-  await page.waitForFunction(() => typeof Game !== 'undefined' && Game.villagers.length > 0, { timeout: 30000 });
+  await waitFor(page, READY, { timeout: 30000 });
   const r2 = await page.evaluate(reloadAndCompare);
   const diff = shapeDifference(JSON.parse(r.saved), JSON.parse(r2.again));
   if (diff) failures.push(`${label}: save changed by a reload: ${diff}`);

@@ -1,0 +1,3 @@
+[submodule "vendor/tycho"]
+	path = vendor/tycho
+	url = https://github.com/doctorallen/tycho
