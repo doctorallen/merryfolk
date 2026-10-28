@@ -94,8 +94,9 @@ const sickAbout = () => Game.villagers.filter((o) => o.isSick()).length;
       if (d.unease > 0.6 && this.isGrown() && R.chance(0.15)) feel(this, 'unsettled');
       if (atHome && d.comfort < 0.15 && d.cold < 0.2 && R.chance(0.1) && (h >= 18 || Game.raining)) feel(this, 'cozy');
     }
-    for (const k of NEW_DRIVES) d[k] = clamp(d[k] || 0, 0, 1);
-    if (this.isChild()) d.unease = Math.min(d.unease, 0.6);
+    // (kept to 0..1, written only when that changes them)
+    for (const k of NEW_DRIVES) { const x = d[k], y = clamp(x || 0, 0, 1); if (y !== x) d[k] = y; }
+    if (this.isChild()) { const u = d.unease; if (!(u <= 0.6)) d.unease = Math.min(u, 0.6); }
     // a child in a tantrum wails about it
     if (this.tantrum) {
       if (Game.time > this.tantrum.until) { this.tantrum = null; this.say(R.pick(['*sniff* ...Okay.', '...I\'m better now.', 'Can I have a cookie?']), 2.5); }

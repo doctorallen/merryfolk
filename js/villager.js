@@ -391,16 +391,10 @@ class Villager {
     const task = this.task;
     if (!task) return;
     const a = task.a;
-    task.done = true; // (Tyrell hears it's done when the task is put down, and learns from it then)
+    task.done = true; // (Tyrell hears it's done when the task is put down)
     if (a.done) a.done(this, task);
-    if (!minded(this)) {
-      // without Tyrell, reward learning: how much did that actually help?
-      let r = 0;
-      for (const d of DRIVES) r += Math.max(0, task.before[d] - this.drives[d]) * (d === 'industry' ? 0.6 : 1);
-      if (task.data.quarrel) r -= 0.3;
-      const w = this.weights[a.id] + 0.08 * (r * (this.genes.taste[a.id] || 1) - 0.25);
-      if (!a.queued) this.weights[a.id] = clamp(w, 0.35, 2.2);
-    }
+    const mind = minded(this);
+    if (!mind) this.learnFrom(task, task.before);
     this.stats[a.id] = (this.stats[a.id] || 0) + 1;
     if (a.id === 'chat' && task.partner) this.bond(task.partner, task.data.quarrel ? -0.04 : 0.03);
     if (a.id === 'chat' && task.partner && task.data.ask) newcomerMet(this, task.partner);
@@ -408,8 +402,22 @@ class Villager {
     if (a.job) { this.lastJobAt = Game.time; this.lastJob = a.id; }
     this.releaseTask(task);
     this.task = null;
+    // (with Tyrell, once it has given what the task relieved, reckoned from
+    // when Tyrell's doing of it began)
+    if (mind && minded(this)) this.learnFrom(task, task.from || task.before);
     this.pose = 'stand';
     this.thinkDelay = R.f(0.5, 3);
+  }
+  // Reward learning: how much did that actually help? What relieved a lot
+  // grows into a habit (a meal at the inn, a natter, a night's sleep), and
+  // what hardly helped fades; a squabble sours a natter.
+  learnFrom(task, before) {
+    const a = task.a;
+    let r = 0;
+    for (const d of DRIVES) r += Math.max(0, before[d] - this.drives[d]) * (d === 'industry' ? 0.6 : 1);
+    if (task.data.quarrel) r -= 0.3;
+    const w = this.weights[a.id] + 0.08 * (r * (this.genes.taste[a.id] || 1) - 0.25);
+    if (!a.queued) this.weights[a.id] = clamp(w, 0.35, 2.2);
   }
 
   pat() {
@@ -473,7 +481,8 @@ class Villager {
       // or something a knitter in the family made
       else if ((homeCrafts(this.home()).knitting || 0) >= 2) chill *= 0.8;
     }
-    d.cold += (chill - d.cold) * rate * (chill > d.cold ? 0.35 : 0.6);
+    const cold = d.cold; // (each need read once: with Tyrell, a read is a look into the minds)
+    d.cold = cold + (chill - cold) * rate * (chill > cold ? 0.35 : 0.6);
     // body chemistry: ale wears off, germs run their course, toxins pass
     c.ale = Math.max(0, c.ale - rate * 0.05);
     if (c.germs > 0) {
@@ -487,14 +496,15 @@ class Villager {
     // getting chilled to the bone can bring on a cold
     if (d.cold > 0.75 && c.germs === 0 && c.immune < 0.2 && Math.random() < rate * 0.04 * (1.2 - g.hardiness)) this.catchCold('the chill');
     const achTarget = Math.max(c.germs * 0.75, c.toxin * 0.9, c.hangover * 0.7);
-    d.ache += (achTarget - d.ache) * rate * 0.6;
+    const ache = d.ache;
+    d.ache = ache + (achTarget - ache) * rate * 0.6;
     // a baby in someone's arms, or indoors with a grown-up of the house, gets fed and cuddled
     if (baby && (this.heldBy || (this.inside && this.inside.kind === 'home' && this.inside.inside.some((id) => { const o = Game.villagers.find((x) => x.id === id); return o && o.isGrown(); })))) {
       d.hunger -= rate * 0.16; d.thirst -= rate * 0.16; d.lonely -= rate * 0.2;
     }
     if (!mind) for (const k of DRIVES) d[k] = clamp(d[k], 0, 1); // (Tyrell keeps its needs to 0..1)
     moodTick(this, dt);
-    if (this.stage === 'baby' || this.isChild()) { d.craving = 0; d.industry = 0; }
+    if (this.stage === 'baby' || this.isChild()) { if (d.craving !== 0) d.craving = 0; if (d.industry !== 0) d.industry = 0; }
 
     if (this.bubble) { this.bubble.t -= dt / Game.minPerSec; if (this.bubble.t <= 0) this.bubble = null; }
     if (this.iconT > 0) this.iconT -= dt / Game.minPerSec;
