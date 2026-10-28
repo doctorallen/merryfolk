@@ -148,7 +148,7 @@ async function run(browser, label, opts, failures) {
 }
 
 (async () => {
-  const browser = await launch();
+  const browser = await launch({ gl: true }); // (the world on the GPU, as most browsers draw it)
   const failures = [];
   const d = await run(browser, 'desktop', { width: 1280, height: 800 }, failures);
   const m = await run(browser, 'phone', { width: 390, height: 844, mobile: true }, failures);

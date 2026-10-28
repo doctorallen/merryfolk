@@ -1266,7 +1266,7 @@ const Ground = {
   },
   // draws a sprite onto the ground (a flower patch someone has sown)
   draw(img, x, y) {
-    for (const ch of this.over(x, y, x + img.width / GS, y + img.height / GS, false)) if (ch.painted) ch.c.getContext('2d').drawImage(img, (x - ch.r.x0) * GS, (y - ch.r.y0) * GS);
+    for (const ch of this.over(x, y, x + img.width / GS, y + img.height / GS, false)) if (ch.painted) { ch.c.getContext('2d').drawImage(img, (x - ch.r.x0) * GS, (y - ch.r.y0) * GS); gpuDirty(ch.c); }
   },
   // paints every chunk now, in one go
   paintAll(season) {
@@ -1311,7 +1311,7 @@ function repaintRect(x, y, w, h) {
   for (const ch of chunks) {
     // a chunk still painting for a new season starts again, so it takes in the change
     if (ch.gen) { ch.gen = null; ch.next = null; }
-    if (!ch.painted) { sketchGround(ch.c.getContext('2d'), ch.season, ch.r); continue; }
+    if (!ch.painted) { sketchGround(ch.c.getContext('2d'), ch.season, ch.r); gpuDirty(ch.c); continue; }
     let patch = patches[ch.season];
     if (!patch) {
       const [c] = makeCanvas((rect.x1 - rect.x0) * GS, (rect.y1 - rect.y0) * GS);
@@ -1322,6 +1322,7 @@ function repaintRect(x, y, w, h) {
     const sx0 = Math.max(x, ch.r.x0), sy0 = Math.max(y, ch.r.y0), sx1 = Math.min(x + w, ch.r.x1), sy1 = Math.min(y + h, ch.r.y1);
     if (sx1 <= sx0 || sy1 <= sy0) continue;
     ch.c.getContext('2d').drawImage(patch, (sx0 - rect.x0) * GS, (sy0 - rect.y0) * GS, (sx1 - sx0) * GS, (sy1 - sy0) * GS, (sx0 - ch.r.x0) * GS, (sy0 - ch.r.y0) * GS, (sx1 - sx0) * GS, (sy1 - sy0) * GS);
+    gpuDirty(ch.c);
   }
 }
 

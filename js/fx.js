@@ -344,6 +344,7 @@ const Light = {
     if (darkness <= 0.01) return;
     if (!this.c || this.c.width !== cam.w || this.c.height !== cam.h) {
       [this.c, this.x] = makeCanvas(cam.w, cam.h, true);
+      this.c.gpuLive = true; // (painted afresh every frame: on the GPU it goes up each time)
     }
     const x = this.x;
     x.globalCompositeOperation = 'source-over';

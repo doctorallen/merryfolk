@@ -11,7 +11,9 @@ const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(__dirname, 'out');
 
 const chromePath = tk.chromePath;
-const launch = () => tk.launch();
+// gl: with WebGL2 in software, so the world is drawn on the GPU (Tycho's
+// renderer); without, the 2D path draws it, as where there's no WebGL2
+const launch = ({ gl = false } = {}) => tk.launch({ gl });
 const waitFor = tk.waitFor;
 const READY = () => typeof Game !== 'undefined' && Game.villagers.length > 0;
 

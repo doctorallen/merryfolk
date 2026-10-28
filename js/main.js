@@ -22,6 +22,14 @@ const Game = {
 };
 
 let view, vctx, overlay, octx, dpr = 1;
+// Where there's WebGL2 the world is drawn on the GPU by Tycho's renderer
+// (vendor/tycho/docs/renderer.md): vctx is then its stand-in for the view's
+// 2D context, so the drawing code is the same either way, and every picture
+// drawn goes up to the GPU once. Without WebGL2, or with ?nogl in the
+// address, it's the view canvas's own 2D context as it always was.
+let viewGpu = null;
+// a canvas drawn before was painted again: the GPU reads it afresh
+function gpuDirty(c) { if (viewGpu) viewGpu.dirty(c); }
 let tReal = 0;
 
 // ---------------------------------------------------------------------------
@@ -656,6 +664,7 @@ const Scene = {
 function render(dtReal, dtWall = dtReal) {
   const cam = Game.cam;
   const ctx = vctx;
+  if (viewGpu) viewGpu.frameBegin([ctx]);
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.imageSmoothingEnabled = false;
   ctx.fillStyle = '#1d2a17'; ctx.fillRect(0, 0, view.width, view.height);
@@ -805,6 +814,8 @@ function render(dtReal, dtWall = dtReal) {
     render.vg = c; render.vgW = cam.w; render.vgH = cam.h;
   }
   ctx.drawImage(render.vg, 0, 0);
+  // (on the GPU: the frame is lit already, so it goes onto the canvas as it is)
+  if (viewGpu) { viewGpu.plain(); viewGpu.frameEnd(); }
 }
 
 function wrapText(ctx, text, maxW) {
@@ -991,6 +1002,7 @@ function resize() {
   Game.cam.w = Math.ceil(W / Game.zoom); Game.cam.h = Math.ceil(H / Game.zoom);
   // two canvas pixels to every world pixel; the zoom steps keep them whole on screen
   view.width = Game.cam.w * RS; view.height = Game.cam.h * RS;
+  if (viewGpu) viewGpu.resize(view.width, view.height, []);
   view.style.width = Game.cam.w * Game.zoom + 'px'; view.style.height = Game.cam.h * Game.zoom + 'px';
   overlay.width = Math.round(W * dpr); overlay.height = Math.round(H * dpr);
   overlay.style.width = W + 'px'; overlay.style.height = H + 'px';
@@ -1310,7 +1322,9 @@ function frame(now) {
 }
 
 function boot() {
-  view = $('view'); vctx = view.getContext('2d');
+  view = $('view');
+  if (!Tycho.dev.query('nogl')) viewGpu = Tycho.gpu.Gpu.create(view, { onError: (e) => noteError(e, 'the GPU') });
+  vctx = viewGpu ? viewGpu.ctx(Tycho.gpu.F.COL) : view.getContext('2d');
   overlay = $('overlay'); octx = overlay.getContext('2d');
   buildIcons();
   buildWorldSprites();
