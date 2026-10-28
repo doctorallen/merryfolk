@@ -3,7 +3,7 @@
 // Values: the two things each hobbit holds dear, handed down from their
 // parents (with the odd one picked up from nowhere). Thrift, merrymaking, the
 // old ways, learning, family, craft, the green valley, or tidiness. A value
-// leans them towards what serves it, warms them to folk who share it and
+// leans them toward what serves it, warms them to folk who share it and
 // cools them a little to folk who hold the opposite, and makes them glad or
 // vexed when the Steward and the Moot decide things. Numbers in TUNE.values.
 // ---------------------------------------------------------------------------

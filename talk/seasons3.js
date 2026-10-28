@@ -2,7 +2,7 @@
 // ---------------------------------------------------------------------------
 // The good things of the year, as folk talk of them to the wizard: putting
 // food by for winter and the state of the top shelf, the harvest coming in,
-// their own gardens (and their neighbours' marrows), the food of each season
+// their own gardens (and their neighbors' pumpkins), the food of each season
 // and the dishes somebody they loved used to make, the long tables at a
 // feast, Trewsday market, and their turn to make the wizard taste something.
 // The facts of the year (jars, the next festival, the occasion) come from
@@ -102,7 +102,7 @@ talkPack('seasons3', () => {
     { if: { temper: 'shy' }, text: ['...Not bad. I count them at night. Is that odd?', '...A few. I\'m slow at it. I like to do it properly.'] },
     { if: { temper: 'dreamy' }, text: ['I love the jars in the window. The light comes through the jam like a church.', 'Every jar\'s a bit of summer you can open in the snow.'] },
     { if: { temper: 'witty' }, text: ['My shelf is a monument to vinegar. Visitors weep. Mostly from the fumes.', 'Full enough that I\'ve started naming them. That one\'s Gerald.'] },
-    { if: { temper: 'proud' }, text: ['Best-stocked larder on the lane. I\'ve checked. Discreetly.', 'Every jar labelled, dated and in order. My mother would weep.'] },
+    { if: { temper: 'proud' }, text: ['Best-stocked larder on the lane. I\'ve checked. Discreetly.', 'Every jar labeled, dated and in order. My mother would weep.'] },
     { if: { temper: 'proud', jarsWord: 'bare' }, text: ['Bare, for now. I\'m doing it properly or not at all. Mostly not at all, so far.'] },
     { if: { temper: 'gloomy' }, text: ['It\'s never enough. Winter eats everything. It\'ll eat this.', 'A few jars. They won\'t last. They never do.'] },
     { if: { temper: 'curious' }, text: ['Did you know smoked fish keeps longer if you pack it in salt? I\'m testing how long.', 'Why doesn\'t jam spoil? I\'ve been wondering. Is it the sugar?'] },
@@ -112,7 +112,7 @@ talkPack('seasons3', () => {
     { if: { job: 'fisher' }, text: ['Smoked fish, mostly. The whole hole smells like a kipper. I\'ve stopped noticing.'] },
     { if: { job: 'orchardist' }, text: ['Apple jam, apple butter, dried apple rings. If it\'s apple, it\'s on my shelf.'] },
     { if: { job: 'baker' }, text: ['A baker doesn\'t put by much. I just bake more. Though I do a lovely jam.'] },
-    { if: { job: 'farmer' }, text: ['Pickled everything that stood still. Beans, onions, a marrow the size of a dog.'] },
+    { if: { job: 'farmer' }, text: ['Pickled everything that stood still. Beans, onions, a pumpkin the size of a dog.'] },
     { if: { job: 'innkeeper' }, text: ['The Badger\'s cellar is full. My own shelf? Bare. The cobbler\'s children, and all that.'] },
     { if: { job: 'herbalist' }, text: ['Jars of herbs, mostly. Mint, sage, feverfew. You can\'t eat them, but you\'ll be well.'] },
     { if: { spouse: (s) => !!s }, text: ['{Spouse} does the jam, I do the pickles, and we argue about the shelf.'] },
@@ -123,8 +123,8 @@ talkPack('seasons3', () => {
     { text: ['Bramble-apple jam, pickles, smoked fish. The holy three.', 'Jam on the left, pickles on the right, fish in the cool corner.'] },
     { if: { temper: 'ornery' }, text: ['What goes on everyone\'s. Jam, pickles, fish. I don\'t do fancy.'] },
     { if: { temper: 'cheerful' }, text: ['Jam! Mostly jam. Some pickles, to be sensible. Then more jam.'] },
-    { if: { temper: 'dreamy' }, text: ['Bramble-apple, for the colour. I like to hold it up to the candle.'] },
-    { if: { temper: 'witty' }, text: ['Jam, for joy. Pickles, for character. Fish, for the neighbours to complain about.'] },
+    { if: { temper: 'dreamy' }, text: ['Bramble-apple, for the color. I like to hold it up to the candle.'] },
+    { if: { temper: 'witty' }, text: ['Jam, for joy. Pickles, for character. Fish, for the neighbors to complain about.'] },
     { if: { temper: 'proud' }, text: ['My bramble-apple took a ribbon at the Harvest Feast. Three years running.'] },
     { if: { temper: 'shy' }, text: ['...Just jam. Bramble-apple. It\'s the only one I\'m good at.'] },
     { if: { temper: 'gloomy' }, text: ['Pickles. Pickles keep. Pickles don\'t let you down.'] },
@@ -140,13 +140,13 @@ talkPack('seasons3', () => {
     { text: ['My grandmother\'s. Everybody\'s jam is somebody\'s grandmother\'s.', 'Mine. I made it up. Badly the first year, and then better.'] },
     { if: { parent: (p) => !!p }, text: ['{Parent}\'s. I watched from the stool every autumn till I could reach the pot.'] },
     { if: { temper: 'proud' }, text: ['Mine, and nobody else\'s. Folk have asked. Folk have been refused.'] },
-    { if: { temper: 'shy' }, text: ['...My nan\'s. She wrote it down for me in her best hand. I keep it in a tin.'] },
+    { if: { temper: 'shy' }, text: ['...My grandma\'s. She wrote it down for me in her best hand. I keep it in a tin.'] },
     { if: { temper: 'dreamy' }, text: ['My grandmother\'s. When I stir it I can hear her humming. Same tune every time.'] },
     { if: { temper: 'witty' }, text: ['Great-aunt Petunia\'s. She took it to the grave. I dug it back up. Out of her diary, I mean.'] },
     { if: { temper: 'ornery' }, text: ['My own. I don\'t hold with other people\'s recipes. They always leave something out.'] },
     { if: { temper: 'gloomy' }, text: ['My mother\'s. I never get it quite right. Close, but never quite.'] },
     { if: { stage: 'elder' }, text: ['Mine, now. It was my mother\'s, and her mother\'s. I\'ve been the grandmother for years.'] },
-    { if: { stage: 'child' }, text: ['Mum\'s. She won\'t tell me. She says I have to be OLDER.'] },
+    { if: { stage: 'child' }, text: ['Mom\'s. She won\'t tell me. She says I have to be OLDER.'] },
     { if: { rift: true }, text: ['A hill-hobbit\'s, next door. She stood over me the whole time. I think I passed.'] },
   ]);
   lines('season.larder.secret', [
@@ -192,7 +192,7 @@ talkPack('seasons3', () => {
     { if: { temper: 'ornery' }, text: ['Jam is jam. Don\'t you go muddling the categories.'] },
     { if: { temper: 'cheerful' }, text: ['I\'m telling everyone! Jam is a vegetable, by order of the wizard!'] },
     { if: { temper: 'curious' }, text: ['Is it, though? Where do you draw the line? Is chutney a vegetable?'] },
-    { if: { stage: 'child' }, text: ['So I can have jam INSTEAD of greens? I\'m telling Mum you said.'] },
+    { if: { stage: 'child' }, text: ['So I can have jam INSTEAD of greens? I\'m telling Mom you said.'] },
     { if: { temper: 'proud' }, text: ['My jam\'s a sight better than any vegetable, squinting or not.'] },
   ]);
   lines('season.larder.pickles', [
@@ -268,7 +268,7 @@ talkPack('seasons3', () => {
   lines('season.larder.honey', [
     { text: ['Honey in your pack! No wonder you\'re always so sweet-tempered.', 'Every day an emergency. Ha! You\'re a hobbit at heart.'] },
     { if: { temper: 'witty' }, text: ['Most days are emergencies. That\'s the truest thing a wizard\'s ever said.'] },
-    { if: { temper: 'shy' }, text: ['...I keep a biscuit in my pocket. For the same reason.'] },
+    { if: { temper: 'shy' }, text: ['...I keep a cookie in my pocket. For the same reason.'] },
     { if: { stage: 'child' }, text: ['Can I have some? It\'s an emergency. I\'m very hungry.'] },
     { if: { rift: true }, text: ['I kept a battery in my pocket, back home. Same thing, really.'] },
   ]);
@@ -298,7 +298,7 @@ talkPack('seasons3', () => {
         { ap: 'ask', say: 'Is it hard on you, the harvest?', to: 'hard', need: { open: 1 }, soft: true },
       ] },
       sheaf: { line: 'season.harvest.sheaf', go: [
-        { ap: 'ask', say: 'And who plaited the dolly last year?', to: 'dolly' },
+        { ap: 'ask', say: 'And who braided the dolly last year?', to: 'dolly' },
         { ap: 'jest', say: 'I\'d make a terrible corn dolly. All beard and no waist.', to: 'beard' },
       ] },
       dolly: { line: 'season.harvest.dolly', fx: { remember: 'Told the wizard about the harvest dolly.', rv: 1, fond: 0.02 }, end: true },
@@ -368,11 +368,11 @@ talkPack('seasons3', () => {
     { if: { temper: 'ornery' }, text: ['Good, no thanks to the crows. Or the rabbits. Or the young ones.'] },
     { if: { temper: 'proud' }, text: ['My field\'s the best in the valley. The rest are... coming along.'] },
     { if: { temper: 'witty' }, text: ['Plenty. Enough for every hobbit to have seconds. Thirds is where it gets tight.'] },
-    { if: { stage: 'child' }, text: ['BIG. There\'s a marrow bigger than me. I sat on it.'] },
+    { if: { stage: 'child' }, text: ['BIG. There\'s a pumpkin bigger than me. I sat on it.'] },
     { if: { stage: 'elder' }, text: ['I\'ve seen better and I\'ve seen worse. This one\'s a kind one.'] },
   ]);
   lines('season.harvest.sheaf', [
-    { text: ['The last sheaf\'s plaited into a dolly, and she hangs over the Badger\'s fire till spring.', 'Nobody wants to cut the last sheaf. They throw their sickles at it from a distance. Old custom.'] },
+    { text: ['The last sheaf\'s braided into a dolly, and she hangs over the Badger\'s fire till spring.', 'Nobody wants to cut the last sheaf. They throw their sickles at it from a distance. Old custom.'] },
     { if: { stage: 'elder' }, text: ['The eldest at the field cuts it. That\'s been me, a few times. Makes your hand shake.'] },
     { if: { stage: 'child' }, text: ['The youngest gets to hold it! I held it last year! It was itchy!'] },
     { if: { temper: 'dreamy' }, text: ['The last sheaf\'s where the field\'s spirit hides. You cut it gently, and say sorry.'] },
@@ -388,7 +388,7 @@ talkPack('seasons3', () => {
     { if: { temper: 'shy' }, text: ['...I did. Nobody knows. I left it on the step at night.'] },
   ]);
   lines('season.harvest.beard', [
-    { text: ['Ha! A wizard dolly! We\'d hang you over the fire with a little hat.', 'All beard! I\'d plait it for you. Long winter, nothing better to do.'] },
+    { text: ['Ha! A wizard dolly! We\'d hang you over the fire with a little hat.', 'All beard! I\'d braid it for you. Long winter, nothing better to do.'] },
     { if: { temper: 'witty' }, text: ['All beard and no waist. That\'s most of the elders I know.'] },
     { if: { stage: 'child' }, text: ['Can we make one of you? Can we? With a STICK for a staff?'] },
   ]);
@@ -463,7 +463,7 @@ talkPack('seasons3', () => {
       best: { line: 'season.garden.best', go: [
         { ap: 'ask', say: 'And what\'s the secret?', to: 'secret', need: { open: 1 }, soft: true },
         { ap: 'warm', say: 'I\'d love to see it, one evening.', to: 'show' },
-        { ap: 'ask', say: 'I hear {rival} grows a fair marrow too.', to: 'rival', need: { if: { rival: (r) => !!r } } },
+        { ap: 'ask', say: 'I hear {rival} grows a fair pumpkin too.', to: 'rival', need: { if: { rival: (r) => !!r } } },
       ] },
       secret: { line: 'season.garden.secret', fx: { confide: { k: 'season.soil', t: 'The secret of {name}\'s garden', secret: true }, open: 1 }, go: [
         { ap: 'warm', say: 'Safe with me. I don\'t even tell my staff.', to: 'safe' },
@@ -473,11 +473,11 @@ talkPack('seasons3', () => {
       slugs: { line: 'season.garden.slugs', end: true },
       show: { line: 'season.garden.show', fx: { fond: 0.02 }, end: true },
       rival: { line: 'season.garden.rival', go: [
-        { ap: 'jest', say: 'Shall I put a curse on their marrows? A small one. Just a wilt.', to: 'curse' },
+        { ap: 'jest', say: 'Shall I put a curse on their pumpkins? A small one. Just a wilt.', to: 'curse' },
         { ap: 'advise', say: 'Grow beans this year. Nobody judges beans.', to: 'beans' },
         { ap: 'warm', say: 'Yours are better. Anyone with eyes can see it.', to: 'better' },
       ] },
-      curse: { line: 'season.garden.curse', fx: { joke: { k: 'season.curse', t: 'The wizard offered to put a small wilt on {rival}\'s marrows.' }, fond: 0.02 }, end: true },
+      curse: { line: 'season.garden.curse', fx: { joke: { k: 'season.curse', t: 'The wizard offered to put a small wilt on {rival}\'s pumpkins.' }, fond: 0.02 }, end: true },
       beans: { line: 'season.garden.beans', fx: { respect: 0.01 }, end: true },
       better: { line: 'season.garden.better', fx: { fond: 0.03 }, end: true },
       pests: { line: 'season.garden.pests', go: [
@@ -506,14 +506,14 @@ talkPack('seasons3', () => {
   lines('season.garden.start', [
     { text: ['Oh, coming along. Slowly. Like me.', 'Bits of it are lovely. Other bits are mostly weeds with ambition.'] },
     { if: { season: 'spring' }, text: ['Seeds in, fingers crossed. The peas are up and the lettuces are thinking about it.', 'Everything\'s sown and I\'m out at dawn to see what\'s poked through.'] },
-    { if: { season: 'summer' }, text: ['Beans up the canes, marrows sprawling, and weeds everywhere I didn\'t plant them.', 'It\'s gone wild. I go out to weed and come back with a basket of strawberries instead.'] },
-    { if: { season: 'autumn' }, text: ['Digging the last potatoes, and the marrows are the size of piglets.', 'Going over, mostly. The last beans and a forest of leeks.'] },
+    { if: { season: 'summer' }, text: ['Beans up the canes, pumpkins sprawling, and weeds everywhere I didn\'t plant them.', 'It\'s gone wild. I go out to weed and come back with a basket of strawberries instead.'] },
+    { if: { season: 'autumn' }, text: ['Digging the last potatoes, and the pumpkins are the size of piglets.', 'Going over, mostly. The last beans and a forest of leeks.'] },
     { if: { season: 'winter' }, text: ['Asleep under the snow. A few leeks standing up like soldiers.', 'Nothing much. Planning. I draw next year\'s beds on the back of the coal bill.'] },
     { if: { weather: 'rain' }, text: ['Drinking it up! It\'s the one thing the garden thanks me for.'] },
     { if: { hazard: 'drought' }, pri: 1, text: ['Parched. I carry every drop from the well and it\'s still crackling.'] },
     { if: { hazard: 'frost' }, pri: 1, text: ['Black with frost. The cabbages look like they\'ve had a shock.'] },
     { if: { likes: 'gardens' }, pri: 1, text: ['Oh, don\'t get me started. ...Well, since you ask. It\'s the best it\'s ever been.'] },
-    { if: { temper: 'ornery' }, text: ['Overrun. Slugs, snails, and a neighbour\'s hen that thinks she owns it.'] },
+    { if: { temper: 'ornery' }, text: ['Overrun. Slugs, snails, and a neighbor\'s hen that thinks she owns it.'] },
     { if: { temper: 'cheerful' }, text: ['Lovely! Everything I touch grows. Even the things I don\'t want.'] },
     { if: { temper: 'shy' }, text: ['...It\'s small. But it\'s mine. I like it.'] },
     { if: { temper: 'dreamy' }, text: ['I sit in it more than I work in it. Is that allowed?'] },
@@ -530,11 +530,11 @@ talkPack('seasons3', () => {
   ]);
   lines('season.garden.best', [
     { text: ['The beans. Up the canes and over the top, like they\'re trying to escape.', 'Lettuces. Crisp as you like. I eat them standing in the bed.'] },
-    { if: { season: 'summer' }, text: ['Marrows. I swear they grow while you watch. I named one. It\'s bigger than the cat.'] },
+    { if: { season: 'summer' }, text: ['Pumpkins. I swear they grow while you watch. I named one. It\'s bigger than the cat.'] },
     { if: { season: 'spring' }, text: ['The peas. Little curly bits, climbing everything. And the rhubarb, which is pink and furious.'] },
     { if: { season: 'autumn' }, text: ['The pumpkins. Fat and orange, sat in the beds like sleeping pigs.'] },
     { if: { season: 'winter' }, text: ['The leeks. They don\'t care about snow. Brave things, leeks.'] },
-    { if: { temper: 'proud' }, text: ['Everything, frankly. But the marrows are winning prizes. Twice now.'] },
+    { if: { temper: 'proud' }, text: ['Everything, frankly. But the pumpkins are winning prizes. Twice now.'] },
     { if: { temper: 'dreamy' }, text: ['The sweet peas. I grow them for the smell, not to eat. The evening smell.'] },
     { if: { temper: 'gloomy' }, text: ['The weeds. The weeds always do best.'] },
     { if: { temper: 'witty' }, text: ['The slugs. Fattest slugs in Thistledown. I should charge them rent.'] },
@@ -582,12 +582,12 @@ talkPack('seasons3', () => {
     { text: ['Ha! ...A small one. Just till the Harvest Feast.', 'Don\'t you dare. ...How small?'] },
     { if: { temper: 'ornery' }, text: ['Now you\'re talking. A wilt and a blight. ...No. No. I\'ll win fair.'] },
     { if: { temper: 'cheerful' }, text: ['Ha! No! That\'s cheating! ...It\'s very kind of you, though.'] },
-    { if: { temper: 'witty' }, text: ['A small curse. On a marrow. The most hobbit thing a wizard\'s ever said.'] },
-    { if: { temper: 'proud' }, text: ['I need no curses. My marrows speak for themselves.'] },
+    { if: { temper: 'witty' }, text: ['A small curse. On a pumpkin. The most hobbit thing a wizard\'s ever said.'] },
+    { if: { temper: 'proud' }, text: ['I need no curses. My pumpkins speak for themselves.'] },
   ]);
   lines('season.garden.beans', [
-    { text: ['Beans. Hm. Nobody does judge beans. You might have something.', 'Beans! Then {rival} can keep the marrow crown and I\'ll be the bean king.'] },
-    { if: { temper: ['proud', 'ornery'] }, text: ['Give up the marrows? Never. ...But some beans as well.'] },
+    { text: ['Beans. Hm. Nobody does judge beans. You might have something.', 'Beans! Then {rival} can keep the pumpkin crown and I\'ll be the bean king.'] },
+    { if: { temper: ['proud', 'ornery'] }, text: ['Give up the pumpkins? Never. ...But some beans as well.'] },
   ]);
   lines('season.garden.better', [
     { text: ['You think so? Say it at the Harvest Feast. Loudly.', 'Oh, that\'s done me good. Say it again.'] },
@@ -615,7 +615,7 @@ talkPack('seasons3', () => {
   ]);
   lines('season.garden.tipped', [
     { text: ['Huh. I\'ll try it. You know more than you let on.', 'Well, I never heard that one. I\'ll give it a go, and blame you if it fails.'] },
-    { if: { temper: ['proud', 'ornery'] }, text: ['I\'ve been gardening since before your hat was grey. ...I\'ll try it.'] },
+    { if: { temper: ['proud', 'ornery'] }, text: ['I\'ve been gardening since before your hat was gray. ...I\'ll try it.'] },
     { if: { temper: 'curious' }, text: ['Why does that work? Have you tested it? I\'ll try half the bed with and half without.'] },
     { if: { temper: 'cheerful' }, text: ['Oh, clever! I\'ll try it this very afternoon!'] },
   ]);
@@ -659,13 +659,13 @@ talkPack('seasons3', () => {
     open: { ask: 'season.food.open' },
     beats: {
       start: { line: 'season.food.start', go: [
-        { ap: 'ask', say: 'And your favourite, any time of year?', to: 'fav' },
+        { ap: 'ask', say: 'And your favorite, any time of year?', to: 'fav' },
         { ap: 'jest', say: 'And how many breakfasts does {season} get, in your hole?', to: 'breakfasts' },
         { ap: 'ask', say: 'What\'s the best thing you ever ate?', to: 'best' },
       ] },
-      fav: { line: 'season.food.fav', fx: { learn: ['season.favfood', '{Name}\'s favourite is {seasonFavFood}'] }, go: [
+      fav: { line: 'season.food.fav', fx: { learn: ['season.favfood', '{Name}\'s favorite is {seasonFavFood}'] }, go: [
         { ap: 'ask', say: 'And who made it best?', to: 'who', need: { open: 1 }, soft: true },
-        { ap: 'jest', say: 'I\'ll remember that, next time I need a favour.', to: 'favour' },
+        { ap: 'jest', say: 'I\'ll remember that, next time I need a favor.', to: 'favour' },
         { ap: 'share', say: 'Mine\'s mushrooms on toast, by a fire, after a long wet road.', to: 'wizfav' },
       ] },
       best: { line: 'season.food.best', go: [
@@ -680,13 +680,13 @@ talkPack('seasons3', () => {
       ] },
       gone: { line: 'season.food.gone', fx: { confide: { k: 'season.dish', t: 'How {name} misses the dish someone used to make for them' }, trust: 0.03 }, go: [
         { ap: 'comfort', say: 'Food remembers people. That\'s why it matters so much.', to: 'remembers' },
-        { ap: 'warm', say: 'If you ever make it, I\'d be honoured to taste it.', to: 'honoured' },
+        { ap: 'warm', say: 'If you ever make it, I\'d be honored to taste it.', to: 'honoured' },
       ] },
       remembers: { line: 'season.food.remembers', fx: { trust: 0.03, fond: 0.02 }, end: true },
       honoured: { line: 'season.food.honoured', fx: { fond: 0.03, hook: 'season.dish' }, end: true },
       make: { line: 'season.food.make', fx: { remember: 'The wizard said I should make the old dish myself.', rv: 1 }, end: true },
       taught: { line: 'season.food.taught', end: true },
-      favour: { line: 'season.food.favour', fx: { joke: { k: 'season.favour', t: 'The wizard knows the way to a favour is through {seasonFavFood}.' } }, end: true },
+      favour: { line: 'season.food.favour', fx: { joke: { k: 'season.favour', t: 'The wizard knows the way to a favor is through {seasonFavFood}.' } }, end: true },
       wizfav: { line: 'season.food.wizfav', fx: { trust: 0.02 }, end: true },
       again: { line: 'season.food.again', end: true },
       porridge: { line: 'season.food.porridge', fx: { fond: 0.01 }, end: true },
@@ -709,7 +709,7 @@ talkPack('seasons3', () => {
     { if: { season: 'spring' }, text: ['New lettuce, new eggs, the first radishes. Everything tastes green.', 'Rhubarb! Pink and sour and wonderful, with custard.', 'Nettle soup. Don\'t pull a face. It\'s the taste of spring, nettle soup.'] },
     { if: { season: 'summer' }, text: ['Strawberries and cream. Strawberries without cream. Strawberries in my pocket.', 'New potatoes with butter and mint. I could weep.', 'Peas straight from the pod. Half of them never make it to the kitchen.'] },
     { if: { season: 'autumn' }, text: ['Mushrooms! Fried, in butter, on toast. Then more mushrooms.', 'Blackberries off the hedge and apple pie with all of them in.', 'Roast chestnuts. And the first stew of the year, when the evenings turn.'] },
-    { if: { season: 'winter' }, text: ['Stew. A great pot of it, all day on the hob.', 'Yule pudding with a silver penny in it. I found it once. I chipped a tooth.', 'Toast and dripping by the fire. Simple. Perfect.'] },
+    { if: { season: 'winter' }, text: ['Stew. A great pot of it, all day on the stove.', 'Yule pudding with a silver penny in it. I found it once. I chipped a tooth.', 'Toast and dripping by the fire. Simple. Perfect.'] },
     { if: { temper: 'ornery' }, text: ['Same as always. Bread and cheese. I don\'t hold with fads.', 'Whatever I didn\'t burn. Which is most things, today.'] },
     { if: { temper: 'cheerful' }, text: ['Everything! I\'ve never met a season I couldn\'t eat.'] },
     { if: { temper: 'shy' }, text: ['...I like the plain things. A boiled egg. Bread. Is that dull?'] },
@@ -720,7 +720,7 @@ talkPack('seasons3', () => {
     { if: { temper: 'curious' }, text: ['I\'m trying everything that grows this season, once. Some of it I shan\'t try twice.'] },
     { if: { stage: 'child' }, text: ['PUDDING. In every season. Especially now.', 'I ate a worm once. By accident. It tasted of mud.'] },
     { if: { stage: 'elder' }, text: ['Soft things, at my age. But I still want the crackling.'] },
-    { if: { rift: true }, text: ['Back home it was noodles from a machine, every season. Here the food changes! On its own!', 'Strawberries. I\'d never had a real one. I thought the colour was made up.'] },
+    { if: { rift: true }, text: ['Back home it was noodles from a machine, every season. Here the food changes! On its own!', 'Strawberries. I\'d never had a real one. I thought the color was made up.'] },
     { if: { job: 'baker' }, text: ['Bread, bread, and the bit of bread I keep back for myself.'] },
     { if: { job: 'fisher' }, text: ['Fish, fried on the bank with the skin crisp. The rest of the world can keep its pies.'] },
     { if: { job: 'innkeeper' }, text: ['Whatever the Badger kitchen\'s doing. Today it\'s pie. Tomorrow it\'s pie.'] },
@@ -743,7 +743,7 @@ talkPack('seasons3', () => {
     { if: { temper: 'shy' }, text: ['...{SeasonFavFood}. Don\'t tell anyone. They\'ll bring it to me and I\'ll have to say thank you.'] },
     { if: { temper: 'witty' }, text: ['{SeasonFavFood}, closely followed by more {seasonFavFood}.'] },
     { if: { temper: 'proud' }, text: ['{SeasonFavFood}, and mine is better than anyone\'s.'] },
-    { if: { stage: 'child' }, text: ['{SeasonFavFood}! And sweets. And {seasonFavFood} with sweets on.'] },
+    { if: { stage: 'child' }, text: ['{SeasonFavFood}! And candy. And {seasonFavFood} with candy on.'] },
   ]);
   lines('season.food.best', [
     { text: ['A pie at a wedding, years ago. Rabbit and something. I never found out what.', 'A slice of bread and dripping on a cold morning, after a long walk. Nothing ever beat it.'] },
@@ -751,17 +751,17 @@ talkPack('seasons3', () => {
     { if: { stage: 'child' }, text: ['A whole honey cake. On my own. On my birthday. Then I was sick. Best day ever.'] },
     { if: { temper: 'dreamy' }, text: ['Strawberries eaten in the rain, under the hedge, with someone I loved.'] },
     { if: { temper: 'ornery' }, text: ['My own cooking. Nobody else gets the salt right.'] },
-    { if: { temper: 'witty' }, text: ['The biscuit I found in an old coat. Three years old. Glorious.'] },
+    { if: { temper: 'witty' }, text: ['The cookie I found in an old coat. Three years old. Glorious.'] },
     { if: { temper: 'gloomy' }, text: ['Something I can\'t have again. That\'s always the best one, isn\'t it?'] },
     { if: { temper: 'proud' }, text: ['The pie that took first at the Harvest Feast. Mine. Obviously.'] },
     { if: { rift: true }, text: ['A boiled egg. Here. The first morning. I didn\'t know an egg could taste of anything.'] },
-    { if: { spouse: (s) => !!s }, text: ['The supper {spouse} burnt the night we were courting. I ate every bit and said it was lovely.'] },
+    { if: { spouse: (s) => !!s }, text: ['The supper {spouse} burned the night we were courting. I ate every bit and said it was lovely.'] },
   ]);
   lines('season.food.who', [
-    { text: ['My grandmother. She\'d stand on a stool to reach the hob, and slap any hand near the pot.', 'An old neighbour. She\'s gone now. Nobody does it like her.'] },
+    { text: ['My grandmother. She\'d stand on a stool to reach the stove, and slap any hand near the pot.', 'An old neighbor. She\'s gone now. Nobody does it like her.'] },
     { if: { parent: (p) => !!p }, text: ['{Parent}. Every Highday. The smell of it came down the passage and woke me up.'] },
     { if: { spouse: (s) => !!s }, text: ['{Spouse}, if I\'m honest. Don\'t tell my mother.'] },
-    { if: { stage: 'child' }, text: ['Gran. She puts extra honey in when Mum\'s not looking.'] },
+    { if: { stage: 'child' }, text: ['Gran. She puts extra honey in when Mom\'s not looking.'] },
     { if: { stage: 'elder' }, text: ['My mother. I was small when I last had it. A lifetime ago. Less, it feels.'] },
     { if: { temper: 'proud' }, text: ['Me. ...Well. My father first. Then me. Better, if I\'m honest.'] },
     { if: { temper: 'gloomy' }, text: ['Someone who isn\'t here any more.'] },
@@ -898,7 +898,7 @@ talkPack('seasons3', () => {
     { text: ['Ah. That\'s between me and the pot.', 'Bits of everything, and a bit of love. That\'s the soppy answer.'] },
     { if: { temper: 'curious' }, text: ['Mint, honey, a pinch of salt and a thing I found in a hedge. I think it was a herb.'] },
     { if: { temper: 'proud' }, text: ['A family recipe. You\'d need to marry into the family.'] },
-    { if: { stage: 'child' }, text: ['Mud. And a daisy. For flavour.'] },
+    { if: { stage: 'child' }, text: ['Mud. And a daisy. For flavor.'] },
   ]);
   lines('season.taste.jar', [
     { text: ['Spare one? Take two. Here. I\'ll wrap them.', 'For the road! A bit of Thistledown on the road. I like that.'] },
@@ -992,14 +992,14 @@ talkPack('seasons3', () => {
     { if: { feastOn: true }, text: ['Are you eating, {name}? You\'ve stopped. Is something wrong?', 'How\'s the dinner, {name}? Room for more?'] },
   ]);
   lines('season.tables.start', [
-    { text: ['White cloths all down the field, and every dish in the valley on them. I\'ve been dreaming of it.', 'Soup, then the mains, then pudding, then the toast. I\'ve been in training since breakfast.'] },
+    { text: ['White cloths all down the field, and every dish in the valley on them. I\'ve been dreaming of it.', 'Soup, then the main course, then pudding, then the toast. I\'ve been in training since breakfast.'] },
     { if: { feastOn: true }, text: ['Isn\'t it wonderful? I\'ve undone a button. Two. Don\'t look.', 'Pass the gravy! No, not you. Him. Oh, you have, thank you.'] },
     { if: { occasion: 'harvest' }, text: ['The Harvest Feast! Pies, stews, cider, and everyone who brought it in, all at one table.'] },
     { if: { occasion: 'founding' }, text: ['Founders\' Day! A long lunch and a toast to the first holes. My kind of history.'] },
     { if: { occasion: 'wedding' }, text: ['A wedding feast! I cried in the soup already. It\'s very good soup.'] },
     { if: { occasion: 'twohearths' }, text: ['Two Hearths. Hill-folk and rift-folk at one table. Mind, the rift-folk put sauce on everything.'] },
     { if: { occasion: 'feast' }, text: ['The Steward\'s feast! Free food and somebody else washing up. Heaven.'] },
-    { if: { temper: 'ornery' }, text: ['Long tables. Long speeches. Long queue for the pie. I\'ll be there, mind.'] },
+    { if: { temper: 'ornery' }, text: ['Long tables. Long speeches. Long line for the pie. I\'ll be there, mind.'] },
     { if: { temper: 'cheerful' }, text: ['I love the long tables! Everyone, all together, all eating! What\'s better?'] },
     { if: { temper: 'shy' }, text: ['...I sit at the very end. You can see everyone from there. Nobody looks at you.'] },
     { if: { temper: 'dreamy' }, text: ['I love when the lanterns come on over the tables. All the faces go gold.'] },
@@ -1031,7 +1031,7 @@ talkPack('seasons3', () => {
   ]);
   lines('season.tables.notby', [
     { text: ['...Somebody who always tells the story about my wedding. The bad version.', '...There\'s a hobbit who talks with his mouth full. Full of my pie.'] },
-    { if: { rival: (r) => !!r }, pri: 1, text: ['{Rival}. Every year they\'re put opposite me. Every year we talk about marrows. It\'s war.'] },
+    { if: { rival: (r) => !!r }, pri: 1, text: ['{Rival}. Every year they\'re put opposite me. Every year we talk about pumpkins. It\'s war.'] },
     { if: { temper: 'shy' }, text: ['...Anyone loud. They put me next to a loud one last time. I didn\'t say a word all night.'] },
     { if: { temper: 'gloomy' }, text: ['Anyone who wants me to be cheerful. Which is everyone, at a feast.'] },
     { if: { stage: 'child' }, text: ['My cousin. He spits the peas. On purpose.'] },
@@ -1050,7 +1050,7 @@ talkPack('seasons3', () => {
     { if: { occasion: 'harvest' }, text: ['Somebody stands and raises a mug: to the harvest, and every hand that brought it in.'] },
     { if: { occasion: 'founding' }, text: ['The eldest, to the folk who dug the first holes. Everyone cries. Even the founders\' grandchildren.'] },
     { if: { occasion: 'wedding' }, text: ['The eldest of the family. There\'s always a bit about the pantry never being bare.'] },
-    { if: { stage: 'elder' }, text: ['It might be me. I\'m the eldest at our end. I\'ve been practising in the mirror.'] },
+    { if: { stage: 'elder' }, text: ['It might be me. I\'m the eldest at our end. I\'ve been practicing in the mirror.'] },
     { if: { temper: 'ornery' }, text: ['Whoever it is, they\'ll take too long and the pudding will go cold.'] },
     { if: { temper: 'witty' }, text: ['The one who\'s hardest to stop. It\'s a sort of contest.'] },
   ]);
@@ -1069,7 +1069,7 @@ talkPack('seasons3', () => {
   lines('season.tables.wiztoast', [
     { text: ['A wizard\'s toast! Go on, then. Let\'s hear it.', 'You? Stand up at the long tables? Oh, they\'d love that.'] },
     { if: { temper: 'ornery' }, text: ['Keep it short. The pudding\'s waiting.'] },
-    { if: { temper: 'cheerful' }, text: ['Oh, do! Practise on me! I\'ll clap!'] },
+    { if: { temper: 'cheerful' }, text: ['Oh, do! Practice on me! I\'ll clap!'] },
     { if: { stage: 'child' }, text: ['Will there be a firework in it? Toasts are better with fireworks.'] },
   ]);
   lines('season.tables.raise', [
@@ -1094,10 +1094,10 @@ talkPack('seasons3', () => {
     { if: { temper: 'witty' }, text: ['A belt\'s just a promise you make before dinner and break after.'] },
   ]);
   lines('season.tables.course', [
-    { text: ['Pudding. You go light on the mains and heavy on the pudding. Every hobbit knows.', 'All of them. That\'s the challenge. That\'s the glory.'] },
-    { if: { seasonFavFood: 'pie' }, pri: 1, text: ['The mains. The pie. I don\'t care what comes after the pie.'] },
+    { text: ['Pudding. You go light on the main course and heavy on the pudding. Every hobbit knows.', 'All of them. That\'s the challenge. That\'s the glory.'] },
+    { if: { seasonFavFood: 'pie' }, pri: 1, text: ['The main course. The pie. I don\'t care what comes after the pie.'] },
     { if: { temper: 'shy' }, text: ['...The soup. I always fill up on soup. Then I sit and watch.'] },
-    { if: { stage: 'child' }, text: ['I\'m going to skip the soup and the mains and go STRAIGHT to pudding.'] },
+    { if: { stage: 'child' }, text: ['I\'m going to skip the soup and the main course and go STRAIGHT to pudding.'] },
   ]);
   lines('season.tables.puddingkind', [
     { text: ['Seed-cake and cream, if there\'s any justice.', 'Honey cake. There\'s always somebody makes a honey cake.'] },
@@ -1155,7 +1155,7 @@ talkPack('seasons3', () => {
     { if: { temper: 'proud' }, text: ['My stall sold out by ten. Again. Not that I\'m counting.'] },
     { if: { temper: 'gloomy' }, text: ['Crowds. Elbows. Someone trod on my foot. Twice.'] },
     { if: { temper: 'curious' }, text: ['The Bree carter had something called a lemon. It\'s yellow and it hates you.'] },
-    { if: { stage: 'child' }, text: ['There\'s a man with SWEETS. On a STICK. I didn\'t have a penny.'] },
+    { if: { stage: 'child' }, text: ['There\'s a man with CANDY. On a STICK. I didn\'t have a penny.'] },
     { if: { stage: 'elder' }, text: ['Same stalls as fifty years ago. Different faces behind them. Same cheese, I swear.'] },
     { if: { rift: true }, text: ['No screens, no prices on lights. You just ask. And they tell you. And then you argue. I love it.'] },
   ]);
@@ -1164,7 +1164,7 @@ talkPack('seasons3', () => {
     { if: { pantryBare: true }, pri: 1, text: ['Everything I could carry. The pantry was down to crumbs.'] },
     { if: { temper: 'proud' }, text: ['The best cheese on the market. I got there before anyone.'] },
     { if: { temper: 'witty' }, text: ['A turnip. I don\'t like turnips. It looked lonely.'] },
-    { if: { stage: 'child' }, text: ['Nothing. Mum bought me a turnip to carry. A TURNIP.'] },
+    { if: { stage: 'child' }, text: ['Nothing. Mom bought me a turnip to carry. A TURNIP.'] },
     { if: { pastime: 'knitting' }, pri: 1, text: ['Wool! Three skeins. Somebody\'s getting a scarf. Possibly everybody.'] },
   ]);
   lines('season.market.forwhat', [
@@ -1265,7 +1265,7 @@ talkPack('seasons3', () => {
   lines('season.larder.advised', [
     { if: { temper: 'cheerful' }, text: ['Snug by Yule! I\'ll put that on the larder door!'] },
     { if: { temper: 'gloomy' }, text: ['If the apples hold out. If the jars don\'t crack. If.'] },
-    { if: { temper: 'witty' }, text: ['A few a day. That\'s what I said about biscuits, and look how that went.'] },
+    { if: { temper: 'witty' }, text: ['A few a day. That\'s what I said about cookies, and look how that went.'] },
   ]);
   lines('season.harvest.dolly', [
     { if: { temper: 'witty' }, text: ['Whoever lost the bet. It\'s always the one who said "how hard can it be".'] },
@@ -1359,7 +1359,7 @@ talkPack('seasons3', () => {
   lines('season.tables.course', [
     { if: { temper: 'ornery' }, text: ['The soup. It\'s the only course they can\'t get wrong.'] },
     { if: { temper: 'witty' }, text: ['I eat the courses in the order they\'re in danger. Pudding first, obviously.'] },
-    { if: { stage: 'elder' }, text: ['The soup and the pudding. The mains are for the young.'] },
+    { if: { stage: 'elder' }, text: ['The soup and the pudding. The main course is for the young.'] },
   ]);
   lines('season.market.bought', [
     { if: { season: 'autumn' }, text: ['Apples for the jam and a stone jar to put it in. That\'s my afternoon spoken for.'] },

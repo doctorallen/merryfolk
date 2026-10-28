@@ -1,7 +1,7 @@
 'use strict';
 // ---------------------------------------------------------------------------
 // The village, part one: other people. Who they count a friend, who they're
-// cross with, who they look up to, the neighbours and the old rivalry, and
+// cross with, who they look up to, the neighbors and the old rivalry, and
 // word carried between them by the wizard ("Bodo sends his regards"). Folk
 // ask after each other through you, and now and then ask you to settle a
 // squabble over a plum tree. The people a talk is about are picked once when
@@ -207,7 +207,7 @@ talkPack('village', () => {
     shy: ['...{VFriend}\'s my friend. My good friend. I don\'t have many, so I\'m careful of {vFriend}.', 'Oh! {VFriend}\'s well. I think. We don\'t need to talk much, us two.'],
     curious: ['{VFriend}? Do you know, I\'ve known {vFriend} years and still don\'t know what {vFriend} keeps in that tin.', 'Very well! Why do you ask? Has {vFriend} said something?'],
     dreamy: ['{VFriend}... is like a warm window on a wet night. You know?', 'We sit on the wall and watch the clouds, {vFriend} and me. Hours, sometimes.'],
-    witty: ['{VFriend}? Still putting up with me. A saint, practically. A short one.', 'Thriving. Mostly on my jokes and other folk\'s biscuits.'],
+    witty: ['{VFriend}? Still putting up with me. A saint, practically. A short one.', 'Thriving. Mostly on my jokes and other folk\'s cookies.'],
     proud: ['{VFriend} is a fine sort. I choose my friends with care, you know.', 'Very well indeed. {VFriend} has excellent taste in friends.'],
     gloomy: ['{VFriend} still talks to me. That\'s something, isn\'t it.', '{VFriend}\'s well. Better than me. Most folk are.'],
     child: ['{VFriend} is my BEST friend. We have a den. You can\'t come in. Sorry.', '{VFriend}! We\'re going to be friends for a hundred years. We swore.'],
@@ -231,7 +231,7 @@ talkPack('village', () => {
     witty: ['{VFriend} laughs at my jokes. All of them. Even the ones about turnips.', 'We finish each other\'s... well. Sandwiches, mostly.'],
     proud: ['{VFriend} has standards. Like me. We don\'t suffer fools.', 'Loyal. {VFriend} would stand by me in front of the whole Moot.'],
     gloomy: ['{VFriend} doesn\'t try to cheer me up. Just sits with me. That\'s better.', '{VFriend} puts up with me. It can\'t be easy.'],
-    child: ['{VFriend} can whistle with two fingers! And knows where the frogs are!', '{VFriend} shares. Even the last biscuit. Even the jammy ones.'],
+    child: ['{VFriend} can whistle with two fingers! And knows where the frogs are!', '{VFriend} shares. Even the last cookie. Even the jammy ones.'],
     elder: ['{VFriend} remembers the old days right. Everyone else gets them wrong.', 'We\'ve buried a lot of good folk between us, {vFriend} and I. You lean on each other.'],
     rift: ['{VFriend} asked about home and actually waited for the answer. No one does that.', '{VFriend} doesn\'t pretend I\'m from here. Doesn\'t pretend I\'m not, either.'],
   }, [
@@ -249,7 +249,7 @@ talkPack('village', () => {
     curious: ['Plotting\'s a strong word. Experimenting. Would you like to know with what?', 'Can I ask you something about fireworks? Hypothetically.'],
     dreamy: ['We were going to build a raft. Float down the Water. Just to see.', 'We talk about running off to the Sea. We never will. It\'s nice to talk about.'],
     witty: ['We\'re plotting to take over the Moot. I\'m to be Mayor and {vFriend} is to be the hat.', 'Plotting? We prefer \'arranging events in advance\'.'],
-    proud: ['We are organising something, yes. Something rather grand.', 'Plotting is for scoundrels. We are planning. Properly.'],
+    proud: ['We are organizing something, yes. Something rather grand.', 'Plotting is for scoundrels. We are planning. Properly.'],
     gloomy: ['Nothing ever comes of our plots. We plot anyway.', 'We were going to... oh, it doesn\'t matter. It\'ll rain.'],
     child: ['We\'re NOT plotting. We\'re digging to the other side of the world. Don\'t tell.', 'Plotting! We have a secret password. It\'s... no. I can\'t tell you.'],
     rift: ['Not plotting. Patching. {VFriend}\'s helping me wire a lamp to a potato.', 'Plotting? Just a little side-project. Low-power. Mostly safe.'],
@@ -265,7 +265,7 @@ talkPack('village', () => {
     proud: ['Naturally. {VFriend} knows a good friend when {vFriend} has one.', 'Well, of course. I am rather worth asking after.'],
     gloomy: ['Was {vFriend}? Somebody remembers me, then.', 'Really? I thought {vFriend} had forgotten. People do.'],
     child: ['{VFriend} ASKED about me? What did you say? Did you say I\'m brave?', 'Really really? I\'m going to go and find {vFriend} RIGHT NOW. After pudding.'],
-    rift: ['{VFriend} pinged me? Through you? That\'s analogue. I love it.', 'Message received, relay wizard. Signal strength: excellent.'],
+    rift: ['{VFriend} pinged me? Through you? That\'s analog. I love it.', 'Message received, relay wizard. Signal strength: excellent.'],
   });
   say('village.friend.regards', {
     _: ['Would you? Tell {vFriend} I\'ll be round soon. I mean it this time.', 'Oh yes. Give {vFriend} my best. And say the kettle\'s always on.', 'Please. And tell {vFriend} I haven\'t forgotten about Highday.'],
@@ -287,8 +287,8 @@ talkPack('village', () => {
     shy: ['{VFriend} sat with me at the harvest supper when nobody else did.', 'We were both hiding from a party. Behind the same tree.'],
     curious: ['{VFriend} asked me what I was looking at through a bottle. I showed {vFriend}. That was that.', 'We both wanted to know what was in the old badger sett. Got very muddy finding out.'],
     dreamy: ['I don\'t remember not knowing {vFriend}. It\'s like the river. Always been there.', 'In the rain, under the party tree. I can still smell it.'],
-    witty: ['I told a joke at the Badger and {vFriend} was the only one who laughed. A kindred spirit.', 'We were both thrown out of a choir. For harmonising. Badly.'],
-    proud: ['We were the two best at the spelling bee. I won, of course. {VFriend} took it well.', '{VFriend} was the only one who came to see my first prize marrow.'],
+    witty: ['I told a joke at the Badger and {vFriend} was the only one who laughed. A kindred spirit.', 'We were both thrown out of a choir. For harmonizing. Badly.'],
+    proud: ['We were the two best at the spelling bee. I won, of course. {VFriend} took it well.', '{VFriend} was the only one who came to see my first prize pumpkin.'],
     gloomy: ['We were both left out of the same game, as children. We started our own.', 'At a funeral. Funny where you find people.'],
     child: ['We both found the same frog! So we shared it. His name is Lord Puddle.', 'At school! {VFriend} lent me a pencil and never asked for it back.'],
     elder: ['Oh, seventy years gone. We stole apples from the same tree. The tree\'s gone now. We\'re not.', 'Before you last came, wizard. Before the time before that.'],
@@ -318,7 +318,7 @@ talkPack('village', () => {
     cheerful: ['I laugh a lot with {vFriend}, but... I don\'t think {vFriend}\'s laughing inside, lately.'],
     ornery: ['Don\'t repeat this. I think {vFriend}\'s been poorly and won\'t say. Stubborn as me.'],
     shy: ['...What if {vFriend} finds a better friend? Someone louder? I think about that.'],
-    dreamy: ['I dreamt {vFriend} went away over the hills and didn\'t look back. I woke up crying. Daft.'],
+    dreamy: ['I dreamed {vFriend} went away over the hills and didn\'t look back. I woke up crying. Daft.'],
     gloomy: ['I worry {vFriend}\'ll move to Bree one day. Everyone leaves, in the end.'],
     proud: ['I would never say so to {vFriend}. But I don\'t know what I\'d do without {vFriend}.'],
     child: ['Sometimes {vFriend} plays with other people. And I pretend I don\'t mind. But I do.'],
@@ -344,7 +344,7 @@ talkPack('village', () => {
   });
   say('village.friend.visit', {
     _: ['You\'re right. I will. I\'ll go now, before I think better of it.', 'Today, then. I\'ll take something. You can\'t go empty-handed.'],
-    cheerful: ['Ooh, yes! Right after this. I\'ll take the good biscuits.'],
+    cheerful: ['Ooh, yes! Right after this. I\'ll take the good cookies.'],
     ornery: ['I was going anyway. Don\'t think it was your idea.'],
     shy: ['...All right. If you think {vFriend} won\'t mind.'],
     proud: ['A fine notion. I was about to suggest it myself.'],
@@ -377,9 +377,9 @@ talkPack('village', () => {
   });
   say('village.friend.madeup', {
     _: ['{VFriend} turned up with a pie and said nothing. Neither did I. We ate the pie.', 'I left a note under the door. Just "sorry" and a drawing of a hat.'],
-    ornery: ['We didn\'t make up. We just forgot to keep quarrelling.'],
+    ornery: ['We didn\'t make up. We just forgot to keep quarreling.'],
     dreamy: ['It rained, and we both sheltered under the same tree. Hard to stay cross under a tree.'],
-    child: ['We pinky-swore. Then we got biscuits.'],
+    child: ['We pinky-swore. Then we got cookies.'],
     proud: ['I was gracious. {VFriend} was grateful. That\'s the version I tell.'],
   });
 
@@ -408,7 +408,7 @@ talkPack('village', () => {
         { ap: 'advise', say: 'Go and see {vRegardsFrom}. Put it behind you both.', to: 'mend', need: { if: { vRegardsSorry: true } } },
         { ap: 'ask', say: 'Anything you\'d like me to carry back?', to: 'back' },
         { ap: 'listen', say: '*You wait. They look as if there\'s more.*', label: 'Wait', to: 'more' },
-        { ap: 'jest', say: 'I\'m a wizard, not a postie. But for you, I made an exception.', to: 'postie', need: { if: { vRegardsSorry: false } } },
+        { ap: 'jest', say: 'I\'m a wizard, not a mail carrier. But for you, I made an exception.', to: 'postie', need: { if: { vRegardsSorry: false } } },
       ] },
       back: { line: 'village.regards.back', fx: { run: (T, v) => promiseRegards(T, v, who(T, 'vRegardsFromId')) }, go: [
         { ap: 'warm', say: 'I\'ll see it gets there.', to: 'end' },
@@ -467,7 +467,7 @@ talkPack('village', () => {
     proud: ['Naturally {vRegardsFrom} sends regards. We go back a long way.', 'How very proper of {vRegardsFrom}. I shall return them in kind.'],
     gloomy: ['{VRegardsFrom} remembered me? ...Well. That\'s something.', 'Regards. For me. You\'re not mixing me up with someone?'],
     child: ['{VRegardsFrom} said HELLO to me? Through a WIZARD?', 'A message! Is it secret? Is it a code? What does it mean?'],
-    rift: ['Message routed through the wizard. Received and decoded. That\'s sweet.', 'A ping from {vRegardsFrom}? Analogue networking. I love this valley.'],
+    rift: ['Message routed through the wizard. Received and decoded. That\'s sweet.', 'A ping from {vRegardsFrom}? Analog networking. I love this valley.'],
   });
   say('village.regards.back', {
     _: ['Tell {vRegardsFrom} the same back, twice over. And that I\'ll be round for tea.', 'Say thank you. And say the plums are nearly ready, if {vRegardsFrom} wants some.'],
@@ -491,10 +491,10 @@ talkPack('village', () => {
     elder: ['At my age, wizard, you start to wonder who\'ll still ask after you. Thank you.'],
   });
   say('village.regards.postie', {
-    _: ['Ha! Don\'t let the postie hear. You\'ll be out of a job, and so will {they}.', 'An exception! I feel very special.'],
-    witty: ['The postie charges a penny. You\'re cheaper. Slower, mind.'],
-    ornery: ['You\'d make a poor postie. Too much chat.'],
-    child: ['You could be the postie! You\'ve got a hat for it!'],
+    _: ['Ha! Don\'t let the mail carrier hear. You\'ll be out of a job, and so will {they}.', 'An exception! I feel very special.'],
+    witty: ['The mail carrier charges a penny. You\'re cheaper. Slower, mind.'],
+    ornery: ['You\'d make a poor mail carrier. Too much chat.'],
+    child: ['You could be the mail carrier! You\'ve got a hat for it!'],
   });
   say('village.regards.satchel', {
     _: ['Ha! A wizard with a satchel. I\'d pay to see that.', 'Get a pigeon. Much more wizardly.'],
@@ -592,10 +592,10 @@ talkPack('village', () => {
     shy: ['{VFoe} laughed at me. In the Badger. Everyone heard. I\'ve not been back.', 'I asked {vFoe} for help and {vFoe} said I was always asking. I won\'t ask again.'],
     curious: ['I asked {vFoe} one question. One! About {vFoe}\'s garden. Apparently that\'s prying.', 'I wanted to know why {vFoe} digs at midnight. Is that so wrong?'],
     dreamy: ['I don\'t even know, really. A look. A word. And then it just grew, like ivy.', 'I forgot something {vFoe} told me. It mattered to {vFoe}. I see that now, maybe.'],
-    witty: ['I made one small joke about {vFoe}\'s hat. One. It was a very good joke. That\'s the trouble.', '{VFoe} has no sense of humour. I tested it thoroughly.'],
+    witty: ['I made one small joke about {vFoe}\'s hat. One. It was a very good joke. That\'s the trouble.', '{VFoe} has no sense of humor. I tested it thoroughly.'],
     proud: ['{VFoe} questioned my word. In public. That isn\'t done.', 'I was not thanked. I did a great deal and I was not thanked.'],
     gloomy: ['{VFoe} said I spoil every party. Maybe I do.', 'I was in the way. I\'m always in the way, it seems.'],
-    child: ['{VFoe} said my den was rubbish. It is NOT rubbish. It has a door.', '{VFoe} wouldn\'t let me play. And then {vFoe} told on me.'],
+    child: ['{VFoe} said my den was junk. It is NOT junk. It has a door.', '{VFoe} wouldn\'t let me play. And then {vFoe} told on me.'],
     rift: ['{VFoe} called my stuff \'rift-junk\'. My stuff saved {vFoe}\'s cellar from flooding.', '{VFoe} said I\'m not from here. Which is true. It was how {vFoe} said it.'],
   }, [
     { if: { vFoeWhy: (w) => has(w) }, pri: 1, text: ['It was {vFoeWhy}. I\'m not one to hold a grudge. But I am holding it.', '{VFoeWhy}. You\'d think I\'d be over it. I\'m not.'] },
@@ -692,7 +692,7 @@ talkPack('village', () => {
     beats: {
       start: { line: 'village.rival.start', go: [
         { ap: 'ask', say: 'Who\'s ahead, these days?', to: 'score' },
-        { ap: 'jest', say: 'I hear {rival} is practising. Day and night.', to: 'stoke' },
+        { ap: 'jest', say: 'I hear {rival} is practicing. Day and night.', to: 'stoke' },
         { ap: 'ask', say: 'What started it all?', to: 'origin' },
       ] },
       score: { line: 'village.rival.score', go: [
@@ -716,7 +716,7 @@ talkPack('village', () => {
         { ap: 'jest', say: 'I\'ve lost count of my birthdays. Very freeing.', to: 'end' },
         { ap: 'advise', say: 'A good rival makes you better. That\'s the prize.', to: 'admit' },
       ] },
-      fired: { line: 'village.rival.fired', fx: { joke: { k: 'village.lamplight', t: '{Rival}, practising by lamplight. Muttering.' }, drive: { bored: -0.1 } }, end: true },
+      fired: { line: 'village.rival.fired', fx: { joke: { k: 'village.lamplight', t: '{Rival}, practicing by lamplight. Muttering.' }, drive: { bored: -0.1 } }, end: true },
       grudge: { line: 'village.rival.grudge', go: [
         { ap: 'ask', say: 'And is {rival} any good, truly?', to: 'admit', need: { open: 1 }, soft: true },
         { ap: 'warm', say: 'Long may it last. Life needs a little salt.', to: 'end' },
@@ -751,7 +751,7 @@ talkPack('village', () => {
     cheerful: ['Who cares! It\'s the fun of it! ...Me. I care. I\'m behind.'],
     ornery: ['I\'m ahead, whatever {rival} says. The judges were blind.'],
     shy: ['{Rival}. It\'s always {rival}. I\'m used to it.'],
-    curious: ['By my reckoning, counting the disputed marrow, it\'s even. Without it, it\'s complicated.'],
+    curious: ['By my reckoning, counting the disputed pumpkin, it\'s even. Without it, it\'s complicated.'],
     witty: ['I am ahead in all the categories that matter. Such as being me.'],
     proud: ['I am, of course. Anyone could see it. Except the judges.'],
     gloomy: ['Not me. Never me.'],
@@ -762,15 +762,15 @@ talkPack('village', () => {
     { if: { vRivalLead: 'level' }, pri: 1, text: ['Level. Dead level. It\'s agony.', 'All square. Which means next time is everything.'] },
   ]);
   say('village.rival.stoke', {
-    _: ['Practising! I knew it. Day AND night?', 'Is {rival}? Is {rival} really? Right.', 'Then I\'ll practise more. I\'ll practise in my sleep.'],
+    _: ['Practicing! I knew it. Day AND night?', 'Is {rival}? Is {rival} really? Right.', 'Then I\'ll practice more. I\'ll practice in my sleep.'],
     cheerful: ['Ha! Good! I like it when {rival} tries hard. Makes it worth winning.'],
     ornery: ['Day and night, is it? Well, I\'ll be at it day and night and teatime.'],
     shy: ['Oh no. Oh, I knew {rival} would.'],
-    curious: ['What exactly is {rival} practising? Did you see? Describe it.'],
-    witty: ['Practising? {Rival}\'ll need it. And a miracle. And my secret.'],
-    proud: ['Let {rival} practise. Talent can\'t be practised. I have it.'],
+    curious: ['What exactly is {rival} practicing? Did you see? Describe it.'],
+    witty: ['Practicing? {Rival}\'ll need it. And a miracle. And my secret.'],
+    proud: ['Let {rival} practice. Talent can\'t be practiced. I have it.'],
     gloomy: ['Of course {rival} is. I\'ll come second again.'],
-    child: ['Practising what? Can I watch?'],
+    child: ['Practicing what? Can I watch?'],
   });
   say('village.rival.origin', {
     _: ['Years ago. A {vRivalThing} contest. {Rival} said mine was a fluke. A FLUKE.', 'Who remembers? We both say the other started it. That\'s how you know it\'s a good one.'],
@@ -806,7 +806,7 @@ talkPack('village', () => {
     witty: ['If I stop counting, {rival} wins by default. That\'s how counting works.'],
   });
   say('village.rival.fired', {
-    _: ['Muttering! Right. That\'s it. I\'m going to practise till my hands drop off.', 'By lamplight! The sneak. Well, I\'ve got a lamp too.'],
+    _: ['Muttering! Right. That\'s it. I\'m going to practice till my hands drop off.', 'By lamplight! The sneak. Well, I\'ve got a lamp too.'],
     cheerful: ['Ha! I love it! This year\'s going to be a cracker!'],
     ornery: ['Muttering, is it? I\'ll give {rival} something to mutter about.'],
     witty: ['Two can mutter. I\'m an excellent mutterer.'],
@@ -895,7 +895,7 @@ talkPack('village', () => {
   say('village.hero.why', {
     _: ['{VHero} is the best at what {vHero} does, and never boasts.', '{VHero} just gets on. Never a fuss, never a complaint.', '{VHero} helped half the village and never once mentioned it.'],
     cheerful: ['{VHero} makes everything look easy and fun! I want to be like that.'],
-    ornery: ['{VHero} doesn\'t talk rubbish. In this village that\'s a miracle.'],
+    ornery: ['{VHero} doesn\'t talk nonsense. In this village that\'s a miracle.'],
     shy: ['{VHero} is kind to everyone. Even to me. Especially to me.'],
     curious: ['{VHero} knows things. Things you can\'t learn from books. I want to know them.'],
     dreamy: ['When {vHero} works, it\'s like watching a song.'],
@@ -915,7 +915,7 @@ talkPack('village', () => {
   say('village.hero.notme', {
     _: ['Ha! You don\'t count. You\'re a wizard. That\'s cheating.', 'Oh, you\'re different. You\'re more of a weather.'],
     cheerful: ['Ha! You\'re in a class of your own!'],
-    ornery: ['You? You\'d need to stay put longer than a fortnight.'],
+    ornery: ['You? You\'d need to stay put longer than two weeks.'],
     witty: ['You\'re more someone I look AT. It\'s the hat.'],
     proud: ['You\'re very good, wizard. But you\'re not from here.'],
     child: ['You\'re second! Second best!'],
@@ -932,7 +932,7 @@ talkPack('village', () => {
     gloomy: ['I couldn\'t. I wouldn\'t know where to start.'],
     proud: ['I already am, in many ways.'],
     dreamy: ['Sometimes I pretend I am. When I\'m alone.'],
-    child: ['Yes! I\'m practising!'],
+    child: ['Yes! I\'m practicing!'],
   });
   say('village.hero.story', {
     _: ['When I was small I broke a window. {VHero} said it was the wind. I\'ve never forgotten.', 'The winter we nearly lost the house, {vHero} came with a cart of wood and said nothing.'],
@@ -967,10 +967,10 @@ talkPack('village', () => {
   });
 
   // =================================================================================
-  // The neighbours
+  // The neighbors
   // =================================================================================
   addThread({
-    id: 'village.next', label: 'How are the neighbours?', weight: 0.9, cool: 5,
+    id: 'village.next', label: 'How are the neighbors?', weight: 0.9, cool: 5,
     when: (F) => has(F.vNext) && has(F.vNextHome),
     open: { ask: 'village.next.open' },
     beats: {
@@ -981,8 +981,8 @@ talkPack('village', () => {
       ] },
       like: { line: 'village.next.like', go: [
         { ap: 'listen', say: '*You lean on the gate.*', label: 'Lean on the gate', to: 'habits' },
-        { ap: 'advise', say: 'Take {vNext} a pie. It works wonders on a neighbour.', to: 'pie' },
-        { ap: 'warm', say: 'Good neighbours are worth more than a good roof.', to: 'end' },
+        { ap: 'advise', say: 'Take {vNext} a pie. It works wonders on a neighbor.', to: 'pie' },
+        { ap: 'warm', say: 'Good neighbors are worth more than a good roof.', to: 'end' },
       ] },
       borrow: { line: 'village.next.borrow', go: [
         { ap: 'jest', say: 'Lend {vNext} something enormous. A cart. Then ask for it back daily.', to: 'cart' },
@@ -993,7 +993,7 @@ talkPack('village', () => {
         { ap: 'ask', say: 'And what are they like, close to?', to: 'habits' },
       ] },
       habits: { line: 'village.next.habits', go: [
-        { ap: 'jest', say: 'There are worse things than a noisy neighbour. A silent one, for a start.', to: 'end' },
+        { ap: 'jest', say: 'There are worse things than a noisy neighbor. A silent one, for a start.', to: 'end' },
         { ap: 'warm', say: 'You sound fond of them, under it all.', to: 'fond' },
       ] },
       cart: { line: 'village.next.cart', fx: { joke: { k: 'village.cart', t: 'Lend {vNext} a cart and ask for it back daily.' } }, end: true },
@@ -1002,9 +1002,9 @@ talkPack('village', () => {
     },
     end: { fond: 0.015 },
   });
-  lines('village.next.open', [{ text: ['And how are the neighbours, {name}?', 'Getting on with the folk next door, {name}?', 'Who\'s that over the hedge from you, {name}? {VNext}, isn\'t it?'] }]);
+  lines('village.next.open', [{ text: ['And how are the neighbors, {name}?', 'Getting on with the folk next door, {name}?', 'Who\'s that over the hedge from you, {name}? {VNext}, isn\'t it?'] }]);
   say('village.next.start', {
-    _: ['{VNext}, over at {vNextHome}? Oh, they\'re all right. Mostly.', 'The neighbours. Well. There\'s a question.', 'Next door? {VNext}. We nod. We wave. We have opinions.'],
+    _: ['{VNext}, over at {vNextHome}? Oh, they\'re all right. Mostly.', 'The neighbors. Well. There\'s a question.', 'Next door? {VNext}. We nod. We wave. We have opinions.'],
     cheerful: ['Oh, lovely! {VNext} waves every morning. I wave back. Sometimes we wave for ages.'],
     ornery: ['{VNext}\'s hens are in my beans again, if that\'s what you\'re asking.', 'Next door? Too close, that\'s what. Everyone\'s too close.'],
     shy: ['{VNext}? Very nice. I think. We don\'t talk much. I hide when I see {vNext}. Not on purpose.'],
@@ -1016,7 +1016,7 @@ talkPack('village', () => {
     child: ['{VNext} lives next door! {VNext} gives me apples if I don\'t shout. I shout anyway.'],
     rift: ['Next door\'s {vNext}. Thinks my satellite dish is a birdbath. I let {vNext} think it.'],
   }, [
-    { if: { vNextKind: ['close', 'friend'] }, not: { stage: 'child' }, text: ['{VNext}? Oh, the best neighbour you could ask for. We share a gate and a teapot.', 'Grand. {VNext} and I go back and forth over the hedge all day.'] },
+    { if: { vNextKind: ['close', 'friend'] }, not: { stage: 'child' }, text: ['{VNext}? Oh, the best neighbor you could ask for. We share a gate and a teapot.', 'Grand. {VNext} and I go back and forth over the hedge all day.'] },
     { if: { vNextKind: 'sour' }, not: { stage: 'child' }, text: ['{VNext}. Don\'t ask. We\'re at daggers drawn over the hedge.', 'Next door? I keep my curtains shut on that side, if you must know.'] },
     { if: { vNextKind: 'stranger' }, not: { stage: 'child' }, text: ['Do you know, I hardly know {vNext}. Isn\'t that terrible? Right next door.'] },
   ]);
@@ -1056,7 +1056,7 @@ talkPack('village', () => {
   say('village.next.habits', {
     _: ['{VNext} sings in the bath. Every night. The same song. I know all the words now.', '{VNext} gets up before the cockerel and lets everyone know.'],
     cheerful: ['{VNext} dances in the garden when {vNext} thinks no one\'s looking. I join in from my side.'],
-    ornery: ['{VNext} saws wood at dawn. At DAWN.', '{VNext} grows marrows the size of pigs and leaves them leaning on MY fence.'],
+    ornery: ['{VNext} saws wood at dawn. At DAWN.', '{VNext} grows pumpkins the size of pigs and leaves them leaning on MY fence.'],
     shy: ['{VNext} talks to the vegetables. I do too. I think we\'d get on, if I ever said hello.'],
     curious: ['{VNext} has had a crate delivered every Mersday for a month. Nobody knows what\'s in it. I\'ve looked.'],
     dreamy: ['{VNext} keeps a lamp in the round window all night. I like knowing someone\'s awake.'],
@@ -1159,7 +1159,7 @@ talkPack('village', () => {
   });
   say('village.ask.howsx.go', {
     _: ['I will. I\'ll go now.', 'You\'re right. What am I standing here for?'],
-    shy: ['...All right. I\'ll go. I\'ll take biscuits. Biscuits help.'],
+    shy: ['...All right. I\'ll go. I\'ll take cookies. Cookies help.'],
     ornery: ['I was going anyway.'],
     child: ['Going! Bye!'],
   });
@@ -1174,7 +1174,7 @@ talkPack('village', () => {
   // Their turn: an apology they can't carry themselves
   // =================================================================================
   addThread({
-    id: 'village.ask.sorry', theirs: true, label: 'They ask you to carry an apology', cool: 5, ask: '{Name} has a favour to ask.',
+    id: 'village.ask.sorry', theirs: true, label: 'They ask you to carry an apology', cool: 5, ask: '{Name} has a favor to ask.',
     when: (F) => F.met && F.talks >= 2 && F.trust >= 0.15 && has(F.vFoe),
     beats: {
       start: { line: 'village.ask.sorry.q', go: [
@@ -1202,13 +1202,13 @@ talkPack('village', () => {
     end: { fond: 0.02 },
   });
   say('village.ask.sorry.q', {
-    _: ['Would you... tell {vFoe} something for me? I can\'t face {vFoe}. Not yet.', 'Can I ask a favour? It\'s about {vFoe}. I want to say sorry and I can\'t.', 'You talk to everyone. Would you take a word to {vFoe} for me?'],
+    _: ['Would you... tell {vFoe} something for me? I can\'t face {vFoe}. Not yet.', 'Can I ask a favor? It\'s about {vFoe}. I want to say sorry and I can\'t.', 'You talk to everyone. Would you take a word to {vFoe} for me?'],
     cheerful: ['Oh, wizard, I\'ve been silly with {vFoe}. Would you tell {vFoe} I\'m sorry? I\'d go myself but I\'d cry.'],
     ornery: ['Don\'t make a fuss. Tell {vFoe}... tell {vFoe} I was wrong. There. Don\'t make me say it twice.'],
     shy: ['...Could you tell {vFoe} something? I\'d write it, but my hand shakes.'],
-    curious: ['If someone wanted to apologise without actually being in the room, how would they? Asking for me.'],
+    curious: ['If someone wanted to apologize without actually being in the room, how would they? Asking for me.'],
     dreamy: ['I keep writing it in my head. "Dear {vFoe}, I\'m sorry." Would you take it? The words, I mean.'],
-    witty: ['Wizard. Professional favour. I need an apology delivered. Discreetly. Ideally with flourish.'],
+    witty: ['Wizard. Professional favor. I need an apology delivered. Discreetly. Ideally with flourish.'],
     proud: ['I find I owe {vFoe} an apology. I would like it delivered. Properly.'],
     gloomy: ['{VFoe} won\'t want to hear it from me. Would you say I\'m sorry?'],
     child: ['Can you tell {vFoe} I\'m sorry? I said a bad word. Not a rude one. A mean one.'],
@@ -1220,7 +1220,7 @@ talkPack('village', () => {
     ornery: ['"Sorry". One word. Don\'t embroider it.'],
     shy: ['...That I\'m sorry. And that I think about it every night.'],
     curious: ['That I\'m sorry, and that I\'d like to understand what went wrong. Properly.'],
-    dreamy: ['That I\'m sorry, and the lane\'s been grey without {vFoe} in it.'],
+    dreamy: ['That I\'m sorry, and the lane\'s been gray without {vFoe} in it.'],
     witty: ['Tell {vFoe} I\'m sorry and I\'ll never do it again. Whatever it was. I\'ve lost track.'],
     proud: ['That I regret my words. Use those exact words. "Regret".'],
     gloomy: ['That I\'m sorry. That\'s all. {VFoe} won\'t believe it.'],
@@ -1233,7 +1233,7 @@ talkPack('village', () => {
     _: ['...You\'re right. It should be me. I\'ll go now, before my knees give out.', 'From me. Yes. All right. I\'ll go.'],
     ornery: ['Hmph. You\'re right. I hate that you\'re right. I\'m going.'],
     shy: ['...I\'ll try. Walk me to the corner? No. I\'ll go. I\'ll go.'],
-    proud: ['Quite so. One apologises in person. I\'ll go.'],
+    proud: ['Quite so. One apologizes in person. I\'ll go.'],
     child: ['Okay. I\'ll say it. In a quiet voice.'],
   });
   say('village.ask.sorry.cant', {
@@ -1313,7 +1313,7 @@ talkPack('village', () => {
     ornery: ['Right. You. {VSpatWhat}. Tell {vSpat} I\'m right. Go on.', 'You\'ll settle this. {VSpat} won\'t listen to sense. {VSpatWhat}. Mine.'],
     shy: ['...Could you help? {VSpat} and I... there\'s a thing. {VSpatWhat}. I don\'t like arguing.'],
     curious: ['I need an impartial wizard. {VSpatWhat}. I\'ve drawn a map. Would you like to see the map?'],
-    witty: ['A case for the wizard! The matter of {vSpatWhat}. I\'ll be prosecution and defence.'],
+    witty: ['A case for the wizard! The matter of {vSpatWhat}. I\'ll be prosecution and defense.'],
     proud: ['I would like a ruling. {VSpatWhat}. I am confident of the outcome.'],
     gloomy: ['You\'ll side with {vSpat}. Everyone does. But: {vSpatWhat}. Who\'s right?'],
     rift: ['Need an arbiter. Dispute with {vSpat}: {vSpatWhat}. Rule on it, wizard.'],
@@ -1377,7 +1377,7 @@ talkPack('village', () => {
   say('village.ask.settle.scoff', {
     _: ['Share it? With {vSpat}? You don\'t know {vSpat}.', 'Share! That\'s what folk say when they won\'t take sides.'],
     ornery: ['Sharing\'s for lambs and in-laws. I want a ruling.'],
-    proud: ['A fudge. I asked for a judgement and you give me a fudge.'],
+    proud: ['A fudge. I asked for a judgment and you give me a fudge.'],
     witty: ['Sharing. The coward\'s verdict. Very diplomatic.'],
   });
   say('village.ask.settle.gracious', {
@@ -1418,10 +1418,10 @@ talkPack('village', () => {
   say('village.friend.start', {
     cheerful: ['Oh, {vFriend}\'s the best! I\'d give {vFriend} my last scone. My second-last, anyway.'],
     ornery: ['{VFriend}? Only one in the village I can stand for a whole afternoon.'],
-    shy: ['{VFriend} is... the one person I don\'t have to practise talking to.'],
+    shy: ['{VFriend} is... the one person I don\'t have to practice talking to.'],
     curious: ['{VFriend}! We\'re halfway through counting the frogs in the mill-pond. It\'s a long project.'],
     dreamy: ['{VFriend}\'s the sort you can be quiet with. Those are the best sort.'],
-    witty: ['{VFriend}? Still my favourite audience. Laughs in all the right places and some wrong ones.'],
+    witty: ['{VFriend}? Still my favorite audience. Laughs in all the right places and some wrong ones.'],
     proud: ['{VFriend} and I go back a long way. A distinguished friendship.'],
     gloomy: ['{VFriend} is the only one who still knocks. Bless {vFriend}.'],
     child: ['{VFriend} can climb higher than ANYONE. Except me. Nearly.'],
@@ -1457,14 +1457,14 @@ talkPack('village', () => {
     witty: ['Pass on my regards, my respects and my best joke about badgers.'],
   });
   say('village.friend.met', {
-    _: ['On the bridge. We both stopped to look at the same fish. It got away. We didn\'t.', 'Our mothers sat us in the same pram. We\'ve been arguing about elbow room since.'],
+    _: ['On the bridge. We both stopped to look at the same fish. It got away. We didn\'t.', 'Our mothers sat us in the same baby carriage. We\'ve been arguing about elbow room since.'],
     proud: ['At the Founders\' Day games. We came first and second. I\'ll leave you to guess who was first.'],
     witty: ['We were both hiding from the same aunt. A bond for life.'],
   });
   say('village.friend.since', {
     _: ['Since then, yes. Every season.', 'And not one week gone by without a word between us.'],
     dreamy: ['Since then. Like the river. It just keeps going.'],
-    proud: ['A long and honourable friendship.'],
+    proud: ['A long and honorable friendship.'],
     curious: ['Ever since. I\'ve still not worked out why {vFriend} puts up with me.'],
   });
   say('village.friend.toldthem', {
@@ -1525,11 +1525,11 @@ talkPack('village', () => {
     child: ['Can I send one back? Can I? Like a letter but with a WIZARD?'],
   });
   say('village.regards.satchel', {
-    ornery: ['A satchel! You\'d look like the postie\'s grandfather.'],
+    ornery: ['A satchel! You\'d look like the mail carrier\'s grandfather.'],
     proud: ['A satchel would suit you. Leather. With a buckle.'],
   });
   say('village.regards.postie', {
-    cheerful: ['Ha! A wizard postie! I\'d write every day!'],
+    cheerful: ['Ha! A wizard mail carrier! I\'d write every day!'],
     shy: ['...Thank you for making an exception.'],
   });
   say('village.regards.go', {
@@ -1620,8 +1620,8 @@ talkPack('village', () => {
   });
 
   lines('village.next.open', [
-    { if: { season: 'summer' }, text: ['Long evenings, {name}. Do you hear much of the neighbours over the hedge?'] },
-    { if: { weather: 'rain' }, text: ['Wet day to be indoors with the neighbours through the wall, {name}. How are they?'] },
+    { if: { season: 'summer' }, text: ['Long evenings, {name}. Do you hear much of the neighbors over the hedge?'] },
+    { if: { weather: 'rain' }, text: ['Wet day to be indoors with the neighbors through the wall, {name}. How are they?'] },
   ]);
   say('village.next.fond', {
     cheerful: ['Fond! Of course! They\'re lovely! Loud, but lovely!'],

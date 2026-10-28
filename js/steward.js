@@ -10,7 +10,7 @@
 //    one (no Highday: more gets done, and folk feel it).
 //  * Contentment: the village's mood as one number, with what's lifting and
 //    sinking it. A contented village gets talked about on the road, and
-//    travellers come looking to settle; a discontented one doesn't.
+//    travelers come looking to settle; a discontented one doesn't.
 //  * Workforce: how many hands each trade should have. The village fills
 //    them, moving folk between trades when you change the numbers.
 // ---------------------------------------------------------------------------
@@ -123,7 +123,7 @@ function migrationDaily() {
   const empty = World.homes.filter((h) => h.built && residentsOf(h).length === 0).length;
   if (c >= 66 && (empty || c >= 78) && Game.villagers.length < MAX_POP - 2 && Game.day - (Game.lastTraveller ?? -9) >= 2 && R.chance((c - 60) / 90 + (empty ? 0.1 : 0))) {
     const r = welcomeTraveller(null, true);
-    if (r && r.ok !== false) { Game.lastTraveller = Game.day; chronicle(`Word of Thistledown's good cheer has got about: ${r.v ? r.v.name() : 'a traveller'} has come up the West Road hoping to settle.`, 'birth'); }
+    if (r && r.ok !== false) { Game.lastTraveller = Game.day; chronicle(`Word of Thistledown's good cheer has got about: ${r.v ? r.v.name() : 'a traveler'} has come up the West Road hoping to settle.`, 'birth'); }
   }
 }
 
@@ -168,7 +168,7 @@ function stewardHTML() {
   const trend = (Game.contentLog || []).slice(-2);
   const arrow = trend.length === 2 ? (trend[1] > trend[0] + 1 ? '▲' : trend[1] < trend[0] - 1 ? '▼' : '') : '';
   let h = `<p class="lede-s">Run Thistledown your way. Every choice has a cost: watch the contentment meter and the Store.</p>`;
-  h += `<div class="st-meter"><div class="st-num" data-level="${c >= 66 ? 'good' : c >= 45 ? 'mid' : 'low'}">${c}%${arrow ? ` <small>${arrow}</small>` : ''}</div><div><b>Contentment</b>${bar(c / 100, c >= 66 ? 'good' : c >= 45 ? 'mid' : 'low')}<div class="sub">${c >= 66 ? 'A happy village: travellers hear of it and come looking to settle.' : c >= 45 ? 'Middling. Folk are getting by.' : 'Discontented. Nobody new will want to come.'}</div></div></div>`;
+  h += `<div class="st-meter"><div class="st-num" data-level="${c >= 66 ? 'good' : c >= 45 ? 'mid' : 'low'}">${c}%${arrow ? ` <small>${arrow}</small>` : ''}</div><div><b>Contentment</b>${bar(c / 100, c >= 66 ? 'good' : c >= 45 ? 'mid' : 'low')}<div class="sub">${c >= 66 ? 'A happy village: travelers hear of it and come looking to settle.' : c >= 45 ? 'Middling. Folk are getting by.' : 'Discontented. Nobody new will want to come.'}</div></div></div>`;
   h += `<div class="st-why"><div><h4>Lifting spirits</h4>${why.up.map(([k]) => `<div>+ ${escapeHtml(k)}</div>`).join('') || '<div class="sub">Not much</div>'}</div><div><h4>Weighing on folk</h4>${why.down.map(([k]) => `<div>− ${escapeHtml(k)}</div>`).join('') || '<div class="sub">Nothing much</div>'}</div></div>`;
   h += '<h3>Policies</h3>';
   for (const k in POLICY) {

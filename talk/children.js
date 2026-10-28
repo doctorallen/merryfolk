@@ -24,15 +24,15 @@ talkPack('children', () => {
     F.childYears = child ? v.years() : null;
     F.childTween = child && v.years() >= 20;
     F.childComing = child && v.years() >= 28;
-    F.childParentWord = child && p0 ? (p0.genes.sex === 'f' ? 'Mum' : 'Dad') : null;
+    F.childParentWord = child && p0 ? (p0.genes.sex === 'f' ? 'Mom' : 'Dad') : null;
     const p1 = P[1] || null;
     F.childOther = child && p1 ? p1.first : null;
-    F.childOtherWord = child && p1 ? (p1.genes.sex === 'f' ? 'Mum' : 'Dad') : null;
+    F.childOtherWord = child && p1 ? (p1.genes.sex === 'f' ? 'Mom' : 'Dad') : null;
     const jp = P.find((p) => p.job);
     F.childParentJob = child && jp ? JOBS[jp.job].label.toLowerCase() : null;
     const gps = P.flatMap((p) => (p.parents || []).map(personById).filter(Boolean));
     F.childGran = child && gps[0] ? gps[0].first : null;
-    F.childGranWord = child && gps[0] ? (gps[0].genes.sex === 'f' ? 'Gran' : 'Grandad') : null;
+    F.childGranWord = child && gps[0] ? (gps[0].genes.sex === 'f' ? 'Gran' : 'Granddad') : null;
     // brothers and sisters: anyone sharing a parent
     const sibs = child && P.length ? Game.villagers.filter((o) => o !== v && !o.leaving && (o.parents || []).some((p) => v.parents.includes(p))) : [];
     const walkers = sibs.filter((o) => o.stage !== 'baby');
@@ -444,7 +444,7 @@ talkPack('children', () => {
     { if: { register: 'bright' }, text: ['It\'s quite complicated, actually. There\'s a scoring system. I wrote it down.'] },
   ]);
   lines('child.games.lost', [
-    { text: ['You\'re not even listening!', 'You\'ve gone all glazed. Like Grandad does.', 'That\'s the wrong nod. That\'s the nod grown-ups do when they don\'t know.'] },
+    { text: ['You\'re not even listening!', 'You\'ve gone all glazed. Like Granddad does.', 'That\'s the wrong nod. That\'s the nod grown-ups do when they don\'t know.'] },
     { if: { childTemper: 'ornery' }, text: ['Ugh. Grown-ups.', 'Never mind. You\'d only lose.'] },
     { if: { childTemper: 'shy' }, text: ['...Sorry. I talk too much about it.'] },
     { if: { childGranWord: has }, text: ['You look like {childGranWord} when I explain things.'] },
@@ -484,7 +484,7 @@ talkPack('children', () => {
   ]);
   lines('child.games.left', [
     { text: ['...Sometimes. There\'s a boy who\'s slow at running. We don\'t pick him.', 'Me. Sometimes it\'s me. They pick everyone and then there\'s me.'] },
-    { if: { childTemper: 'ornery' }, text: ['Only people who deserve it.', 'Some people are rubbish at games. It\'s not my fault.'] },
+    { if: { childTemper: 'ornery' }, text: ['Only people who deserve it.', 'Some people are hopeless at games. It\'s not my fault.'] },
     { if: { childTemper: 'shy' }, text: ['...Me, mostly. I don\'t ask. They don\'t ask.'] },
     { if: { childTemper: 'cheerful' }, text: ['No! Well. The little ones. They\'re too slow. ...Is that bad?'] },
     { if: { childTemper: 'gloomy' }, text: ['Me. Always me. I don\'t care. I do care.'] },
@@ -520,12 +520,12 @@ talkPack('children', () => {
     { if: { childTemper: 'curious' }, text: ['How did he cheat? I need to know. For research.'] },
   ]);
   lines('child.games.play', [
-    { text: ['Will you play? Now? Will you?', 'You can play if you want. You\'ll be rubbish, but you can.', 'Play with us! You can be It. You\'ll be It forever because you\'re slow.'] },
+    { text: ['Will you play? Now? Will you?', 'You can play if you want. You\'ll be terrible, but you can.', 'Play with us! You can be It. You\'ll be It forever because you\'re slow.'] },
     { if: { childTemper: 'shy' }, text: ['...Would you play? With me? Just a bit?'] },
     { if: { band: 'youth' }, text: ['I suppose you could play. If you wanted. I\'m not bothered either way.'] },
   ]);
   lines('child.games.played', [
-    { text: ['I WON! I beat the wizard!', 'You\'re rubbish! That was brilliant!', 'Again tomorrow! You promised! You didn\'t, but you did!'] },
+    { text: ['I WON! I beat the wizard!', 'You\'re hopeless! That was brilliant!', 'Again tomorrow! You promised! You didn\'t, but you did!'] },
     { if: { childTemper: 'ornery' }, text: ['You let me win. Don\'t let me win. ...I would have won anyway.'] },
     { if: { childTemper: 'shy' }, text: ['...That was the best game. Ever.'] },
   ]);
@@ -605,7 +605,7 @@ talkPack('children', () => {
     { text: ['One night! With a stone! He\'ll love it!', 'I\'ll put a leaf in too. For a blanket.', 'Deal! And tomorrow he goes home. Probably.'] },
   ]);
   lines('child.frog.pond', [
-    { text: ['...All right. But I\'m going to visit him.', 'Fine. He was getting my pocket wet anyway.', 'I\'ll take him back. He\'s probably got a mum.'] },
+    { text: ['...All right. But I\'m going to visit him.', 'Fine. He was getting my pocket wet anyway.', 'I\'ll take him back. He\'s probably got a mom.'] },
     { if: { childTemper: 'gloomy' }, text: ['Everything I like has to go home.'] },
     { if: { childTemper: 'ornery' }, text: ['Hmph. He liked my pocket. ...Fine.'] },
   ]);
@@ -678,8 +678,8 @@ talkPack('children', () => {
   lines('child.pet.day', [
     { text: ['Sleeps, mostly. Then eats. Then sleeps somewhere else.', 'Sits in the sun and looks at things. It\'s a lot of work.'] },
     { if: { childPetKind: 'cat' }, text: ['Hunts! Mice, mostly. Once a sausage. Off the table.', 'Sits on the step and judges everyone who goes past.', 'Goes off on business. Cat business. Nobody knows what.'] },
-    { if: { childPetKind: 'dog' }, text: ['Follows everyone about. And barks at the post.', 'Chases rabbits. Never catches them. Doesn\'t mind.', 'Digs. Mostly in the garden. Mostly where the carrots were.'] },
-    { if: { childPetKind: 'dog', childParentWord: has }, text: ['Follows {childParentWord} about. And barks at the post.', 'Lies across the door so {childParentWord} trips over. Every morning.'] },
+    { if: { childPetKind: 'dog' }, text: ['Follows everyone about. And barks at the mail carrier.', 'Chases rabbits. Never catches them. Doesn\'t mind.', 'Digs. Mostly in the garden. Mostly where the carrots were.'] },
+    { if: { childPetKind: 'dog', childParentWord: has }, text: ['Follows {childParentWord} about. And barks at the mail carrier.', 'Lies across the door so {childParentWord} trips over. Every morning.'] },
     { if: { band: 'toddler' }, pri: 3, text: ['Sleep.', '*mimes a cat washing its face*', 'Run run run!'] },
     { if: { weather: 'rain' }, text: ['Hides under the table from the rain. Same as me.'] },
   ]);
@@ -689,7 +689,7 @@ talkPack('children', () => {
     { if: { childPetKind: 'cat' }, text: ['Cats are always in charge. That\'s just science.'] },
   ]);
   lines('child.pet.tea', [
-    { text: ['{ChildPetName} doesn\'t take tea. {ChildPetName} takes the cream. Off the top.', 'Only if there\'s a biscuit in it.', 'Ha! {ChildPetName} would knock the cup off the table.'] },
+    { text: ['{ChildPetName} doesn\'t take tea. {ChildPetName} takes the cream. Off the top.', 'Only if there\'s a cookie in it.', 'Ha! {ChildPetName} would knock the cup off the table.'] },
     { if: { band: 'toddler' }, pri: 3, text: ['*giggles* Tea!'] },
   ]);
   lines('child.pet.second', [
@@ -792,7 +792,7 @@ talkPack('children', () => {
     { if: { childSib: has }, text: ['Ha! I\'m telling {childSib} you said that. {ChildSib} will be ever so good now.'] },
   ]);
   lines('child.sibs.worst', [
-    { text: ['They tell on me. Every time. Even for things I haven\'t done YET.', 'They eat the last of everything. The last biscuit. The last scone. The last ANYTHING.', 'They get away with everything. I get told off for breathing.'] },
+    { text: ['They tell on me. Every time. Even for things I haven\'t done YET.', 'They eat the last of everything. The last cookie. The last scone. The last ANYTHING.', 'They get away with everything. I get told off for breathing.'] },
     { if: { childSibLittle: has }, text: ['{ChildSibLittle} gets away with everything because {childSibLittle}\'s "only little."', 'Everyone says I have to look after {childSibLittle}. Nobody looks after ME.'] },
     { if: { childSibBig: has }, text: ['{ChildSibBig} bosses me about. Then says I\'m the bossy one.', 'I get all {childSibBig}\'s old clothes. My best waistcoat has someone else\'s name in it.'] },
     { if: { childBaby: has }, text: ['The baby wakes up the whole house. Every night. At the worst bit of my dream.'] },
@@ -800,7 +800,7 @@ talkPack('children', () => {
     { if: { childTemper: 'gloomy' }, text: ['Everyone likes them better. Everyone.'] },
   ]);
   lines('child.sibs.told', [
-    { text: ['Kindly? That\'s hard. ...I could try kindly.', 'I\'ll try. If they start it I\'m not being kind though.', 'Hm. Maybe. With a biscuit. Biscuits help.'] },
+    { text: ['Kindly? That\'s hard. ...I could try kindly.', 'I\'ll try. If they start it I\'m not being kind though.', 'Hm. Maybe. With a cookie. Cookies help.'] },
     { if: { childTemper: 'ornery' }, text: ['Kindly. Hmph. Fine. Kindly-ish.'] },
     { if: { band: 'youth' }, text: ['...You\'re probably right. Don\'t look so pleased about it.'] },
   ]);
@@ -1177,7 +1177,7 @@ talkPack('children', () => {
     { if: { childTemper: 'cheerful' }, text: ['We laugh at the same things! Nobody else gets the jokes. Only us.'] },
   ]);
   lines('child.sibs.newt', [
-    { if: { childTween: true }, pri: 1, text: ['Ha! I\'m too old to want that. ...What colour newt?'] },
+    { if: { childTween: true }, pri: 1, text: ['Ha! I\'m too old to want that. ...What color newt?'] },
   ]);
   lines('child.sibs.miss', [
     { if: { childTween: true }, pri: 1, text: ['I would. When they move out it\'ll be strange. Quiet. Awful.'] },
@@ -1260,7 +1260,7 @@ talkPack('children', () => {
     { if: { childTemper: 'shy' }, text: ['*nods, very proud, very quiet*'] },
   ]);
   // =====================================================================================
-  // Gran and Grandad
+  // Gran and Granddad
   // =====================================================================================
   addThread({
     id: 'child.gran', label: (F) => (F.childGranWord ? `How's your ${F.childGranWord.toLowerCase()}?` : 'Your grandparents'), weight: 1, cool: 4,
@@ -1297,7 +1297,7 @@ talkPack('children', () => {
   lines('child.gran.start', [
     { text: ['{ChildGranWord}\'s all right. {ChildGranWord} gives me humbugs when nobody\'s looking.', '{ChildGranWord} falls asleep in the chair and then says {childGranWord} wasn\'t asleep.', '{ChildGranWord} knows everything. Everything that happened ever. And says so.'] },
     { if: { childGranWord: 'Gran' }, text: ['Gran\'s the best. She makes the scones with the jam already in.', 'Gran pinches my cheeks. I\'m too old for it. I let her.'] },
-    { if: { childGranWord: 'Grandad' }, text: ['Grandad\'s teaching me to whittle. I\'ve still got all my fingers. So far.', 'Grandad tells the same story every supper. I mouth along. He hasn\'t noticed.'] },
+    { if: { childGranWord: 'Granddad' }, text: ['Granddad\'s teaching me to whittle. I\'ve still got all my fingers. So far.', 'Granddad tells the same story every supper. I mouth along. He hasn\'t noticed.'] },
     { if: { band: 'young' }, text: ['{ChildGranWord} has a WHISTLE in {childGranWord}\'s nose! When {childGranWord} sleeps!'] },
     { if: { band: 'youth' }, text: ['{ChildGranWord}\'s slowing down. I sit with {childGranWord} more. Don\'t tell anyone.'] },
     { if: { childTemper: 'shy' }, text: ['...{ChildGranWord}\'s the only one who doesn\'t mind when I\'m quiet.'] },
@@ -1310,7 +1310,7 @@ talkPack('children', () => {
     { if: { childRiftStage: { min: 1 } }, text: ['{ChildGranWord} says the sky tore once before, long ago, and a tinker walked into it. Mungo something.'] },
   ]);
   lines('child.gran.believe', [
-    { text: ['Some of them. Not the one about the forty-pound marrow.', 'All of them. Even the silly ones. Especially the silly ones.', 'I believe {childGranWord} believes them. That\'s nearly the same.'] },
+    { text: ['Some of them. Not the one about the forty-pound pumpkin.', 'All of them. Even the silly ones. Especially the silly ones.', 'I believe {childGranWord} believes them. That\'s nearly the same.'] },
   ]);
   lines('child.gran.goose', [
     { text: ['What goose? WHAT GOOSE? I\'m asking tonight!', 'Ha! There\'s a goose story? Nobody told me about a goose!', 'I\'m going to ask at supper. In front of everyone.'] },
@@ -1358,7 +1358,7 @@ talkPack('children', () => {
   ]);
   lines('child.games.off', [
     { if: { childTemper: 'shy' }, text: ['...All right. I\'ll see who\'s about.'] },
-    { if: { childTemper: 'ornery' }, text: ['Fine. They\'re all rubbish anyway. I\'ll win.'] },
+    { if: { childTemper: 'ornery' }, text: ['Fine. They\'re all no good anyway. I\'ll win.'] },
   ]);
   lines('child.frog.start', [
     { if: { childTemper: 'cheerful' }, text: ['Guess what\'s in my pocket! Guess! You\'ll NEVER guess! It\'s a frog!'] },
@@ -1414,7 +1414,7 @@ talkPack('children', () => {
     { if: { childTemper: 'curious' }, text: ['How do you turn a hat into a teapot? Is it a spell or a trick? Teach me. For research.'] },
   ]);
   lines('child.toldoff.what', [
-    { if: { band: 'young' }, text: ['I drew on the wall. A dragon. It was a GOOD dragon.', 'I put the cat in the bread bin. She wanted to go. She TOLD me.'] },
+    { if: { band: 'young' }, text: ['I drew on the wall. A dragon. It was a GOOD dragon.', 'I put the cat in the bread box. She wanted to go. She TOLD me.'] },
     { if: { register: 'bright', childParentWord: has }, text: ['I corrected {childParentWord}\'s sums. Out loud. In front of the miller.'] },
     { if: { childPetKind: 'dog', childPetName: has }, text: ['I let {childPetName} in with muddy feet. And then {childPetName} got on the bed. And then I did.'] },
   ]);
@@ -1468,7 +1468,7 @@ talkPack('children', () => {
   ]);
   lines('child.gran.listen', [
     { if: { childTemper: 'shy' }, text: ['*nods* ...I sit by {childGranWord}\'s chair. We don\'t talk much. It\'s nice.'] },
-    { if: { band: 'youth' }, text: ['I know. I\'ve been sitting with {childGranWord} more. We play draughts. {ChildGranWord} cheats.'] },
+    { if: { band: 'youth' }, text: ['I know. I\'ve been sitting with {childGranWord} more. We play checkers. {ChildGranWord} cheats.'] },
   ]);
   lines('child.gran.stories', [
     { if: { childTemper: 'curious' }, text: ['About the Fell Winter. {ChildGranWord}\'s gran was THERE. With a pitchfork!'] },
@@ -1485,7 +1485,7 @@ talkPack('children', () => {
     { if: { band: 'young' }, text: ['*sniffs, and wipes {their} nose on your sleeve*'] },
   ]);
   lines('child.games.why', [
-    { if: { childTemper: 'ornery' }, text: ['Because they\'re rubbish at it. ...And because nobody asks why.'] },
+    { if: { childTemper: 'ornery' }, text: ['Because they\'re terrible at it. ...And because nobody asks why.'] },
     { if: { childTemper: 'gloomy' }, text: ['Because I\'m me, I expect.'] },
   ]);
   lines('child.frog.dragon', [

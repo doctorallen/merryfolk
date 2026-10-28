@@ -2,7 +2,7 @@
 // ---------------------------------------------------------------------------
 // The wizard himself, and what folk want from him (1 of 4): the facts the
 // other wizard packs share (which of his tales they've heard, whether they
-// saw the fireworks, who owes whom a favour, a baby to bless), how his
+// saw the fireworks, who owes whom a favor, a baby to bless), how his
 // promises are kept, the small wonders he works in a talk, and the threads
 // where folk ask about the old man: his age, his hat, his staff, his beard,
 // his wagon and horse, what a wizard eats, and "Ask me anything".
@@ -52,7 +52,7 @@ talkPack('wizard', () => {
   const taleList = () => Object.assign({}, typeof JOURNEY_TALES !== 'undefined' ? JOURNEY_TALES : {}, WIZARD_TALES);
   const taleWord = (x) => x.replace(/^(of|about) /, '');
   // an age in words: 'ninety-seven', 'a hundred and three'
-  const ONES = ['nought', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+  const ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
   const TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
   const numWords = (n) => (n < 20 ? ONES[n] : n < 100 ? TENS[Math.floor(n / 10)] + (n % 10 ? '-' + ONES[n % 10] : '') : n < 200 ? 'a hundred' + (n % 100 ? ' and ' + numWords(n % 100) : '') : String(n));
   addFacts((v, F) => {
@@ -96,7 +96,7 @@ talkPack('wizard', () => {
   addPromiseCheck('wiz.visit', (v, p) => (bondFull(v).last > p.d ? 'kept' : null));
 
   // --- Small wonders, worked in the middle of a talk ------------------------------------
-  // Sparing: a smoke ring or two, a puff of coloured stars, a light on the staff.
+  // Sparing: a smoke ring or two, a puff of colored stars, a light on the staff.
   const STAR = ['#ff8ae0', '#6ad0ff', '#ffd34a', '#9aff7a'];
   const ding = (k) => { try { if (typeof Sound !== 'undefined' && Sound[k]) Sound[k](); } catch (e) { /* no sound is fine */ } };
   const wonder = (kind) => (T, v) => {
@@ -177,7 +177,7 @@ talkPack('wizard', () => {
   });
   wz('wiz.age.say.jest', {
     _: ['Older than your grandmother\'s grandmother\'s teapot.', 'Older than the river. Well. Older than the teapot at the Badger.'],
-    child: ['Older than your grandad\'s grandad\'s teapot. Older than cheese.', 'Older than every teapot in the valley put together.'],
+    child: ['Older than your granddad\'s granddad\'s teapot. Older than cheese.', 'Older than every teapot in the valley put together.'],
     elder: ['Older than you, youngster, and older than your grandmother\'s teapot.', 'Older than the teapot you were weaned on.'],
     rift: ['Older than your city. Older than the oldest teapot in this valley.'],
   });
@@ -188,7 +188,7 @@ talkPack('wizard', () => {
     shy: ['...Can I ask how old you are? Sorry. That\'s rude. Is it rude?', '...Are you very old? You don\'t have to say.'],
     curious: ['How old are you? Do wizards have birthdays? Who gives you presents?', 'How old are you exactly? And do you count in years, or something else?'],
     dreamy: ['You must have seen the world change a hundred times. How old are you?', 'Do you remember when the stars were new? You look as if you might.'],
-    witty: ['How old are you? Don\'t say \'old enough\'. Everyone says \'old enough\'.', 'I\'ve been counting the grey in your beard. I gave up at three hundred.'],
+    witty: ['How old are you? Don\'t say \'old enough\'. Everyone says \'old enough\'.', 'I\'ve been counting the gray in your beard. I gave up at three hundred.'],
     proud: ['My family\'s been in this valley nine generations. How long have YOU been about?', 'I can trace my line back two hundred years. How far back do you go?'],
     gloomy: ['How old are you? You must have buried a lot of folk.', 'Does it ever end, for a wizard? Getting old?'],
     child: ['How old are you? A HUNDRED? A MILLION?', 'Are you older than the party tree? Are you older than the SKY?', 'How many birthdays have you had? Do you get cake at all of them?'],
@@ -208,7 +208,7 @@ talkPack('wizard', () => {
     witty: ['Judging by the hat? Antique. Judging by the jokes? Older.', 'Somewhere between \'very\' and \'don\'t ask\'.'],
     proud: ['My grandfather said you were old when HE was young. So, ancient.', 'Older than my family line. And that\'s saying a great deal.'],
     gloomy: ['Old enough to have outlived everyone. Poor thing.', 'Too old, I expect. It must ache.'],
-    child: ['A BILLION!', 'Seventy-twelve! Is that a number? It is now.', 'Older than dinosaurs. Mum says there were no dinosaurs. Mum doesn\'t know.'],
+    child: ['A BILLION!', 'Seventy-twelve! Is that a number? It is now.', 'Older than dinosaurs. Mom says there were no dinosaurs. Mom doesn\'t know.'],
     elder: ['Older than me by a long chalk, and I\'m {years}.', 'You knew my grandfather as a boy. So, very.'],
     rift: ['Biometrics say: unknown. Signal says: error. So, really old?', 'Your beard\'s got more data in it than our archives. Three hundred?'],
   });
@@ -228,7 +228,7 @@ talkPack('wizard', () => {
   });
   wz('wiz.age.shock', {
     _: ['A few THOUSAND? You\'re pulling my leg.', 'Thousands! How do you remember where you left your pipe?', 'Well, you look very well on it. Very well indeed.'],
-    cheerful: ['Thousands! Then you must have had thousands of birthdays. Thousands of cakes!', 'Oh, that\'s marvellous. I hope I\'m that old. I hope I\'m that cheerful.'],
+    cheerful: ['Thousands! Then you must have had thousands of birthdays. Thousands of cakes!', 'Oh, that\'s marvelous. I hope I\'m that old. I hope I\'m that cheerful.'],
     ornery: ['Thousands. Pull the other one, it\'s got bells on.', 'Hmph. And still can\'t arrive on the day you say.'],
     shy: ['...Thousands? Oh. I\'m sorry I asked. Is that sad?', '...That\'s a lot. I\'d be tired.'],
     curious: ['Thousands! Then you saw the Fell Winter? The first hobbits crossing the river? Everything?', 'But what does that feel like? Does a year go by quicker, the more you have?'],
@@ -250,7 +250,7 @@ talkPack('wizard', () => {
     witty: ['Flattery, wizard, is the only thing I give away free. Treasure it.', 'Then you owe me a thank you. I\'ll take it in fireworks.'],
     proud: ['I have a good eye for these things. Everyone says.'],
     gloomy: ['Well, you\'re welcome. Not that it changes anything.'],
-    child: ['I\'m good at guessing. I guessed Mum\'s age and she said I was very rude.'],
+    child: ['I\'m good at guessing. I guessed Mom\'s age and she said I was very rude.'],
     elder: ['At my age, wizard, everyone younger than me is a youngster. Except you.'],
     rift: ['Not flattery. Rough estimate. Error bars the size of a barn.'],
   });
@@ -289,7 +289,7 @@ talkPack('wizard', () => {
     shy: ['*laughs, then looks surprised at laughing*'],
     curious: ['Is that true about the hat? Does it really take centuries off?'],
     dreamy: ['You\'re like a story that won\'t finish. In a good way.'],
-    witty: ['Better glazed! I\'ll remember that one. I\'ll use it on my aunt.', 'If you\'re the teapot, who\'s the tea cosy?'],
+    witty: ['Better glazed! I\'ll remember that one. I\'ll use it on my aunt.', 'If you\'re the teapot, who\'s the tea cozy?'],
     proud: ['Well, I\'m a very well-preserved hobbit myself. Everyone says.'],
     gloomy: ['...That was funny. Don\'t tell anyone I laughed.'],
     child: ['HAHAHA! Say another one!', 'You\'re silly. Wizards aren\'t supposed to be silly.'],
@@ -304,24 +304,24 @@ talkPack('wizard', () => {
     curious: ['{Years}. Which is about four hundred breakfasts a year, if you count properly.'],
     dreamy: ['{Years}. But I feel about seven inside. Or ninety. It changes.'],
     witty: ['{Years}. Younger than you. Younger than your hat, probably.'],
-    proud: ['{Years}, and I\'ve done more with them than most.', '{Years}, and not a grey hair. Well, one. It\'s a very good one.'],
+    proud: ['{Years}, and I\'ve done more with them than most.', '{Years}, and not a gray hair. Well, one. It\'s a very good one.'],
     gloomy: ['{Years}. And what\'ve I got to show for it?'],
     child: ['I\'m {years}! And a half! The half is important.', '{Years}! Nearly {years} and a quarter!'],
-    elder: ['{Years}, wizard. Old enough to sit when I like and say what I think.', '{Years}. I\'ve outlived three cats and a husband\'s moustache.'],
+    elder: ['{Years}, wizard. Old enough to sit when I like and say what I think.', '{Years}. I\'ve outlived three cats and a husband\'s mustache.'],
     rift: ['{Years}. Though my clock got scrambled coming through the rift. Could be off.'],
   });
   wz('wiz.age.memory', {
     _: ['The oldest? My mother singing over the washing. I couldn\'t see her, just hear her.', 'The smell of bread. Before I knew what bread was.', 'A red ball rolling down the hill and me crying after it.'],
-    cheerful: ['Laughing! I don\'t know at what. I\'ve been at it ever since.', 'A snowball. Right in my grandad\'s ear. Best day of my life.'],
+    cheerful: ['Laughing! I don\'t know at what. I\'ve been at it ever since.', 'A snowball. Right in my granddad\'s ear. Best day of my life.'],
     ornery: ['Being told off. I expect I deserved it. I usually do.', 'A goose. A very angry goose. We\'ve not been friends since.'],
     shy: ['...Hiding under the table at a party. Everyone\'s feet. It was nice under there.', '...A blanket with ducks on. I still have it. Don\'t tell.'],
     curious: ['Taking the clock apart. I was three. It never went again.', 'Asking why the sky was blue. Nobody knew. I still don\'t.'],
     dreamy: ['Lying in the long grass watching clouds go by. I think I\'m still there, a bit.', 'Fireflies over the water. I thought they were stars that had come down to drink.'],
     witty: ['Being born, I expect. Didn\'t care for it. Too bright, and no breakfast.', 'My first joke. Nobody laughed. It was about a turnip.'],
-    proud: ['Winning a prize for the biggest marrow. I was four. I grew it myself. Mostly.'],
+    proud: ['Winning a prize for the biggest pumpkin. I was four. I grew it myself. Mostly.'],
     gloomy: ['A funeral. I didn\'t know what it was. I knew everyone was sad.', 'Rain on the window, and nobody coming.'],
-    child: ['Yesterday! No, the day before. I fell in the duck pond.', 'Being a baby! I don\'t remember it. Mum says I was loud.'],
-    elder: ['The Long Winter, when I was tiny. Grandad carried me through snow up to his chest.', 'The first lamp lit in the lane. Oh, we thought it was magic.'],
+    child: ['Yesterday! No, the day before. I fell in the duck pond.', 'Being a baby! I don\'t remember it. Mom says I was loud.'],
+    elder: ['The Long Winter, when I was tiny. Granddad carried me through snow up to his chest.', 'The first lamp lit in the lane. Oh, we thought it was magic.'],
     rift: ['A neon sign outside my window, blinking. Pink, blue, pink. All night. I still can\'t sleep in the dark.', 'The hum of the city. Like a song with no words.'],
     'rift+shy': ['...The rain on the tram roof. Back home. It sounded like applause.'],
     'elder+gloomy': ['My little brother. He\'s been gone sixty years. I still see his face.'],
@@ -344,7 +344,7 @@ talkPack('wizard', () => {
   wz('wiz.age.comforted', {
     _: ['Every goodbye was a hello first. I like that. I\'ll keep that.', 'Well. You\'re always welcome here. For as long as there\'s a here.', 'Then we\'ll keep saying hello. As often as you like.'],
     cheerful: ['Then HELLO! There! Another one for the pile!'],
-    ornery: ['Hmph. Soft old thing. ...Have a biscuit.'],
+    ornery: ['Hmph. Soft old thing. ...Have a cookie.'],
     shy: ['...Hello, then. Again. Ha.'],
     curious: ['I\'ll be a hello you remember. I\'ll make sure of it.'],
     dreamy: ['That\'s the loveliest thing. I\'ll think of it whenever someone waves.'],
@@ -372,9 +372,9 @@ talkPack('wizard', () => {
         { ap: 'ask', say: 'What would you keep under a hat like this?', to: 'inside' },
       ] },
       inside: { line: 'wiz.hat.inside', go: [
-        { ap: 'tale', say: '*You reach into the crown and bring out a puff of coloured stars.*', label: 'Reach in and show them', to: 'pulled', fx: { run: magic('stars') } },
+        { ap: 'tale', say: '*You reach into the crown and bring out a puff of colored stars.*', label: 'Reach in and show them', to: 'pulled', fx: { run: magic('stars') } },
         { ap: 'jest', say: 'A spare hat. A very small one. For emergencies.', to: 'spare' },
-        { ap: 'warm', say: 'Mostly my head. And a biscuit, in case of a long afternoon.', to: 'biscuit' },
+        { ap: 'warm', say: 'Mostly my head. And a cookie, in case of a long afternoon.', to: 'biscuit' },
       ] },
       pulled: { line: 'wiz.hat.pulled', fx: { fond: 0.02, drive: { bored: -0.15 } }, go: [
         { ap: 'warm', say: 'Would you like to try it on? Mind the stars.', to: 'tryon' },
@@ -385,7 +385,7 @@ talkPack('wizard', () => {
         { ap: 'jest', say: 'And a spare beard. Don\'t tell anyone.', to: 'birds' },
       ] },
       biscuit: { line: 'wiz.hat.biscuit', go: [
-        { ap: 'share', say: '*You find the biscuit, break it, and give them half.*', label: 'Share the biscuit', to: 'shared', fx: { fond: 0.03, drive: { hunger: -0.05 } } },
+        { ap: 'share', say: '*You find the cookie, break it, and give them half.*', label: 'Share the cookie', to: 'shared', fx: { fond: 0.03, drive: { hunger: -0.05 } } },
         { ap: 'jest', say: 'It\'s from the Old Took\'s birthday. Still good. Probably.', to: 'old' },
       ] },
       tryon: { line: 'wiz.hat.tryon', fx: { fond: 0.02, joke: { k: 'wiz.hat.tryon', t: '{Name} tried on the wizard\'s hat and disappeared under it.' } }, go: [
@@ -422,7 +422,7 @@ talkPack('wizard', () => {
     shy: ['...I like your hat. Sorry. I just do.', '...Is it true there\'s something living in your hat?'],
     curious: ['How tall is your hat, exactly? I measured it by eye and got three different answers.', 'Why pointed? Does it do something? Collect lightning? Keep thoughts in?'],
     dreamy: ['Your hat looks like a mountain with the clouds round it.', 'When you stand on the hill at dusk, your hat touches the first star.'],
-    witty: ['Is that a hat, or a small grey tower you\'re wearing for a bet?', 'Your hat has its own weather. I saw a cloud on it this morning.'],
+    witty: ['Is that a hat, or a small gray tower you\'re wearing for a bet?', 'Your hat has its own weather. I saw a cloud on it this morning.'],
     proud: ['My uncle had a hat like that. Taller. Better brim.', 'A good hat says a great deal. Yours says... quite a lot, actually.'],
     gloomy: ['That hat must let the rain down your neck. Everything does, mine.', 'Doesn\'t it get tiring, being the one in the hat?'],
     child: ['Can I wear your hat? Please? PLEASE?', 'Is there a rabbit in your hat? Is there? Can I see it?', 'Your hat is SO tall. Is it taller than me? It\'s taller than me.'],
@@ -447,8 +447,8 @@ talkPack('wizard', () => {
     rift: ['A star-shield. Okay. Our city had smog for that.'],
   });
   wz('wiz.hat.inside', {
-    _: ['Yes! What is in it? Rabbits? Letters? Biscuits?', 'Go on, then. What\'s in there?', 'I always thought there was something in there. Something that moves.'],
-    cheerful: ['Ooh, yes! Is it sweets? Tell me it\'s sweets.'],
+    _: ['Yes! What is in it? Rabbits? Letters? Cookies?', 'Go on, then. What\'s in there?', 'I always thought there was something in there. Something that moves.'],
+    cheerful: ['Ooh, yes! Is it candy? Tell me it\'s candy.'],
     ornery: ['Nothing good, I\'ll bet. Fireworks. Trouble. Fireworks and trouble.', 'Go on, then. Surprise me. You won\'t.'],
     shy: ['...Only if it\'s not something with legs.', '...If you want to show me. You don\'t have to.'],
     curious: ['YES. Everything in it. In order. With labels.', 'Is it bigger on the inside? It\'s bigger on the inside, isn\'t it.'],
@@ -456,12 +456,12 @@ talkPack('wizard', () => {
     witty: ['If it\'s your head, I\'ll be very disappointed.', 'Let me guess. A smaller wizard.'],
     proud: ['I\'ll see what\'s in it, if you insist. I\'m not easily impressed.'],
     gloomy: ['Probably just more rain.'],
-    child: ['A DRAGON? Is it a baby dragon? Is it a frog? I\'d like it to be a frog.', 'Sweets! Is it sweets? Sweets and a frog?'],
+    child: ['A DRAGON? Is it a baby dragon? Is it a frog? I\'d like it to be a frog.', 'Candy! Is it candy? Candy and a frog?'],
     elder: ['I\'ve wondered that for seventy years. Go on. Before I go.'],
     rift: ['Hidden storage. I knew it. What\'s the capacity?'],
   });
   wz('wiz.hat.pulled', {
-    _: ['Oh! Oh, look at them! Coloured stars, out of a hat!', 'Do it again! No, don\'t, then it won\'t be special. Do it again.', 'Well, I never. I\'ll not look at a hat the same way.'],
+    _: ['Oh! Oh, look at them! Colored stars, out of a hat!', 'Do it again! No, don\'t, then it won\'t be special. Do it again.', 'Well, I never. I\'ll not look at a hat the same way.'],
     cheerful: ['HA! Oh, that\'s wonderful! Again! Everyone, come and look!', 'Stars! Out of a hat! Best day of the week, this.'],
     ornery: ['Hmph. Sparks. Mind you don\'t set the hedge alight.', '...All right. That was quite good. Don\'t look so pleased.'],
     shy: ['*watches the stars fade with both hands over their mouth*', '...Oh. Oh, that was lovely.'],
@@ -471,12 +471,12 @@ talkPack('wizard', () => {
     proud: ['Very good. I\'ve seen better. Once. At a wedding. Possibly not.'],
     gloomy: ['...Oh. That was nice. I wasn\'t expecting nice today.'],
     child: ['AGAIN! AGAIN! AGAIN!', 'I SAW A PINK ONE! Did you see the pink one? I\'m going to tell EVERYONE.'],
-    elder: ['You did that for me at my naming, my mother said. Same colours.'],
+    elder: ['You did that for me at my naming, my mother said. Same colors.'],
     rift: ['No battery. No wire. Nothing on any scan. I hate it. I love it.', 'Okay, that was better than a holo. Don\'t tell anyone back home.'],
   });
   wz('wiz.hat.spare', {
     _: ['A spare hat in the hat! Ha! And is there a spare in that one?', 'Ha! You never give a straight answer.'],
-    cheerful: ['Hats all the way down! Oh, that\'s marvellous.'],
+    cheerful: ['Hats all the way down! Oh, that\'s marvelous.'],
     ornery: ['Talking nonsense again.', 'And I suppose you keep a spare wizard in the spare hat.'],
     shy: ['...Ha. A tiny hat. I\'d like to see a tiny hat.'],
     curious: ['But does the small hat have a smaller hat? Where does it stop?'],
@@ -489,30 +489,30 @@ talkPack('wizard', () => {
     rift: ['Redundancy. Good engineering, that.'],
   });
   wz('wiz.hat.biscuit', {
-    _: ['A biscuit in your hat? How long\'s it been there?', 'A hat-biscuit. I\'ve heard of everything now.'],
-    cheerful: ['A biscuit! You\'re a hobbit at heart, wizard.'],
+    _: ['A cookie in your hat? How long\'s it been there?', 'A hat-cookie. I\'ve heard of everything now.'],
+    cheerful: ['A cookie! You\'re a hobbit at heart, wizard.'],
     ornery: ['That\'ll be soft. And full of hat.'],
-    shy: ['...What sort of biscuit?'],
-    curious: ['What kind? Where from? Is it a magic biscuit? Does it go off?'],
-    dreamy: ['A biscuit you\'ve carried all the way from somewhere. That\'s a well-travelled biscuit.'],
+    shy: ['...What sort of cookie?'],
+    curious: ['What kind? Where from? Is it a magic cookie? Does it go off?'],
+    dreamy: ['A cookie you\'ve carried all the way from somewhere. That\'s a well-traveled cookie.'],
     witty: ['I see. Not a wizard, then. A walking larder with a point.'],
-    proud: ['I always keep a biscuit about me. Very wise.'],
-    gloomy: ['Bet it\'s broken. Biscuits always are.'],
+    proud: ['I always keep a cookie about me. Very wise.'],
+    gloomy: ['Bet it\'s broken. Cookies always are.'],
     child: ['Can I have it? Is it chocolate? Is it a magic one?'],
     elder: ['Very sensible. I keep a mint in my cardigan for the same.'],
     rift: ['Emergency rations. Respect.'],
-    hungry: ['A biscuit? Is it... is it a big one?'],
+    hungry: ['A cookie? Is it... is it a big one?'],
   });
   wz('wiz.hat.shared', {
-    _: ['Oh, thank you. It\'s a bit hatty. It\'s lovely.', 'Half a wizard\'s biscuit. I\'ll remember this.'],
-    cheerful: ['Mm! Best biscuit I\'ve had all morning. Tastes of adventure.'],
+    _: ['Oh, thank you. It\'s a bit hatty. It\'s lovely.', 'Half a wizard\'s cookie. I\'ll remember this.'],
+    cheerful: ['Mm! Best cookie I\'ve had all morning. Tastes of adventure.'],
     ornery: ['Hmph. Soft as I said. ...Not bad, though.'],
     shy: ['*eats it in very small bites, smiling*'],
     curious: ['It tastes of... cinnamon. And pipe-weed. And far away.'],
-    dreamy: ['I\'ll eat it slowly. You never know when you\'ll get another wizard\'s biscuit.'],
-    witty: ['A shared biscuit is a binding agreement. You know that. We\'re allies now.'],
-    proud: ['Thank you. I\'ll tell folk I shared biscuits with the wizard.'],
-    gloomy: ['...That\'s cheered me. Daft, isn\'t it. Half a biscuit.'],
+    dreamy: ['I\'ll eat it slowly. You never know when you\'ll get another wizard\'s cookie.'],
+    witty: ['A shared cookie is a binding agreement. You know that. We\'re allies now.'],
+    proud: ['Thank you. I\'ll tell folk I shared cookies with the wizard.'],
+    gloomy: ['...That\'s cheered me. Daft, isn\'t it. Half a cookie.'],
     child: ['Mmm! Crumbs! I got crumbs on your boots. Sorry!'],
     elder: ['Thank you, lad. Lad! Ha. Hark at me.'],
     rift: ['Calories received. Thank you. Seriously.'],
@@ -523,12 +523,12 @@ talkPack('wizard', () => {
     ornery: ['That\'s disgusting. You\'re disgusting.'],
     shy: ['...I\'ll pass. Thank you, though.'],
     curious: ['Is it really? Can I see it? Has it turned to stone?'],
-    dreamy: ['A biscuit from a party a hundred years ago. It\'s practically a story.'],
+    dreamy: ['A cookie from a party a hundred years ago. It\'s practically a story.'],
     witty: ['Keep it. It\'s got more history than the rest of us put together.'],
-    proud: ['My great-grandfather was at that party. Don\'t offer me his biscuit.'],
+    proud: ['My great-grandfather was at that party. Don\'t offer me his cookie.'],
     gloomy: ['Course it is. Nothing\'s fresh any more.'],
     child: ['EWWWW! Can I touch it?'],
-    elder: ['I was at that party. I\'d know those biscuits anywhere. Rock cakes.'],
+    elder: ['I was at that party. I\'d know those cookies anywhere. Rock cakes.'],
     rift: ['Ha. Fossil food. We had those too, from vending machines.'],
   });
   wz('wiz.hat.tryon', {
@@ -579,10 +579,10 @@ talkPack('wizard', () => {
     ornery: ['It looks like the inside of a hat, wizard. What did you expect?'],
     shy: ['...Safe. It looks safe. Can I stay in a bit?'],
     curious: ['There\'s writing on the band! Tiny letters! What do they say? Is it a spell?'],
-    dreamy: ['Like the sky before the stars come out. All soft and grey and waiting.'],
+    dreamy: ['Like the sky before the stars come out. All soft and gray and waiting.'],
     witty: ['Much improved. I can\'t see anyone, and nobody can see me. Bliss.'],
     proud: ['Smaller than I\'d imagined. I\'d have expected more room for thinking.'],
-    gloomy: ['Grey. Like everything. But warmer.'],
+    gloomy: ['Gray. Like everything. But warmer.'],
     child: ['DARK! It\'s like night time! Can I have night time whenever I want?'],
     elder: ['Like being a child again under the bedclothes. Thank you, wizard.'],
     rift: ['Zero light pollution. You know how rare that is where I\'m from?'],
@@ -594,7 +594,7 @@ talkPack('wizard', () => {
     shy: ['...That\'s nice. That you kept it.'],
     curious: ['Who? Where? When? Was it wrapped? How do you wrap a hat that shape?'],
     dreamy: ['So every time it rains, someone\'s keeping the rain off you. Even now.'],
-    witty: ['And they never said anything about the colour? A true friend.'],
+    witty: ['And they never said anything about the color? A true friend.'],
     proud: ['A fine gift. I gave my sister a hat once. Better than this. But fine.'],
     gloomy: ['From someone you\'ve lost, isn\'t it. I can tell.'],
     child: ['Was it for your BIRTHDAY? Do wizards have birthdays?'],
@@ -617,9 +617,9 @@ talkPack('wizard', () => {
   });
   wz('wiz.hat.keepsake', {
     _: ['...My mother\'s thimble. It lives in my waistcoat pocket. I touch it when I\'m nervous.', '...A button off my dad\'s coat. Just a button. I couldn\'t tell you why it matters.'],
-    cheerful: ['...I don\'t talk about it much. Grandad\'s pipe. I don\'t smoke. I just hold it.'],
+    cheerful: ['...I don\'t talk about it much. Granddad\'s pipe. I don\'t smoke. I just hold it.'],
     ornery: ['...My brother\'s penknife. Blunt as a spoon. Don\'t you dare tell anyone I keep it.'],
-    shy: ['...A ribbon. It was my nan\'s. It\'s under my pillow. I\'ve never told anyone that.'],
+    shy: ['...A ribbon. It was my grandma\'s. It\'s under my pillow. I\'ve never told anyone that.'],
     curious: ['...A letter I\'ve never opened. From an aunt. I want to know and I don\'t want to know.'],
     dreamy: ['...A pressed flower from my grandmother\'s garden. It\'s nearly dust now. I keep it anyway.'],
     witty: ['...All right, no jokes. My old friend\'s spoon. We used to fight over it. I won, in the end.'],
@@ -733,7 +733,7 @@ talkPack('wizard', () => {
     curious: ['Just leaning? But there must be a reason it\'s THAT stick and not another.'],
     dreamy: ['There\'s something lovely about a stick that\'s held you up for years.'],
     witty: ['Leaning. And looking mysterious while you do. The two go together.'],
-    proud: ['A fine leaning stick is nothing to be ashamed of. My father leant beautifully.'],
+    proud: ['A fine leaning stick is nothing to be ashamed of. My father leaned beautifully.'],
     gloomy: ['I could do with something to lean on.'],
     child: ['That\'s BORING. Make it do a magic.'],
     elder: ['Don\'t knock leaning. Leaning\'s half of getting old.'],
@@ -745,7 +745,7 @@ talkPack('wizard', () => {
     ornery: ['Hmph. A light. We\'ve lamps for that.', 'Very clever. Mind it doesn\'t set your beard going.'],
     shy: ['*goes very quiet, watching the light*', '...Oh. It\'s so soft.'],
     curious: ['How does it work? Is it fire? It\'s not hot. Is it a sort of glow-worm?'],
-    dreamy: ['It\'s like a star that\'s come down to sit on your stick.', 'It\'s the colour of the first lamp on a winter evening.'],
+    dreamy: ['It\'s like a star that\'s come down to sit on your stick.', 'It\'s the color of the first lamp on a winter evening.'],
     witty: ['So THAT\'S how you find the inn after dark.'],
     proud: ['Very good. I\'ve an excellent lamp at home, mind. Brass.'],
     gloomy: ['...That\'s the first nice light I\'ve seen in a while.'],
@@ -767,10 +767,10 @@ talkPack('wizard', () => {
     gloomy: ['And all that walking, and you end up back here. Funny, that.'],
     child: ['Has it been to the MOUNTAINS? Has it been to where the dragons live?'],
     elder: ['I used to walk. Every hill in this valley. Now it\'s the step and back.'],
-    rift: ['I came further than that in a second. Through the rift. Didn\'t feel like travelling. Felt like falling.'],
+    rift: ['I came further than that in a second. Through the rift. Didn\'t feel like traveling. Felt like falling.'],
   });
   wz('wiz.staff.stick', {
-    _: ['I\'ve a stick by the door. My grandad cut it. It\'s seen better days. So have I.', 'Only an old blackthorn. Good for nettles.'],
+    _: ['I\'ve a stick by the door. My granddad cut it. It\'s seen better days. So have I.', 'Only an old blackthorn. Good for nettles.'],
     cheerful: ['I\'ve got a stick! It\'s got a duck\'s head on top. I named it Duncan.'],
     ornery: ['I\'ve a stick for poking cats off the wall. Works a treat.'],
     shy: ['...Only a little one. For walking in the woods. It\'s nothing special.'],
@@ -781,7 +781,7 @@ talkPack('wizard', () => {
     gloomy: ['I had one. It broke. Most things do.'],
     child: ['I\'ve got a stick! It\'s a sword! And a horse! And a fishing rod! It\'s a lot of things.'],
     elder: ['I\'ve three. One for good, one for mud and one for shaking at the young.'],
-    rift: ['Not a stick. A collapsible baton. Carbon fibre. It doesn\'t collapse any more.'],
+    rift: ['Not a stick. A collapsible baton. Carbon fiber. It doesn\'t collapse any more.'],
   });
   wz('wiz.staff.hold', {
     _: ['*takes it in both hands* It\'s warm! Why is it warm?', '*holds it, and goes very still* It\'s humming. Is it humming?', '*holds it up* Ooh. I feel taller. I feel ever so tall.'],
@@ -821,7 +821,7 @@ talkPack('wizard', () => {
     witty: ['I\'d settle for a light on the way back from the Badger. That road\'s treacherous after three pints.'],
     proud: ['I\'ve walked every road in this valley in the dark. ...With a lantern.'],
     gloomy: ['Every road\'s dark, if you ask me. Some are just honest about it.'],
-    child: ['I don\'t like the dark. The dark has things in it. Mum says it doesn\'t. Mum doesn\'t know.'],
+    child: ['I don\'t like the dark. The dark has things in it. Mom says it doesn\'t. Mom doesn\'t know.'],
     elder: ['When you\'re old, every night\'s a dark road. Thank you, wizard.'],
     rift: ['There was no dark back home. Not ever. Here the dark\'s so big. I still can\'t get used to it.'],
   });
@@ -872,7 +872,7 @@ talkPack('wizard', () => {
     _: ['*turns it round in a hurry* Which way\'s up?!', 'Ha! *hands it back very quickly*'],
     cheerful: ['Ha! *turns it upside down on purpose* There. Let\'s see what it does!'],
     ornery: ['Then take it back before it complains.'],
-    shy: ['*hands it back at once, apologising to the staff*'],
+    shy: ['*hands it back at once, apologizing to the staff*'],
     curious: ['Which way IS up? Is there a top? How do you tell?'],
     dreamy: ['I\'ll hold it the way it wants, then. It\'ll tell me.'],
     witty: ['It\'s a stick. Both ends are the end.'],
@@ -892,7 +892,7 @@ talkPack('wizard', () => {
     witty: ['I\'ve always said I was wasted on turnips.'],
     proud: ['I\'ve always had a certain bearing. People notice.'],
     gloomy: ['Born to it. Ha. Born to sweep the step, more like.'],
-    child: ['I\'M GOING TO BE A WIZARD! MUM! MUM! I\'M A WIZARD!'],
+    child: ['I\'M GOING TO BE A WIZARD! MOM! MOM! I\'M A WIZARD!'],
     elder: ['Too late for me, wizard. But thank you.'],
     rift: ['Born to it. Back home I was a tech. Same thing, maybe.'],
   });
@@ -937,7 +937,7 @@ talkPack('wizard', () => {
       ] },
       trip: { line: 'wiz.beard.trip', go: [
         { ap: 'ask', say: 'Have you any advice for an old beard?', to: 'advice' },
-        { ap: 'jest', say: 'I keep biscuits in it too. In case.', to: 'crumbs' },
+        { ap: 'jest', say: 'I keep cookies in it too. In case.', to: 'crumbs' },
       ] },
       grow: { line: 'wiz.beard.grow', go: [
         { ap: 'warm', say: 'You\'d suit one. A fine, brushy one.', to: 'suit' },
@@ -952,8 +952,8 @@ talkPack('wizard', () => {
         { ap: 'warm', say: 'I\'ll try it. Thank you, {name}.', to: 'thanks' },
         { ap: 'jest', say: 'The last hobbit who advised my beard ended up wearing it as a scarf.', to: 'scarf' },
       ] },
-      crumbs: { line: 'wiz.beard.crumbs', fx: { joke: { k: 'wiz.beard.crumbs', t: 'The wizard keeps biscuits in his beard.' } }, go: [
-        { ap: 'warm', say: '*You find a biscuit in your beard and offer it.*', label: 'Find one and offer it', to: 'offered', fx: { fond: 0.02 } },
+      crumbs: { line: 'wiz.beard.crumbs', fx: { joke: { k: 'wiz.beard.crumbs', t: 'The wizard keeps cookies in his beard.' } }, go: [
+        { ap: 'warm', say: '*You find a cookie in your beard and offer it.*', label: 'Find one and offer it', to: 'offered', fx: { fond: 0.02 } },
         { ap: 'jest', say: 'I\'ve lost a spoon in there too. I\'ve stopped looking.', to: 'spoon' },
       ] },
       suit: { line: 'wiz.beard.suit', end: true },
@@ -976,11 +976,11 @@ talkPack('wizard', () => {
     shy: ['...Your beard\'s very long. Sorry. That\'s all.'],
     curious: ['How long does a beard like that take? Is it a year a foot? Do you measure?'],
     dreamy: ['Your beard looks like a waterfall in winter.'],
-    witty: ['That beard\'s got more grey in it than the sky in November.', 'Does the beard come off with the hat, or is it a set?'],
+    witty: ['That beard\'s got more gray in it than the sky in November.', 'Does the beard come off with the hat, or is it a set?'],
     proud: ['My grandfather had a beard like that. He won prizes. Hobbits don\'t usually, you know.'],
     gloomy: ['Doesn\'t it itch? I\'d go mad.'],
     child: ['Can I pull your beard? Just a little bit? Is it real?', 'Is there anything living in your beard? Like a mouse?', 'Your beard is longer than my whole ARM!'],
-    elder: ['Your beard was grey when I was young. Mine\'s just started. Hobbits hardly do beards, you know.'],
+    elder: ['Your beard was gray when I was young. Mine\'s just started. Hobbits hardly do beards, you know.'],
     rift: ['How much does that beard weigh? Rough estimate. I\'m curious.', 'Back home everyone had laser-trimmed everything. That\'s a real beard. Respect.'],
     herbalist: ['That beard could do with a rinse of rosemary. I could do you a bottle.'],
   });
@@ -1000,7 +1000,7 @@ talkPack('wizard', () => {
   });
   wz('wiz.beard.grow', {
     _: ['Me? Hobbits don\'t do beards. Not proper ones.', 'I tried once. It came out like a hedgehog had sat on my chin.'],
-    cheerful: ['Ooh, I\'d love one! I\'d plait it! With ribbons!'],
+    cheerful: ['Ooh, I\'d love one! I\'d braid it! With ribbons!'],
     ornery: ['Hobbits with beards. Whatever next. Dwarves in the Badger?'],
     shy: ['...I\'d like one. To hide behind.'],
     curious: ['Can hobbits grow them? I\'ve seen one or two. Is it the diet? The weather?'],
@@ -1027,31 +1027,31 @@ talkPack('wizard', () => {
     rift: ['A living nest. In your face hair. That\'s the most organic thing I\'ve heard all week.'],
   });
   wz('wiz.beard.advice', {
-    _: ['Comb it with a bit of goose fat. Gran swore by it.', 'Plait it, in the wet. Keeps the mud off.', 'Tuck it in your belt at the bridge. That\'s where the wind gets up.'],
+    _: ['Comb it with a bit of goose fat. Gran swore by it.', 'Braid it, in the wet. Keeps the mud off.', 'Tuck it in your belt at the bridge. That\'s where the wind gets up.'],
     cheerful: ['Ribbons! A ribbon at the end. A red one. Then everyone sees you coming!'],
     ornery: ['A pair of shears and five minutes. That\'s my advice.'],
     shy: ['...A beard-net? Like for hair? I could make you one.'],
     curious: ['Have you tried oil? Which kind? Walnut? Linseed? I\'d like to test them all.'],
-    dreamy: ['Brush it out under the moon. My nan said that\'s when hair grows kindest.'],
+    dreamy: ['Brush it out under the moon. My grandma said that\'s when hair grows kindest.'],
     witty: ['Teach it to sit. A well-trained beard\'s a joy.'],
     proud: ['Our family uses a bone comb. Hand-carved. I could lend you it. Carefully.'],
     gloomy: ['Don\'t bother. It\'ll only get rained on.'],
-    child: ['Put it in a ponytail! Like Mum\'s! I can do it! I\'m good at ponytails!'],
+    child: ['Put it in a ponytail! Like Mom\'s! I can do it! I\'m good at ponytails!'],
     elder: ['Wash it in rainwater, dry it by the fire, and never, ever let a child near it.'],
     rift: ['Static brush. We had those. Plug it in, and every hair stands to attention.'],
     herbalist: ['Rosemary oil and a nettle rinse. I\'ll make you a bottle. You\'ll smell like a herb bed.'],
-    knitting: ['A beard-cosy! I\'ll knit you one! For winter! In grey, to match!'],
+    knitting: ['A beard-cozy! I\'ll knit you one! For winter! In gray, to match!'],
     baker: ['Keep it out of the dough, is all I ask. I found one in a loaf once. Not yours, I hope.'],
   });
   wz('wiz.beard.crumbs', {
-    _: ['Biscuits! In your beard! I knew it smelt of shortbread.', 'Ha! That explains the birds.'],
-    cheerful: ['Ha! I\'m checking next time. I\'ll have a biscuit out of there.'],
+    _: ['Cookies! In your beard! I knew it smelled of shortbread.', 'Ha! That explains the birds.'],
+    cheerful: ['Ha! I\'m checking next time. I\'ll have a cookie out of there.'],
     ornery: ['That\'s how you get mice.'],
     shy: ['...Really? What kind?'],
     curious: ['How do they stay in? Is there a pocket? Is it a beard-pocket?'],
-    dreamy: ['A beard full of biscuits. That\'s a beard for a long road.'],
+    dreamy: ['A beard full of cookies. That\'s a beard for a long road.'],
     witty: ['A wizard with a larder in his beard. You\'ve thought of everything.'],
-    proud: ['I keep my biscuits in a tin. Like a civilised hobbit.'],
+    proud: ['I keep my cookies in a tin. Like a civilized hobbit.'],
     gloomy: ['Soggy ones, I\'ll bet.'],
     child: ['CAN I HAVE ONE? Can I find one? I\'ll look! Hold still!'],
     elder: ['Very sensible. I keep humbugs in my sleeve. Same principle.'],
@@ -1063,7 +1063,7 @@ talkPack('wizard', () => {
     ornery: ['I\'d look like a gorse bush.'],
     shy: ['...Maybe a small one.'],
     curious: ['How long before folk would notice? A week? A month? I\'ll keep a chart.'],
-    dreamy: ['Me, with a long grey beard, sitting on a hill. I can see it.'],
+    dreamy: ['Me, with a long gray beard, sitting on a hill. I can see it.'],
     witty: ['A fine brushy one. To match my fine brushy personality.'],
     proud: ['I\'d grow a better one than most, I expect.'],
     gloomy: ['It\'d come in patchy. Everything does.'],
@@ -1133,7 +1133,7 @@ talkPack('wizard', () => {
     ornery: ['Disgusting. I take it all back.'],
     shy: ['...I\'ll keep my advice to myself, then.'],
     curious: ['Is that true? How long was the scarf?'],
-    dreamy: ['A grey scarf that remembers being a wizard\'s beard. That\'s a story.'],
+    dreamy: ['A gray scarf that remembers being a wizard\'s beard. That\'s a story.'],
     witty: ['A scarf made of advice. Very warming. Very itchy.'],
     proud: ['I\'d have advised better.'],
     gloomy: ['Course they did.'],
@@ -1143,16 +1143,16 @@ talkPack('wizard', () => {
   });
   wz('wiz.beard.offered', {
     _: ['*takes it, inspects it, eats it* ...It\'s actually quite good.', 'From your beard! Oh, I can\'t. ...Oh, go on.'],
-    cheerful: ['A BEARD BISCUIT! *eats it at once* Best biscuit ever!'],
-    ornery: ['I will not eat a biscuit from your beard. *eats it* Hmph.'],
+    cheerful: ['A BEARD COOKIE! *eats it at once* Best cookie ever!'],
+    ornery: ['I will not eat a cookie from your beard. *eats it* Hmph.'],
     shy: ['*takes it, and keeps it in a pocket for later*'],
     curious: ['*turns it over* Ginger. From Bree, I\'d say. Two weeks old. Am I right?'],
-    dreamy: ['*holds it up to the light* A biscuit that\'s been on the road with you. I\'ll treasure it. And then eat it.'],
+    dreamy: ['*holds it up to the light* A cookie that\'s been on the road with you. I\'ll treasure it. And then eat it.'],
     witty: ['I\'ll eat it, but I\'m telling everyone where it came from.'],
     proud: ['Thank you. I\'ll eat it later. In private.'],
     gloomy: ['*eats it* ...That\'s cheered me up. Of all things.'],
     child: ['*eats it in one go* MORE! Is there more in there? Can I look?'],
-    elder: ['Ha! *takes it* Haven\'t had a beard biscuit since the Old Took\'s day.'],
+    elder: ['Ha! *takes it* Haven\'t had a beard cookie since the Old Took\'s day.'],
     rift: ['*eats it* Organic. Unprocessed. Tastes like... pipe-weed. And kindness.'],
   });
   wz('wiz.beard.spoon', {
@@ -1166,14 +1166,14 @@ talkPack('wizard', () => {
     proud: ['I\'ve never lost a spoon in my life. We count them on Highdays.'],
     gloomy: ['That\'ll be gone for ever, then. Like my good spoon.'],
     child: ['A SPOON? Let me find it! Let me LOOK! *peers into the beard*'],
-    elder: ['I lost my teeth once. Found them in the bread bin. So I understand.'],
+    elder: ['I lost my teeth once. Found them in the bread box. So I understand.'],
     rift: ['I could build you a metal detector. For your beard. Genuinely.'],
   });
 
   // --- The wagon and the horse -------------------------------------------------------------
   addThread({
     id: 'wiz.wagon', theirs: true, label: 'They ask about your wagon and horse', cool: 5,
-    ask: '{Name} nods towards your wagon by the party field.',
+    ask: '{Name} nods toward your wagon by the party field.',
     beats: {
       start: { line: 'wiz.wagon.q', go: [
         { ap: 'jest', say: 'She has a name. She\'s never seen fit to tell me it.', to: 'name' },
@@ -1226,7 +1226,7 @@ talkPack('wizard', () => {
     shy: ['...I gave your horse a carrot. I hope that\'s all right.', '...Your horse looks kind.'],
     curious: ['What\'s in all those crates? How many are there? Do you count them?', 'How old\'s your horse? Do wizard horses live longer? Is she a bit magic?'],
     dreamy: ['Your wagon looks like it\'s been everywhere. Even the places that aren\'t on maps.'],
-    witty: ['Your horse looks more sensible than you. No offence. Mostly to the horse.'],
+    witty: ['Your horse looks more sensible than you. No offense. Mostly to the horse.'],
     proud: ['We keep a very fine pony at our place. Very fine. Your horse is... sturdy.'],
     gloomy: ['That wagon looks lonely, out there on its own at night.'],
     child: ['Can I ride your HORSE? Please? Just to the bridge?', 'What\'s your horse CALLED? Is she magic? Can she fly?'],
@@ -1270,7 +1270,7 @@ talkPack('wizard', () => {
     shy: ['...I\'d like a little home on wheels. Somewhere small to hide.'],
     curious: ['What\'s inside? Is there a bed? A stove? Where do you keep the fireworks?'],
     dreamy: ['A home that takes you places. That\'s the dream, isn\'t it.'],
-    witty: ['And when the neighbours get noisy, you just drive off. Clever.'],
+    witty: ['And when the neighbors get noisy, you just drive off. Clever.'],
     proud: ['Our home\'s been in the family nine generations. Built into the hill. Doesn\'t move an inch.'],
     gloomy: ['No proper home. That\'s sad. Even I have a proper home.'],
     child: ['A house with WHEELS! Can I sleep in it? Just once?'],
@@ -1286,7 +1286,7 @@ talkPack('wizard', () => {
     curious: ['How will you know if she says yes? A nod? A whinny? A look?'],
     dreamy: ['If she likes it, she\'ll go a bit faster on the road. You\'ll see.'],
     witty: ['And if she says no, I\'ve a list. A long list.'],
-    proud: ['She\'d be honoured. It\'s a very good name.'],
+    proud: ['She\'d be honored. It\'s a very good name.'],
     gloomy: ['She\'ll say no. Nobody says yes to me.'],
     child: ['She\'ll say YES! I KNOW she will!'],
     elder: ['Old Meg would be proud. Tell her that.'],
@@ -1316,7 +1316,7 @@ talkPack('wizard', () => {
     witty: ['A cat. Or rather, I belong to a cat. It\'s very clear on that.'],
     proud: ['We keep the best laying hens on the lane. Prize-winning.'],
     gloomy: ['I had a dog. He was old. I don\'t want to talk about it.'],
-    child: ['I have a SNAIL. His name is Gerald. He\'s very fast for a snail.', 'I want a puppy. Mum says no. Will you tell Mum yes?'],
+    child: ['I have a SNAIL. His name is Gerald. He\'s very fast for a snail.', 'I want a puppy. Mom says no. Will you tell Mom yes?'],
     elder: ['Just the old cat now. We\'re much of an age, the cat and me.'],
     rift: ['Back home I had a robot cat. Here there\'s a real one that keeps visiting. It\'s better.'],
     herder: ['Sheep, cows and pigs, all day long. And a dog who thinks he\'s in charge.'],
@@ -1328,7 +1328,7 @@ talkPack('wizard', () => {
     shy: ['*holds out the apple with a shaky hand, and she takes it softly*'],
     curious: ['*watches her eat* Do horses taste things the way we do? She looks like she does.'],
     dreamy: ['*gives her the apple* There. Now we\'re friends, you and me.'],
-    witty: ['*gives the apple* That\'s a bribe, horse. I\'ll want a favour back.'],
+    witty: ['*gives the apple* That\'s a bribe, horse. I\'ll want a favor back.'],
     proud: ['*gives her the best apple* Only the best, for a guest.'],
     gloomy: ['*gives her the apple* ...She liked it. Something liked something I did.'],
     child: ['*holds the apple up high* Here, horsey! HERE! She took it! She TOOK it!'],
@@ -1374,7 +1374,7 @@ talkPack('wizard', () => {
     witty: ['A spare wizard. In case the first one broke.'],
     proud: ['My family portraits. All of them. On the walls. Very straight.'],
     gloomy: ['An umbrella. You know why.'],
-    child: ['My snail. And sweets. And a SWORD.'],
+    child: ['My snail. And candy. And a SWORD.'],
     elder: ['My letters. Seventy years of them. And a good stout pair of slippers.'],
     rift: ['A solar panel. A kettle. And a way home.'],
     spouse: ['{Spouse}. Wherever {spouse} is, that\'s home enough. Don\'t tell {spouse} I said that.'],
@@ -1385,7 +1385,7 @@ talkPack('wizard', () => {
     ornery: ['Just keep it off the good grass.'],
     shy: ['...I\'m glad you stop here.'],
     curious: ['Is it really? Out of everywhere you\'ve been?'],
-    dreamy: ['Then this is your harbour. Every wagon needs a harbour.'],
+    dreamy: ['Then this is your harbor. Every wagon needs a harbor.'],
     witty: ['Flattery will get you a cup of tea. A small one.'],
     proud: ['Of course it is. Best valley there is.'],
     gloomy: ['...That\'s nice. That you think so.'],
@@ -1428,7 +1428,7 @@ talkPack('wizard', () => {
     ornery: ['She\'d best not. I\'ve nowhere to put a horse.'],
     shy: ['...I\'d like that, a bit.'],
     curious: ['Would she, though? Has she done that before?'],
-    dreamy: ['Me and a grey horse, walking home together. Like a story.'],
+    dreamy: ['Me and a gray horse, walking home together. Like a story.'],
     witty: ['You\'d never get her back. I\'d feed her too well.'],
     proud: ['She\'d be very well kept at ours.'],
     gloomy: ['She wouldn\'t. Nothing follows me.'],
@@ -1457,7 +1457,7 @@ talkPack('wizard', () => {
     shy: ['...I wouldn\'t mind.'],
     curious: ['Has that happened? Did someone have a wizard for a hundred years?'],
     dreamy: ['A hundred years of tea. Imagine the stories.'],
-    witty: ['Then I\'ll charge rent. Starting from the first biscuit.'],
+    witty: ['Then I\'ll charge rent. Starting from the first cookie.'],
     proud: ['We could manage a hundred years. We\'ve the room.'],
     gloomy: ['A hundred years. I\'ll not last that long.'],
     child: ['STAY A HUNDRED YEARS! STAY A MILLION!'],
@@ -1518,7 +1518,7 @@ talkPack('wizard', () => {
   });
   wz('wiz.eats.q', {
     _: ['What does a wizard eat? You never seem to eat.', 'Do wizards eat proper food? Or just smoke and starlight?', 'When did you last have a proper meal, wizard?'],
-    cheerful: ['What\'s a wizard\'s favourite food? Mine\'s everything!', 'Do you like pie? Everyone likes pie. Wizards must like pie.'],
+    cheerful: ['What\'s a wizard\'s favorite food? Mine\'s everything!', 'Do you like pie? Everyone likes pie. Wizards must like pie.'],
     ornery: ['You\'re thin as a rake. Doesn\'t anyone feed you?', 'Do you eat, or do you just turn up at other folk\'s suppers?'],
     shy: ['...Do you get hungry? You never look hungry.', '...Would you like something to eat? Sorry. You probably have food.'],
     curious: ['What do wizards eat? Is it different? Do you need more, for the magic?'],
@@ -1526,9 +1526,9 @@ talkPack('wizard', () => {
     witty: ['How many breakfasts does a wizard have? One? That explains a great deal.'],
     proud: ['Have you ever eaten a proper hobbit supper? A really proper one? Ours, say?'],
     gloomy: ['You look like you\'ve not eaten in a week. Nobody looks after you.'],
-    child: ['What\'s your favourite food? Is it frogs? Do wizards eat FROGS?', 'Do you eat dragon eggs? For breakfast? On toast?'],
+    child: ['What\'s your favorite food? Is it frogs? Do wizards eat FROGS?', 'Do you eat dragon eggs? For breakfast? On toast?'],
     elder: ['You never put on a pound, all these years. What\'s your secret? Don\'t say walking.'],
-    rift: ['What\'s your fuel? Back home it was nutrient paste. Grey. Tasted grey.'],
+    rift: ['What\'s your fuel? Back home it was nutrient paste. Gray. Tasted gray.'],
     hungry: ['I\'m starving. Are you starving? You look starving.'],
     baker: ['Do wizards like seed-cake? I\'ve one cooling now.'],
     innkeeper: ['You never order at the Badger. What do wizards eat, then?'],
@@ -1559,7 +1559,7 @@ talkPack('wizard', () => {
     proud: ['That would never happen at our table. Never.'],
     gloomy: ['I know how that is. Some weeks.'],
     child: ['You can have my dinner! Not my pudding. My dinner.'],
-    elder: ['When I was a girl we fed every traveller who passed. Every one. Things have slipped.'],
+    elder: ['When I was a girl we fed every traveler who passed. Every one. Things have slipped.'],
     rift: ['Same, first week here. Then a hill-hobbit fed me soup. Changed everything.'],
     hungry: ['Nothing! And here\'s me moaning, and I had breakfast. Twice.'],
   });
@@ -1595,7 +1595,7 @@ talkPack('wizard', () => {
     witty: ['...I\'ll tell you, and then I\'ll have to feed you to the horse. The bottom of the long meadow.'],
     proud: ['...On our own land, of course. The far corner. Best in the valley. Not a word.'],
     gloomy: ['...By the churchyard wall. Nobody goes there. That\'s why.'],
-    child: ['...I KNOW A PLACE. Behind the hen house. Don\'t tell Mum. She\'d eat them all.'],
+    child: ['...I KNOW A PLACE. Behind the hen house. Don\'t tell Mom. She\'d eat them all.'],
     elder: ['...My grandmother\'s spot. Sixty years I\'ve kept it. By the stone with the hole in.'],
     rift: ['...I tagged them with a marker. Under the rift scar. They glow a bit. Is that bad?'],
   });
@@ -1656,7 +1656,7 @@ talkPack('wizard', () => {
     rift: ['Seconds. Thirds. Here they just keep giving you food. It\'s incredible.'],
   });
   wz('wiz.eats.made', {
-    _: ['Every bit. Since breakfast. Well, second breakfast.', 'With my own hands. Burnt one thumb.'],
+    _: ['Every bit. Since breakfast. Well, second breakfast.', 'With my own hands. Burned one thumb.'],
     cheerful: ['All of it! I sang to it while it cooked! It\'s a happy pie!'],
     ornery: ['Who else would? There\'s nobody else in my kitchen worth trusting.'],
     shy: ['...Yes. It\'s not very good. It\'s quite good. It\'s all right.'],
@@ -1673,7 +1673,7 @@ talkPack('wizard', () => {
     _: ['Good. I\'ll know if you tell.', 'Then go, before I change my mind.'],
     cheerful: ['Ha! Good! Now you\'re one of the mushroom folk!'],
     ornery: ['You\'d better. I\'ll check.'],
-    shy: ['...Thank you. That\'s my favourite place.'],
+    shy: ['...Thank you. That\'s my favorite place.'],
     curious: ['And tell me if you find any I\'ve missed.'],
     dreamy: ['Go at dawn. That\'s when they\'re best. When the mist\'s still on them.'],
     witty: ['The horse is sworn too, then. She looks discreet.'],
@@ -1707,7 +1707,7 @@ talkPack('wizard', () => {
     witty: ['The first step is admitting it. Next, elevenses.'],
     proud: ['We invented it, you know. Hobbits. Everyone else just copies.'],
     gloomy: ['Second breakfast is the only thing that gets me through the morning.'],
-    child: ['I have SIX breakfasts. Mum only knows about two.'],
+    child: ['I have SIX breakfasts. Mom only knows about two.'],
     elder: ['It\'s about time you learned. Took you long enough.'],
     rift: ['Two breakfasts. I thought they were joking. They\'re not joking.'],
   });
@@ -1721,7 +1721,7 @@ talkPack('wizard', () => {
     witty: ['An ancient family recipe. Ancient as last Thursday.'],
     proud: ['A family recipe, nine generations old. The finest.'],
     gloomy: ['My mother\'s. She\'s gone now. I make it on her birthday.'],
-    child: ['My MUM\'S! It\'s a secret! But I know some of it!'],
+    child: ['My MOM\'S! It\'s a secret! But I know some of it!'],
     elder: ['Mine, now. I\'ve made it longer than anyone else alive.'],
     rift: ['A hill-hobbit taught me. It\'s my first recipe that isn\'t from a packet.'],
   });
@@ -1809,7 +1809,7 @@ talkPack('wizard', () => {
   });
   wz('wiz.any.say.share', {
     _: ['Because I\'m happy here. Wizards aren\'t, often. I come to remember how it\'s done.'],
-    cheerful: ['Truly? A small one, in a hill parlour, with nobody important there at all. I think it was yours.'],
+    cheerful: ['Truly? A small one, in a hill parlor, with nobody important there at all. I think it was yours.'],
     ornery: ['Because sometimes the world needs a push, and I\'d rather it were a gentle one. I get it wrong, too.'],
     shy: ['Yes. Very much. This is the place I think of on cold nights on the road.'],
     curious: ['I don\'t know. Nobody comes back to say. I\'d like to think it\'s somewhere kind.'],
@@ -1861,7 +1861,7 @@ talkPack('wizard', () => {
   });
   wz('wiz.any.more', {
     _: ['Another? All right. Do you ever wish you\'d stayed somewhere?'],
-    cheerful: ['Another! What\'s your favourite colour? It\'s grey, isn\'t it. It\'s grey.'],
+    cheerful: ['Another! What\'s your favorite color? It\'s gray, isn\'t it. It\'s gray.'],
     ornery: ['Fine. Do you ever get it badly wrong? Properly wrong?'],
     shy: ['...Do you remember everyone\'s names? Even the quiet ones?'],
     curious: ['What\'s the one thing you\'ve never told anyone? Small one. Doesn\'t have to be big.'],
@@ -1869,12 +1869,12 @@ talkPack('wizard', () => {
     witty: ['What\'s under the hat? Hair? More hat? A tiny second wizard?'],
     proud: ['Who\'s the finest hobbit you ever met? Apart from present company.'],
     gloomy: ['Do you ever feel like giving up?'],
-    child: ['What\'s your favourite animal? Is it a dragon? It\'s a dragon.'],
+    child: ['What\'s your favorite animal? Is it a dragon? It\'s a dragon.'],
     'rift!': ['Could you ever go through the rift? To our side? Would you?'],
   });
   wz('wiz.any.say.more.jest', {
     _: ['Every day. Usually just before I\'ve finished a pudding somewhere.'],
-    cheerful: ['Grey is a very cheerful colour. Ask any cloud.'],
+    cheerful: ['Gray is a very cheerful color. Ask any cloud.'],
     ornery: ['I once set a tinker\'s cart on fire with a sneeze. Does that count?'],
     shy: ['Especially the quiet ones. They\'re the ones who notice my hat\'s on wrong.'],
     curious: ['I\'m frightened of geese. There. You\'ll take that to your grave.'],
@@ -1887,14 +1887,14 @@ talkPack('wizard', () => {
   });
   wz('wiz.any.say.more.share', {
     _: ['Sometimes. But a wizard who stays somewhere stops seeing it. I\'d rather keep coming back.'],
-    cheerful: ['Grey, yes. But I\'m very fond of the green of this valley in May.'],
+    cheerful: ['Gray, yes. But I\'m very fond of the green of this valley in May.'],
     ornery: ['Yes. More than once. I carry those. It\'s why I listen more than I used to.'],
     shy: ['Especially the quiet ones. I remember you, {name}. I always will.'],
     curious: ['That I can\'t whistle. Not a note. Seven thousand years, and not one whistle.'],
     dreamy: ['Of a green country under a swift sunrise. I\'ve never seen it. I dream of it anyway.'],
-    witty: ['Very thin grey hair, and a great many worries. The hat keeps them in.'],
+    witty: ['Very thin gray hair, and a great many worries. The hat keeps them in.'],
     proud: ['An old hobbit who gave up her last loaf to a stranger in the Fell Winter. Nobody remembers her name.'],
-    gloomy: ['Yes. And then somebody brings me tea and talks about their marrows, and I don\'t.'],
+    gloomy: ['Yes. And then somebody brings me tea and talks about their pumpkins, and I don\'t.'],
     child: ['Horses. Mine especially. Don\'t tell her. She\'ll be unbearable.'],
     'rift!': ['I don\'t know. Some doors aren\'t mine to open. But I\'d help you through one, if you needed.'],
   });

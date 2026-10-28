@@ -8,7 +8,7 @@
 // village lives on without you, the real simulation run fast behind a
 // journal page: the wagon on the road, the days ticking by, and letters
 // catching you up as things happen, each in its writer's own hand (a small
-// child's is a drawing, then misspelt, then fluent). When something big is
+// child's is a drawing, then misspelled, then fluent). When something big is
 // coming (a child you know coming of age, a baby due, an elder near the
 // end, a Moot) a letter asks you to come back, and you can turn the wagon
 // round or stay on the road and miss it.
@@ -252,7 +252,7 @@ function writerFor(e) {
   const fond = Game.villagers.filter((v) => v.isGrown() && !v.leaving && closeToHim(v) && !about.includes(v)).sort((a, b) => (J.sent[a.id] || 0) - (J.sent[b.id] || 0) || weight(b) - weight(a));
   return fond[0] || null;
 }
-// A letter in its writer's hand: a small child's is a drawing, then misspelt, then fluent.
+// A letter in its writer's hand: a small child's is a drawing, then misspelled, then fluent.
 const MISSPELL = [[/\bwizard\b/g, 'wizzard'], [/\bbecause\b/g, 'becos'], [/\bfireworks\b/g, 'firewurks'], [/\blittle\b/g, 'littel'], [/\bfriend/g, 'frend'], [/\bsaid\b/g, 'sed'], [/\bplease\b/g, 'pleez'], [/\bwas\b/g, 'wos'], [/\bvery\b/g, 'verry'], [/\bbirthday\b/g, 'burthday'], [/\bwedding\b/g, 'weding'], [/\bbaby\b/g, 'babby']];
 function inHand(v, text, drawing) {
   if (v.isChild() && v.edu < 0.12) return `<i>A drawing in crayon: ${drawing || 'you, very tall, with a hat like a chimney, and a dragon'}. Underneath, in a grown-up's hand: "${escapeHtml(v.first)} wanted you to have this."</i>`;
@@ -261,7 +261,7 @@ function inHand(v, text, drawing) {
     for (const [re, to] of MISSPELL) t = t.replace(re, to);
     return escapeHtml(t.replace(/\./g, '').replace(/!/g, '!!'));
   }
-  if (v.isGrown() && v.edu < 0.12) return `${escapeHtml(text)} <i>(Written for ${v.pron.them} by the postie.)</i>`;
+  if (v.isGrown() && v.edu < 0.12) return `${escapeHtml(text)} <i>(Written for ${v.pron.them} by the mail carrier.)</i>`;
   return escapeHtml(text);
 }
 const SIGN = { cheerful: 'Love and cake,', ornery: 'Yours, I suppose,', shy: 'Yours (quietly),', curious: 'Write back and tell me everything!', dreamy: 'Under the same stars,', witty: 'Yours in haste, and in pie,', proud: 'With respect,', gloomy: 'It rained. Yours,' };
@@ -285,9 +285,9 @@ function letterFrom(v, kind, { e }) {
     case 'rift': text = `Another one came through the rift: ${and(ids.map(jName)) || 'a stranger'}. Blinking, poor thing, and no idea what a scone is.`; break;
     case 'home': text = `There's a new hole finished on the knoll. The door's painted and the kettle's on.`; break;
     case 'trade': text = me ? `I've taken up a trade! ${v.job ? `I'm ${aAn(JOBS[v.job].label.toLowerCase())} now.` : ''}` : `${and(ids.map(jName))} ${ids.length > 1 ? 'have' : 'has'} taken up a trade.`; break;
-    case 'party': text = 'We had a party. The fireworks weren\'t a patch on yours.'; drawing = 'fireworks, in every colour of crayon'; break;
+    case 'party': text = 'We had a party. The fireworks weren\'t a patch on yours.'; drawing = 'fireworks, in every color of crayon'; break;
     case 'clue': text = 'Something odd about the rifts. The rift-folk are all whispering about it. Come back and make sense of it?'; break;
-    case 'child': text = R.pick(['I learned my letters up to M!', 'I found a frog. I called it Gandalf.', 'When are you coming back? Mum says soon.', 'I can skim a stone four times now.', 'We had a party and I stayed up til ten.']); drawing = R.pick(['a frog with a pointed hat', 'you, riding a dragon', 'the wagon, with too many wheels']); break;
+    case 'child': text = R.pick(['I learned my letters up to M!', 'I found a frog. I called it Gandalf.', 'When are you coming back? Mom says soon.', 'I can skim a stone four times now.', 'We had a party and I stayed up til ten.']); drawing = R.pick(['a frog with a pointed hat', 'you, riding a dragon', 'the wagon, with too many wheels']); break;
     case 'roundup': { const f = feelingsOf(v).find((x) => x[3] && MOODLETS[x[3].k] && MOODLETS[x[3].k][3] && !x[3].k.startsWith('wizard')); text = `All's well here. ${f ? MOODLETS[f[3].k][3][0].replace('{x}', f[3].x || '') : 'Nothing much has happened, and I mean that kindly.'}`; break; }
     default: return;
   }
@@ -443,10 +443,10 @@ function sinceCards(J, newIds, newHomes, forgot, found) {
     }
     const now = jStage(v);
     if (was.s !== now) {
-      const grew = was.s === 'baby' ? 'toddling about' : now === 'adult' ? 'come of age' : now === 'elder' ? 'gone a little grey' : now === 'youth' ? 'shot up like a beanpole' : 'grown';
+      const grew = was.s === 'baby' ? 'toddling about' : now === 'adult' ? 'come of age' : now === 'elder' ? 'gone a little gray' : now === 'youth' ? 'shot up like a beanpole' : 'grown';
       const verb = (many) => (grew === 'toddling about' ? (many ? 'are ' : 'is ') : many ? 'have ' : 'has ') + grew;
       const sc = (now === 'adult' ? 4 : 2) * imp(v.id) * (was.met ? 1.5 : 1);
-      const note = { 'come of age': 'You\'d hardly know them.', 'gone a little grey': 'Getting on a bit, though nobody says so.', 'toddling about': 'And into everything.', 'shot up like a beanpole': 'All knees and elbows.' }[grew] || '';
+      const note = { 'come of age': 'You\'d hardly know them.', 'gone a little gray': 'Getting on a bit, though nobody says so.', 'toddling about': 'And into everything.', 'shot up like a beanpole': 'All knees and elbows.' }[grew] || '';
       add(sc, { id: v.id, grew, many: verb(true), head: `${v.first} ${verb(false)}`, text: forgot.includes(v.id) ? 'And doesn\'t remember you, I\'m afraid.' : was.met || grew !== 'come of age' ? note : '', then: was.s, now: true });
     }
     if (v.spouse && v.spouse !== was.sp) add(4 * Math.max(imp(v.id), imp(v.spouse)), { id: v.id, head: `${v.first} and ${jName(v.spouse)} were married`, text: 'beneath the party tree, without you.', now: true, pair: v.spouse });
@@ -504,7 +504,7 @@ function reunionLine(v) {
   const B = Game.wizBack, was = B && B.snap[v.id];
   if (!was) return null;
   const now = jStage(v);
-  if (B.forgot.includes(v.id)) return R.pick(['Do I know you? Mum says you were here before, when I was little.', '...Who are you? You\'ve got a very big hat.']);
+  if (B.forgot.includes(v.id)) return R.pick(['Do I know you? Mom says you were here before, when I was little.', '...Who are you? You\'ve got a very big hat.']);
   if (was.s !== 'adult' && now === 'adult') return `It's me, ${v.first}! I was this high when you left. I've come of age!`;
   if (was.s !== now && v.isChild()) return R.pick(['You came back! I\'ve grown a whole inch. Two!', `Gandalf! It's me! ${v.first}! Look how tall I am!`]);
   if (v.spouse && v.spouse !== was.sp) return R.pick(['You missed the wedding, you old goat! We saved you some cake.', `You missed the wedding! ${jName(v.spouse)} and I waited as long as we could.`]);

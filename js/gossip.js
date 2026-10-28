@@ -17,7 +17,7 @@ LINES.surprise = {
   common: ['Well I never!', 'You don\'t say!', 'Fancy that!', 'Bless my buttons!'],
   fine: ['How perfectly extraordinary.', 'Goodness, I had no idea.', 'What splendid news.'],
   child: ['Really? Wow!', 'No way!', 'Ooh! Tell me more!'],
-  bright: ['Really? How marvellous!', 'Goodness! Truly?'],
+  bright: ['Really? How marvelous!', 'Goodness! Truly?'],
 };
 function newsList() { return Game.news || (Game.news = []); }
 function knowsNews(v, n) { return n.knowers.includes(v.id); }

@@ -6,7 +6,7 @@
 //   Village:     farming (crops grow faster), building (works go faster) or
 //                merrymaking (parties and feasts lift spirits more)
 //   Market Town: commerce (better prices from the caravans), learning (more
-//                lore) or hospitality (travellers settle more readily)
+//                lore) or hospitality (travelers settle more readily)
 //   Shire Town:  renown (charters pay more), tidiness (everything is lovelier)
 //                or the great outdoors (hazards are gentler)
 // ---------------------------------------------------------------------------
@@ -20,7 +20,7 @@ const TRADITIONS = {
   2: [
     { k: 'commerce', name: 'A tradition of commerce', desc: 'The caravans pay 20% more and charge 10% less.' },
     { k: 'learning', name: 'A tradition of learning', desc: 'Half as much lore again from every source.' },
-    { k: 'hospitality', name: 'A tradition of hospitality', desc: 'Travellers settle more readily, even when spirits are only fair.' },
+    { k: 'hospitality', name: 'A tradition of hospitality', desc: 'Travelers settle more readily, even when spirits are only fair.' },
   ],
   3: [
     { k: 'renown', name: 'A tradition of renown', desc: 'Every charter pays half as much again.' },
@@ -57,7 +57,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const c = contentment();
     if (c >= 55 && c < 66 && Game.villagers.length < MAX_POP - 2 && Game.day - (Game.lastTraveller ?? -9) >= 2 && R.chance(0.25)) {
       const r = welcomeTraveller(null, true);
-      if (r && r.ok !== false) { Game.lastTraveller = Game.day; chronicle(`Thistledown's famous hospitality has drawn ${r.v ? r.v.name() : 'a traveller'} up the West Road to settle.`, 'birth'); }
+      if (r && r.ok !== false) { Game.lastTraveller = Game.day; chronicle(`Thistledown's famous hospitality has drawn ${r.v ? r.v.name() : 'a traveler'} up the West Road to settle.`, 'birth'); }
       return;
     }
     return md();

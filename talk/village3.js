@@ -185,7 +185,7 @@ talkPack('village3', () => {
     rift: ['Matter printing. We had that. It tasted like printer.'],
   });
   say('village.store.confess', {
-    _: ['...Me. Seed-cake. On Highdays. One slice. Fine. Two.', 'Ha! Don\'t you look at me like that. A hobbit\'s entitled to a biscuit.'],
+    _: ['...Me. Seed-cake. On Highdays. One slice. Fine. Two.', 'Ha! Don\'t you look at me like that. A hobbit\'s entitled to a cookie.'],
     ornery: ['Hmph. A jar of honey went missing. I didn\'t take it. I didn\'t NOT take it.'],
     shy: ['...I took a jar of plum jam once. I put a jar of damson back. Is that all right?'],
     witty: ['Nobody. Absolutely nobody. Certainly not someone with crumbs on their waistcoat.'],
@@ -275,7 +275,7 @@ talkPack('village3', () => {
     ornery: ['Too full. Too loud. The stools wobble. I\'m there every night.'],
     shy: ['I like the corner by the window. Nobody notices me there. It\'s lovely.'],
     curious: ['Fascinating place. You learn more in an hour at the Badger than a year of books.'],
-    dreamy: ['On a winter night the windows glow like a lantern in the hill. I love walking towards it.'],
+    dreamy: ['On a winter night the windows glow like a lantern in the hill. I love walking toward it.'],
     witty: ['The Badger is the only place in Thistledown where the ale and the conversation are equally watered.'],
     proud: ['A respectable house, mostly. I go for the company. The better company.'],
     gloomy: ['Everyone\'s happy at the Badger. I go and watch.'],
@@ -298,7 +298,7 @@ talkPack('village3', () => {
     dreamy: ['The window seat, for the moon. If the moon\'s out.'],
     witty: ['Seating is by order of loudness. The loudest get the fire.'],
     proud: ['There\'s a proper order to it. I have the good chair, near the fire, not too near.'],
-    gloomy: ['By the draught. That\'s where they leave room for me.'],
+    gloomy: ['By the draft. That\'s where they leave room for me.'],
     child: ['I don\'t know. I\'m not allowed in! Where do YOU sit?'],
     rift: ['The rift crowd sits by the window, where the signal\'s best. Old habits.'],
   }, [
@@ -324,7 +324,7 @@ talkPack('village3', () => {
     ornery: ['Every Mersday. I go to complain about the noise. Then I sing.'],
     shy: ['I go. I don\'t sing. I mouth the words. It\'s nice.'],
     curious: ['Do you know, nobody knows who wrote half those songs? I\'ve asked.'],
-    dreamy: ['The slow ones at the end, when the fire\'s low. That\'s my favourite bit of the week.'],
+    dreamy: ['The slow ones at the end, when the fire\'s low. That\'s my favorite bit of the week.'],
     witty: ['Every Mersday the Badger is full of hobbits who can\'t sing, singing.'],
     proud: ['I have a fine baritone, I\'m told. I\'m told it frequently. By me.'],
     gloomy: ['I sit at the back. The songs are all about folk who\'ve gone.'],
@@ -443,7 +443,7 @@ talkPack('village3', () => {
     { if: { vTraderKey: 'bree' }, pri: 2, text: ['Barliman\'s in from Bree! Knows everyone, forgets everyone, back again next month.'] },
     { if: { vTraderKey: 'dwarf' }, pri: 2, text: ['A dwarf! In the square! Selling iron and buying every pie in sight.'] },
     { if: { vTraderKey: 'took' }, pri: 2, text: ['The cheesemonger from Tookland! You can smell the wagon from the bridge.'] },
-    { if: { vTraderKey: 'rift' }, pri: 2, text: ['Vex is in with the salvage cart. Half the village is scandalised. The other half\'s queuing.'] },
+    { if: { vTraderKey: 'rift' }, pri: 2, text: ['Vex is in with the salvage cart. Half the village is scandalized. The other half\'s lining up.'] },
     { if: { vMarketTomorrow: true, vTrader: null }, text: ['Market day tomorrow. I\'ve been saving up since last Trewsday.'] },
   ]);
   say('village.market.buy', {
@@ -458,7 +458,7 @@ talkPack('village3', () => {
     gloomy: ['I never have a full purse. So, nothing.'],
     rift: ['A battery. A real one. ...They don\'t sell those. Honey, then.'],
   }, [
-    { if: { job: 'farmer' }, text: ['A new plough-share. The old one\'s more patch than iron.'] },
+    { if: { job: 'farmer' }, text: ['A new plow-share. The old one\'s more patch than iron.'] },
     { if: { job: 'woodwright' }, text: ['Dwarf iron. Nails that don\'t bend. You\'ve no idea what bad nails do to a hobbit.'] },
     { if: { job: 'baker' }, text: ['Spice! Proper spice from the south. For the Yule cakes.'] },
     { if: { job: 'tinker' }, text: ['Scrap. Good scrap. You\'d be amazed what you can make with the right scrap.'] },
@@ -498,7 +498,7 @@ talkPack('village3', () => {
     _: ['As far as I can throw a wagon.', 'Mostly. I count my change. Twice.'],
     cheerful: ['Oh, mostly! Everyone\'s honest on a sunny day.'],
     ornery: ['No. And they don\'t trust me either. It works.'],
-    proud: ['I trust my own judgement. That\'s enough.'],
+    proud: ['I trust my own judgment. That\'s enough.'],
   });
   say('village.market.pea', {
     _: ['Ha! A pea! Did you plant it?', 'A magic pea is still a pea. Was it a good pea?'],
@@ -548,7 +548,7 @@ talkPack('village3', () => {
   say('village.board.start', {
     _: ['Lost hens, a recipe, and somebody selling a goat. The usual.', 'Nothing much. A note about the well rope. A very cross note.', 'Same as ever. Notices about notices.'],
     cheerful: ['Oh, there\'s a dance on! Probably. There usually is!'],
-    ornery: ['Rubbish, mostly. Complaints. Half of them mine.'],
+    ornery: ['Nonsense, mostly. Complaints. Half of them mine.'],
     shy: ['I read it every day. I never pin anything up.'],
     curious: ['I read every notice. Even the old ones underneath. Especially those.'],
     dreamy: ['Somebody pinned up a poem last week. No name on it. I copied it out.'],
@@ -575,7 +575,7 @@ talkPack('village3', () => {
   say('village.board.listen', {
     _: ['Sometimes. When it suits.', 'Somebody reads them. Whether they listen is another matter.'],
     gloomy: ['No. Nobody listens to the likes of us.'],
-    ornery: ['They listen to whoever shouts loudest. I\'ve been practising.'],
+    ornery: ['They listen to whoever shouts loudest. I\'ve been practicing.'],
   }, [
     { if: { vFactionMood: ['devoted', 'pleased'] }, pri: 1, text: ['They do, lately! Our lot\'s been heard twice this season. I\'m almost suspicious.', 'Oh yes. We\'ve no complaints. Well, a few. Small ones.'] },
     { if: { vFactionMood: ['grumbling', 'fed up'] }, pri: 1, text: ['Listen? Every petition we put up comes down with a no. Every one.', 'No. And we\'ve noticed. Believe me, we\'ve noticed.'] },
@@ -588,7 +588,7 @@ talkPack('village3', () => {
     proud: ['Our board is for serious notices, wizard.'],
   });
   say('village.board.oddest', {
-    _: ['"Lost: one sense of humour. Answers to Grumble." We all know whose.', 'A notice saying "Do not read this notice." Everyone read it.'],
+    _: ['"Lost: one sense of humor. Answers to Grumble." We all know whose.', 'A notice saying "Do not read this notice." Everyone read it.'],
     curious: ['A map with an X on it and no name. I\'ve dug in three places.'],
     dreamy: ['A pressed flower and the word "sorry". Nobody ever claimed it.'],
     witty: ['"Wanted: someone to want things." I put that one up.'],
@@ -658,7 +658,7 @@ talkPack('village3', () => {
     proud: ['Thistledown is a {vEra} of real standing. Folk in Bree talk about us.'],
     gloomy: ['Bigger means busier. Busier means worse. Probably.'],
     elder: ['I remember when it was three holes and a well. Now look. A {vEra}.'],
-    rift: ['It\'s levelling up. Slowly. No cheat codes.'],
+    rift: ['It\'s leveling up. Slowly. No cheat codes.'],
   }, [
     { if: { vEraReady: true }, pri: 2, text: ['Everything\'s in place for us to be a {vEraNext}! There\'s talk of a Moot. Real talk.', 'They say we\'re ready. A {vEraNext}! The Moot just has to say so.'] },
     { if: { vEra: 'Shire Town' }, pri: 1, text: ['A Shire Town! Fountains! A Great Fair every season! I never thought I\'d see it.'] },
@@ -771,8 +771,8 @@ talkPack('village3', () => {
     child: ['They\'re building {vProject}! There\'s a big hole! I\'m not allowed near the hole!'],
     rift: ['{VProject}. No cranes, no drones. Just hobbits and hammers. Respect.'],
   }, [
-    { if: { vProjectKind: 'home' }, pri: 1, text: ['A new hole! {VProject}. Round door, round windows, the lot.', 'They\'re digging {vProject}. A new hole means new neighbours. Or new babies.'] },
-    { if: { vProjectKind: 'well' }, pri: 1, text: ['A new well! {VProject}. No more queueing at the old one. Less gossip, mind.'] },
+    { if: { vProjectKind: 'home' }, pri: 1, text: ['A new hole! {VProject}. Round door, round windows, the lot.', 'They\'re digging {vProject}. A new hole means new neighbors. Or new babies.'] },
+    { if: { vProjectKind: 'well' }, pri: 1, text: ['A new well! {VProject}. No more waiting in line at the old one. Less gossip, mind.'] },
     { if: { vProjectKind: 'field' }, pri: 1, text: ['{VProject}. Fresh furrows. More barley, more bread, more ale.'] },
     { if: { job: 'woodwright' }, pri: 2, text: ['{VProject}? That\'s mine. My back, my beams, my blisters.', 'I\'m on {vProject}. Ask me about joists. No, don\'t. I\'ll never stop.'] },
   ]);
@@ -780,8 +780,8 @@ talkPack('village3', () => {
     _: ['Nobody knows yet. That\'s the fun. Everybody\'s guessing.', 'A young couple, they say. Or a family that\'s outgrown its hole.'],
     cheerful: ['Whoever it is, I\'ll bake them a welcome cake!'],
     ornery: ['Strangers, probably. Everyone\'s a stranger these days.'],
-    shy: ['I hope it\'s someone kind. I\'d like a kind neighbour.'],
-    curious: ['I have three theories and a bet with the postie.'],
+    shy: ['I hope it\'s someone kind. I\'d like a kind neighbor.'],
+    curious: ['I have three theories and a bet with the mail carrier.'],
     dreamy: ['Someone who doesn\'t know yet that they\'ll live there. Isn\'t that strange?'],
     witty: ['Whoever loses the argument about who gets it.'],
     gloomy: ['Someone luckier than me.'],
@@ -942,7 +942,7 @@ talkPack('village3', () => {
       start: { line: 'village.hazard.start', go: [
         { ap: 'ask', say: 'What can be done?', to: 'done' },
         { ap: 'comfort', say: 'It\'ll pass. These things do.', to: 'pass' },
-        { ap: 'jest', say: 'I\'ll have a word with the weather. It owes me a favour.', to: 'weather' },
+        { ap: 'jest', say: 'I\'ll have a word with the weather. It owes me a favor.', to: 'weather' },
       ] },
       done: { line: 'village.hazard.done', go: [
         { ap: 'advise', say: 'Then let\'s see it done, and quickly.', to: 'do' },
@@ -972,7 +972,7 @@ talkPack('village3', () => {
     curious: ['I\'ve been reading about it in the almanac. There\'s a pattern.'],
     proud: ['My hole is ready. I can\'t speak for anyone else\'s.'],
     gloomy: ['This is the one that finishes us. I\'ve said that before. This time I mean it.'],
-    child: ['Is it going to be bad? Mum says it won\'t be bad.'],
+    child: ['Is it going to be bad? Mom says it won\'t be bad.'],
     rift: ['A real weather event. No dome. No shield. Just us. Wild.'],
   }, [
     { ...HZ('flood', false), text: ['The river\'s up. High and brown. Anything on the low meadows is in for it.', 'The water\'s talking. You can hear it from the lane. A flood\'s coming.'] },
@@ -982,7 +982,7 @@ talkPack('village3', () => {
     { ...HZ('blight', false), text: ['The barley doesn\'t look right. Spots. The farmers are muttering.'] },
     { ...HZ('blight', true), text: ['Blight in the field. Whole rows stopped growing. It\'s a sorry sight.'] },
     { ...HZ('frost', false), text: ['Clear sky and a bite in the air. A hard frost is coming. Is the woodpile up to it?'] },
-    { ...HZ('frost', true), text: ['Bitter. The hearth eats wood like a dragon. I\'ve two jumpers on. Three.', 'Every breath a cloud. The river\'s got ice at the edges.'] },
+    { ...HZ('frost', true), text: ['Bitter. The hearth eats wood like a dragon. I\'ve two sweaters on. Three.', 'Every breath a cloud. The river\'s got ice at the edges.'] },
     { if: { job: 'farmer', vHazard: ['flood', 'drought', 'blight'] }, pri: 1, text: ['It\'s my fields, wizard. My barley. I\'ve not slept.'] },
     { if: { job: 'woodwright', vHazard: 'frost' }, pri: 1, text: ['Every hole wants timber at once. I\'ve chopped till my arms hum.'] },
     { if: { job: 'herbalist', vHazard: 'blight' }, pri: 1, text: ['Herbs. They need herbs on that field. I\'ve been at it since dawn.'] },
@@ -994,7 +994,7 @@ talkPack('village3', () => {
   }, [
     { if: { vHazard: 'flood' }, pri: 1, text: ['Raise the banks along the river. Raised ground holds water back. Everybody knows. Nobody does it.'] },
     { if: { vHazard: 'drought' }, pri: 1, text: ['More wells. A pond by the fields. Water close to the barley, that\'s the trick.'] },
-    { if: { vHazard: 'blight' }, pri: 1, text: ['The herbalist can treat it, with enough herbs. Or there\'s dwarf sulphur, if anyone has the coin.'] },
+    { if: { vHazard: 'blight' }, pri: 1, text: ['The herbalist can treat it, with enough herbs. Or there\'s dwarf sulfur, if anyone has the coin.'] },
     { if: { vHazard: 'frost' }, pri: 1, text: ['Wood. Stack every stick. The hearths burn twice as much in a hard frost.'] },
   ]);
   say('village.hazard.pass', {
@@ -1004,7 +1004,7 @@ talkPack('village3', () => {
     child: ['Promise?'],
   });
   say('village.hazard.weather', {
-    _: ['Ha! Do. Tell it Thistledown sends its regards and would like its sun back.', 'A favour! Can you really? ...You can\'t, can you.'],
+    _: ['Ha! Do. Tell it Thistledown sends its regards and would like its sun back.', 'A favor! Can you really? ...You can\'t, can you.'],
     child: ['Can you REALLY? Tell it to stop!'],
     ornery: ['If you could, you\'d have done it already.'],
     witty: ['Tell it to take it up with the Moot. Like everyone else.'],
@@ -1012,7 +1012,7 @@ talkPack('village3', () => {
   say('village.hazard.do', {
     _: ['Right. I\'ll go and see who\'s about. Many hands.', 'You\'re right. Talking won\'t raise a bank.'],
     ornery: ['I\'ve been saying so all week. Fine. I\'ll start.'],
-    proud: ['I\'ll organise it. Somebody must.'],
+    proud: ['I\'ll organize it. Somebody must.'],
   });
   say('village.hazard.through', {
     _: ['Always comes through. Yes. I believe that, when you say it.', 'Coming from you, that means something.'],
@@ -1044,7 +1044,7 @@ talkPack('village3', () => {
       ] },
       spoken: { line: 'village.newcomer.spoken', go: [
         { ap: 'advise', say: 'Go and say hello. Being new is hard.', to: 'hello' },
-        { ap: 'warm', say: 'Give it time. Strangers become neighbours.', to: 'end' },
+        { ap: 'warm', say: 'Give it time. Strangers become neighbors.', to: 'end' },
       ] },
       new: { line: 'village.newcomer.new', go: [
         { ap: 'tale', say: 'I came in a wagon full of fireworks and nobody would sell me a pie.', to: 'pie' },
@@ -1181,7 +1181,7 @@ talkPack('village3', () => {
     rift: ['The wary ones. They see the glow and step back. I get it. Still stings.'],
   });
   say('village.newme.small', {
-    _: ['Ask for something? Like... the way to the mill? I could do that.', 'Hm. Ask a favour. That\'s clever. That\'s very hobbit.'],
+    _: ['Ask for something? Like... the way to the mill? I could do that.', 'Hm. Ask a favor. That\'s clever. That\'s very hobbit.'],
   });
 
   // =================================================================================
@@ -1347,7 +1347,7 @@ talkPack('village3', () => {
     proud: ['Sharing, yes. Fairly. That\'s the important part.'],
   });
   say('village.store.confess', {
-    cheerful: ['Me! Biscuits! For the children! Mostly for the children!'],
+    cheerful: ['Me! Cookies! For the children! Mostly for the children!'],
     gloomy: ['Me. A jar of pickles. I was sad. They helped.'],
   });
 
@@ -1515,7 +1515,7 @@ talkPack('village3', () => {
     shy: ['...Nobody\'s unkind. They just don\'t look at me.'],
   });
   say('village.newme.small', {
-    rift: ['Ask a favour. Social engineering, hill-style. I like it.'],
+    rift: ['Ask a favor. Social engineering, hill-style. I like it.'],
     shy: ['Something small. I can do something small.'],
   });
 

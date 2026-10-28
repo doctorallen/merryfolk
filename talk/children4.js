@@ -576,7 +576,7 @@ talkPack('children4', () => {
   lines('child.rift.ways.show', [
     { text: ['*twists it, and it hums, and blinks a pale blue light on your beard*', 'You do this, and this, and then wait, and... THERE.', '*taps a little panel and a tiny voice says something in rift-speak*'] },
     { if: { band: 'young' }, text: ['*presses it against your nose* BEEP!'] },
-    { if: { childTemper: 'curious' }, text: ['It\'s ones and noughts inside. Like acorns. Only very small, and very fast.'] },
+    { if: { childTemper: 'curious' }, text: ['It\'s ones and zeros inside. Like acorns. Only very small, and very fast.'] },
   ]);
   lines('child.rift.ways.relay', [
     { text: ['Half lullaby? I\'ve heard it! I thought I was dreaming!', 'I\'m going to listen. Tonight. At dusk.', 'A lullaby? Who\'s singing it?'] },
@@ -767,7 +767,7 @@ talkPack('children4', () => {
 
   lines('child.youth.leave.start', [
     { if: { childTween: true }, pri: 1, text: ['I think about it more now. Coming of age, everyone asks what\'s next. Nobody asks "where".'] },
-    { if: { childTemper: 'cheerful' }, text: ['Leave? For a holiday! A long one! Then home for tea!'] },
+    { if: { childTemper: 'cheerful' }, text: ['Leave? For a vacation! A long one! Then home for tea!'] },
     { if: { childTemper: 'ornery' }, text: ['If they keep on at me about chores, yes.'] },
   ]);
   lines('child.youth.leave.where', [
@@ -818,7 +818,7 @@ talkPack('children4', () => {
   lines('child.rift.home.miss', [
     { if: { childTemper: 'cheerful' }, text: ['The noodles! Obviously! Hill-folk can\'t do noodles. Not yet. I\'m teaching them.'] },
     { if: { childTemper: 'curious' }, text: ['Knowing how everything worked. Here half of it\'s "that\'s how it\'s always been".'] },
-    { if: { childTemper: 'shy' }, text: ['...My nan\'s voice. She stayed behind.'] },
+    { if: { childTemper: 'shy' }, text: ['...My grandma\'s voice. She stayed behind.'] },
   ]);
   lines('child.rift.home.here', [
     { if: { childTemper: 'cheerful' }, text: ['SECOND BREAKFAST. And mud. I love mud. We didn\'t have mud.'] },
@@ -838,7 +838,7 @@ talkPack('children4', () => {
     { if: { childUpb: 'hill' }, text: ['It\'s only a blinker. I\'m not going rift or anything. I just like it.'] },
   ]);
   lines('child.rift.ways.show', [
-    { if: { childTemper: 'cheerful' }, text: ['*makes it flash every colour at once, and laughs*'] },
+    { if: { childTemper: 'cheerful' }, text: ['*makes it flash every color at once, and laughs*'] },
     { if: { childTemper: 'shy' }, text: ['*shows you, very carefully, cupping it so the light only falls on your hand*'] },
   ]);
   lines('child.rift.ways.relay', [
@@ -905,7 +905,7 @@ talkPack('children4', () => {
   lines('child.rift.lost.about', [
     { text: ['{Lost} could whistle through two fingers. Loud enough to stop a train.', '{Lost} gave me the last noodle. Every time. Even when {lost} was hungry.', '{Lost} used to tell me the city was a dragon asleep, and the lights were its scales.'] },
     { if: { lostRel: 'brother' }, text: ['My brother. Bossy. The worst. I\'d give anything.'] },
-    { if: { lostRel: 'sister' }, text: ['My sister. She plaited my hair every morning. Nobody does it right now.'] },
+    { if: { lostRel: 'sister' }, text: ['My sister. She braided my hair every morning. Nobody does it right now.'] },
     { if: { lostRel: ['mother', 'father'] }, text: ['They sang the lullaby. The willow lamp one. Every night. I sing it to myself now.'] },
     { if: { lostRel: 'best friend' }, text: ['My best friend. We had a code. Two blinks and a tap. I still do it at the sky.'] },
   ]);
@@ -991,10 +991,10 @@ talkPack('children4', () => {
     { text: ['Plain words. That\'s the rift way, isn\'t it? Just say it.', 'Straight out. All right. I can do that.', 'That\'s braver than sorry, somehow.'] },
   ]);
   lines('child.youth.friends.gold', [
-    { text: ['More than gold. Yes. Don\'t tell them I agreed.', 'I wouldn\'t swap them. Not for a dragon\'s hoard.', 'They\'re rubbish. And the best. Both.'] },
+    { text: ['More than gold. Yes. Don\'t tell them I agreed.', 'I wouldn\'t swap them. Not for a dragon\'s hoard.', 'They\'re the worst. And the best. Both.'] },
   ]);
   lines('child.youth.friends.fine', [
-    { text: ['It is. Best part of the day.', 'Don\'t tell my folks it\'s fine. They think it\'s a den of wickedness.', 'It is fine. Don\'t come, though. No offence.'] },
+    { text: ['It is. Best part of the day.', 'Don\'t tell my folks it\'s fine. They think it\'s a den of wickedness.', 'It is fine. Don\'t come, though. No offense.'] },
   ]);
 
   // =====================================================================================

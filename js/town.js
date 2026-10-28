@@ -4,7 +4,7 @@
 // land is surveyed: knolls for new hobbit-holes, lots for public buildings and
 // room for more barley fields. Those lots are kept clear of trees, and each
 // one is opened when the village needs it. Woodwrights then dig and build them,
-// and farmers plough the new fields.
+// and farmers plow the new fields.
 // ---------------------------------------------------------------------------
 
 const HOME_LOTS_MAX = 34;
@@ -28,13 +28,13 @@ const CIVIC_DEFS = [
     desc: 'A snug second tavern on the south bank: more seats, shorter walks',
     make: (lit) => makeCottage({ w: 96, wall: '#f0e2bc', roof: 'thatch', sign: 'mug', windows: [12, 30, 66, 80], door: 48, chimneys: [20, 70], lit }),
   },
-  { key: 'field3', kind: 'field', name: 'the hill barley field', anchor: [42, 7], pop: 34, desc: 'Fresh-ploughed barley' },
+  { key: 'field3', kind: 'field', name: 'the hill barley field', anchor: [42, 7], pop: 34, desc: 'Fresh-plowed barley' },
   {
     key: 'bakery2', kind: 'building', name: 'The South Bakehouse', anchor: [82, 72], pop: 46, w: 5, pw: 88, doorOff: 44, chimneys: [62],
     desc: 'A second oven: more bread, pies and cakes for a growing village',
     make: (lit) => makeCottage({ w: 88, wall: '#f2e6c6', roof: 'thatch', sign: 'bread', windows: [12, 64], door: 44, chimneys: [62], lit }),
   },
-  { key: 'field4', kind: 'field', name: 'the far barley field', anchor: [80, 80], pop: 44, desc: 'Fresh-ploughed barley' },
+  { key: 'field4', kind: 'field', name: 'the far barley field', anchor: [80, 80], pop: 44, desc: 'Fresh-plowed barley' },
   { key: 'well_west', kind: 'well', name: 'the West Well', anchor: [20, 50], pop: 52, desc: 'A well for the western holes' },
 ];
 const BUILD_PHRASES = {
@@ -417,7 +417,7 @@ function planTown() {
     if (def.kind === 'field') {
       if (P.some((p) => p.kind === 'field')) continue;
       P.push(startProject(lot));
-      chronicle(`The farmers are fencing and ploughing ${def.name} to feed the growing village.`, 'build');
+      chronicle(`The farmers are fencing and plowing ${def.name} to feed the growing village.`, 'build');
       continue;
     }
     if (!housed && P.length >= maxProjects) break;
@@ -473,7 +473,7 @@ function workProject(v, p) {
   }
   finishLot(lot);
   const nm = lot.def.name;
-  if (p.kind === 'field') chronicle(`${nm.charAt(0).toUpperCase() + nm.slice(1)} is ploughed and sown. More barley for bread and ale!`, 'build');
+  if (p.kind === 'field') chronicle(`${nm.charAt(0).toUpperCase() + nm.slice(1)} is plowed and sown. More barley for bread and ale!`, 'build');
   else if (p.kind === 'well') chronicle(`${nm.charAt(0).toUpperCase() + nm.slice(1)} is finished, and the first bucket comes up cold and sweet.`, 'build');
   else { chronicle(`${nm} is finished! ${lot.def.desc}.`, 'build'); Game.schedulePartyTonight('the opening of ' + nm); }
   v.remember(`Helped build ${nm}.`, 2);

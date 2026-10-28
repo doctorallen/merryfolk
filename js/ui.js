@@ -1,7 +1,7 @@
 'use strict';
 // ---------------------------------------------------------------------------
 // Interface: toolbar, HUD, the villager inspector (five tabs), the village
-// ledger, family trees, posting villagers, the chronicle and the intro card.
+// ledger, family trees, sending villagers, the chronicle and the intro card.
 // ---------------------------------------------------------------------------
 
 
@@ -266,7 +266,7 @@ function renderPanel(full) {
   if (js) js.addEventListener('change', () => {
     const val = js.value;
     if (val === 'auto') { v.playerJob = false; v.job = null; assignJobs(false); toast(`${v.first} will find their own trade.`, 'info'); }
-    else { v.playerJob = true; v.job = val; v.remember(`Was steered towards ${JOBS[val].label.toLowerCase()} work.`, 0); toast(`${v.first} is now the village ${JOBS[val].label.toLowerCase()}.`, 'work'); }
+    else { v.playerJob = true; v.job = val; v.remember(`Was steered toward ${JOBS[val].label.toLowerCase()} work.`, 0); toast(`${v.first} is now the village ${JOBS[val].label.toLowerCase()}.`, 'work'); }
     renderPanel(true);
   });
 }
@@ -325,7 +325,7 @@ function panelNature(v) {
   const inst = Object.keys(g.taste).filter((a) => HABIT_KEYS.includes(a) && habitShown(v, a)).sort((a, b) => g.taste[b] - g.taste[a]);
   const foods = PANTRY_KINDS.slice().sort((a, b) => g.food[b] - g.food[a]);
   h += `<div class="likes"><div><b>Born loving</b> ${inst.slice(0, 2).map((a) => ACTION_NAMES[a].toLowerCase()).join(', ')} and ${FOODS[foods[0]].label}</div><div><b>Born wary of</b> ${ACTION_NAMES[inst[inst.length - 1]].toLowerCase()} and ${FOODS[foods[foods.length - 1]].label}</div></div>`;
-  if (v.isGrown()) h += '<div class="row-btns"><button data-post title="Pack this villager\'s genome into a code a friend can paste into their own game of Merryfolk">Post a copy to a friend</button></div>';
+  if (v.isGrown()) h += '<div class="row-btns"><button data-post title="Pack this villager\'s genome into a code a friend can paste into their own game of Merryfolk">Send a copy to a friend</button></div>';
   return h;
 }
 
@@ -363,7 +363,7 @@ function panelMind(v) {
   h += '</div>';
   if (v.isGrown() || v.isChild()) {
     const foods = PANTRY_KINDS.slice().sort((a, b) => v.genes.food[b] * v.foodLike[b] - v.genes.food[a] * v.foodLike[a]);
-    h += `<div class="likes"><div><b>Favourite food</b> ${FOODS[foods[0]].label}</div><div><b>Least favourite</b> ${FOODS[foods[foods.length - 1]].label}</div>`;
+    h += `<div class="likes"><div><b>Favorite food</b> ${FOODS[foods[0]].label}</div><div><b>Least favorite</b> ${FOODS[foods[foods.length - 1]].label}</div>`;
     if (v.wary > 0.1) h += `<div><b>Has learned</b> to be wary of toadstools${v.wary > 0.5 ? ' (very!)' : ''}</div>`;
     h += '</div>';
   }
@@ -448,7 +448,7 @@ function panelWork(v) {
   if (v.isGrown()) {
     const J = v.job ? JOBS[v.job] : null;
     h += `<h3>Trade</h3><div class="job">${J ? `${iconHTML(J.icon)} <b>${J.label}</b><div class="sub">${J.desc}</div>` : (v.stage === 'elder' ? '<b>Retired</b><div class="sub">Enjoying a well-earned rest.</div>' : '<b>No trade yet</b><div class="sub">Will find one soon.</div>')}</div>`;
-    h += '<label class="jobsel">Steer them towards: <select data-job><option value="auto">Let them choose</option>';
+    h += '<label class="jobsel">Steer them toward: <select data-job><option value="auto">Let them choose</option>';
     for (const j in JOBS) h += `<option value="${j}" ${v.playerJob && v.job === j ? 'selected' : ''}>${JOBS[j].label}</option>`;
     h += '</select></label>';
   } else {
@@ -523,7 +523,7 @@ function renderVillage() {
   body.querySelectorAll('a[data-v]').forEach((a) => a.addEventListener('click', () => { const o = Game.villagers.find((x) => x.id === +a.dataset.v); if (o) { selectVillager(o); focusVillager(o); } }));
   if (Game.villageTab === 'travellers') {
     $('tr-invite').addEventListener('click', () => {
-      if (Game.day - Game.lastTraveller < 1) { toast('One traveller a day. The road is long.', 'info'); return; }
+      if (Game.day - Game.lastTraveller < 1) { toast('One traveler a day. The road is long.', 'info'); return; }
       const r = welcomeTraveller(null);
       if (!r.ok) toast(r.msg, 'info'); else { selectVillager(r.v); focusVillager(r.v); $('village').hidden = true; }
     });
@@ -549,7 +549,7 @@ function renderVillage() {
 function villageStores() {
   const S = Village.stores, Y = Village.yesterday;
   const groups = [['Food', ['bread', 'pie', 'cake', 'stew', 'veg', 'fish', 'mush', 'apple', 'egg', 'cheese']], ['Makings', ['grain', 'flour', 'honey', 'herbs', 'scrap']], ['Comforts', ['ale', 'leaf', 'remedy', 'wood', 'wool']]];
-  let h = '<p class="lede-s">Everything the village grows, catches and makes goes into the Common Store, and folk fetch what their larders need. Numbers in grey are yesterday\'s comings and goings.</p>';
+  let h = '<p class="lede-s">Everything the village grows, catches and makes goes into the Common Store, and folk fetch what their larders need. Numbers in gray are yesterday\'s comings and goings.</p>';
   for (const [title, keys] of groups) {
     h += `<h3>${title}</h3><div class="stores">`;
     for (const k of keys) {
@@ -568,7 +568,7 @@ function villageStores() {
   h += `<h3>Homes and building</h3><div class="likes"><div>${built.length} hobbit-holes for ${live} folk (about ${(live / Math.max(1, built.length - empty)).toFixed(1)} to a lived-in hole)${empty ? `, ${empty} standing ready for newcomers` : ''}. ${larders} helpings in larders${cold ? `, <b>${cold} cold hearth${cold > 1 ? 's' : ''}</b>` : ''}.</div>`;
   if (waiting) h += `<div><b>${waiting} household${waiting > 1 ? 's are' : ' is'} waiting for a hole of their own.</b></div>`;
   for (const p of Village.projects) {
-    const what = p.kind === 'home' ? 'Digging' : p.kind === 'field' ? 'Ploughing' : p.kind === 'well' ? 'Sinking' : p.kind === 'retrofit' ? 'Wiring up' : 'Raising';
+    const what = p.kind === 'home' ? 'Digging' : p.kind === 'field' ? 'Plowing' : p.kind === 'well' ? 'Sinking' : p.kind === 'retrofit' ? 'Wiring up' : 'Raising';
     const needsScrap = p.kind === 'retrofit' || (p.lot != null && World.lots[p.lot].def && World.lots[p.lot].def.rift);
     const stall = projectReady(p) ? '' : needsScrap && (Village.stores.scrap || 0) < 2 ? ' <small>(waiting for rift salvage)</small>' : ' <small>(waiting for timber: the hearths come first)</small>';
     h += `<div class="build-row"><span>${what} ${escapeHtml(projectLabel(p))} · ${Math.round(p.prog * 100)}%${stall}</span>${bar(p.prog, 'good')}</div>`;
@@ -646,10 +646,10 @@ function villageRemembered() {
 
 function villageTravellers() {
   const wait = Game.day - Game.lastTraveller < 1;
-  return `<p class="lede-s">Folk sometimes come walking up the West Road looking for a home, like the eggs in the old Creatures hatchery. Others step out of rifts in the sky. And villages can post their folk to one another, like Docking Station's warp.</p>
-  <h3>Welcome a stranger</h3><div class="row-btns"><button id="tr-invite" ${wait || Game.villagers.length >= MAX_POP ? 'disabled' : ''}>Invite a traveller</button><span class="sub">${Game.villagers.length >= MAX_POP ? 'The village is full.' : wait ? 'Another may come tomorrow.' : 'A newcomer with their own genes will arrive along the West Road.'}</span></div>
+  return `<p class="lede-s">Folk sometimes come walking up the West Road looking for a home, like the eggs in the old Creatures hatchery. Others step out of rifts in the sky. And villages can send their folk to one another, like Docking Station's warp.</p>
+  <h3>Welcome a stranger</h3><div class="row-btns"><button id="tr-invite" ${wait || Game.villagers.length >= MAX_POP ? 'disabled' : ''}>Invite a traveler</button><span class="sub">${Game.villagers.length >= MAX_POP ? 'The village is full.' : wait ? 'Another may come tomorrow.' : 'A newcomer with their own genes will arrive along the West Road.'}</span></div>
   ${riftLedger()}
-  <h3>Receive a villager by post</h3><p class="sub">Paste a code a friend made with "Post a copy to a friend" (on the Nature tab of any grown-up).</p>
+  <h3>Receive a villager by mail</h3><p class="sub">Paste a code a friend made with "Send a copy to a friend" (on the Nature tab of any grown-up).</p>
   <textarea id="tr-code" rows="3" placeholder="TD2:..."></textarea><div class="row-btns"><button id="tr-import">Welcome them</button><span id="tr-error" class="err"></span></div>`;
 }
 
@@ -715,7 +715,7 @@ function openTree(v) {
 }
 
 function openPost(v) {
-  $('post-title').textContent = `Post ${v.first} to a friend`;
+  $('post-title').textContent = `Send ${v.first} to a friend`;
   $('post-code').value = exportVillager(v);
   $('post-copy').textContent = 'Copy code';
   $('post').hidden = false;
@@ -759,7 +759,7 @@ function placeAt(wx, wy) {
   for (const p of Village.projects) {
     if (p.kind === 'home' || p.kind === 'retrofit') continue;
     const lot = World.lots[p.lot], [x0, y0, x1, y1] = lotBounds(lot);
-    if (wx / 16 >= x0 && wx / 16 <= x1 + 1 && wy / 16 >= y0 && wy / 16 <= y1 + 1) return [projectLabel(p), `${p.kind === 'field' ? 'Being ploughed' : 'Under construction'}: ${Math.round(p.prog * 100)}% done`, lot.def.desc];
+    if (wx / 16 >= x0 && wx / 16 <= x1 + 1 && wy / 16 >= y0 && wy / 16 <= y1 + 1) return [projectLabel(p), `${p.kind === 'field' ? 'Being plowed' : 'Under construction'}: ${Math.round(p.prog * 100)}% done`, lot.def.desc];
   }
   for (const k in World.buildings) {
     const b = World.buildings[k];
@@ -787,7 +787,7 @@ function placeAt(wx, wy) {
   if (Math.hypot(tx - 60.5, ty - 24.5) < 2) return ['Market stall', 'Folk fetch food for their larders here'];
   for (const p of World.pens) if (tx >= p.x0 && tx <= p.x1 && ty >= p.y0 && ty <= p.y1) {
     const n = World.animals.filter((a) => a.pen === p).length;
-    return [p.name.replace(/^the /, 'The '), `${n} ${ANIMAL_INFO[p.kind].label.toLowerCase()} · ${p.tend > 0.5 ? 'well looked after' : p.tend > 0.2 ? 'could do with a visit' : 'wanting the herder'}`, p.kind === 'cow' ? 'Milk for the cheese-press' : p.kind === 'sheep' ? 'Wool for winter woollens' : 'They eat the scraps and dig for taters'];
+    return [p.name.replace(/^the /, 'The '), `${n} ${ANIMAL_INFO[p.kind].label.toLowerCase()} · ${p.tend > 0.5 ? 'well looked after' : p.tend > 0.2 ? 'could do with a visit' : 'wanting the herder'}`, p.kind === 'cow' ? 'Milk for the cheese-press' : p.kind === 'sheep' ? 'Wool for winter woolens' : 'They eat the scraps and dig for taters'];
   }
   for (const a of World.allotments) if (tx >= a.x0 && tx <= a.x1 && ty >= a.y0 && ty <= a.y1) return ['The allotments', 'Cabbages, carrots, taters, tomatoes and pumpkins for the Store', `${a.plots.filter((p) => p.stage === 4).length} rows ready to lift`];
   if (World.orchard2 && tx >= World.orchard2.x0 && tx <= World.orchard2.x1 && ty >= World.orchard2.y0 && ty <= World.orchard2.y1) return ['The south orchard', 'Young apple trees, planted for the growing village'];

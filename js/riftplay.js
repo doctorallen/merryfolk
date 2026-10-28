@@ -4,7 +4,7 @@
 // 'wizard') the story of the Lamplighter's Children is something you take
 // part in by talking:
 //
-// - Strangers into neighbours. Ask one of the rift-folk about home and,
+// - Strangers into neighbors. Ask one of the rift-folk about home and,
 //   warmly asked, they tell you what they miss, who they lost and what they
 //   did in the city. Each of them has a thread on the Rift-folk page with its
 //   four beats (home, the one they lost, their knack, a true friend among the
@@ -17,7 +17,7 @@
 //   notices, and you find it by asking the right person at the right time:
 //   the kettle on a rift-born sleeve, an old song an elder half remembers
 //   with one of the rift-folk humming nearby, a coin a child found at a rift
-//   scar, a portrait in a parlour, a voice on a gadget at dusk, the rifts'
+//   scar, a portrait in a parlor, a voice on a gadget at dusk, the rifts'
 //   edges on a night when every lamp is lit, and at last, from the oldest
 //   hobbit, the name in the ledger. The stages that wait on machines move on
 //   friendships and time instead. Nothing stalls for long: a clue nobody has
@@ -56,7 +56,7 @@ const SKILL_SAY = {
   medic: 'Street medic. Patched folk up under the overpass, no questions asked.',
   cook: 'I had a noodle stall under the overpass. Best broth in Neverdark, ask anyone.',
   teacher: 'I taught the little ones their numbers. Binary first, then the rest.',
-  grower: 'Rooftop gardens. Lettuces under lamps, forty storeys up.',
+  grower: 'Rooftop gardens. Lettuces under lamps, forty stories up.',
 };
 function knowArc(v, beat) { const k = rp().known[v.id] || (rp().known[v.id] = {}); if (!k[beat]) k[beat] = Game.day; }
 function homeAsk(v, T, tone) {
@@ -155,7 +155,7 @@ const CLUE_HINT = {
   sigil: 'Ask one of the rift-folk about the little kettle on their sleeve.',
   lullaby: 'Get an old hobbit talking about the songs of their youth, with one of the rift-folk near, or on a sing night.',
   coin: 'Ask the children whether they\'ve found anything by the rift scars.',
-  saint: 'Ask a rift-born who\'s had supper in a hill-family\'s parlour what surprised them there.',
+  saint: 'Ask a rift-born who\'s had supper in a hill-family\'s parlor what surprised them there.',
   relay: 'Sit with one of the rift-folk at dusk and ask what they\'re listening to.',
   gold: 'On a night when every lamp is lit, look at an open rift with somebody.',
   ledger: 'With four clues found, ask the oldest hobbit in the village about a tinker who went missing long ago.',
@@ -185,8 +185,8 @@ const CLUE_ASKS = [
     } },
   { k: 'coin', label: 'Found anything by the rift scars?', when: (v) => v.isChild() && World.riftScars.length > 0,
     run: (v, T) => { T.wiz('Have you found anything interesting by the rift scars?'); talkClue('coin', v, T, 'I found a coin! It\'s got wires on one side and a DOOR on the other. A round one. Like ours!', 'May I see? ...Well. A round green door, on a coin from another world.'); } },
-  { k: 'saint', label: 'What surprised you in our parlours?', when: (v) => v.isRiftborn() && story().stage >= 2 && (moodletsOf(v).some((m) => m.k === 'supper') || (v.homeId >= 0 && residentsOf(v.home()).some((o) => !o.isRiftborn())) || (story().suppers || 0) > 0),
-    run: (v, T) => { T.wiz('You\'ve had supper in a hill-family\'s parlour. Did anything there surprise you?'); talkClue('saint', v, T, 'The portrait over the fire! That\'s Saint Mungo of the First Lamp. He\'s on our coins. What\'s he doing on your wall?', 'Saint Mungo. Mungo... now where have I heard that name?'); } },
+  { k: 'saint', label: 'What surprised you in our parlors?', when: (v) => v.isRiftborn() && story().stage >= 2 && (moodletsOf(v).some((m) => m.k === 'supper') || (v.homeId >= 0 && residentsOf(v.home()).some((o) => !o.isRiftborn())) || (story().suppers || 0) > 0),
+    run: (v, T) => { T.wiz('You\'ve had supper in a hill-family\'s parlor. Did anything there surprise you?'); talkClue('saint', v, T, 'The portrait over the fire! That\'s Saint Mungo of the First Lamp. He\'s on our coins. What\'s he doing on your wall?', 'Saint Mungo. Mungo... now where have I heard that name?'); } },
   { k: 'relay', label: 'What are you listening to?', when: (v) => v.isRiftborn() && story().stage >= 3 && Game.hour >= 18 && Game.hour < 22.5,
     run: (v, T) => { T.wiz('What is it you\'re listening to, at this hour?'); talkClue('relay', v, T, 'Static, mostly. But at dusk there\'s a voice under it. Listen: "...lamp... lighter... is anyone... the kettle\'s gone cold..."', 'The kettle\'s gone cold. Hm.'); } },
   { k: 'gold', label: 'Look at the rift, tonight…', when: (v) => World.rifts.length > 0 && Game.hour >= 20 && lampsAllLit(),
@@ -288,14 +288,14 @@ function workParty() {
     finishLot(lot, true);
     built.push(lot.def && lot.def.name ? lot.def.name : key);
   }
-  chronicle(`A petition went round the village with ${names} names on it, and this morning the whole of Thistledown turned out: hill-folk with spades and rift-folk with spanners${built.length ? `, and by sunset ${built.join(' and ')} stood finished by the river` : ', rigging the old mill to feed the Relay'}. There's a feast tonight to thank everyone.`, 'rift');
+  chronicle(`A petition went round the village with ${names} names on it, and this morning the whole of Thistledown turned out: hill-folk with spades and rift-folk with wrenches${built.length ? `, and by sunset ${built.join(' and ')} stood finished by the river` : ', rigging the old mill to feed the Relay'}. There's a feast tonight to thank everyone.`, 'rift');
   if (Game.schedulePartyTonight && typeof PARTY_KINDS !== 'undefined' && PARTY_KINDS.workparty) Game.schedulePartyTonight('workparty');
 }
 // the work party's own feast (the Steward's feast is the Steward's, and there's no Steward)
 addPartyKind('workparty', { rank: 4,
   label: 'The work party\'s feast', hud: 'Village feast!', feast: true, paid: true,
   note: 'The long tables are out in the party field for everyone who dug and wired and carried today, hill-folk and rift-folk side by side.',
-  toast: () => 'To spades and spanners, and everyone who held one!',
+  toast: () => 'To spades and wrenches, and everyone who held one!',
 });
 // The Moot itself: a couple of speeches, then the vote.
 function riftMoot() {

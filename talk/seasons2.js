@@ -76,12 +76,12 @@ talkPack('seasons2', () => {
     { text: ['{NextFestWord} soon, {name}. Are you ready for it?', 'Looking forward to {nextFestWord}, {name}?'] },
     { if: { festTomorrow: true }, text: ['{NextFestWord} tomorrow, {name}! Can you wait?', 'Only one more sleep till {nextFestWord}, {name}.'] },
     { if: { nextFest: 'yule' }, text: ['Yule\'s nearly here, {name}. Have you been good?'] },
-    { if: { nextFest: 'mayday' }, text: ['Mayday soon, {name}. Have you been practising your ribbons?'] },
+    { if: { nextFest: 'mayday' }, text: ['Mayday soon, {name}. Have you been practicing your ribbons?'] },
     { if: { stage: 'child' }, text: ['Do you know what\'s coming, {name}? {NextFestWord}!'] },
   ]);
   lines('season.next.start', [
     { text: ['Ready? I\'ve been ready since the last one.', 'Oh, I can\'t wait. I never can.', 'Am I? I\'ve been counting the days on the pantry door.'] },
-    { if: { nextFest: 'mayday' }, text: ['Mayday! The maypole\'s been lying in the field all week, waiting.', 'I\'ve been practising the ribbon dance in the kitchen. Over, under, over. Mostly under.'] },
+    { if: { nextFest: 'mayday' }, text: ['Mayday! The maypole\'s been lying in the field all week, waiting.', 'I\'ve been practicing the ribbon dance in the kitchen. Over, under, over. Mostly under.'] },
     { if: { nextFest: 'midsummer' }, text: ['Midsummer! The biggest bonfire and the biggest fireworks of the whole year.', 'The shortest night. I mean to stay up for every minute of it.'] },
     { if: { nextFest: 'harvest' }, text: ['The Harvest Feast! I\'ve been saving room since Highday.', 'Long tables, pies and the year\'s best ale. I\'ve let my belt out already.'] },
     { if: { nextFest: 'yule' }, text: ['Yule! The bonfire and the carols and the mulled ale. I can smell it already.', 'Yule. I\'ve wrapped half my presents and eaten half my mince pies.'] },
@@ -92,12 +92,12 @@ talkPack('seasons2', () => {
     { if: { temper: 'ornery', nextFest: 'mayday' }, text: ['Mayday. Prancing round a pole. In my day we had dignity. And a bigger pole.'] },
     { if: { temper: 'cheerful' }, text: ['Ready? I was born ready! I\'ve been humming the tunes all week.', 'I love a festival. I love all of them. I love the one after this one too.'] },
     { if: { temper: 'shy' }, text: ['...I like watching. From the edge. With a cup of something.', '...I\'m looking forward to the food. The dancing I\'m less sure about.'] },
-    { if: { temper: 'dreamy' }, text: ['The night before is my favourite. When it\'s all still to come.', 'I like the moment the lanterns are lit and nobody\'s said anything yet.'] },
+    { if: { temper: 'dreamy' }, text: ['The night before is my favorite. When it\'s all still to come.', 'I like the moment the lanterns are lit and nobody\'s said anything yet.'] },
     { if: { temper: 'witty' }, text: ['Ready? I\'ve fasted since second breakfast. It\'s been agony.', 'I\'ve planned my excuses for leaving early. I won\'t use any of them.'] },
     { if: { temper: 'proud' }, text: ['I always do my part. You\'ll see. Nobody does it like my family.', 'I\'m bringing my pie. People talk about my pie. Ask them.'] },
     { if: { temper: 'gloomy' }, text: ['I suppose. It\'s always over too soon. Then there\'s the washing up.', 'It\'ll rain. It rained last time. ...I\'ll still go.'] },
     { if: { temper: 'curious' }, text: ['Do you know how it started? {NextFestWord}, I mean. Nobody here seems to.', 'I want to see how they put it all together. Every year it\'s a bit different.'] },
-    { if: { stage: 'child' }, text: ['YES! I\'ve been waiting FOREVER. Is it tomorrow? Is it today?', 'I\'m allowed to stay up! Mum said! Well, she said "we\'ll see".'] },
+    { if: { stage: 'child' }, text: ['YES! I\'ve been waiting FOREVER. Is it tomorrow? Is it today?', 'I\'m allowed to stay up! Mom said! Well, she said "we\'ll see".'] },
     { if: { stage: 'child', nextFest: 'yule' }, text: ['Yule! Presents! I\'ve made Dad a spoon. Don\'t tell him. It\'s mostly a stick.'] },
     { if: { stage: 'child', nextFest: 'midsummer' }, text: ['Fireworks! The big ones! Are you doing them? You are, aren\'t you?'] },
     { if: { stage: 'elder' }, text: ['Another one. I\'ve seen a good many. I mean to see a good many more.', 'I\'ll sit at the end of the table where the pudding comes out first. Privilege of age.'] },
@@ -146,7 +146,7 @@ talkPack('seasons2', () => {
     { if: { temper: 'dreamy' }, text: ['Slip away for a bit, up the hill, and look down at it all lit up.'] },
     { if: { temper: 'gloomy' }, text: ['Go. Stay an hour. Feel a bit better. Come home.'] },
     { if: { temper: 'curious' }, text: ['Watch how the fiddler does that fast bit. I\'ve been trying to work it out for a year.'] },
-    { if: { stage: 'child' }, text: ['Stay up the LATEST. Later than anyone. Later than you.', 'Eat cake till I\'m sick. Mum says don\'t. I\'ll do it quietly.'] },
+    { if: { stage: 'child' }, text: ['Stay up the LATEST. Later than anyone. Later than you.', 'Eat cake till I\'m sick. Mom says don\'t. I\'ll do it quietly.'] },
     { if: { stage: 'elder' }, text: ['Sit by the fire with the other old ones and say it was better in our day.'] },
     { if: { spouse: (s) => !!s }, text: ['Dance with {spouse}. We always have the first one. Every year since we were wed.'] },
     { if: { kid: (k) => !!k }, text: ['Keep {kid} out of the punch and off the trestles. Wish me luck.'] },
@@ -182,7 +182,7 @@ talkPack('seasons2', () => {
     { if: { lonely: true }, pri: 1, text: ['...Nobody. I don\'t really have anyone to go with.'] },
   ]);
   lines('season.next.hat', [
-    { text: ['Hold your hat! I\'d be honoured. I\'ll try not to wear it.', 'Ha! All right. I\'ll find you by the party tree.'] },
+    { text: ['Hold your hat! I\'d be honored. I\'ll try not to wear it.', 'Ha! All right. I\'ll find you by the party tree.'] },
     { if: { temper: 'shy' }, text: ['...Really? I\'d like that. I won\'t drop it.'] },
     { if: { temper: 'ornery' }, text: ['A hat-holder. That\'s what I\'m good for. ...Fine. I\'ll be there.'] },
     { if: { lonely: true }, pri: 1, text: ['...Thank you. That\'s made my week, that has.'] },
@@ -330,7 +330,7 @@ talkPack('seasons2', () => {
     { if: { temper: 'proud' }, text: ['A fine day for Thistledown. We do these things properly here.'] },
     { if: { temper: 'cheerful' }, text: ['Happy day! Happy day! I\'ve said it to everyone. Now I\'ve said it to you.'] },
     { if: { temper: 'dreamy' }, text: ['Days like this feel like they\'ve always been happening, somewhere.'] },
-    { if: { stage: 'child' }, text: ['IT\'S TODAY! It\'s actually today! I\'ve been waiting a WHOLE YEAR!', 'I\'m allowed to stay up! I\'m allowed! Mum said yes this time!'] },
+    { if: { stage: 'child' }, text: ['IT\'S TODAY! It\'s actually today! I\'ve been waiting a WHOLE YEAR!', 'I\'m allowed to stay up! I\'m allowed! Mom said yes this time!'] },
     { if: { stage: 'elder' }, text: ['Another one. I never tire of them. That surprises people.'] },
     { if: { rift: true }, text: ['Everyone\'s smiling at once. In Neverdark that meant a sale. Here it just means a party.'] },
     { if: { bdayToday: true }, pri: 3, text: ['It\'s my birthday! I\'ve been giving out presents since breakfast. That\'s the custom!'] },
@@ -360,7 +360,7 @@ talkPack('seasons2', () => {
   ]);
   lines('season.today.best', [
     { text: ['Everyone in one place, for once. Even the ones who don\'t like each other.', 'The moment the first tune starts. Every year it gets me.'] },
-    { if: { occasion: 'mayday' }, text: ['The ribbons all plaiting down the pole. And then somebody goes the wrong way and it\'s chaos.', 'The crowning. Seeing some young one go pink under a hawthorn crown.'] },
+    { if: { occasion: 'mayday' }, text: ['The ribbons all braiding down the pole. And then somebody goes the wrong way and it\'s chaos.', 'The crowning. Seeing some young one go pink under a hawthorn crown.'] },
     { if: { occasion: 'midsummer' }, text: ['Jumping the fire. It\'s for luck. And for showing off.', 'The fireworks at the end. Yours. Nothing else comes close.'] },
     { if: { occasion: 'harvest' }, text: ['The toast. Everyone standing, all down the long tables, cups up for the harvest.', 'The pies. Every family brings their own, and you have to try them all. It\'s only polite.'] },
     { if: { occasion: 'yule' }, text: ['Carols round the bonfire, with everyone\'s breath going up in clouds.', 'Giving the presents. Seeing their faces. That\'s Yule.'] },
@@ -384,7 +384,7 @@ talkPack('seasons2', () => {
     { if: { temper: 'ornery' }, text: ['Rude. ...Tonight. Twice my weight, if I can manage it.'] },
     { if: { temper: 'witty' }, text: ['My own weight? Amateur. I\'m going for yours.'] },
     { if: { temper: 'proud' }, text: ['I eat precisely what is proper. Which is a great deal.'] },
-    { if: { temper: 'shy' }, text: ['...I\'ve had a biscuit. Just one. Saving room.'] },
+    { if: { temper: 'shy' }, text: ['...I\'ve had a cookie. Just one. Saving room.'] },
     { if: { stage: 'child' }, text: ['I\'ve had THREE cakes and it\'s not even dinner!'] },
   ]);
   lines('season.today.scales', [
@@ -508,7 +508,7 @@ talkPack('seasons2', () => {
   ]);
   lines('season.party.start', [
     { text: ['Oh, it\'s lovely! The music, the lanterns, all of it.', 'Best do in ages! Did you see the fiddler\'s face? He\'s on fire tonight.'] },
-    { if: { tipsy: true }, pri: 2, text: ['Wizard! My favourite wizard! Have you had the cider? Have the cider.', 'I love everyone. Everyone! Even the miller. Especially the miller.'] },
+    { if: { tipsy: true }, pri: 2, text: ['Wizard! My favorite wizard! Have you had the cider? Have the cider.', 'I love everyone. Everyone! Even the miller. Especially the miller.'] },
     { if: { temper: 'ornery' }, text: ['Too loud. Too crowded. Somebody trod on me twice. ...It\'s not bad, I suppose.'] },
     { if: { temper: 'shy' }, text: ['...It\'s nice from here. At the edge. I can see everyone.'] },
     { if: { temper: 'cheerful' }, text: ['I\'m having the BEST time. I\'ve danced four times and eaten six times.'] },
@@ -677,7 +677,7 @@ talkPack('seasons2', () => {
     { if: { temper: 'proud' }, text: ['Frightened? Certainly not. I merely stepped back. Several steps.'] },
     { if: { temper: 'shy' }, text: ['...I hid behind the trestle. Just for the low bit.'] },
     { if: { temper: 'ornery' }, text: ['A dragon in the sky over my house. Of course I was. Do it again, mind.'] },
-    { if: { stage: 'child' }, text: ['NO. ...A little. I hid behind Mum. Only my eyes. My eyes were out.'] },
+    { if: { stage: 'child' }, text: ['NO. ...A little. I hid behind Mom. Only my eyes. My eyes were out.'] },
     { if: { stage: 'elder' }, text: ['At my age, I\'ve no time to be frightened. I just watched it come.'] },
   ]);
   lines('season.fw.safe', [
@@ -836,12 +836,12 @@ talkPack('seasons2', () => {
     { if: { bdayIn: 2 }, text: ['The day after tomorrow. Plenty of time. ...Is it? It isn\'t, is it.'] },
     { if: { temper: 'ornery' }, text: ['Don\'t make a fuss. I hate a fuss. ...You can make a small fuss.'] },
     { if: { temper: 'shy' }, text: ['...Oh. You knew. Nobody usually knows.'] },
-    { if: { temper: 'cheerful' }, text: ['Yes! My favourite day! Everybody gets a present! From ME!'] },
+    { if: { temper: 'cheerful' }, text: ['Yes! My favorite day! Everybody gets a present! From ME!'] },
     { if: { temper: 'gloomy' }, text: ['Another year. They go faster. ...Thank you for remembering, though.'] },
     { if: { temper: 'witty' }, text: ['My birthday. The one day a year I\'m expected to give things away. Hobbits are mad.'] },
     { if: { temper: 'proud' }, text: ['It is. I\'ve planned the presents with great care. Every one a gem.'] },
     { if: { temper: 'dreamy' }, text: ['My birthday. I always feel a bit new on my birthday. Like spring.'] },
-    { if: { stage: 'child' }, text: ['MY BIRTHDAY! I\'m giving everyone a present! I made them! Out of stones!', 'I\'m getting bigger! And I get a present from Mum AND I give presents! Double!'] },
+    { if: { stage: 'child' }, text: ['MY BIRTHDAY! I\'m giving everyone a present! I made them! Out of stones!', 'I\'m getting bigger! And I get a present from Mom AND I give presents! Double!'] },
     { if: { stage: 'elder' }, text: ['Another one. I stopped counting at ninety. I started again at a hundred, out of pride.'] },
     { if: { rift: true }, text: ['Here you GIVE presents on your birthday? Back home you\'d get a voucher. This is better.'] },
   ]);
@@ -887,7 +887,7 @@ talkPack('seasons2', () => {
   ]);
   lines('season.bday.generous', [
     { text: ['It\'s only proper. You give on your birthday. It\'s how you know you\'re rich.', 'Oh, it\'s the best bit. Getting presents is nice. Giving them is better.'] },
-    { if: { temper: 'witty' }, text: ['Generous? It\'s self-defence. If I give first, nobody can out-give me.'] },
+    { if: { temper: 'witty' }, text: ['Generous? It\'s self-defense. If I give first, nobody can out-give me.'] },
     { if: { temper: 'shy' }, text: ['...I just like seeing them smile.'] },
   ]);
   lines('season.bday.socks', [
@@ -907,7 +907,7 @@ talkPack('seasons2', () => {
   ]);
   lines('season.bday.wizsocks', [
     { text: ['...Well, it was going to be socks. Now I\'ll have to think of something.', 'Not socks. A hat-pin. To keep that thing on in the wind.'] },
-    { if: { pastime: 'knitting' }, pri: 1, text: ['Too late. They\'re grey. They\'re very long. They\'re very wizardly.'] },
+    { if: { pastime: 'knitting' }, pri: 1, text: ['Too late. They\'re gray. They\'re very long. They\'re very wizardly.'] },
   ]);
 
   // --- Lantern Night -------------------------------------------------------------------------
@@ -999,7 +999,7 @@ talkPack('seasons2', () => {
     { if: { temper: 'ornery' }, text: ['As long as it doesn\'t come down on the haystack again.'] },
   ]);
   lines('season.lantern.cheat', [
-    { text: ['A firework! That\'s cheating! ...Can I watch?', 'You can\'t! It\'s a quiet night! ...What colour?'] },
+    { text: ['A firework! That\'s cheating! ...Can I watch?', 'You can\'t! It\'s a quiet night! ...What color?'] },
     { if: { temper: 'ornery' }, text: ['Of course it does. Wizards. Can\'t leave anything alone.'] },
     { if: { stage: 'child' }, text: ['Put one in mine! Please! A little one!'] },
   ]);
@@ -1017,7 +1017,7 @@ talkPack('seasons2', () => {
     { text: ['My mother. She folded them faster than you could watch. I still can\'t.', 'Everybody learns as a child. You fold the paper like this, and like this, and then you ruin it.'] },
     { if: { parent: (p) => !!p }, text: ['{Parent} did. Sat me on the table and folded with me till I got it.'] },
     { if: { rift: true }, text: ['Nobody. I watched the children and copied. A little one corrected my folds. Very strictly.'] },
-    { if: { stage: 'child' }, text: ['My mum. She did the hard bits. I did the painting. And the paste. There was a lot of paste.'] },
+    { if: { stage: 'child' }, text: ['My mom. She did the hard bits. I did the painting. And the paste. There was a lot of paste.'] },
   ]);
 
   // --- The May --------------------------------------------------------------------------------
@@ -1043,7 +1043,7 @@ talkPack('seasons2', () => {
       ears: { line: 'season.may.ears', end: true },
       hayfever: { line: 'season.may.hayfever', go: [
         { ap: 'tale', say: 'I sneezed the crown clean off, into the duck pond.', to: 'pond' },
-        { ap: 'warm', say: 'It\'s an honour, all the same. Even sneezing.', to: 'end' },
+        { ap: 'warm', say: 'It\'s an honor, all the same. Even sneezing.', to: 'end' },
       ] },
       pond: { line: 'season.may.pond', fx: { joke: { k: 'season.maypond', t: 'The wizard was King of the May once, and sneezed the crown into the duck pond.' } }, end: true },
       choose: { line: 'season.may.choose', go: [
@@ -1185,7 +1185,7 @@ talkPack('seasons2', () => {
     { if: { stage: 'child' }, text: ['YULE! Presents! The pudding with a coin in it! I\'m going to find the coin!'] },
     { if: { stage: 'elder' }, text: ['Another Yule. I like to count them. I\'ve a lot to count.'] },
     { if: { rift: true }, text: ['In Neverdark there was a holiday called Upgrade Day. This is better. Nobody upgrades.'] },
-    { if: { job: 'baker' }, pri: 1, text: ['Yule baking. Mince pies by the hundred. I\'ve dreamt in mince.'] },
+    { if: { job: 'baker' }, pri: 1, text: ['Yule baking. Mince pies by the hundred. I\'ve dreamed in mince.'] },
     { if: { job: 'brewer' }, pri: 1, text: ['The mulled ale\'s steeping. Cloves, orange peel and a secret. I\'ll never tell the secret.'] },
     { if: { jarsWord: 'full' }, text: ['Shelves full, woodpile high, and Yule coming. I could purr.'] },
     { if: { jarsWord: 'bare' }, pri: 1, text: ['Yule, and the shelves half bare. We\'ll manage. We always manage at Yule.'] },
@@ -1195,7 +1195,7 @@ talkPack('seasons2', () => {
     { if: { pastime: (p) => !!p, madeMany: (m) => !!m }, pri: 1, text: ['{MadeMany}. Everyone on the lane is getting one. Some are getting two by accident.'] },
     { if: { pastime: 'knitting' }, pri: 2, text: ['Scarves. Everyone\'s getting a scarf. The lane will be very warm and very stripy.'] },
     { if: { pastime: 'carving' }, pri: 2, text: ['Little animals. A badger for one, a hare for another. The heron\'s for nobody. It went wrong.'] },
-    { if: { stage: 'child' }, text: ['A present for Mum! It\'s a box. With things in. I won\'t say what things.'] },
+    { if: { stage: 'child' }, text: ['A present for Mom! It\'s a box. With things in. I won\'t say what things.'] },
     { if: { temper: 'ornery' }, text: ['Nothing. Bought things. ...Fine, a few socks.'] },
     { if: { rift: true }, text: ['Little lights. Rift-tech, but gentle. They glow when you hold them. Like a heartbeat.'] },
   ]);
@@ -1212,7 +1212,7 @@ talkPack('seasons2', () => {
   lines('season.yule.me', [
     { text: ['You? A lump of coal, for asking.', 'Wait and see. Wizards have to wait like everybody else.'] },
     { if: { stage: 'child' }, text: ['It\'s a SECRET. ...It\'s a stone. It\'s a nice stone.'] },
-    { if: { pastime: 'knitting' }, pri: 1, text: ['A hat-cosy. For your hat. Don\'t ask. You\'ll see.'] },
+    { if: { pastime: 'knitting' }, pri: 1, text: ['A hat-cozy. For your hat. Don\'t ask. You\'ll see.'] },
   ]);
   lines('season.yule.lucky', [
     { text: ['That\'s nice of you. I\'ll tell them you said so.', 'Lucky, or polite. We\'ll see which.'] },
@@ -1354,7 +1354,7 @@ talkPack('seasons2', () => {
     { if: { rift: true }, text: ['The other rift-folk, at first. Then whoever pulls me into the dancing.'] },
   ]);
   lines('season.today.means', [
-    { if: { stage: 'child' }, pri: 1, text: ['It means staying up! And everyone\'s nice to you! And cake!', '...It means Mum and Dad laugh a lot. I like it when they laugh.'] },
+    { if: { stage: 'child' }, pri: 1, text: ['It means staying up! And everyone\'s nice to you! And cake!', '...It means Mom and Dad laugh a lot. I like it when they laugh.'] },
     { if: { temper: 'ornery' }, text: ['It means a day off. ...And seeing everyone. Fine. It means that.'] },
     { if: { temper: 'shy' }, text: ['...It means I belong here. Even if I stand at the back.'] },
   ]);
@@ -1441,7 +1441,7 @@ talkPack('seasons2', () => {
     { if: { temper: 'shy' }, text: ['...A ship. Oh. I\'d like to see that.'] },
   ]);
   lines('season.fwask.duck', [
-    { if: { temper: 'ornery' }, text: ['A duck. Don\'t you dare. ...What colour duck?'] },
+    { if: { temper: 'ornery' }, text: ['A duck. Don\'t you dare. ...What color duck?'] },
     { if: { temper: 'witty' }, text: ['A fire duck. Finally, a firework I can relate to.'] },
   ]);
   lines('season.fwask.promise', [
@@ -1462,7 +1462,7 @@ talkPack('seasons2', () => {
   ]);
   lines('season.bday.generous', [
     { if: { temper: 'ornery' }, text: ['Generous nothing. It\'s the custom. I just follow it to the letter.'] },
-    { if: { temper: 'proud' }, text: ['My family has always given well. It\'s a point of honour.'] },
+    { if: { temper: 'proud' }, text: ['My family has always given well. It\'s a point of honor.'] },
     { if: { stage: 'child' }, text: ['I like giving! Mostly. Except the blue marble.'] },
   ]);
   lines('season.bday.wizbday', [
@@ -1472,7 +1472,7 @@ talkPack('seasons2', () => {
   ]);
   lines('season.bday.shared', [
     { if: { temper: 'ornery' }, text: ['Shared. Fine. You\'re doing the washing up.'] },
-    { if: { temper: 'proud' }, text: ['It\'s an honour to share it. For you, I mean.'] },
+    { if: { temper: 'proud' }, text: ['It\'s an honor to share it. For you, I mean.'] },
   ]);
   lines('season.bday.wizsocks', [
     { if: { temper: 'ornery' }, text: ['You\'ll get socks and like them.'] },
@@ -1563,7 +1563,7 @@ talkPack('seasons2', () => {
   ]);
   lines('season.yule.together', [
     { if: { temper: 'ornery' }, text: ['Hmph. I\'ll stand at the back and hum. That\'s my offer.'] },
-    { if: { temper: 'proud' }, text: ['I\'d be honoured. I have a fine voice. Everybody says.'] },
+    { if: { temper: 'proud' }, text: ['I\'d be honored. I have a fine voice. Everybody says.'] },
   ]);
   lines('season.yule.ale', [
     { if: { temper: 'ornery' }, text: ['Bring your own. I\'m not sharing mine.'] },

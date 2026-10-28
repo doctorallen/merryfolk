@@ -76,7 +76,7 @@ talkPack('rift2', () => {
     { if: { temper: 'dreamy' }, text: ['Every meal here tastes like a field. Like sunshine got cooked. I don\'t know how else to say it.'] },
     { if: { temper: 'witty' }, text: ['Properly? I\'ve put on so much weight my visor sits differently. It\'s a hardware issue now.'] },
     { if: { temper: 'gloomy' }, text: ['Well enough. Too well. I feel guilty, eating. Back home they\'re rationing.'] },
-    { if: { stage: 'child' }, text: ['I had FOUR breakfasts! Mum only knows about two!'] },
+    { if: { stage: 'child' }, text: ['I had FOUR breakfasts! Mom only knows about two!'] },
     { if: { hungry: true }, pri: 1, text: ['Not lately. Running on low battery. Is there pie? There\'s usually pie.'] },
     { if: { riftCustoms: 'breakfast' }, pri: 1, text: ['Second breakfast. I\'m a convert. A zealot. I\'ve started telling the others they\'re doing mornings wrong.'] },
   ]);
@@ -86,14 +86,14 @@ talkPack('rift2', () => {
   ]);
   lines('rift.food.jest2', [{ text: ['They used one to wedge the mill door. It\'s held for forty years.', 'The Badger uses last week\'s for doorstops. And for the darts.'] }]);
   lines('rift.food.paste', [
-    { text: ['Printed paste. Comes in four flavours: beige, other beige, green, and Tuesday.', 'Noodles from a machine. Protein bars. The odd real dumpling if you knew someone.'] },
+    { text: ['Printed paste. Comes in four flavors: beige, other beige, green, and Tuesday.', 'Noodles from a machine. Protein bars. The odd real dumpling if you knew someone.'] },
     { if: { riftHome: 'the noodle stall under the overpass' }, pri: 1, text: ['Pak\'s broth. Under the overpass. When I could afford it, which was often, because Pak didn\'t charge me.'] },
     { if: { riftHome: 'the night market' }, pri: 1, text: ['The night market. Skewers, dumplings, things on sticks. Never asked what the things were. Better not.'] },
     { if: { riftHome: 'the rooftop gardens' }, pri: 1, text: ['Lettuce. A lot of lettuce. I grew it. Lettuce for breakfast, lettuce for tea. I can\'t look at lettuce now.'] },
     { if: { riftKnack: 'cook' }, pri: 1, text: ['Mine! I fed half the stack. Mushroom broth, chilli oil, noodles I pulled myself. I miss my pot.'] },
-    { if: { temper: 'gloomy' }, text: ['Whatever there was. Less of it, at the end. You queued. Sometimes you queued and there wasn\'t any.'] },
+    { if: { temper: 'gloomy' }, text: ['Whatever there was. Less of it, at the end. You stood in line. Sometimes you stood in line and there wasn\'t any.'] },
     { if: { temper: 'witty' }, text: ['Algae. Lovingly shaped into the idea of a sausage. The idea was the best part.'] },
-    { if: { stage: 'child' }, text: ['Squishy stuff from a tube. It was blue. Your food is lots of colours! And it\'s NOT squishy!'] },
+    { if: { stage: 'child' }, text: ['Squishy stuff from a tube. It was blue. Your food is lots of colors! And it\'s NOT squishy!'] },
   ]);
   lines('rift.food.scones', [
     { text: ['A scone. Ha! First one, I thought it was a stone someone had buttered. I still went back for three.', 'Survived? Barely. Then I discovered cream. And jam. Now I\'m in too deep.'] },
@@ -115,7 +115,7 @@ talkPack('rift2', () => {
     { text: ['Tried. The first lot came out black. The second lot came out flat. The hens ate them and looked at me.', 'Once. The innkeeper took one look and quietly put them in the pig bucket. Kindly, though.'] },
     { if: { riftKnack: 'cook' }, text: ['Of course! I\'ve put chilli in mine. The hill-folk cried. Then they asked for more.'] },
     { if: { temper: 'proud' }, text: ['They came out perfect. First go. The baker\'s not spoken to me since.'] },
-    { if: { temper: 'shy' }, text: ['I made some for my neighbours. I left them on the step and ran. I don\'t know if they liked them.'] },
+    { if: { temper: 'shy' }, text: ['I made some for my neighbors. I left them on the step and ran. I don\'t know if they liked them.'] },
   ]);
   lines('rift.food.tea', [
     { text: ['Tea! Hot leaf water, five times a day, and it fixes everything. I\'m suspicious. And addicted.', 'Converted. I own a teapot. A teapot! With a little hat on it.'] },
@@ -123,8 +123,8 @@ talkPack('rift2', () => {
     { if: { temper: 'ornery' }, text: ['Tea. Everyone offers it. You can\'t refuse. I\'m sloshing. I slosh when I walk.'] },
     { if: { temper: 'curious' }, text: ['I\'ve tested every kind in the valley. Mint, nettle, the one with the black leaves. There\'s a ranking. Want it?'] },
     { if: { temper: 'gloomy' }, text: ['Tea\'s the only thing that\'s ever warm all the way through. I didn\'t know I was cold till I drank it.'] },
-    { if: { riftSupper: true }, pri: 1, text: ['I had supper at a hill-family\'s last night. The tea came in a pot with a jumper on. A jumper!'] },
-    { if: { stage: 'child' }, text: ['Tea is yucky. But you get a biscuit with it. So it\'s worth it.'] },
+    { if: { riftSupper: true }, pri: 1, text: ['I had supper at a hill-family\'s last night. The tea came in a pot with a sweater on. A sweater!'] },
+    { if: { stage: 'child' }, text: ['Tea is yucky. But you get a cookie with it. So it\'s worth it.'] },
   ]);
   lines('rift.food.missfood', [
     { text: ['Ramen. Mushroom ramen. Steam in your face, rain on your back. I\'d trade a week of pies for one bowl.', 'Broth. Proper broth, with noodles you pull. Hobbits boil everything to death. Lovingly. To death.'] },
@@ -134,7 +134,7 @@ talkPack('rift2', () => {
     { if: { stage: 'child' }, text: ['Blinky jelly. It glowed in the dark. Your jelly doesn\'t glow. It\'s nice, though.'] },
   ]);
   lines('rift.food.catchup', [
-    { text: ['That\'s what everyone says! Then they give me cake. It\'s a conspiracy. I\'m in favour.', 'Catching up, one breakfast at a time. Two, before ten.'] },
+    { text: ['That\'s what everyone says! Then they give me cake. It\'s a conspiracy. I\'m in favor.', 'Catching up, one breakfast at a time. Two, before ten.'] },
     { if: { temper: 'ornery' }, text: ['I\'m trying! The waistcoat\'s complaining.'] },
   ]);
   lines('rift.food.ritual', [
@@ -153,7 +153,7 @@ talkPack('rift2', () => {
     { if: { temper: 'shy' }, text: ['...What if they don\'t like it? ...Okay. A small pot. A trial pot.'] },
   ]);
   lines('rift.food.kettle', [
-    { text: ['The kettle. Huh. The city\'s mark, and here\'s every hole with one on the fire. I never put that together.', '...Now I can\'t stop seeing it. A kettle, on every sleeve back home. A kettle, on every hob here.'] },
+    { text: ['The kettle. Huh. The city\'s mark, and here\'s every hole with one on the fire. I never put that together.', '...Now I can\'t stop seeing it. A kettle, on every sleeve back home. A kettle, on every stove here.'] },
     { if: { riftFrags: 'ledger' }, pri: 1, text: ['A copper kettle. Mungo\'s. It\'s been in front of us this whole time. Over every fire.'] },
   ]);
 
@@ -227,7 +227,7 @@ talkPack('rift2', () => {
     { if: { temper: 'shy' }, text: ['Visiting. You just... knock on someone\'s door. Unannounced. And they\'re pleased. I can\'t do it yet.'] },
     { if: { temper: 'dreamy' }, text: ['Leaving the window open for the moon. Granny Proudfoot does it. Says the moon gets lonely. I do it now.'] },
     { if: { temper: 'cheerful' }, text: ['Dancing round a pole with ribbons! For no reason! Because it\'s May! I love it so much.'] },
-    { if: { stage: 'child' }, text: ['You don\'t have to wear shoes! Ever! My feet are going all furry. Mum\'s horrified.'] },
+    { if: { stage: 'child' }, text: ['You don\'t have to wear shoes! Ever! My feet are going all furry. Mom\'s horrified.'] },
   ]);
   lines('rift.customs.birthday', [
     { text: ['I have! I went to wish someone happy birthday and came home with a teapot, a scarf and a chicken.', 'The presents go the WRONG WAY. I tried to explain. They said I was the wrong way.'] },
@@ -240,7 +240,7 @@ talkPack('rift2', () => {
   lines('rift.customs.mathom', [
     { text: ['A mathom! I\'ve had four. A brass thing nobody can name. I gave it on. It came back to me in a week.', 'A cracked umbrella-stand. It\'s gone round the whole lane. It came back. I think it likes me.'] },
     { if: { temper: 'curious' }, text: ['I\'ve been tracking one. A china owl. Eleven households in two seasons. It\'s basically a courier.'] },
-    { if: { riftKnack: 'courier' }, pri: 1, text: ['I tracked one round the whole lane. Faster than the post. Mathoms are your real network.'] },
+    { if: { riftKnack: 'courier' }, pri: 1, text: ['I tracked one round the whole lane. Faster than the mail. Mathoms are your real network.'] },
   ]);
   lines('rift.customs.law', [
     { text: ['That\'s the law? Okay. Your birthday\'s coming, wizard. Start clearing a shelf.', 'Copy that. Whose birthday is next? I\'ve got an owl to unload.'] },
@@ -260,7 +260,7 @@ talkPack('rift2', () => {
     { if: { riftCustoms: 'willow' }, text: ['The Willow Lamp song. I know all the words now. I sing it walking home. I think it\'s the oldest song I know.'] },
     { if: { riftCustoms: 'mayday' }, text: ['The maypole. Left over right, under and round. I fell over twice and nobody minded.'] },
     { if: { temper: 'dreamy' }, text: ['Leaving a light in the window for whoever\'s out late. Everyone does it. Nobody says why.'] },
-    { if: { temper: 'gloomy' }, text: ['Sitting together without talking. You lot are very good at it. It\'s my favourite thing.'] },
+    { if: { temper: 'gloomy' }, text: ['Sitting together without talking. You lot are very good at it. It\'s my favorite thing.'] },
     { if: { temper: 'witty' }, text: ['Afternoon naps. Declared, public, unashamed. Neverdark would have called it a strike.'] },
     { if: { stage: 'child' }, text: ['The pudding. All of the puddings. Every pudding.'] },
   ]);
@@ -270,7 +270,7 @@ talkPack('rift2', () => {
     { if: { riftTraditions: 'ramen' }, pri: 2, text: ['Ramen\'s a Thistledown thing now. The innkeeper put it on the board. In chalk. Forever.'] },
     { if: { riftTraditions: 'blues' }, pri: 2, text: ['The Low Battery Blues! The fiddler plays it Highdays. Hill-folk sing it about their knees.'] },
     { if: { riftTraditions: 'breakfast' }, pri: 2, text: ['We took to second breakfast so hard it\'s a tradition the other way round. Rift-folk keep it. Fiercely.'] },
-    { if: { temper: 'ornery' }, text: ['The kids are saying "lag" about the post. The postie is furious. I\'m delighted.'] },
+    { if: { temper: 'ornery' }, text: ['The kids are saying "lag" about the mail. The mail carrier is furious. I\'m delighted.'] },
   ]);
   lines('rift.customs.bunting', [
     { text: ['They\'ve forgiven worse. Probably. I saw old Hamfast tap his foot under it.', 'They grumble, but nobody\'s taken it down. That\'s a hobbit yes.'] },
@@ -325,7 +325,7 @@ talkPack('rift2', () => {
     end: { fond: 0.02 },
   });
   lines('rift.wary.open', [
-    { text: ['Do folk treat you kindly, {name}?', 'How are the neighbours treating you, {name}?', 'Has the village made you welcome, {name}? Honestly?'] },
+    { text: ['Do folk treat you kindly, {name}?', 'How are the neighbors treating you, {name}?', 'Has the village made you welcome, {name}? Honestly?'] },
     { if: { homeless: true }, text: ['You\'re still at the camp, {name}. Is anyone being unkind?'] },
   ]);
   lines('rift.wary.start', [
@@ -366,7 +366,7 @@ talkPack('rift2', () => {
   lines('rift.wary.hurt', [
     { text: ['A bit. When it\'s someone you\'d like to know. You can see they\'re kind. Just not to you. Yet.', 'Yeah. It does. I didn\'t ask to fall out of the sky.'] },
     { if: { temper: 'proud' }, text: ['Hurt? No. ...A little. Don\'t make me say it twice.'] },
-    { if: { temper: 'gloomy' }, text: ['Every time. Like being a draught in someone\'s house.'] },
+    { if: { temper: 'gloomy' }, text: ['Every time. Like being a draft in someone\'s house.'] },
     { if: { stage: 'child' }, text: ['When the big girls whisper. That hurts. I pretend it doesn\'t.'] },
   ]);
   lines('rift.wary.bread', [
@@ -432,7 +432,7 @@ talkPack('rift2', () => {
     { if: { temper: 'ornery' }, text: ['It\'s ours. Leave it be. ...Fine. It\'s gossip with blinking lights.'] },
   ]);
   lines('rift.relay.posts', [
-    { text: ['"Rained again. REAL rain." "Second breakfast is a protocol." "Who took my spanner." That sort of thing.', 'The kids post riddles. The old folk post "is this thing on". Every single time.'] },
+    { text: ['"Rained again. REAL rain." "Second breakfast is a protocol." "Who took my wrench." That sort of thing.', 'The kids post riddles. The old folk post "is this thing on". Every single time.'] },
     { if: { temper: 'witty' }, text: ['A farmer posted "Turnips doing well. Yours sincerely." I printed it out. It\'s on my wall.'] },
     { if: { temper: 'cheerful' }, text: ['Happy things! Who got married, who had a baby, who fell in the pond. Mostly the pond.'] },
     { if: { temper: 'dreamy' }, text: ['Little lines at dusk. "miss the trains tonight." "stars are out." Like lanterns in a window.'] },
@@ -527,7 +527,7 @@ talkPack('rift2', () => {
     { text: ['Saint Mungo. The First Lamp. There\'s a story: he walked out of a storm with a kettle and lit the dark.', 'A saint, they say. Mungo. He\'s on the coins. Little fellow with big feet and a kettle.'] },
     { if: { temper: 'curious' }, text: ['Saint Mungo of the First Lamp. Small, big-footed, carried a copper kettle. Very specific saint. Why so specific?'] },
     { if: { temper: 'witty' }, text: ['A saint with a kettle. We built a religion round a tinker\'s tea. Make of that what you will.'] },
-    { if: { riftFrags: 'saint' }, pri: 1, text: ['Saint Mungo. The one on your parlour wall. Same face. I nearly dropped my cup.'] },
+    { if: { riftFrags: 'saint' }, pri: 1, text: ['Saint Mungo. The one on your parlor wall. Same face. I nearly dropped my cup.'] },
   ]);
   lines('rift.lamp.tended', [
     { text: ['Everything. The lights, the trains, the hum. It tended the city like a garden. Patient. Never slept.', 'It lit the clouds so nobody was ever in the dark. That was the promise. Never dark.'] },
@@ -537,7 +537,7 @@ talkPack('rift2', () => {
   lines('rift.lamp.song', [
     { text: ['A lamp by a willow? ...Hum it. ...That\'s our lullaby. That\'s the city lullaby. How do you know it?', 'Down by the willow lamp? We sing that! To babies! In Neverdark!'] },
     { if: { riftFrags: 'lullaby' }, pri: 1, text: ['The Willow Lamp. Your grannies sang it. Ours too. Same words. I\'ve stopped thinking that\'s a coincidence.'] },
-    { if: { temper: 'shy' }, text: ['...My mum sang that. I haven\'t heard it since. Could you... no. Never mind. Thank you.'] },
+    { if: { temper: 'shy' }, text: ['...My mom sang that. I haven\'t heard it since. Could you... no. Never mind. Thank you.'] },
   ]);
   lines('rift.lamp.kettle', [
     { text: ['The kettle\'s the city\'s mark. It\'s on everything. Coins, sleeves, the trains. It\'s always been the kettle.', 'Mungo\'s kettle. The first lamp was a kettle, the story goes. Boiled the dark away.'] },
@@ -549,7 +549,7 @@ talkPack('rift2', () => {
     { if: { temper: 'dreamy' }, text: ['So we came home. That\'s what the rifts are. A long way home.'] },
   ]);
   lines('rift.lamp.fading', [
-    { text: ['Flickering. Street by street. Lights out where they\'d never been out. The Long Dim, they started calling it.', 'Tired. It\'s been tired for years. The clouds went grey. Some nights black. Nobody knew what to do.'] },
+    { text: ['Flickering. Street by street. Lights out where they\'d never been out. The Long Dim, they started calling it.', 'Tired. It\'s been tired for years. The clouds went gray. Some nights black. Nobody knew what to do.'] },
     { if: { riftStage: { min: 8 } }, pri: 1, text: ['Going out. You\'ve seen the rifts gutter. That\'s it. That\'s the Lamplighter, running down.'] },
     { if: { riftFinale: 'hearthlink' }, pri: 2, text: ['It\'s steadier! Your river\'s feeding it through the golden doors. Neverdark saw stars last month. Stars!'] },
     { if: { riftFinale: 'softclose' }, pri: 2, text: ['I don\'t know, now. The doors are closed. I hope it\'s resting. I hope someone\'s tucking it in.'] },
@@ -560,7 +560,7 @@ talkPack('rift2', () => {
     { if: { riftDynamo: true }, text: ['With your river, maybe. The dynamo, the spinner. Maybe that\'s what all this is for.'] },
   ]);
   lines('rift.lamp.sent', [
-    { text: ['Sent. That\'s what some say. It sent us. Out of the dark. Somewhere soft.', 'I think so. I think it opened the doors on purpose. Before the end. Like a mum pushing kids out of a fire.'] },
+    { text: ['Sent. That\'s what some say. It sent us. Out of the dark. Somewhere soft.', 'I think so. I think it opened the doors on purpose. Before the end. Like a mom pushing kids out of a fire.'] },
     { if: { riftFrags: 'voice' }, pri: 1, text: ['"I sent my children to find it." You heard it too. We\'re its children. This is the soft place.'] },
     { if: { temper: 'shy' }, text: ['...I think it wanted us safe. I think it\'s sitting in the dark on its own now. I try not to think that.'] },
   ]);
@@ -679,7 +679,7 @@ talkPack('rift2', () => {
   lines('rift.asks.jest', [{ text: ['Mostly for leaning. Occasionally for pointing at things dramatically.'] }]);
   lines('rift.asks.share', [{ text: ['Honestly? It\'s the only thing I\'ve kept, all these years. That and the hat.'] }]);
   lines('rift.asks.r.tale', [{ text: ['A tree that remembers. So it\'s storage. Wooden storage. That\'s beautiful.', 'Remembers the first sunrise. ...I\'ve never seen a sunrise till here. I\'m remembering mine.'] }]);
-  lines('rift.asks.r.jest', [{ text: ['Pointing dramatically! I knew it. I\'ve seen you practise.', 'Leaning and pointing. Best tools there are.'] }]);
+  lines('rift.asks.r.jest', [{ text: ['Pointing dramatically! I knew it. I\'ve seen you practice.', 'Leaning and pointing. Best tools there are.'] }]);
   lines('rift.asks.r.share', [{ text: ['The only thing you\'ve kept. ...I kept one thing too. Look. A bit of my old coat.', 'Huh. You and me both. One thing each. That\'s a lot, from the other side.'] }]);
   lines('rift.asks.view', [{ text: ['I think it\'s a staff. And that\'s the best thing it could be.', 'I think it hums. Very quietly. Like home.'] }]);
 
@@ -690,7 +690,7 @@ talkPack('rift2', () => {
     open: { ask: 'rift.kids.open' },
     beats: {
       start: { line: 'rift.kids.start', go: [
-        { ap: 'ask', say: 'What\'s your favourite game?', to: 'game' },
+        { ap: 'ask', say: 'What\'s your favorite game?', to: 'game' },
         { ap: 'ask', say: 'Do the other children ask about your eye?', to: 'eye', need: { if: { rift: true } } },
         { ap: 'jest', say: 'Can you see in the dark? I can\'t. I walk into trees.', to: 'dark' },
       ] },
@@ -703,7 +703,7 @@ talkPack('rift2', () => {
         { ap: 'warm', say: 'It\'s a fine eye. The finest in the valley.', to: 'fine' },
       ] },
       dark: { line: 'rift.kids.dark', go: [
-        { ap: 'ask', say: 'What\'s your favourite game, then?', to: 'game' },
+        { ap: 'ask', say: 'What\'s your favorite game, then?', to: 'game' },
         { ap: 'warm', say: 'Then you can lead me home at night.', to: 'lead' },
       ] },
       lead: { line: 'rift.kids.lead', fx: { fond: 0.03 }, end: true },
@@ -721,8 +721,8 @@ talkPack('rift2', () => {
   ]);
   lines('rift.kids.start', [
     { text: ['Both! I\'m BOTH. That means I get two of everything. That\'s the rule.', 'I\'m a hill-rift-hobbit. It\'s a new kind. I\'m the first. Probably.'] },
-    { if: { rift: true }, text: ['I remember lights. And a lift that sang. And mum\'s hand. That\'s all, mostly.', 'The city was loud. Here is quiet. I like quiet now. Don\'t tell mum, she misses loud.'] },
-    { if: { riftBlood: 'half' }, text: ['My mum says I\'ve got a rift nose. My dad says I\'ve got hill feet. I\'ve got my own everything else.'] },
+    { if: { rift: true }, text: ['I remember lights. And a lift that sang. And mom\'s hand. That\'s all, mostly.', 'The city was loud. Here is quiet. I like quiet now. Don\'t tell mom, she misses loud.'] },
+    { if: { riftBlood: 'half' }, text: ['My mom says I\'ve got a rift nose. My dad says I\'ve got hill feet. I\'ve got my own everything else.'] },
     { if: { riftBlood: 'little' }, text: ['My gran came out of the sky! I\'ve got a sky gran! Nobody else has a sky gran.'] },
     { if: { riftTier: { min: 1 }, riftBlood: null }, text: ['I\'m not from the sky but I say "ping" anyway. Rift-folk say I\'m an honorary. That\'s a real word.'] },
     { if: { band: 'youth' }, text: ['Two worlds? Mostly it means two lots of people telling me how to live. But both lots make good food.'] },
@@ -737,7 +737,7 @@ talkPack('rift2', () => {
     { if: { band: 'youth' }, text: ['Less now. They got used to it. I sort of miss being interesting.'] },
   ]);
   lines('rift.kids.dark', [
-    { text: ['A bit! My eye goes green. I can find the biscuit tin at night. That\'s the main use.', 'YOU walk into trees? But you\'re a WIZARD. Wizards shouldn\'t walk into trees.'] },
+    { text: ['A bit! My eye goes green. I can find the cookie tin at night. That\'s the main use.', 'YOU walk into trees? But you\'re a WIZARD. Wizards shouldn\'t walk into trees.'] },
     { if: { rift: false }, text: ['I can\'t, but my cousin can. She leads us home from the pond. She\'s like a lantern with legs.'] },
   ]);
   lines('rift.kids.lead', [
@@ -750,18 +750,18 @@ talkPack('rift2', () => {
     { text: ['YES! You can be the dragon! You\'re the biggest dragon! Tomorrow, after lessons!', 'You can play but you have to say "beep" when you\'re offline. Even wizards.'] },
   ]);
   lines('rift.kids.hillgame', [
-    { text: ['Conkers! And hide-and-seek in the barley. I\'m best at hiding. Nobody can find me. Except mum.', 'Yes! Leapfrog. Hill games are good. You don\'t need a battery.'] },
+    { text: ['Conkers! And hide-and-seek in the barley. I\'m best at hiding. Nobody can find me. Except mom.', 'Yes! Leapfrog. Hill games are good. You don\'t need a battery.'] },
   ]);
-  lines('rift.kids.comfort', [{ text: ['...Really? They\'re jealous? ...Huh. I\'m going to tell them that.', 'Wish they had one. Okay. I\'ll let them look closer. For a biscuit.'] }]);
+  lines('rift.kids.comfort', [{ text: ['...Really? They\'re jealous? ...Huh. I\'m going to tell them that.', 'Wish they had one. Okay. I\'ll let them look closer. For a cookie.'] }]);
   lines('rift.kids.fine', [{ text: ['The FINEST! I\'m telling everyone! The wizard said!', 'Hee! It\'s a good eye. It\'s mine.'] }]);
 
   // --- Every temper, every beat: more ways of saying it ------------------------------------
   const byTemper = (key, o) => lines(key, Object.keys(o).map((temper) => ({ if: { temper }, text: o[temper] })));
   byTemper('rift.food.paste', {
-    cheerful: ["Paste! In a tube! Every colour of grey! I didn't know what I was missing till your mushrooms!", "Vending noodles! They were fine! Then I had a pie and cried!"],
+    cheerful: ["Paste! In a tube! Every color of gray! I didn't know what I was missing till your mushrooms!", "Vending noodles! They were fine! Then I had a pie and cried!"],
     ornery: ["Printed muck. Don't remind me. I'm still angry about every meal before this valley.", "Paste. Beige. Every day. Your sheep eat better than we did."],
-    shy: ["...Mostly bars. Little grey bars. I ate them on my own.", "...Noodles from a box. They were all right. Not like here."],
-    curious: ["Protein printed from algae, mostly. Fascinating process. Terrible flavour.", "Lab-grown everything. Here it all comes out of the ground. I still find that astonishing."],
+    shy: ["...Mostly bars. Little gray bars. I ate them on my own.", "...Noodles from a box. They were all right. Not like here."],
+    curious: ["Protein printed from algae, mostly. Fascinating process. Terrible flavor.", "Lab-grown everything. Here it all comes out of the ground. I still find that astonishing."],
     dreamy: ["Things that came in little lit boxes. Here food comes out of the earth with dirt on. I love the dirt.", "Steam from a hundred stalls. That's what I remember. More the steam than the food."],
     proud: ["The best the city could make. Which wasn't much. I made the best of it.", "I cooked my own when I could. Never touched the paste. Well. Rarely."],
   });
@@ -774,7 +774,7 @@ talkPack('rift2', () => {
     shy: ["*giggles* Don't let the baker hear.", "Ha. I won't tell. ...I might tell."],
     curious: ["Forty years? I want to study it. Carbon-date the doorstop.", "Is that true? I'm going to check. I need to see this scone."],
     dreamy: ["A scone that's held a door for forty years. That's sort of beautiful.", "Everything here lasts. Even the scones. Especially the scones."],
-    proud: ["Mine would last fifty. I've been practising.", "Doorstops. Hm. My scones are softer than that."],
+    proud: ["Mine would last fifty. I've been practicing.", "Doorstops. Hm. My scones are softer than that."],
     gloomy: ["Ha. At least something here's built to last.", "Forty years. Longer than some cities."],
   });
   byTemper('rift.food.baking', {
@@ -794,23 +794,23 @@ talkPack('rift2', () => {
   byTemper('rift.food.missfood', {
     cheerful: ["Ramen! Oh, ramen! I'll make some! You'll love it! Everyone loves ramen!", "Noodles! Long ones! Slurpy ones! I miss slurping!"],
     ornery: ["Spice. Your food's lovely and it's got no fight in it. I miss food that fights back.", "Real chilli. Here everything's gentle. Too gentle."],
-    shy: ["...A dumpling. Mum made them. I don't know how.", "...Just one bowl of broth from home."],
+    shy: ["...A dumpling. Mom made them. I don't know how.", "...Just one bowl of broth from home."],
     curious: ["Fermented things! Here nobody ferments anything but ale. I've started a jar. It's bubbling.", "Spices. I've been trying to recreate them with herbs. Some success. One explosion."],
     witty: ["Anything that came in a box with a picture of what it wasn't.", "Pak's broth. And the shouting that came with it. Seasoning, that."],
     proud: ["My own cooking. I was good. I'll be good here too.", "My broth. I'll make it again. Properly. Here."],
-    gloomy: ["Things nobody here can make. Things that don't exist any more.", "Mum's dumplings. I'll never have them again."],
+    gloomy: ["Things nobody here can make. Things that don't exist any more.", "Mom's dumplings. I'll never have them again."],
   });
   byTemper('rift.food.catchup', {
-    cheerful: ["I'm catching up as fast as I can! It's my favourite job!", "A great deal! I'm on it! Fork in hand!"],
+    cheerful: ["I'm catching up as fast as I can! It's my favorite job!", "A great deal! I'm on it! Fork in hand!"],
     shy: ["...I'm trying. People keep giving me more.", "*nods, slightly overwhelmed*"],
     curious: ["How much catching up? I've estimated. It's several years of breakfasts.", "I've been keeping a list. Forty-two new foods so far."],
     dreamy: ["Every meal's a little bit of the life I missed.", "Catching up. One warm plate at a time."],
     witty: ["I've a lot of catching up to do. My waistcoat's a lot of letting out to do.", "Catching up? I'm overtaking."],
     proud: ["I'm catching up faster than any of the others.", "I've already caught up. I'm working ahead."],
-    gloomy: ["I'll never catch up. But I'll try. Mostly with pie.", "Years of grey food. A lot of catching up."],
+    gloomy: ["I'll never catch up. But I'll try. Mostly with pie.", "Years of gray food. A lot of catching up."],
   });
   byTemper('rift.food.ritual', {
-    cheerful: ["It's both! It's the best thing! Everyone stops and smiles!", "Ritual! With biscuits! The best kind!"],
+    cheerful: ["It's both! It's the best thing! Everyone stops and smiles!", "Ritual! With cookies! The best kind!"],
     ornery: ["Ritual. And a tyrannical one. You can't refuse a cup. It's illegal.", "It's a ritual. A compulsory one."],
     shy: ["...Ritual. It's the bit where everyone sits down. I like that bit.", "...It gives you something to do with your hands."],
     curious: ["Both, but the ritual matters more. I've timed how long people stay after the pot's empty. Ages.", "I've studied it. The tea's almost irrelevant. It's the stopping."],
@@ -837,7 +837,7 @@ talkPack('rift2', () => {
   });
   byTemper('rift.food.kettle', {
     cheerful: ["The kettle! Oh! It's everywhere! Our sign and your tea! That's wonderful!", "A kettle! Everywhere I look! Like a little hello from home!"],
-    ornery: ["A kettle. Huh. I've been staring at that mark my whole life and never thought about it.", "Kettle on the sleeve, kettle on the hob. Someone's having a joke."],
+    ornery: ["A kettle. Huh. I've been staring at that mark my whole life and never thought about it.", "Kettle on the sleeve, kettle on the stove. Someone's having a joke."],
     shy: ["...Oh. The kettle. I never thought.", "*looks at their sleeve for a long moment*"],
     curious: ["The kettle. A city sigil and a hobbit tea-ritual. That can't be coincidence. I'll find out.", "A kettle. Same shape. Same copper. I need to look into this."],
     dreamy: ["The kettle. Like a thread tying two worlds together.", "It's like the city left a message for me. On every stove."],
@@ -860,7 +860,7 @@ talkPack('rift2', () => {
     ornery: ["A broken clock. Nobody wants it. Not even me. It's mine now, apparently.", "Yes. An ugly vase. I tried to give it away. It came back in a week."],
     shy: ["...A little china dog. I kept it. I'm not supposed to keep it, am I?", "...Yes. I don't know what to do with it."],
     dreamy: ["A tin music box that plays half a tune. I wind it at night. The half's enough.", "A mathom. It's like a story nobody finished."],
-    witty: ["A mathom is a present that's going somewhere else. Like gossip.", "Yes. A cracked teapot. It's done more rounds than the postie."],
+    witty: ["A mathom is a present that's going somewhere else. Like gossip.", "Yes. A cracked teapot. It's done more rounds than the mail carrier."],
     proud: ["Several. I've given away more than anyone in my lane.", "Yes. And I passed it on correctly."],
     gloomy: ["A mathom. Something nobody wanted. Felt about right.", "A cracked plate. I've kept it. It feels like me."],
   });
@@ -876,7 +876,7 @@ talkPack('rift2', () => {
   });
   byTemper('rift.customs.taught', {
     cheerful: ["Loads! Songs! Words! Games! I teach everyone everything!", "The kids learned 'ping' in a day! I'm so proud!"],
-    ornery: ["Taught you? You lot don't learn. ...Except the kids. And the miller. And the innkeeper.", "I've taught them to say 'lag' about the post. It's my finest achievement."],
+    ornery: ["Taught you? You lot don't learn. ...Except the kids. And the miller. And the innkeeper.", "I've taught them to say 'lag' about the mail. It's my finest achievement."],
     curious: ["A few things! And I've been tracking how they spread! Kids first, then everyone!", "Binary. With acorns. The little ones are faster at it than our kids were."],
     dreamy: ["A song. At dusk, on the hill. The children hum it now.", "The way we say goodnight. 'Lights low.' Some of you say it now."],
     witty: ["To say 'copy that' instead of 'right you are'. A hundred years of hobbit culture, undone in a week.", "How to complain about the Relay. Very popular."],
@@ -894,7 +894,7 @@ talkPack('rift2', () => {
     shy: ["...The kids say 'ping'. I hear it at the pond. It makes me smile.", "...A few things. I don't want to push."],
     curious: ["I've been mapping it! Ping spread fastest! Then neon trim! Then the songs!", "The slang's catching fastest. Language always does. Fascinating."],
     dreamy: ["Little things. Like seeds blowing on the wind. They land where they land.", "A song here, a word there. Like two rivers meeting."],
-    witty: ["'Lag'. Everyone's using it about the post. The postie's furious.", "Neon bunting. The elders pretend to hate it. They dance under it."],
+    witty: ["'Lag'. Everyone's using it about the mail. The mail carrier's furious.", "Neon bunting. The elders pretend to hate it. They dance under it."],
     proud: ["Plenty. And most of it's from me.", "Our ways are good. Of course they're catching on."],
     gloomy: ["A little. Enough that we won't be forgotten.", "Some. It's nice. It means we're here."],
   });
@@ -930,14 +930,14 @@ talkPack('rift2', () => {
     dreamy: ["Kindly, mostly. Some folk look at us like we're a dream they're not sure about.", "Some are lovely. Some are scared. I understand the scared ones. I was scared too."],
   });
   byTemper('rift.wary.stare', {
-    curious: ["I've categorised the starers. Curious, worried, rude. The curious ones talk to me eventually.", "It's fascinating, honestly. Who stares, who waves, who hides. There's a pattern."],
+    curious: ["I've categorized the starers. Curious, worried, rude. The curious ones talk to me eventually.", "It's fascinating, honestly. Who stares, who waves, who hides. There's a pattern."],
     dreamy: ["I wave at the ones who hide behind curtains. Maybe one day the curtain will wave back.", "They look at me like I'm a ghost. Maybe I am, a bit."],
     proud: ["I don't hide. I walk where I like. They'll get used to it.", "They stare. I hold my head up. That's all."],
     gloomy: ["Some days the staring's all I notice.", "There's one who still cuts me dead. Every day. It wears."],
   });
   byTemper('rift.wary.first', {
     cheerful: ["Oh, a lovely lady with a basket of eggs! She gave me six! I didn't know what to do with them!", "A little lad! He asked if I was a robot! I said yes! He was thrilled!"],
-    ornery: ["An old farmer who told me I was standing in his cabbages. Rude. We're friends now.", "Someone who shouted at me. Then apologised. That's how you know they mean it."],
+    ornery: ["An old farmer who told me I was standing in his cabbages. Rude. We're friends now.", "Someone who shouted at me. Then apologized. That's how you know they mean it."],
     shy: ["...A girl at the well. She just smiled. That was enough.", "...Someone left a loaf on my step. I never found out who."],
     curious: ["A child who asked forty questions. I answered thirty-nine. The fortieth was about my eye.", "The storyteller. Asked about the city and wrote down everything I said."],
     witty: ["The innkeeper. Asked if I wanted ale. I said yes. Instant citizenship.", "A goose. It was hostile, but it was first."],
@@ -956,7 +956,7 @@ talkPack('rift2', () => {
     ornery: ["Hurt? It makes me angry. Angry's easier than hurt.", "Hurt. Yes. I won't let them see it."],
     shy: ["...Yes. I go home and sit for a while.", "...It's why I don't go out much."],
     curious: ["It does. I try to understand why they're scared. It helps a little.", "I didn't expect it to. It does. Interesting how that works."],
-    dreamy: ["Like a cold draught through a warm room.", "It aches. Then it fades. Then it comes back."],
+    dreamy: ["Like a cold draft through a warm room.", "It aches. Then it fades. Then it comes back."],
     witty: ["Does it hurt? Only my feelings. And my feelings are very large.", "A little. I cope with jokes. You may have noticed."],
   });
   byTemper('rift.wary.bread', {
@@ -982,7 +982,7 @@ talkPack('rift2', () => {
     cheerful: ["Ha! Like cats! I love cats!", "Then I've got a lot of cats coming!"],
     ornery: ["Cats. Great. I'll have them sitting on me forever.", "Hm. Cats don't stare, though."],
     shy: ["*laughs softly* Like cats. Yes.", "Ha. I like cats."],
-    curious: ["Cats! Yes! Same behaviour pattern! Suspicion, then sudden devotion!", "That's a good model. I'll use it."],
+    curious: ["Cats! Yes! Same behavior pattern! Suspicion, then sudden devotion!", "That's a good model. I'll use it."],
     dreamy: ["Like cats curling up by a fire. Yes.", "That's a lovely way of seeing it."],
     witty: ["Like cats. So they'll bring me dead mice next?", "Then I'll need a cat flap."],
     proud: ["Like cats. They'll come to me when they're ready.", "I'll wait. I'm good with cats."],
@@ -1004,7 +1004,7 @@ talkPack('rift2', () => {
   byTemper('rift.relay.posts', {
     ornery: ["Nonsense, mostly. 'Rained again.' Yes. We know. We're standing in it.", "Gossip with spelling mistakes. And a hill-folk asking how to make letters bigger."],
     shy: ["...Little things. Somebody's lost hen. Somebody's birthday.", "...I like reading them at night. All the little lives."],
-    curious: ["Everything! Weather, births, scrap, songs! It's a perfect record of the village!", "I've been categorising them. Mostly food."],
+    curious: ["Everything! Weather, births, scrap, songs! It's a perfect record of the village!", "I've been categorizing them. Mostly food."],
     proud: ["The important things. Who's built what. Who needs help.", "Useful things. I post useful things."],
     gloomy: ["Homesick things, at night. Everyone pretends they're jokes.", "'miss the trains tonight.' That sort of thing."],
   });
@@ -1050,7 +1050,7 @@ talkPack('rift2', () => {
     shy: ["...It sounds lonely. I whisper back. I don't know if it hears.", "...It's sad. Kind and sad."],
     curious: ["It's the Lamplighter. I'm almost certain. The cadence matches the old recordings.", "Same message. Every dusk. Like a beacon."],
     dreamy: ["It's the city, calling its children home. Or calling them away. I can't tell which.", "A voice like a lullaby, worn thin."],
-    witty: ["It's asking for tea. I'm not even joking. 'The kettle's gone cold.'", "The oldest machine in two worlds, and it wants a cuppa."],
+    witty: ["It's asking for tea. I'm not even joking. 'The kettle's gone cold.'", "The oldest machine in two worlds, and it wants a cup of tea."],
     proud: ["It's the Lamplighter. I'd know it anywhere.", "It's asking for us. We'll answer."],
     gloomy: ["It's dying. Listen to it. It's dying and it's still asking about us.", "It's saying goodbye, I think."],
   });
@@ -1060,13 +1060,13 @@ talkPack('rift2', () => {
     shy: ["...Okay. I'll keep sending.", "*nods*"],
     curious: ["Not wasted. A message sent changes the sender, if nothing else. I'll accept that.", "Interesting. I'll keep a record."],
     dreamy: ["Someone listening. Like a lamp in a far window. Yes.", "I'll imagine them reading it. That's enough."],
-    witty: ["Not wasted. Just undelivered. Like the post.", "Keep sending. The static's going to have to reply eventually."],
+    witty: ["Not wasted. Just undelivered. Like the mail.", "Keep sending. The static's going to have to reply eventually."],
     proud: ["I'll keep the line open. Someone will hear.", "Not wasted. Nothing I do is."],
   });
   byTemper('rift.lamp.built', {
     cheerful: ["Saint Mungo! He's lovely! Little round face! Big feet! He's on everything!", "Saint Mungo! Every kid in the city loves him!"],
     ornery: ["A saint. With a kettle. Don't laugh. ...Fine, laugh.", "Saint Mungo. The church says he walked out of the dark. I say he got lost."],
-    shy: ["...Saint Mungo. Mum had a little picture of him. Over the cooker.", "...Saint Mungo. He's kind, in the stories."],
+    shy: ["...Saint Mungo. Mom had a little picture of him. Over the stove.", "...Saint Mungo. He's kind, in the stories."],
     dreamy: ["Saint Mungo, who walked out of the storm with fire in a kettle. I always loved that story.", "A saint from nowhere, with big feet. Like someone from here."],
     proud: ["Saint Mungo of the First Lamp. Founder of the greatest city there ever was.", "Our saint. Our founder. Our light."],
     gloomy: ["Saint Mungo. He lit the first lamp. Now the last ones are going out.", "Saint Mungo. I wonder if he'd be sad, seeing it now."],
@@ -1076,7 +1076,7 @@ talkPack('rift2', () => {
     ornery: ["Everything. And nobody thanked it. Not once. Then they wondered why it got tired.", "Everything. We took it for granted. Every one of us."],
     shy: ["...It kept us safe. I used to say goodnight to it.", "...It hummed. That's how you knew you were safe."],
     curious: ["Power distribution, traffic, the cloud-glow. One machine. Nobody knows how.", "I've seen plans of the outer layers. The core's never been mapped."],
-    witty: ["Everything. Imagine if your miller also ran the weather and the post. That.", "It was the city's mum. Nobody ever called."],
+    witty: ["Everything. Imagine if your miller also ran the weather and the mail. That.", "It was the city's mom. Nobody ever called."],
     proud: ["It kept ten million people safe. Every night. For centuries.", "Everything. The greatest machine ever built."],
     gloomy: ["Everything. That's why it's so bad that it's tired.", "It did everything. Now it can't."],
   });
@@ -1092,7 +1092,7 @@ talkPack('rift2', () => {
   byTemper('rift.lamp.kettle', {
     cheerful: ["The kettle! It's on everything! Coins! Trains! I've got one on my boot!", "The kettle's our sign! Isn't it funny? You have kettles too!"],
     ornery: ["The kettle. Everyone's mark. Nobody asks why. I asked why. Nobody knew.", "It's a kettle. On everything. Don't ask me why."],
-    shy: ["...The kettle. Mum sewed one on my sleeve. For luck.", "...It's the city's mark. Always has been."],
+    shy: ["...The kettle. Mom sewed one on my sleeve. For luck.", "...It's the city's mark. Always has been."],
     curious: ["The kettle's on everything. The oldest coins have one. I've always wondered.", "Every seal, every badge. A kettle. Odd choice for a city of light."],
     dreamy: ["The kettle. It means home, back there. Funny, it means home here too.", "A kettle, warm, waiting. That's what the city was meant to be."],
     witty: ["The kettle. Our city's crest is a tea appliance. Says a lot.", "A kettle. Founded on tea. Like every good thing."],
@@ -1113,7 +1113,7 @@ talkPack('rift2', () => {
     ornery: ["Fading. And the Council pretended it wasn't. Cowards.", "Going out. And everyone pretending it isn't."],
     shy: ["...It's getting dark. I don't like thinking about it.", "...It flickers. I used to watch it flicker."],
     curious: ["Fading. I measured it. Output's down by half in twenty years.", "The decline's accelerating. I've seen the numbers."],
-    dreamy: ["Like a candle near the end. Brighter for a moment, then smaller.", "The clouds go grey now. They used to be gold."],
+    dreamy: ["Like a candle near the end. Brighter for a moment, then smaller.", "The clouds go gray now. They used to be gold."],
     witty: ["Fading. Like my enthusiasm for mornings.", "Dimming. Someone forgot to change the bulb for three hundred years."],
     proud: ["Fading. But it held on longer than anyone thought possible.", "It's tired. It's earned its tiredness."],
   });
@@ -1225,7 +1225,7 @@ talkPack('rift2', () => {
     cheerful: ["A tinker! In lightning! That's amazing! Tell me more!", "Ooh! A clue! I love clues!"],
     ornery: ["A tale. Always tales. ...Go on, then.", "A tinker. Hm. That's not nothing."],
     shy: ["...A tinker. Like Saint Mungo, in the stories. Oh.", "...That sounds like our story."],
-    curious: ["Lightning! A tinker! That's a data point! When was it? Where exactly?", "A clue! What colour was the lightning? Green? It was green, wasn't it?"],
+    curious: ["Lightning! A tinker! That's a data point! When was it? Where exactly?", "A clue! What color was the lightning? Green? It was green, wasn't it?"],
     dreamy: ["A tinker in green lightning. Like a fairy tale. Like our fairy tales.", "That's a story I've heard. From the other side."],
     witty: ["You're telling me a tinker started all this. With a kettle. Classic.", "Still learning the ending. That's very wizard of you."],
     proud: ["I knew there was a story. I knew it.", "A tinker. Then it was one of yours who started it."],
@@ -1265,7 +1265,7 @@ talkPack('rift2', () => {
     shy: ["...Is it rude to ask how old you are?", "...You seem very old. Kindly old."],
     curious: ["How old are you? In years? Ours or yours? Is there a conversion?", "Age question. Honest answer. Please. For my records."],
     dreamy: ["Are you as old as the stars? You look like you might be.", "How many winters have you seen? Thousands?"],
-    witty: ["Rumour says you predate the hills. True or false?", "How old are you? Ballpark. Era. Geological period."],
+    witty: ["Rumor says you predate the hills. True or false?", "How old are you? Ballpark. Era. Geological period."],
     proud: ["I've worked out everyone's age in the village except yours. Help me.", "What's your age? I'd like to know who I'm talking to."],
     gloomy: ["Do you remember being young?", "How long have you been wandering?"],
   });
@@ -1275,7 +1275,7 @@ talkPack('rift2', () => {
     shy: ["...That's so old. ...And you're still kind.", "*stares in wonder*"],
     curious: ["The river moved! How fast? Over how many years? Tell me!", "All oak? What happened to the oaks? Who cut them?"],
     dreamy: ["All oak. Imagine the quiet. Even quieter than now.", "You've seen the valley before it was a valley. Like a dream."],
-    witty: ["Older than the river. You've got seniority over the water.", "So you're the valley's grandad."],
+    witty: ["Older than the river. You've got seniority over the water.", "So you're the valley's granddad."],
     proud: ["Then you've seen everything. And you chose to come back.", "Impressive. Truly."],
     gloomy: ["All that time. And it all changes anyway.", "You've seen so much go. How do you bear it?"],
   });
@@ -1323,7 +1323,7 @@ talkPack('rift2', () => {
     ornery: ["A tree that remembers. Romantic nonsense. ...Beautiful nonsense.", "Hm. So it's a very old stick."],
     shy: ["...It remembers for you. That's lovely.", "*touches it gently* Oh."],
     curious: ["A tree that remembers the first sunrise. How? Rings? Sap? I need to know.", "Wooden memory. Fascinating."],
-    dreamy: ["A tree that remembers the first sunrise. I'd like to remember mine.", "It holds memories like light holds colour."],
+    dreamy: ["A tree that remembers the first sunrise. I'd like to remember mine.", "It holds memories like light holds color."],
     witty: ["A tree with a better memory than me. Insulting.", "So the staff is a library. Wooden."],
     proud: ["A staff with history. Like a good tool should be.", "Respect. That's a fine staff."],
     gloomy: ["Remembers for you. ...Some things I'd rather not remember.", "Lucky. Some things should be remembered."],
@@ -1360,7 +1360,7 @@ talkPack('rift2', () => {
   // the children, by age and mood
   const kidLines = (key, rules) => lines(key, rules);
   kidLines('rift.kids.start', [
-    { if: { band: 'young' }, text: ['I\'m from the sky AND the hill! I\'m special! Mum says!', 'Two worlds! I don\'t know what that means but I like it!'] },
+    { if: { band: 'young' }, text: ['I\'m from the sky AND the hill! I\'m special! Mom says!', 'Two worlds! I don\'t know what that means but I like it!'] },
     { if: { band: 'school' }, text: ['At school they call me "sky-kid". I don\'t mind. Sky-kid\'s a good name.', 'Two worlds means two stories at bedtime. One about lights, one about dragons.'] },
     { if: { mood: ['low', 'miserable'] }, pri: 1, text: ['Sometimes I feel like I don\'t fit either. The hill kids and the sky kids.', 'It\'s hard sometimes. Everyone wants me to pick.'] },
   ]);
@@ -1374,7 +1374,7 @@ talkPack('rift2', () => {
     { if: { band: 'school' }, text: ['Sometimes. A boy asked if I could see his thoughts. I said yes. He\'s been nice ever since.', 'They ask if it hurts. It doesn\'t. Mostly it itches.'] },
   ]);
   kidLines('rift.kids.dark', [
-    { if: { band: 'young' }, text: ['A bit! The biscuit tin glows green! I find it every time!', 'Yes! I\'m not scared of the dark! The dark\'s scared of ME!'] },
+    { if: { band: 'young' }, text: ['A bit! The cookie tin glows green! I find it every time!', 'Yes! I\'m not scared of the dark! The dark\'s scared of ME!'] },
     { if: { band: 'school' }, text: ['A bit. Enough to find the privy at night. That\'s the most useful thing it does.', 'Sort of. Mostly I see the bats. They\'re friendly.'] },
   ]);
   kidLines('rift.kids.play', [
@@ -1385,7 +1385,7 @@ talkPack('rift2', () => {
   kidLines('rift.kids.hillgame', [
     { if: { band: 'young' }, text: ['Puddle jumping! I\'m the best! I get the wettest!', 'Mud pies! The rift kids didn\'t know mud pies! I taught them!'] },
     { if: { band: 'school' }, text: ['Conkers. I\'ve got a forty-sixer. Nobody can beat it.', 'Climbing the party tree. Not allowed. Everyone does it.'] },
-    { if: { band: 'youth' }, text: ['The old songs, at the Badger. Don\'t tell anyone I like them.', 'Fishing with Grandad. Quiet. I like quiet.'] },
+    { if: { band: 'youth' }, text: ['The old songs, at the Badger. Don\'t tell anyone I like them.', 'Fishing with Granddad. Quiet. I like quiet.'] },
   ]);
   kidLines('rift.kids.comfort', [
     { if: { band: 'young' }, text: ['Jealous! Hee! I\'m going to tell them!', 'They want one? I\'ll let them look! For one sweet!'] },
@@ -1393,7 +1393,7 @@ talkPack('rift2', () => {
     { if: { band: 'youth' }, text: ['Jealous. Ha. Maybe. Thanks, wizard.', 'That\'s a nice thing to say. I\'ll pretend I believe it.'] },
   ]);
   kidLines('rift.kids.fine', [
-    { if: { band: 'young' }, text: ['THE FINEST! I\'m telling Mum!', 'Hee! Finest eye! Finest!'] },
+    { if: { band: 'young' }, text: ['THE FINEST! I\'m telling Mom!', 'Hee! Finest eye! Finest!'] },
     { if: { band: 'school' }, text: ['Finest in the valley. I\'ll put that on a badge.', 'Ha! Thanks, wizard. It is pretty good.'] },
     { if: { band: 'youth' }, text: ['Finest eye. Okay. You\'re embarrassing. Thanks.', 'Ha. Don\'t say that in front of my friends.'] },
   ]);

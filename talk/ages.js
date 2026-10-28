@@ -24,7 +24,7 @@ talkPack('ages', () => {
   };
   const has = (x) => x != null && x !== false && x !== '';
   // a number in words, the way folk say it ("a hundred and seven")
-  const ONES = ['nought', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+  const ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
   const TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
   const numWord = (n) => {
     n = Math.max(0, Math.floor(n));
@@ -47,7 +47,7 @@ talkPack('ages', () => {
     F.ageGrownWord = F.ageGrown != null ? numWord(F.ageGrown) : null;
     F.ageJobA = v.job && JOBS[v.job] ? aAn(JOBS[v.job].label.toLowerCase()) : null;
     F.ageNature = v.isChild() ? temperOf(v) : null;
-    F.ageTrade = v.job ? ({ farmer: 'farming', miller: 'milling', baker: 'baking', brewer: 'brewing', innkeeper: 'innkeeping', grower: 'leaf-growing', fisher: 'fishing', woodwright: 'woodwork', herbalist: 'herb-craft', orchardist: 'orchard work', herder: 'herding', postie: 'post round', storyteller: 'storytelling', tinker: 'tinkering', nanny: 'minding the little ones', lamplighter: 'lamplighting' }[v.job] || 'work') : null;
+    F.ageTrade = v.job ? ({ farmer: 'farming', miller: 'milling', baker: 'baking', brewer: 'brewing', innkeeper: 'innkeeping', grower: 'leaf-growing', fisher: 'fishing', woodwright: 'woodwork', herbalist: 'herb-craft', orchardist: 'orchard work', herder: 'herding', postie: 'mail round', storyteller: 'storytelling', tinker: 'tinkering', nanny: 'minding the little ones', lamplighter: 'lamplighting' }[v.job] || 'work') : null;
     F.ageFounder = v.isGrown() && !v.born && !(v.isRiftborn && v.isRiftborn());
     // the eldest in the village, and the littlest
     const live = Game.villagers.filter((o) => !o.leaving);
@@ -238,13 +238,13 @@ talkPack('ages', () => {
     { if: { temper: 'dreamy' }, text: ['Their eyes have gone somewhere far off and long ago.'] },
   ]);
   L('ages.olddays.people', {
-    _: ['Old Hal at the mill, the Proudfoot sisters, a postie with one boot. Characters, all of them.', 'Fewer of us, and louder. We had to be, to fill the place.'],
+    _: ['Old Hal at the mill, the Proudfoot sisters, a mail carrier with one boot. Characters, all of them.', 'Fewer of us, and louder. We had to be, to fill the place.'],
     cheerful: ['Oh, such folk! There was a miller who sang to his flour. Said it rose better.', 'We had a cook who could feed twenty on one pig. And did, every Highday.'],
     ornery: ['Proper folk. Didn\'t need the wizard to tell them how to live.', 'Folk who\'d lend you a spade and expect it back clean. Not like now.'],
     shy: ['Kind ones. Nobody made you talk if you didn\'t want to.', 'There was an old aunt who let me sit in her kitchen and say nothing. I loved her for it.'],
     curious: ['A tinker who knew every road to Bree, and a herbalist who\'d eat anything once.', 'I used to follow the old storyteller about. He knew where every name came from.'],
     dreamy: ['They were giants, to me. Every one of them. Now I\'m the giant, and I don\'t feel it.', 'The faces come back at night, sometimes. All of them laughing at something.'],
-    witty: ['A brewer who couldn\'t hold his own ale, and an innkeeper who couldn\'t count. Happy times.', 'Characters. We didn\'t call them that then. We called them the neighbours.'],
+    witty: ['A brewer who couldn\'t hold his own ale, and an innkeeper who couldn\'t count. Happy times.', 'Characters. We didn\'t call them that then. We called them the neighbors.'],
     proud: ['Good stock. Hard workers. The kind who built things that last.', 'My people. The best in the valley. We still are, mostly.'],
     gloomy: ['Most of them have gone over the hills now. I\'m the one who stayed.', 'Gone, mostly. I count the stones on the Green sometimes.'],
   }, [
@@ -265,7 +265,7 @@ talkPack('ages', () => {
   });
   L('ages.olddays.snow', {
     _: ['In the snow, in summer, with a goat on my back. And I was glad of it!', 'Snow in summer, hail at harvest. You young things have it easy.'],
-    cheerful: ['In the snow! In summer! And we called it a holiday!', 'Ha! Snow up to the eyebrows and a smile on every face.'],
+    cheerful: ['In the snow! In summer! And we called it a vacation!', 'Ha! Snow up to the eyebrows and a smile on every face.'],
     ornery: ['Very funny. Now you\'re just making it up for me.', 'Snow every day of the year. You\'d have lasted a week.'],
     shy: ['...There was snow once in Afterlithe. I\'m not making that up.', 'Ha. You\'re teasing. That\'s all right.'],
     curious: ['There was one summer snow, actually. I wrote down the date. Somewhere.', 'Snow in summer! It happened once. The weather was very confused that year.'],
@@ -282,7 +282,7 @@ talkPack('ages', () => {
     curious: ['The river ran the other side of the alders then. It moves, you know. Slowly. I\'ve watched.', 'We had no Store. Everyone kept their own, and borrowed everybody else\'s.'],
     dreamy: ['The light. The evening light came all the way down the valley. It still does. I just see less of it.', 'Lanterns on sticks and a song going round. It felt like the whole world was here.'],
     witty: ['Smaller. Quieter. Fewer people asking me how it used to be.', 'We had one cart. It belonged to everyone, so nobody ever greased it.'],
-    proud: ['Hard work, plain food, and a good word for your neighbour. That was the village.', 'We built every bit of it. The square, the mill, the lanes. Our hands.'],
+    proud: ['Hard work, plain food, and a good word for your neighbor. That was the village.', 'We built every bit of it. The square, the mill, the lanes. Our hands.'],
     gloomy: ['Better, in most ways. I don\'t know what we\'ve gained, honestly.', 'Kinder. Quieter. I suppose everyone says that.'],
   }, [
     { if: { ageMemory: has, ageMemoryGood: true }, pri: 1, text: ['I wrote it down once: "{ageMemory}." I read it over sometimes.', 'Do you know what I think of most? "{AgeMemory}." Funny what sticks.'] },
@@ -302,7 +302,7 @@ talkPack('ages', () => {
   });
   L('ages.olddays.thistles', {
     _: ['You never! Thistles? So that\'s where the name came from.', 'Ha! Before us? How old ARE you?'],
-    cheerful: ['Thistles! Ha! Well, we got most of them out. Most.', 'Oh, that\'s marvellous. I\'ll tell the grandchildren the wizard saw the thistles.'],
+    cheerful: ['Thistles! Ha! Well, we got most of them out. Most.', 'Oh, that\'s marvelous. I\'ll tell the grandchildren the wizard saw the thistles.'],
     ornery: ['Thistles. And whose job do you suppose it was to dig them up? Mine.', 'Don\'t tell me. You stood there and watched us dig them out.'],
     shy: ['...Really? You were here? Before?', 'Oh. I always wondered what was here before.'],
     curious: ['Truly? What else? Was the river where it is? Were there trees on the hill?', 'You must tell me everything. I\'ve a book. I\'ll need a new page.'],
@@ -313,7 +313,7 @@ talkPack('ages', () => {
   });
   L('ages.olddays.missed', {
     _: ['{AgeMissed}? Oh, the best of us. Laughed like a door banging.', '{AgeMissed} could make a feast out of a cabbage and a joke.'],
-    cheerful: ['{AgeMissed} would dance on a table at the drop of a hat. Any hat.', 'Oh, {ageMissed}! Never once let me win at draughts. Not once!'],
+    cheerful: ['{AgeMissed} would dance on a table at the drop of a hat. Any hat.', 'Oh, {ageMissed}! Never once let me win at checkers. Not once!'],
     ornery: ['{AgeMissed} was the only one who ever told me I was wrong and lived.', 'Stubborn as a gatepost, {ageMissed}. I miss arguing with {ageMissed}.'],
     shy: ['...{AgeMissed} always saved me a seat. Always. I never had to ask.', '{AgeMissed} talked for both of us. I didn\'t mind.'],
     curious: ['{AgeMissed} knew the name of every bird in the valley. I\'m still learning them.', '{AgeMissed} taught me to read the weather off the river.'],
@@ -386,9 +386,9 @@ talkPack('ages', () => {
     cheerful: ['You did! You set off a rocket that went down the chimney of the Badger! Best night ever!', 'I remember! You made the smoke rings into ships. I chased them to the river.'],
     ornery: ['You did. You set fire to my father\'s hedge. He never forgave you. I did.', 'You came. You made a mess. You left. Some things don\'t change.'],
     shy: ['...You gave me a sparkler once. I was too scared to hold it. You held it for me.', 'You came. I hid under the table. I watched your boots.'],
-    curious: ['You did! I asked you how the colours worked. You said "practice". I\'ve never forgotten.', 'You came every few summers. I tried to work out which. I never could.'],
+    curious: ['You did! I asked you how the colors worked. You said "practice". I\'ve never forgotten.', 'You came every few summers. I tried to work out which. I never could.'],
     dreamy: ['You came the summer I was nine. A butterfly made of light. I\'ve chased that ever since.', 'You did. And the sky was full of flowers. I thought it was the end of the world, in a good way.'],
-    witty: ['You came and told us a wizard is never late. You were four days late.', 'You did. My grandad called you "that tall nuisance". With great affection.'],
+    witty: ['You came and told us a wizard is never late. You were four days late.', 'You did. My granddad called you "that tall nuisance". With great affection.'],
     proud: ['You came for my coming of age. Gave me a rocket all of my own. I still have the stick.', 'You came to see us, specially. We were the envy of the Shire.'],
     gloomy: ['You came. Then you went. Folk do.', 'You did, once or twice. I thought you\'d forgotten us after.'],
   }, [
@@ -607,7 +607,7 @@ talkPack('ages', () => {
     shy: ['...Thank you for telling me. I won\'t tell anyone.', 'Oh. I\'ll... I\'ll keep that to myself.'],
     curious: ['How many centuries does it take, to stop counting? I\'ve always wondered.'],
     dreamy: ['Then we\'re both getting old under the same sky. That\'s not so bad.'],
-    witty: ['The stairs win at mine. I\'ve moved the bed to the parlour. Stairs nil.'],
+    witty: ['The stairs win at mine. I\'ve moved the bed to the parlor. Stairs nil.'],
     proud: ['You\'re in fine shape. Better than most. I mean it.'],
     gloomy: ['Then it never stops. Even for wizards.', 'Oh. I thought you at least would go on for ever.'],
   });
@@ -749,7 +749,7 @@ talkPack('ages', () => {
     shy: ['...You don\'t have to talk to be liked. Just turn up. Turning up is most of it.', 'Find one person who understands you. One is plenty.'],
     curious: ['Never stop learning. The day you stop, you start getting old. Really old.', 'Ask the old ones questions while they\'re here. I didn\'t ask enough.'],
     dreamy: ['Don\'t wait for the right time. It\'s now. It was always now.', 'Love the ordinary days. They\'re the ones you\'ll miss.'],
-    witty: ['Most things that worry you never happen. The rest happen anyway. So have a biscuit.', 'Nobody\'s really grown up. We\'re all pretending, very well.'],
+    witty: ['Most things that worry you never happen. The rest happen anyway. So have a cookie.', 'Nobody\'s really grown up. We\'re all pretending, very well.'],
     proud: ['Do honest work and keep your word. Everything else follows.', 'Know what you\'re good at, and do it for others.'],
     gloomy: ['Don\'t waste time being sad about things you can\'t change. I wasted years.', 'Hold on to people. They go. Hold on while they\'re here.'],
   }, [
@@ -759,12 +759,12 @@ talkPack('ages', () => {
     { if: { ageTrips: { min: 1 } }, text: ['Go and see the world once, then come home and love it properly.'] },
   ]);
   L('ages.wisdom.learned', {
-    _: ['The hard way. Is there another?', 'From getting it wrong. Getting it wrong is a marvellous teacher. Terrible manners, though.'],
+    _: ['The hard way. Is there another?', 'From getting it wrong. Getting it wrong is a marvelous teacher. Terrible manners, though.'],
     cheerful: ['From a very old aunt who said yes to everything. She lived to a hundred and twelve!', 'By getting it wrong, then laughing, then getting it right.'],
     ornery: ['From years of being right and alone. Not a good trade, it turns out.', 'From a quarrel I should have mended. There. Don\'t ask more.'],
     shy: ['...From a friend who sat with me when I couldn\'t talk. She didn\'t say anything. She was just there.', 'By watching. I watch a lot.'],
     curious: ['From an old tinker who knew everything. I asked him how. He said "I asked".', 'I worked it out slowly. Over about sixty years.'],
-    dreamy: ['One spring morning I realised I\'d missed a whole year looking at my feet.', 'From the river. It goes on, whatever happens. I try to.'],
+    dreamy: ['One spring morning I realized I\'d missed a whole year looking at my feet.', 'From the river. It goes on, whatever happens. I try to.'],
     witty: ['From my mother. She said it every day. It took me forty years to hear it.', 'I read it on a tea towel. Tea towels are very wise.'],
     proud: ['From my father, who never once broke his word. Not once.', 'From doing it right for a very long time.'],
     gloomy: ['By losing people. That\'s how everyone learns it.', 'Too late. That\'s how I learned it. Too late.'],
@@ -849,7 +849,7 @@ talkPack('ages', () => {
     gloomy: ['That\'s true. That\'s the truest thing anyone\'s said today.'],
   });
   L('ages.wisdom.little', {
-    _: ['{AgeLittlest}. Yes. I\'ll tell {ageLittlest} with a biscuit. Biscuits help.', 'Little ears. You\'re right. They\'ll remember it when I\'m long gone.'],
+    _: ['{AgeLittlest}. Yes. I\'ll tell {ageLittlest} with a cookie. Cookies help.', 'Little ears. You\'re right. They\'ll remember it when I\'m long gone.'],
     cheerful: ['Oh, {ageLittlest} will love it! I\'ll make it a game!'],
     ornery: ['{AgeLittlest}\'s a menace. ...A menace who listens, mind.'],
     shy: ['...{AgeLittlest} does sit with me sometimes. I\'ll try.'],
@@ -894,7 +894,7 @@ talkPack('ages', () => {
       start: { line: 'ages.grandkids.start', go: [
         { ap: 'ask', say: 'How many is it now?', to: 'count', need: { if: { ageGrandkids: { min: 2 } } } },
         { ap: 'ask', say: 'Who do they take after?', to: 'takes' },
-        { ap: 'jest', say: 'And how many sweets have you slipped them this week?', to: 'sweets' },
+        { ap: 'jest', say: 'And how much candy have you slipped them this week?', to: 'sweets' },
         { ap: 'warm', say: 'You light up, talking about them.', to: 'lightup' },
       ] },
       count: { line: 'ages.grandkids.count', go: [
@@ -906,9 +906,9 @@ talkPack('ages', () => {
         { ap: 'ask', say: 'What will you teach them, while you can?', to: 'teach' },
         { ap: 'jest', say: 'Heaven help the village.', to: 'heaven' },
       ] },
-      sweets: { line: 'ages.grandkids.sweets', fx: { joke: { k: 'ages.sweets', t: 'Sweets for the grandchildren, and the wizard knows the pocket.' } }, go: [
+      sweets: { line: 'ages.grandkids.sweets', fx: { joke: { k: 'ages.sweets', t: 'Candy for the grandchildren, and the wizard knows the pocket.' } }, go: [
         { ap: 'jest', say: 'Your secret\'s safe. Which pocket?', to: 'pocket' },
-        { ap: 'ask', say: 'What else do you give them? Besides sweets?', to: 'teach' },
+        { ap: 'ask', say: 'What else do you give them? Besides candy?', to: 'teach' },
       ] },
       lightup: { line: 'ages.grandkids.lightup', fx: { fond: 0.02 }, go: [
         { ap: 'ask', say: 'What do you hope for them?', to: 'hope', need: { open: 1 }, soft: true },
@@ -951,7 +951,7 @@ talkPack('ages', () => {
   L('ages.grandkids.start', {
     _: ['{AgeGrandkid}? Oh, a handful. A lovely handful.', 'Growing. Eating. Asking why. The usual.'],
     cheerful: ['Oh, {ageGrandkid}! The light of my life! Did you know {ageGrandkid} can whistle now?', 'Wonderful! Loud and muddy and wonderful!'],
-    ornery: ['{AgeGrandkid} broke my good jug. Then gave me a daisy. I forgave the jug.', 'Noisy. Always in the biscuit tin. ...Bright, mind. Very bright.'],
+    ornery: ['{AgeGrandkid} broke my good jug. Then gave me a daisy. I forgave the jug.', 'Noisy. Always in the cookie tin. ...Bright, mind. Very bright.'],
     shy: ['...{AgeGrandkid} holds my hand on the lane. Nobody\'s done that in years.', 'They\'re lovely. They chatter and I listen. It suits us.'],
     curious: ['{AgeGrandkid} asked me why the sky is blue. I didn\'t know! I\'ve been asking everyone.', 'Clever. Too clever. Asks questions I can\'t answer.'],
     dreamy: ['When {ageGrandkid} laughs I hear my own mother. Isn\'t that strange?', 'They\'re the best thing I\'ve ever had a hand in. A small hand.'],
@@ -960,14 +960,14 @@ talkPack('ages', () => {
     gloomy: ['Growing too fast. Soon they won\'t want an old hobbit about.', 'Busy. They don\'t come round as much. I understand.'],
   }, [
     { if: { ageGrandkidBaby: true }, pri: 1, text: ['{AgeGrandkid}\'s still a babe in arms. Tiny fingers. Grips like a blacksmith.', 'Little {ageGrandkid}! Sleeps through anything except me singing.'] },
-    { if: { ageGrandkids: { min: 3 } }, text: ['Which one? I\'ve {ageGrandkidsWord}! {AgeGrandkid}\'s my favourite. Don\'t tell the others.'] },
+    { if: { ageGrandkids: { min: 3 } }, text: ['Which one? I\'ve {ageGrandkidsWord}! {AgeGrandkid}\'s my favorite. Don\'t tell the others.'] },
     { if: { stage: 'grown' }, text: ['A grandparent! Me! I still feel about thirty-four.'] },
   ]);
   L('ages.grandkids.count', {
-    _: ['{AgeGrandkidsWord}! And every one of them knows where I keep the biscuits.', '{AgeGrandkidsWord} now. I count them on my fingers. Some days twice.'],
-    cheerful: ['{AgeGrandkidsWord}! Isn\'t it marvellous? Birthdays every other week!'],
+    _: ['{AgeGrandkidsWord}! And every one of them knows where I keep the cookies.', '{AgeGrandkidsWord} now. I count them on my fingers. Some days twice.'],
+    cheerful: ['{AgeGrandkidsWord}! Isn\'t it marvelous? Birthdays every other week!'],
     ornery: ['{AgeGrandkidsWord}. All of them in my garden at once, usually.'],
-    shy: ['...{AgeGrandkidsWord}. I know all their favourite things.'],
+    shy: ['...{AgeGrandkidsWord}. I know all their favorite things.'],
     curious: ['{AgeGrandkidsWord}! I\'ve been writing down their first words. I\'ve a whole book.'],
     dreamy: ['{AgeGrandkidsWord} little lanterns. That\'s how I think of them.'],
     witty: ['{AgeGrandkidsWord}, last I counted. They move about too much to be sure.'],
@@ -988,19 +988,19 @@ talkPack('ages', () => {
     { if: { ageMissed: has, ageMissedRel: ['wife', 'husband'] }, pri: 1, text: ['They\'ve {ageMissed}\'s eyes. Every time they look at me, there {ageMissed} is.'] },
   ]);
   L('ages.grandkids.sweets', {
-    _: ['Sweets? Me? ...Four. Five. They have very persuasive faces.', 'Only one a day. Each. Per pocket.'],
+    _: ['Candy? Me? ...Four pieces. Five. They have very persuasive faces.', 'Only one a day. Each. Per pocket.'],
     cheerful: ['Oh, dozens! What are grandparents for?', 'Hundreds! Don\'t tell their mother!'],
     ornery: ['That\'s between me and them. Mind your own.', 'None. ...None that their mother knows about.'],
     shy: ['...Just a few. They\'re so pleased.'],
     curious: ['I\'ve been trying to find which sweet they like best. It requires a lot of research.'],
     dreamy: ['A sweet in a small hand. Best trade in the world.'],
-    witty: ['Sweets are a grandparent\'s right. It\'s in the Moot\'s rules. I wrote it in.', 'I\'m teaching them economics. They pay in hugs.'],
+    witty: ['Candy is a grandparent\'s right. It\'s in the Moot\'s rules. I wrote it in.', 'I\'m teaching them economics. They pay in hugs.'],
     proud: ['I give them a sweet for good manners. They have very good manners.'],
-    gloomy: ['Sweets are all I\'ve got to give, some days.'],
+    gloomy: ['Candy is all I\'ve got to give, some days.'],
   });
   L('ages.grandkids.lightup', {
     _: ['Do I? Ha. I suppose I do.', 'They\'re the best part of getting old. The only good part, some days.'],
-    cheerful: ['How could I not! They\'re marvellous!'],
+    cheerful: ['How could I not! They\'re marvelous!'],
     ornery: ['I don\'t light up. ...Do I? Hmph.'],
     shy: ['...Do I? Oh. I didn\'t know it showed.'],
     curious: ['Do I? I wonder what that looks like. A lantern, I hope.'],
@@ -1013,7 +1013,7 @@ talkPack('ages', () => {
     _: ['How to whistle with an acorn cap. Important skills.', 'Which mushrooms not to eat. Which pudding to eat first. The basics.'],
     cheerful: ['Every song I know! We sing on the way to the river.', 'How to skip stones. Six bounces! Well. Four.'],
     ornery: ['How to tell a lazy hobbit from a tired one. Very useful.', 'How to mend a fence properly. Nobody mends fences properly.'],
-    shy: ['...How to sit quietly and watch the herons. That\'s my favourite.'],
+    shy: ['...How to sit quietly and watch the herons. That\'s my favorite.'],
     curious: ['The names of the stars. Some of them I made up. They don\'t know that yet.', 'How to ask a good question. That\'s the whole of it.'],
     dreamy: ['How to listen to the rain. And the old songs.'],
     witty: ['Cards. They\'ll be fleecing the Tooks by spring.'],
@@ -1047,7 +1047,7 @@ talkPack('ages', () => {
   });
   L('ages.grandkids.pocket', {
     _: ['The left one. The right has a hole. ...Don\'t tell.', 'Inside the waistcoat. The one with the button that sticks.'],
-    cheerful: ['Every pocket! I\'m a walking sweetshop!'],
+    cheerful: ['Every pocket! I\'m a walking candy store!'],
     ornery: ['Never you mind which pocket.'],
     shy: ['...The little one inside. Shh.'],
     curious: ['A different one each day, to keep them guessing. It\'s a game.'],
@@ -1085,7 +1085,7 @@ talkPack('ages', () => {
   ]);
   L('ages.grandkids.visit', {
     _: ['Today. Yes. Off I go, then. Before I find a reason not to.', 'You\'re right. I\'ll go now.'],
-    cheerful: ['Yes! I\'ll go right now! I\'ll take a biscuit as a bribe!'],
+    cheerful: ['Yes! I\'ll go right now! I\'ll take a cookie as a bribe!'],
     ornery: ['Fine. I was going anyway.'],
     shy: ['...All right. I\'ll go and find them.'],
     curious: ['I will. I\'ll see what they make of it.'],
@@ -1112,7 +1112,7 @@ talkPack('ages', () => {
     shy: ['...I hope so.'],
     curious: ['I wonder which bits. Never the ones you expect.'],
     dreamy: ['Like a song you can\'t remember learning.'],
-    witty: ['They\'ll remember the sweets. The wisdom\'s a bonus.'],
+    witty: ['They\'ll remember the candy. The wisdom\'s a bonus.'],
     proud: ['They will. I make sure of it.'],
     gloomy: ['That\'s something, isn\'t it. Being remembered.'],
   });
@@ -1177,7 +1177,7 @@ talkPack('ages', () => {
       ] },
       proud: { line: 'ages.regrets.proud', fx: { learn: ['ages.proud', '{Name} is proudest of a life well spent'] }, go: [
         { ap: 'warm', say: 'So you should be.', to: 'should' },
-        { ap: 'jest', say: 'More than your marrows?', to: 'marrows' },
+        { ap: 'jest', say: 'More than your pumpkins?', to: 'marrows' },
       ] },
       small: { line: 'ages.regrets.small', fx: { respect: 0.03, feel: 'inspired' }, end: true },
       should: { line: 'ages.regrets.should', fx: { fond: 0.02 }, end: true },
@@ -1233,7 +1233,7 @@ talkPack('ages', () => {
     shy: ['...Do you think so? Truly?'],
     curious: ['Which part, though? Which part could I still do? Let me think.'],
     dreamy: ['Maybe the road\'s still there, waiting. Roads are patient.'],
-    witty: ['Not too late for the fiddle? The neighbours will disagree.'],
+    witty: ['Not too late for the fiddle? The neighbors will disagree.'],
     proud: ['It\'s never too late. I\'ve always said so.'],
     gloomy: ['...Maybe. Maybe it isn\'t.'],
   }, [
@@ -1311,15 +1311,15 @@ talkPack('ages', () => {
     gloomy: ['...Maybe I should.'],
   });
   L('ages.regrets.marrows', {
-    _: ['Ha! Nearly. The marrows were close.', 'Don\'t tell the marrows.'],
-    cheerful: ['Ha! Almost! The marrows were a close second!'],
-    ornery: ['The marrows are a separate matter. Entirely.'],
-    shy: ['...Ha. Yes. More than the marrows.'],
-    curious: ['I never grew marrows. Should I have?'],
-    dreamy: ['Marrows come and go. Love stays.'],
-    witty: ['The marrows know their place. Second.'],
-    proud: ['My marrows are a matter of public record.'],
-    gloomy: ['Ha. The marrows rotted. So, yes.'],
+    _: ['Ha! Nearly. The pumpkins were close.', 'Don\'t tell the pumpkins.'],
+    cheerful: ['Ha! Almost! The pumpkins were a close second!'],
+    ornery: ['The pumpkins are a separate matter. Entirely.'],
+    shy: ['...Ha. Yes. More than the pumpkins.'],
+    curious: ['I never grew pumpkins. Should I have?'],
+    dreamy: ['Pumpkins come and go. Love stays.'],
+    witty: ['The pumpkins know their place. Second.'],
+    proud: ['My pumpkins are a matter of public record.'],
+    gloomy: ['Ha. The pumpkins rotted. So, yes.'],
   });
 
   // ==================================================================================
@@ -1408,7 +1408,7 @@ talkPack('ages', () => {
   L('ages.lastroad.where', {
     _: ['Somewhere with no stairs, I hope. And sunshine. And everyone who went before.', 'West, they say. Past the Sea, maybe. I\'ll know when I get there.'],
     cheerful: ['Somewhere lovely! With a party at the end and all my old friends at the table!', 'Over the hills and through the best orchard you ever saw. I\'ve decided.'],
-    ornery: ['Somewhere quiet, if there\'s any justice. No neighbours. No Moot.', 'Wherever it goes, I\'ll walk it on my own feet. That\'s all I ask.'],
+    ornery: ['Somewhere quiet, if there\'s any justice. No neighbors. No Moot.', 'Wherever it goes, I\'ll walk it on my own feet. That\'s all I ask.'],
     shy: ['...Somewhere gentle. I hope it\'s gentle.', 'I think it goes somewhere nobody has to talk unless they want to.'],
     curious: ['I\'ve a theory. It goes round, and comes back from the other side, and everyone\'s there.', 'Nobody knows! That\'s the best bit. One last thing nobody knows.'],
     dreamy: ['To where the light goes in the evening. It has to go somewhere.', 'A green country under a swift sunrise. I heard that in a song once.'],
@@ -1473,14 +1473,14 @@ talkPack('ages', () => {
     ornery: ['Afraid? Of a road? I\'ve faced the Moot. A road\'s nothing.', '...A bit. Don\'t you tell anyone.'],
     shy: ['...Yes. A little. Is that all right?'],
     curious: ['Not of the road. Of missing what happens here, after. I want to know how it all turns out.'],
-    dreamy: ['Afraid of forgetting. Their faces. The colour of the lane in autumn.'],
+    dreamy: ['Afraid of forgetting. Their faces. The color of the lane in autumn.'],
     witty: ['Only of going without my good boots.', 'Of the food. What if they don\'t do second breakfast?'],
     proud: ['No. ...Not much. A little. I\'ll go anyway.'],
     gloomy: ['Yes. I am. I think everyone is.'],
   });
   L('ages.lastroad.take', {
     _: ['My walking stick, my pipe, and a jar of the good honey.', 'A warm coat and a good pair of boots. And a letter from home to read on the way.'],
-    cheerful: ['Biscuits! Lots of biscuits! And a song for every mile!'],
+    cheerful: ['Cookies! Lots of cookies! And a song for every mile!'],
     ornery: ['As little as possible. I\'ve carried enough.'],
     shy: ['...A little stone from the river. I\'ve had it since I was small.'],
     curious: ['A notebook. Someone should write it down.'],
@@ -1490,7 +1490,7 @@ talkPack('ages', () => {
     gloomy: ['Not much. It\'s the people I\'d want to take.'],
   }, [
     { if: { ageKeepsake: has }, pri: 1, text: ['I was going to take {ageKeepsake}. But it should stay. It belongs here.'] },
-    { if: { pastime: ['carving', 'basketry', 'pottery', 'knitting', 'painting'], made: { min: 2 } }, text: ['One of my {madeMany}. The first one I made. It\'s rubbish. I love it.'] },
+    { if: { pastime: ['carving', 'basketry', 'pottery', 'knitting', 'painting'], made: { min: 2 } }, text: ['One of my {madeMany}. The first one I made. It\'s terrible. I love it.'] },
   ]);
   L('ages.lastroad.cake', {
     _: ['Ha! A seed-cake for emergencies. That\'s wisdom.', 'Two. One for me and one for whoever I meet.'],
@@ -1534,7 +1534,7 @@ talkPack('ages', () => {
     shy: ['...Thank you. I didn\'t like to ask.'],
     curious: ['Would you tell {kid} something from me? No. I\'ll tell {kid} myself. But look in.'],
     dreamy: ['Then I\'ll leave {kid} in good hands. Good, tall hands.'],
-    witty: ['Look in. Eat {kid}\'s biscuits. Report back.'],
+    witty: ['Look in. Eat {kid}\'s cookies. Report back.'],
     proud: ['{Kid} will manage. But it would mean a great deal.'],
     gloomy: ['...That helps. More than you know.'],
   });
@@ -1649,7 +1649,7 @@ talkPack('ages', () => {
     { text: ['What would you like folk to remember of you, {name}?', 'When they talk about you at the Badger, {name}, years from now, what should they say?'] },
   ]);
   L('ages.legacy.start', {
-    _: ['Remembered? Me? For my marrows, I expect.', 'Oh, I don\'t know. That I paid my debts and kept a tidy step.', 'For the time I fell in the river at the Midsummer fair. Everyone does.'],
+    _: ['Remembered? Me? For my pumpkins, I expect.', 'Oh, I don\'t know. That I paid my debts and kept a tidy step.', 'For the time I fell in the river at the Midsummer fair. Everyone does.'],
     cheerful: ['For my parties! The year with the pig on the roof! Everyone remembers that!', 'For laughing. I\'d like them to remember me laughing.'],
     ornery: ['I\'d like them to remember I was right. About the drains. About everything.', 'Remembered? I\'d settle for being listened to while I\'m here.'],
     shy: ['...I don\'t think they will. Not really. That\'s all right.', 'Oh. I hadn\'t thought. I don\'t think I\'ve done anything to remember.'],
@@ -1664,14 +1664,14 @@ talkPack('ages', () => {
     { if: { ageFounder: true }, text: ['For being here at the start. Somebody should remember there was a start.'] },
   ]);
   L('ages.legacy.stone', {
-    _: ['Ha! "Here\'s to the marrows." In big letters.', 'Ha! On the stone. Under my name. "And their marrows."'],
-    cheerful: ['Ha! Oh, do! With a little marrow carved at the bottom!'],
+    _: ['Ha! "Here\'s to the pumpkins." In big letters.', 'Ha! On the stone. Under my name. "And their pumpkins."'],
+    cheerful: ['Ha! Oh, do! With a little pumpkin carved at the bottom!'],
     ornery: ['Don\'t you dare. ...Well. A small mention.'],
     shy: ['...Ha. Please don\'t. ...Maybe a small one.'],
     curious: ['What do they carve on the stones? I\'ve never looked closely. I should.'],
-    dreamy: ['A stone with a marrow on it. Folk would smile, walking past. That\'s nice.'],
-    witty: ['"Here lies, well, nobody. They went west. Mind the marrows."'],
-    proud: ['A prize-winning marrow deserves a mention.'],
+    dreamy: ['A stone with a pumpkin on it. Folk would smile, walking past. That\'s nice.'],
+    witty: ['"Here lies, well, nobody. They went west. Mind the pumpkins."'],
+    proud: ['A prize-winning pumpkin deserves a mention.'],
     gloomy: ['A stone. Yes. That\'s what we get. A stone.'],
   });
   L('ages.legacy.list', {
@@ -1700,8 +1700,8 @@ talkPack('ages', () => {
     { if: { spouse: has }, pri: 1, text: ['That {spouse} and I were happy. Folk should know it can be done.'] },
   ]);
   L('ages.legacy.small', {
-    _: ['Ha! Very small. The marrow can go on the back.', 'Stone\'s dear! Ha! Then just my initials and a marrow.'],
-    cheerful: ['Ha! Tiny letters! And a tiny marrow!'],
+    _: ['Ha! Very small. The pumpkin can go on the back.', 'Stone\'s dear! Ha! Then just my initials and a pumpkin.'],
+    cheerful: ['Ha! Tiny letters! And a tiny pumpkin!'],
     ornery: ['They\'ll charge by the letter. Thieves.'],
     shy: ['...Small is fine. Small suits me.'],
     curious: ['Is it charged by the letter? I\'ll have a short name, then.'],
@@ -1711,7 +1711,7 @@ talkPack('ages', () => {
     gloomy: ['Small. Yes. That\'s about right.'],
   });
   L('ages.legacy.kind', {
-    _: ['Do they? ...Do they really? Oh.', 'Kindness. Well. I\'d take that over the marrows.'],
+    _: ['Do they? ...Do they really? Oh.', 'Kindness. Well. I\'d take that over the pumpkins.'],
     cheerful: ['Oh! Oh, that\'s lovely. I\'ll be smiling all week.'],
     ornery: ['Kind? Me? Hmph. ...Who said?'],
     shy: ['...I didn\'t know anyone noticed.'],
@@ -1751,12 +1751,12 @@ talkPack('ages', () => {
     curious: ['What would you say? Would you tell the true bits or the good bits?'],
     dreamy: ['A tale under the tree. That\'s the best thing anyone could give me.'],
     witty: ['Leave out the river. And the badger. And the Moot. Actually, keep the Moot.'],
-    proud: ['I\'d be honoured. Truly.'],
+    proud: ['I\'d be honored. Truly.'],
     gloomy: ['...Nobody\'s ever said anything like that to me.'],
   });
   L('ages.legacy.taught', {
-    _: ['My mother. She fed half the lane and never once said so.', 'An old neighbour, when I was small. Always had a seat for you.'],
-    cheerful: ['My grandad! He\'d give you his last apple and laugh about it.'],
+    _: ['My mother. She fed half the lane and never once said so.', 'An old neighbor, when I was small. Always had a seat for you.'],
+    cheerful: ['My granddad! He\'d give you his last apple and laugh about it.'],
     ornery: ['Nobody. I learned it the hard way. By being unkind first.'],
     shy: ['...A friend, long ago. She\'s gone over the hills.'],
     curious: ['I worked it out. Watching who folk went to, when things were bad.'],
@@ -1940,7 +1940,7 @@ talkPack('ages', () => {
     ornery: ['What the young ones are getting wrong. {AgeMissed} would want to know.'],
     shy: ['...Things I don\'t tell anyone else.'],
     curious: ['What\'s changed. I describe the rift-folk in detail. It\'s quite a lot.'],
-    dreamy: ['The colour of the sky. Whether the swallows have come.'],
+    dreamy: ['The color of the sky. Whether the swallows have come.'],
     witty: ['The gossip. All of it. The stone is very discreet.'],
     proud: ['How well the family\'s doing. {AgeMissed} would want to know.'],
     gloomy: ['That I miss them. Mostly that.'],
@@ -2045,15 +2045,15 @@ talkPack('ages', () => {
     cheerful: ['I was the one shrieking loudest! At your fireworks! Sixty years ago, near enough!', 'Do you remember me? I chased your cart all the way to the bridge. You threw me a squib!'],
     ornery: ['You set fire to our hay-rick, you know. When I was a youngster. I\'ve been meaning to mention it.', 'You came once when I was small and promised to come back next summer. You were twenty years late.'],
     shy: ['...You won\'t remember. You gave me a sparkler and I cried. You held it for me.', 'I was the one hiding under the trestle. At the party. You winked at me.'],
-    curious: ['I asked you a question once, when I was six. How do the colours get in the rockets. You said "patience". I\'ve wondered ever since.', 'I\'ve been trying to work out how many times you\'ve come to the valley. I make it nine.'],
+    curious: ['I asked you a question once, when I was six. How do the colors get in the rockets. You said "patience". I\'ve wondered ever since.', 'I\'ve been trying to work out how many times you\'ve come to the valley. I make it nine.'],
     dreamy: ['You made a butterfly out of light when I was small. I\'ve looked for one like it all my life.', 'I remember your wagon coming over the hill the first time. The bells. I thought you were a story.'],
-    witty: ['You told my grandad a wizard is never late. My grandad said "then where\'ve you been since Lithe".', 'You owe me a sweet. From about seventy years ago. I\'ve been keeping count.'],
+    witty: ['You told my granddad a wizard is never late. My granddad said "then where\'ve you been since Lithe".', 'You owe me a sweet. From about seventy years ago. I\'ve been keeping count.'],
     proud: ['You came to my coming of age. Gave me a rocket of my own. I\'ve still got the stick.', 'You shook my hand at my father\'s party. I didn\'t wash it for a week.'],
     gloomy: ['You came when I was young. Everybody was here then. Now look.', 'You always come back. Not everyone does.'],
   });
   L('ages.oldfriend.hat', {
     _: ['Ha! My uncle\'s! He blamed you for the rest of his life. He loved telling it.', 'It was mine! A paper crown! It went up like a hayrick!'],
-    cheerful: ['Ha! It was my mum\'s best bonnet! She laughed till she cried!'],
+    cheerful: ['Ha! It was my mom\'s best bonnet! She laughed till she cried!'],
     ornery: ['It was my father\'s. And it wasn\'t funny. ...It was a bit funny.'],
     shy: ['...It was mine. I was so proud of it. Then so proud you\'d set it alight.'],
     curious: ['You do remember! I\'ve wondered for years if you would!'],
@@ -2151,7 +2151,7 @@ talkPack('ages', () => {
       start: { line: 'ages.eldest.start', go: [
         { ap: 'jest', say: 'Do they ask you when the world began?', to: 'began' },
         { ap: 'ask', say: 'Does it weigh on you, being the eldest?', to: 'weigh' },
-        { ap: 'warm', say: 'It\'s an honour, and you wear it well.', to: 'honour' },
+        { ap: 'warm', say: 'It\'s an honor, and you wear it well.', to: 'honour' },
       ] },
       began: { line: 'ages.eldest.began', go: [
         { ap: 'ask', say: 'What do they ask you, really?', to: 'ask' },
@@ -2180,7 +2180,7 @@ talkPack('ages', () => {
   lines('ages.eldest.open', [{ text: ['You\'re the eldest in Thistledown now, {name}. How does that sit?', 'They tell me nobody in the valley has more years than you, {name}.'] }]);
   L('ages.eldest.start', {
     _: ['The eldest. Yes. I don\'t know how it happened. I just kept on.', 'Everyone looks at me at the Moot now. As if I\'d know.'],
-    cheerful: ['Ha! The eldest! I get the best chair at every party! It\'s marvellous!'],
+    cheerful: ['Ha! The eldest! I get the best chair at every party! It\'s marvelous!'],
     ornery: ['The eldest. Which means everyone shouts at me as if I\'m deaf. I\'m not deaf.'],
     shy: ['...I don\'t like it much. Folk look at me.'],
     curious: ['Strange, isn\'t it? I remember when I was the youngest. Same village. Different everything.'],
@@ -2214,10 +2214,10 @@ talkPack('ages', () => {
   L('ages.eldest.honour', {
     _: ['Do I? Thank you. I wear it like an old coat. Comfortable, but I notice it.', 'I try to. Mostly I just try to stay upright.'],
     cheerful: ['Thank you! I polish it every morning!'],
-    ornery: ['Hmph. It\'s not an honour, it\'s an accident of arithmetic.'],
+    ornery: ['Hmph. It\'s not an honor, it\'s an accident of arithmetic.'],
     shy: ['...Thank you.'],
     curious: ['What does it mean to wear it well, I wonder?'],
-    dreamy: ['An honour. Yes. Like being given the last of the sun.'],
+    dreamy: ['An honor. Yes. Like being given the last of the sun.'],
     witty: ['I wear it well because I\'ve had it on so long.'],
     proud: ['Thank you. I do my best.'],
     gloomy: ['...Do I? Thank you.'],
@@ -2230,7 +2230,7 @@ talkPack('ages', () => {
     curious: ['Everything! And I don\'t always know, so then I go and find out.'],
     dreamy: ['Stories. The old stories. I tell them slowly.'],
     witty: ['Whether I\'m feeling all right. Every five minutes.'],
-    proud: ['Advice. Judgement. Who\'s in the right. That sort of thing.'],
+    proud: ['Advice. Judgment. Who\'s in the right. That sort of thing.'],
     gloomy: ['How I\'m keeping. As if they\'re counting.'],
   });
   L('ages.eldest.trewsday', {

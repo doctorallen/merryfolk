@@ -44,7 +44,7 @@ function leaveCaravan() {
   Game.caravan = null;
   showCaravan(false);
 }
-// Prices: a trader's favourites fetch half as much again; each sale this visit knocks the price down, each purchase pushes it up.
+// Prices: a trader's favorites fetch half as much again; each sale this visit knocks the price down, each purchase pushes it up.
 function sellPrice(k) {
   const c = caravan(); if (!c) return 0;
   const base = PRICE[k] || 1, want = c.wants.includes(k) ? 1.6 : 1;

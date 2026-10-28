@@ -102,7 +102,7 @@ function placeBuildingRoom(L, r) {
     case 'lodging': {
       let bx = r.x0 + 8;
       for (let k = 0; k < 3; k++) { const bd = { kind: 'single', who: [], w: 30, x: bx, room: r }; L.beds.push(bd); add({ t: 'bed', x: bx, bed: bd }); bx += 36; }
-      hot(r.x0, 60, r.x1, 104, () => { const n = Game.villagers.filter((v) => v.task && v.task.a.id === 'lodge' && v.inside === b).length; return n ? `${n} lodger${n > 1 ? 's' : ''} in for the night.` : 'Three narrow beds for travellers, if the innkeeper likes the look of you.'; });
+      hot(r.x0, 60, r.x1, 104, () => { const n = Game.villagers.filter((v) => v.task && v.task.a.id === 'lodge' && v.inside === b).length; return n ? `${n} lodger${n > 1 ? 's' : ''} in for the night.` : 'Three narrow beds for travelers, if the innkeeper likes the look of you.'; });
       break;
     }
     case 'shopfloor':

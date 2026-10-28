@@ -124,7 +124,7 @@ function charterHTML() {
   });
   h += '</div>';
   if (next) {
-    h += `<h3>Towards ${next.name}</h3><div class="ch-era">${eraNeeds(e + 1).map(([t, have, want]) => `<div class="${have >= want ? 'met' : ''}">${have >= want ? '✓' : '○'} ${escapeHtml(t)} <span class="sub">(${typeof have === 'number' ? Math.round(have) : have})</span></div>`).join('')}</div>`;
+    h += `<h3>Toward ${next.name}</h3><div class="ch-era">${eraNeeds(e + 1).map(([t, have, want]) => `<div class="${have >= want ? 'met' : ''}">${have >= want ? '✓' : '○'} ${escapeHtml(t)} <span class="sub">(${typeof have === 'number' ? Math.round(have) : have})</span></div>`).join('')}</div>`;
     h += `<div class="sub">${next.blurb}</div>`;
     h += `<div class="row-btns"><button id="ch-moot" class="${eraReady(e + 1) ? 'primary' : ''}" ${eraReady(e + 1) ? '' : 'disabled'}>Call a Moot: become a ${next.name}</button></div>`;
   } else h += '<p>Thistledown is as grand as a Shire town gets. Long may it prosper.</p>';

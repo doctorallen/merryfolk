@@ -13,8 +13,8 @@
 //   6.4 by a grave · 6 tipsy · 5.6 poorly · 5.4 their own party · 5 a party ·
 //   4.9 a long absence · 4.8 a callback (some talks) · 4.4 back the same day ·
 //   4.2 at work · 4 hungry · 3.9 tired · 3.6 what they were doing · 3.5 lonely ·
-//   2.5 the talk's flavour (weather, hour, season, meal, fondness, temper,
-//   register, what they like), one flavour a talk.
+//   2.5 the talk's flavor (weather, hour, season, meal, fondness, temper,
+//   register, what they like), one flavor a talk.
 // Within a tier, +0.2 or +0.3 for a temper or stage of its own.
 // ---------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ talkPack('phrasing', () => {
     'when all\'s said and done', 'with knobs on', 'you mark me', 'you may depend on it', 'all things considered', 'and that\'s saying something', 'and I\'m not one to gossip',
     'and I\'ve seen a few', 'bless the hens', 'beans and bacon', 'buttons and bows', 'by my pipe', 'by the shine on my kettle', 'come rain or shine', 'every word of it',
     'for my sins', 'for what it\'s worth', 'good as gold', 'I\'ll be blowed', 'in all my born days', 'it stands to reason', 'make no mistake', 'mercy me', 'no word of a lie',
-    'on my honour', 'plain as pudding', 'right enough', 'stone the crows', 'tea and toast', 'there\'s a thing', 'touch wood', 'what ho', 'with a cherry on top',
+    'on my honor', 'plain as pudding', 'right enough', 'stone the crows', 'tea and toast', 'there\'s a thing', 'touch wood', 'what ho', 'with a cherry on top',
     'you\'ll see', 'and so say all of us', 'and long may it last', 'take it or leave it', 'so to speak', 'my sainted aunt', 'by my second-best spoon', 'that\'s the ticket',
     'and Bob\'s your uncle', 'hot buttered scones', 'up the lane and down again',
   ]);
@@ -87,13 +87,13 @@ talkPack('phrasing', () => {
     'zero lag', 'no static', 'five bars', 'full charge', 'signal\'s clean', 'straight off the Relay', 'neon-bright', 'on the grid', 'end of transmission', 'logged and saved',
     'hard-wired', 'max brightness', 'by every billboard in Neverdark', 'no glitch', 'verified', 'firmware fresh', 'clean boot', 'all green', 'locked in', 'over and out',
     'running hot', 'bandwidth willing', 'cache cleared', 'on the frequency', 'zero buffer', 'signal boosted', 'mint condition', 'checksum clean', 'flagged and filed',
-    'neon or nothing', 'by the Relay', 'high voltage', 'grid\'s honour',
+    'neon or nothing', 'by the Relay', 'high voltage', 'grid\'s honor',
   ]);
   // the wizard's business while he waits
   frags('fill', [
-    'You knock the ash from your pipe.', 'You lean on the gate.', 'You blow a smoke ring, which drifts off towards the hills.', 'You scratch your nose with the end of your staff.',
+    'You knock the ash from your pipe.', 'You lean on the gate.', 'You blow a smoke ring, which drifts off toward the hills.', 'You scratch your nose with the end of your staff.',
     'You tip your hat to a more thoughtful angle.', 'You brush a moth off your sleeve.', 'You count the buttons on your waistcoat. All present.', 'You straighten your hat.',
-    'You settle your back against the wall.', 'You find half a biscuit in your pocket, and eat it.', 'You watch a bee go about its business.', 'You draw a little star in the dust with your staff.',
+    'You settle your back against the wall.', 'You find half a cookie in your pocket, and eat it.', 'You watch a bee go about its business.', 'You draw a little star in the dust with your staff.',
     'You hum a bar of something old.', 'You prop your chin on your staff.', 'You blow a smoke ring shaped like a ship.', 'You nod slowly, like a wise old owl.',
     'You look at the sky, as if it might have an opinion.', 'You pick a burr off your robe.',
   ]);
@@ -103,9 +103,9 @@ talkPack('phrasing', () => {
   frags('simile', [
     'like a badger in a bonnet', 'like a hen in a hailstorm', 'like a kettle on the boil', 'like a pig in clover', 'like a cat at the cream jug', 'like a toad in a teacup',
     'like a mole at a dance', 'like a goose at a wedding', 'like jam on a hot day', 'like a dropped pie', 'like a stuck gate', 'like butter in July', 'like a pudding in a puddle',
-    'like a lost sheep', 'like a hedgehog in a hat shop', 'like the Water in spring', 'like a sparrow in a bath', 'like Grandad after pudding',
+    'like a lost sheep', 'like a hedgehog in a hat shop', 'like the Water in spring', 'like a sparrow in a bath', 'like Granddad after pudding',
   ]);
-  frags('snack', ['a seed-cake', 'a jam tart', 'a slice of pork pie', 'a buttered crumpet', 'a mushroom pasty', 'a toasted teacake', 'a bit of cheese', 'an apple turnover', 'a honey biscuit', 'a sausage roll', 'a scone with cream', 'a wedge of fruit loaf', 'a bowl of blackberries', 'a gingerbread hobbit']);
+  frags('snack', ['a seed-cake', 'a jam tart', 'a slice of pork pie', 'a buttered crumpet', 'a mushroom pasty', 'a toasted teacake', 'a bit of cheese', 'an apple turnover', 'a honey cookie', 'a sausage roll', 'a scone with cream', 'a wedge of fruit loaf', 'a bowl of blackberries', 'a gingerbread hobbit']);
   frags('opener', ['Well now,', 'Now then,', 'Ha!', 'Oh,', 'Well,', 'Here,', 'Look here,', 'I say,', 'Ooh,', 'Right,']);
 
   // --- Greetings ----------------------------------------------------------------------
@@ -133,19 +133,19 @@ talkPack('phrasing', () => {
     at(8.3, { met: false, temper: 'ornery' }, ['If you\'re selling something, I\'ve already got one.', 'Wizard, are you? Well, keep your bangs and flashes away from my hens.', 'I suppose you\'ll want feeding. Everyone wants feeding.']),
     at(8.3, { met: false, temper: 'shy' }, ['Oh! Um. Hello. Sorry. Hello.', '*looks at your boots, then your hat, then your boots again* ...Good day.', 'I didn\'t think you\'d talk to me. Hello.']),
     at(8.3, { met: false, temper: 'curious' }, ['You\'re the wizard! Is the hat for anything? Does it do things? Can I see inside it?', 'A real wizard! How old are you? Sorry. How do you do? How old are you?', 'Where have you come from? What\'s in the wagon? Is the beard real? Sorry. Hello.']),
-    at(8.3, { met: false, temper: 'dreamy' }, ['I dreamt a tall grey stranger would come up the lane. And here you are.', 'Oh. You look like you\'ve come from somewhere a long way off. Hello.', 'A wizard. I always hoped one would just... walk up. And one has.']),
+    at(8.3, { met: false, temper: 'dreamy' }, ['I dreamed a tall gray stranger would come up the lane. And here you are.', 'Oh. You look like you\'ve come from somewhere a long way off. Hello.', 'A wizard. I always hoped one would just... walk up. And one has.']),
     at(8.3, { met: false, temper: 'witty' }, ['A wizard! I\'d bow, but I\'d never get up again. How do you do?', 'So you\'re the wizard. I pictured you shorter. And with less hat.', 'Good morning! I hear that\'s what you say. Thought I\'d get in first.']),
     at(8.3, { met: false, temper: 'proud' }, ['Good day. {Full}. I keep the best-swept step in Thistledown. You may have noticed it.', 'A wizard. Well. I met a dwarf once, you know. You\'re not the first marvel round here.']),
     at(8.4, { met: false, temper: 'proud', home: (h) => !!h }, ['{Full}, of {home}. You\'ll have heard of us, I expect.']),
     at(8.3, { met: false, temper: 'gloomy' }, ['Oh. A wizard. I suppose that means trouble. It usually does, in stories.', 'Hello. You\'ll be wanting someone more interesting. Most folk do.', 'A wizard. Well. I hope you brought an umbrella. It\'ll rain now, you\'ll see.']),
-    at(8.3, { met: false, stage: 'child' }, ['A WIZARD! Are you the real one? Is that a real staff? Can I hold it?', 'Mum! MUM! There\'s a wizard! ...She\'s not coming. Hello.', 'Have you got any fireworks? I\'m only asking. I\'m very good.']),
-    at(8.5, { met: false, band: 'youth' }, ['Oh. Hi. You\'re the wizard? Brilliant. I mean, good. Good day.', 'Don\'t tell my mum I talked to you. Actually, do. She\'ll be amazed.', 'Everyone said you\'d come. I said I didn\'t care. ...Hello.']),
-    at(8.5, { met: false, band: 'young' }, ['*hides behind the fence post* Are you a giant?', 'Are you a grandad? You look like a grandad. A tall one.', 'Is your beard warm? It looks warm.']),
-    at(8.4, { met: false, register: 'fine' }, ['Good day to you, sir. Allow me: {full}. An honour, I\'m sure.', 'A wizard! How very distinguished. We are not, as a rule, visited.']),
+    at(8.3, { met: false, stage: 'child' }, ['A WIZARD! Are you the real one? Is that a real staff? Can I hold it?', 'Mom! MOM! There\'s a wizard! ...She\'s not coming. Hello.', 'Have you got any fireworks? I\'m only asking. I\'m very good.']),
+    at(8.5, { met: false, band: 'youth' }, ['Oh. Hi. You\'re the wizard? Brilliant. I mean, good. Good day.', 'Don\'t tell my mom I talked to you. Actually, do. She\'ll be amazed.', 'Everyone said you\'d come. I said I didn\'t care. ...Hello.']),
+    at(8.5, { met: false, band: 'young' }, ['*hides behind the fence post* Are you a giant?', 'Are you a granddad? You look like a granddad. A tall one.', 'Is your beard warm? It looks warm.']),
+    at(8.4, { met: false, register: 'fine' }, ['Good day to you, sir. Allow me: {full}. An honor, I\'m sure.', 'A wizard! How very distinguished. We are not, as a rule, visited.']),
     at(8.4, { met: false, register: 'plain' }, ['Well, I\'ll be. A wizard, large as life. How do.', 'Ah. Wizard. Right you are, then. Wipe your boots.']),
     at(8.4, { met: false, register: 'bright' }, ['Are you a wizard or a sorcerer? There\'s a difference. I read about it.', 'Good day! I\'ve read three books about wizards. You\'re not like any of them.']),
     at(8.4, { met: false, stage: 'elder' }, ['I\'ve heard of you since I was in short trousers. You\'ve not changed a bit. Have you?', 'A wizard, at my age. My old dad would\'ve been tickled. Good day to you.', 'Come closer, my eyes aren\'t what they were. Ah. Yes. Wizard. Thought so.']),
-    at(8.5, { met: false, rift: true }, ['Oh, so you\'re the local legend. Hi. I\'m from... further than here.', 'A wizard. Huh. Back home that was a job title for people who fixed signal boxes.', 'Hey. You\'re the one with the light-shows. Respect. Proper analogue pyrotechnics.']),
+    at(8.5, { met: false, rift: true }, ['Oh, so you\'re the local legend. Hi. I\'m from... further than here.', 'A wizard. Huh. Back home that was a job title for people who fixed signal boxes.', 'Hey. You\'re the one with the light-shows. Respect. Proper analog pyrotechnics.']),
     at(8.6, { met: false, rift: true, stage: 'child' }, ['Are you an app? You look like a help-screen. A tall one.', 'Whoa. Are you real? Real-real? Not a projection?']),
     at(8.7, { met: false, tipsy: true }, ['A wizard! Ha! Have a drink! Have you met me? I\'m lovely.', 'Is it a wizard or is it the ale? Both! Hello, both!']),
     at(8.7, { met: false, sick: true }, ['*sniff* A wizard, and me with a nose like a turnip. How do you do.', 'Don\'t come close. Pleased to meet you. Don\'t come close.']),
@@ -189,7 +189,7 @@ talkPack('phrasing', () => {
     at(6, { tipsy: true }, ['Wizard! You came! Everyone, the wizard came! Where\'s everyone?', 'Is it you? There\'s two of you. Both lovely.', 'Have a sit. Have a drink. Have my drink. No, that one\'s mine.']),
     at(6.3, { tipsy: true, temper: 'cheerful' }, ['WIZARD! I love you. I love everyone. I love this fence.']),
     at(6.3, { tipsy: true, temper: 'ornery' }, ['You. You\'re all right, you are. Don\'t tell anyone I said.']),
-    at(6.3, { tipsy: true, temper: 'shy' }, ['Hello! Hello! I\'m not shy at all today. Isn\'t it marvellous?']),
+    at(6.3, { tipsy: true, temper: 'shy' }, ['Hello! Hello! I\'m not shy at all today. Isn\'t it marvelous?']),
     at(6.3, { tipsy: true, temper: 'gloomy' }, ['Wizard. Sit. Let me tell you about my sorrows. All of them. In order.']),
     at(6.3, { tipsy: true, temper: 'proud' }, ['Have I ever told you I was the finest dancer in the Southfarthing? I was. Watch.']),
     at(6.3, { tipsy: true, temper: 'witty' }, ['Wizard! I\'ve thought of something terribly clever. Gone. It\'ll come back.']),
@@ -272,7 +272,7 @@ talkPack('phrasing', () => {
     at(4.8, { lastAsked: askedLast, daysSince: { min: 1, max: 6 }, phrRoll: { min: 0.42, max: 0.56 } }, ['You again! I\'ve been chewing on what you asked. "{lastAsked}" I\'ve a better answer now.', 'Last time it was "{lastAsked}" What\'ll it be today?']),
     at(4.9, { lastAsked: askedLast, daysSince: { min: 1, max: 6 }, phrRoll: { min: 0.42, max: 0.56 }, temper: 'ornery' }, ['If it\'s "{lastAsked}" again, I\'ve said all I\'m saying.']),
     at(4.9, { lastAsked: askedLast, daysSince: { min: 1, max: 6 }, phrRoll: { min: 0.42, max: 0.56 }, temper: 'witty' }, ['"{lastAsked}" you asked. I\'ve been composing my reply ever since.']),
-    at(4.9, { lastAsked: askedLast, daysSince: { min: 1, max: 6 }, phrRoll: { min: 0.42, max: 0.56 }, temper: 'dreamy' }, ['I dreamt about what you asked me. "{lastAsked}" I dreamt a different answer.']),
+    at(4.9, { lastAsked: askedLast, daysSince: { min: 1, max: 6 }, phrRoll: { min: 0.42, max: 0.56 }, temper: 'dreamy' }, ['I dreamed about what you asked me. "{lastAsked}" I dreamed a different answer.']),
     at(4.95, { lastThread: 'evenings', pastime: (p) => !!p, phrRoll: { min: 0.42, max: 0.56 } }, ['Come about the {madeMany} again? I\'ve done another since.']),
     at(4.95, { lastThread: 'how', phrRoll: { min: 0.42, max: 0.56 } }, ['I\'m better than last time, since you\'re going to ask. You were going to ask.']),
     at(4.95, { lastThread: 'mind', wish: (w) => !!w, phrRoll: { min: 0.42, max: 0.56 } }, ['Still thinking about {wishText}. Still wanting it, too.']),
@@ -339,11 +339,11 @@ talkPack('phrasing', () => {
     at(3.6, { phrDoing: 'pipe' }, ['*puffs* Afternoon, wizard. Or whatever it is. Have a fill?', 'Smoke ring? Watch. ...That was meant to be a ship.']),
     at(3.6, { phrDoing: 'garden' }, ['Mind the lettuces! Hello. Mind them.', 'Weeding. It\'s like arguing with slugs, but they listen.']),
     at(3.6, { phrDoing: 'fish' }, ['Shh. They\'re biting. Well, one was. Once.', 'Nothing yet. The fish are having a lie-in.']),
-    at(3.6, { phrDoing: 'forage' }, ['Mushrooms! Look! Don\'t tell anyone where. Especially not the neighbours.', 'I know a patch. I\'m not saying where. I\'m saying it\'s good.']),
+    at(3.6, { phrDoing: 'forage' }, ['Mushrooms! Look! Don\'t tell anyone where. Especially not the neighbors.', 'I know a patch. I\'m not saying where. I\'m saying it\'s good.']),
     at(3.6, { phrDoing: 'read' }, ['Oh! I was miles away. In a book. A good one, with a dragon.', 'Just one more page. ...Hello. Sorry. One more page.']),
     at(3.6, { phrDoing: 'letter' }, ['I\'m writing a letter. Don\'t read over my shoulder. Hello.']),
     at(3.6, { phrDoing: 'nap' }, ['*wakes with a snort* I wasn\'t asleep. I was resting my eyes.', 'Mm? Oh. I was just thinking. Very hard. With my eyes closed.']),
-    at(3.6, { phrDoing: 'stroll' }, ['Just taking the air. It\'s very good air today. Help yourself.', 'Out for a potter. Pottering\'s underrated.']),
+    at(3.6, { phrDoing: 'stroll' }, ['Just taking the air. It\'s very good air today. Help yourself.', 'Out for a putter. Puttering\'s underrated.']),
     at(3.6, { phrDoing: 'play' }, ['We\'re playing hide and seek! You can\'t hide. You\'re too big.', 'Tag! You\'re it! ...You\'re not playing. Fine.']),
     at(3.6, { phrDoing: 'party' }, ['Did you hear me play? Was it good? Lie if you must.', 'Fireworks! Did you see the green one? Do the green one again.']),
     at(3.6, { phrDoing: 'chat' }, ['We were only talking about you a little bit. Nicely. Mostly.', 'Oh, you\'ve missed the best bit. I\'ll tell you later.']),
@@ -351,7 +351,7 @@ talkPack('phrasing', () => {
     at(3.6, { phrDoing: 'market' }, ['Been to the Store. Look at these turnips. Beauties.', 'They\'d run out of honey. Run out! What\'s the world coming to?']),
     at(3.6, { phrDoing: 'baby' }, ['Shh! Baby\'s nearly off. Whisper. Whisper smaller.', 'Don\'t make any sudden noises. Or any noises.']),
     at(3.6, { phrDoing: 'lesson' }, ['It\'s story time! You can come. You have to sit on the floor.', 'I\'m learning! Ask me something. Not sums.']),
-    at(3.6, { phrDoing: 'pet' }, ['This is my cat. She\'s better than people. No offence.', 'Say hello to the cat. She won\'t say hello back. She\'s like that.']),
+    at(3.6, { phrDoing: 'pet' }, ['This is my cat. She\'s better than people. No offense.', 'Say hello to the cat. She won\'t say hello back. She\'s like that.']),
     at(3.6, { phrDoing: 'soup' }, ['Can\'t stop, I\'m taking soup to someone poorly. Mind, it\'s hot.']),
     at(3.7, { phrDoing: 'hobby', pastime: (p) => !!p }, ['{PastimeWord}! I was just at it. Look at my hands.']),
     at(3.8, { phrDoing: 'hobby', pastime: 'carving' }, ['Mind the shavings. I\'m doing a hedgehog. It\'s going well. It\'s going badly.']),
@@ -366,7 +366,7 @@ talkPack('phrasing', () => {
     at(3.8, { phrDoing: 'pipe', temper: 'dreamy' }, ['*watches a smoke ring drift off* Where do they go, do you think?']),
     at(3.8, { phrDoing: 'read', temper: 'curious' }, ['Did you know there are fish that climb trees? It says so here. Do you believe it?']),
     at(3.8, { phrDoing: 'nap', temper: 'ornery' }, ['Can\'t a hobbit nap in peace? Oh. You. What?']),
-    at(3.8, { phrDoing: 'play', band: 'youth' }, ['We weren\'t playing. We\'re too old to play. We were... organising.']),
+    at(3.8, { phrDoing: 'play', band: 'youth' }, ['We weren\'t playing. We\'re too old to play. We were... organizing.']),
 
     // lonely
     at(3.5, { lonely: true }, ['Oh! Company! I\'ve not had a word with anyone all day.', 'Wizard! Stay a bit. Say anything. I\'ve been talking to the hens.']),
@@ -375,7 +375,7 @@ talkPack('phrasing', () => {
     at(3.7, { lonely: true, temper: 'ornery' }, ['Oh, it\'s you. Well. Don\'t go just yet.']),
     at(3.7, { lonely: true, rift: true }, ['Hey. Signal\'s quiet today. Glad you\'re here.']),
 
-    // the talk's flavour: the weather
+    // the talk's flavor: the weather
     at(2.5, { phrFlavour: 'weather', weather: 'rain' }, ['Wet enough for you? It\'s wet enough for me.', 'In you come, under the eaves. You\'re dripping like a teapot.', 'Rain again! Good for the turnips. Bad for my temper.', 'Your hat\'s holding about a pint of rain, wizard.']),
     at(2.6, { phrFlavour: 'weather', phrStorm: true }, ['Did you hear that thunder? I\'ve lost a hen. She\'ll be under the bed.', 'What a storm! Don\'t stand under the oak. Or near me. You\'re very tall.']),
     at(2.7, { phrFlavour: 'weather', weather: 'rain', temper: 'cheerful' }, ['Isn\'t it a lovely rain? Puddles everywhere! I\'ve jumped in four.']),
@@ -384,14 +384,14 @@ talkPack('phrasing', () => {
     at(2.7, { phrFlavour: 'weather', weather: 'rain', temper: 'dreamy' }, ['I love the rain. Everything goes soft, like a drawing.']),
     at(2.7, { phrFlavour: 'weather', weather: 'rain', temper: 'witty' }, ['Did you bring this rain? It looks like your sort of weather.']),
     at(2.7, { phrFlavour: 'weather', weather: 'rain', temper: 'shy' }, ['Oh. You\'re wet. Do you want... a towel? I\'ve got one. Somewhere.']),
-    at(2.7, { phrFlavour: 'weather', weather: 'rain', stage: 'child' }, ['I\'ve been in EVERY puddle. Mum\'s going to be so cross.']),
+    at(2.7, { phrFlavour: 'weather', weather: 'rain', stage: 'child' }, ['I\'ve been in EVERY puddle. Mom\'s going to be so cross.']),
     at(2.8, { phrFlavour: 'weather', weather: 'rain', rift: true }, ['Water just falls out of the sky here. For free. Still weird.']),
     at(2.5, { phrFlavour: 'weather', weather: 'snow' }, ['Snow! Mind the drifts by the gate, they\'re deeper than they look.', 'Your beard\'s gone white. Well, whiter.']),
     at(2.7, { phrFlavour: 'weather', weather: 'snow', temper: 'cheerful' }, ['Snow! Have you made a snow-hobbit? I\'ve made three.']),
     at(2.7, { phrFlavour: 'weather', weather: 'snow', temper: 'ornery' }, ['Snow. Lovely to look at, murder to shovel.']),
     at(2.7, { phrFlavour: 'weather', weather: 'snow', stage: 'child' }, ['SNOW! Snowball fight! You\'re on my side. No, you\'re the target.']),
     at(2.7, { phrFlavour: 'weather', weather: 'snow', stage: 'elder' }, ['Snow gets into the knees at my age. Still pretty, mind.']),
-    at(2.8, { phrFlavour: 'weather', weather: 'snow', rift: true }, ['Frozen rain! Back home it was just grey slush. With adverts in the slush.']),
+    at(2.8, { phrFlavour: 'weather', weather: 'snow', rift: true }, ['Frozen rain! Back home it was just gray slush. With adverts in the slush.']),
     at(2.5, { phrFlavour: 'weather', weather: 'clear' }, ['Lovely day! The sort you could bottle.', 'Not a cloud. Somebody up there\'s in a good mood.']),
     at(2.6, { phrFlavour: 'weather', weather: 'clear', season: 'summer' }, ['Hot enough to bake bread on the doorstep. I\'ve tried.']),
     at(2.6, { phrFlavour: 'weather', weather: 'clear', season: 'winter' }, ['Bright and cold. My breath\'s making little clouds. Look.']),
@@ -400,8 +400,8 @@ talkPack('phrasing', () => {
     at(2.7, { phrFlavour: 'weather', weather: 'clear', temper: 'dreamy' }, ['Have you ever seen the sky so blue? It\'s like it\'s been washed.']),
     at(2.7, { phrFlavour: 'weather', weather: 'clear', stage: 'child' }, ['It\'s sunny so I\'m allowed out ALL day!']),
     at(2.8, { phrFlavour: 'weather', weather: 'clear', rift: true }, ['Real sun. No filters. It\'s kind of a lot, honestly.']),
-    at(2.5, { phrFlavour: 'weather', weather: 'cloudy' }, ['Grey old day. Might rain, might not. Might do both.', 'Cloudy. Good drying weather, if it holds.']),
-    at(2.7, { phrFlavour: 'weather', weather: 'cloudy', temper: 'gloomy' }, ['Grey. Suits me.']),
+    at(2.5, { phrFlavour: 'weather', weather: 'cloudy' }, ['Gray old day. Might rain, might not. Might do both.', 'Cloudy. Good drying weather, if it holds.']),
+    at(2.7, { phrFlavour: 'weather', weather: 'cloudy', temper: 'gloomy' }, ['Gray. Suits me.']),
     at(2.7, { phrFlavour: 'weather', weather: 'cloudy', temper: 'witty' }, ['Clouds like a fleece. Somebody up there\'s keeping sheep.']),
     at(2.5, { phrFlavour: 'weather', weather: 'fog' }, ['Fog\'s thick as porridge. I heard you before I saw you.', 'Mist on the Water. Can\'t see my own feet. Hello, I think.']),
     at(2.7, { phrFlavour: 'weather', weather: 'fog', temper: 'dreamy' }, ['Fog. The whole valley\'s gone secret.']),
@@ -436,7 +436,7 @@ talkPack('phrasing', () => {
     at(2.5, { phrFlavour: 'season', season: 'spring' }, ['Spring at last! The lambs are out, and so am I.', 'Smell that? Blossom. And something muddier.']),
     at(2.5, { phrFlavour: 'season', season: 'summer' }, ['Lovely and warm. I could lie in the hay all day. I might.', 'Summer! Strawberries, long evenings and warm toes.']),
     at(2.5, { phrFlavour: 'season', season: 'autumn' }, ['Leaves coming down. I\'ve swept the path three times today.', 'Autumn! Apples, mushrooms, the fire lit. Best time of year.', 'Smell the woodsmoke? Autumn\'s here proper.']),
-    at(2.5, { phrFlavour: 'season', season: 'winter' }, ['Cold enough to freeze the ale. Nearly. Not quite. We checked.', 'Winter. I\'ve three jumpers on and I can feel every one.', 'Come by the fire. Your nose has gone the colour of a radish.']),
+    at(2.5, { phrFlavour: 'season', season: 'winter' }, ['Cold enough to freeze the ale. Nearly. Not quite. We checked.', 'Winter. I\'ve three sweaters on and I can feel every one.', 'Come by the fire. Your nose has gone the color of a radish.']),
     at(2.7, { phrFlavour: 'season', season: 'spring', temper: 'proud' }, ['My daffodils came up first in the lane. Again.']),
     at(2.7, { phrFlavour: 'season', season: 'spring', stage: 'child' }, ['There\'s a nest in the hedge with EGGS in it! Don\'t tell the cat.']),
     at(2.7, { phrFlavour: 'season', season: 'summer', temper: 'ornery' }, ['Too hot. Flies everywhere. Hmph.']),
@@ -464,11 +464,11 @@ talkPack('phrasing', () => {
     at(2.8, { phrFlavour: 'meal', rift: true, phrMeal: MEAL }, ['{PhrMeal}. You lot have a meal for every hour. I love it here.']),
 
     // how fond of you they are
-    at(2.5, { phrFlavour: 'fond', fond: { min: 0.6 } }, ['Oh, it\'s you! Come here. Let me look at you.', 'My favourite wizard. My only wizard, but still.', 'I was just thinking of you! That\'s twice today.', 'There you are. The day\'s better already.']),
+    at(2.5, { phrFlavour: 'fond', fond: { min: 0.6 } }, ['Oh, it\'s you! Come here. Let me look at you.', 'My favorite wizard. My only wizard, but still.', 'I was just thinking of you! That\'s twice today.', 'There you are. The day\'s better already.']),
     at(2.5, { phrFlavour: 'fond', fond: { min: 0.3, max: 0.6 } }, ['Ah, hello! Good to see you.', 'Hello again. You\'re looking well. For a wizard.']),
     at(2.5, { phrFlavour: 'fond', fond: { min: 0.05, max: 0.3 } }, ['Hello, wizard. Passing through?', 'Good day. What brings you this way?']),
     at(2.5, { phrFlavour: 'fond', fond: { min: -0.15, max: 0.05 } }, ['Oh. Hello.', 'Wizard. Good day, I suppose.']),
-    at(2.5, { phrFlavour: 'fond', fond: { max: -0.15 } }, ['Oh, it\'s you. I\'d hoped it was the postie.', 'You again. Well, say your piece.']),
+    at(2.5, { phrFlavour: 'fond', fond: { max: -0.15 } }, ['Oh, it\'s you. I\'d hoped it was the mail carrier.', 'You again. Well, say your piece.']),
     at(2.6, { phrFlavour: 'fond', fond: { max: -0.4 } }, ['I\'ve nothing to say to you. ...Well, what is it?']),
     at(2.7, { phrFlavour: 'fond', fond: { min: 0.6 }, temper: 'shy' }, ['*smiles at the ground* Hello. I\'m glad it\'s you.']),
     at(2.7, { phrFlavour: 'fond', fond: { min: 0.6 }, temper: 'ornery' }, ['Oh, it\'s you. Good. I mean, hmph. Good.']),
@@ -486,7 +486,7 @@ talkPack('phrasing', () => {
     at(2.5, { phrFlavour: 'temper', temper: 'witty' }, ['Ah, the wizard! Still tall, I see.', 'Good day! If it isn\'t, I\'ll take it back.', 'Wizard! I was just thinking about you. Something funny. Can\'t remember.']),
     at(2.5, { phrFlavour: 'temper', temper: 'proud' }, ['Good day. You\'ll have noticed the step. Swept it myself.', 'Ah. Wizard. Glad you came to see me first. You did, didn\'t you?']),
     at(2.5, { phrFlavour: 'temper', temper: 'gloomy' }, ['Oh. Hello. Don\'t mind me.', 'Hello. Nothing\'s wrong. Everything\'s wrong. Hello.']),
-    at(2.5, { phrFlavour: 'temper', stage: 'child' }, ['Wizard! Wizard wizard wizard!', 'Have you got sweets? Hello. Have you got sweets?', 'Look! I lost a tooth! Well, it fell out.']),
+    at(2.5, { phrFlavour: 'temper', stage: 'child' }, ['Wizard! Wizard wizard wizard!', 'Have you got candy? Hello. Have you got candy?', 'Look! I lost a tooth! Well, it fell out.']),
     at(2.7, { phrFlavour: 'temper', band: 'youth' }, ['Oh. Hi. Don\'t make a fuss, everyone\'s looking.', 'Wizard. Hello. You\'re not going to do magic, are you? In public?']),
     at(2.6, { phrFlavour: 'temper', rift: true }, ['Hey, wizard. Your signal\'s strong today.', 'Oh hey. Was hoping you\'d swing by.']),
     at(2.6, { phrFlavour: 'temper', stage: 'elder' }, ['At my age every visitor\'s a treat. Even wizards.', 'Ah, there you are. Sit down before you fall down. Not you. Me.']),
@@ -545,7 +545,7 @@ talkPack('phrasing', () => {
     at(2.7, { phrFlavour: 'mood', mood: 'low', temper: 'shy' }, ['...Hello. Sorry. I\'m a bit quiet today. Quieter.']),
     at(2.7, { phrFlavour: 'mood', mood: 'low', temper: 'cheerful' }, ['Hello! I\'m... well, I\'m trying to be cheerful. Give me a minute.']),
     at(2.7, { phrFlavour: 'mood', mood: 'low', temper: 'proud' }, ['Good day. I\'m perfectly well. Perfectly.']),
-    at(2.7, { phrFlavour: 'mood', mood: 'low', temper: 'dreamy' }, ['Hello. Everything\'s gone a bit grey. Not you. Everything else.']),
+    at(2.7, { phrFlavour: 'mood', mood: 'low', temper: 'dreamy' }, ['Hello. Everything\'s gone a bit gray. Not you. Everything else.']),
     at(2.7, { phrFlavour: 'mood', mood: 'low', stage: 'child' }, ['Hello. *kicks a stone*']),
     at(2.8, { phrFlavour: 'mood', mood: 'low', rift: true }, ['Hey. Running on low today.']),
     at(2.5, { phrFlavour: 'mood', mood: 'miserable' }, ['Oh. It\'s you. I\'m not... I\'m not good today.', '*wipes eyes quickly* Wizard! Hello. Didn\'t see you.']),
@@ -585,11 +585,11 @@ talkPack('phrasing', () => {
     at(2.7, { phrFlavour: 'weather', weather: 'clear', temper: 'witty' }, ['Sun\'s out! Hide your pale bits.']),
     at(2.7, { phrFlavour: 'weather', weather: 'clear', temper: 'proud' }, ['Fine day. My washing\'s been out since dawn.']),
     at(2.7, { phrFlavour: 'weather', weather: 'clear', stage: 'elder' }, ['Sun on my old bones. That\'s all I ask these days.']),
-    at(2.7, { phrFlavour: 'weather', weather: 'cloudy', temper: 'cheerful' }, ['Grey\'s just a colour, wizard. A cosy one!']),
+    at(2.7, { phrFlavour: 'weather', weather: 'cloudy', temper: 'cheerful' }, ['Gray\'s just a color, wizard. A cozy one!']),
     at(2.7, { phrFlavour: 'weather', weather: 'cloudy', temper: 'ornery' }, ['Can\'t make its mind up, the sky. Like some people.']),
-    at(2.7, { phrFlavour: 'weather', weather: 'cloudy', temper: 'dreamy' }, ['Grey skies are the softest.']),
-    at(2.7, { phrFlavour: 'weather', weather: 'cloudy', stage: 'child' }, ['It\'s all grey. Is the sun asleep?']),
-    at(2.8, { phrFlavour: 'weather', weather: 'cloudy', rift: true }, ['Grey sky. Practically home. Minus the drones.']),
+    at(2.7, { phrFlavour: 'weather', weather: 'cloudy', temper: 'dreamy' }, ['Gray skies are the softest.']),
+    at(2.7, { phrFlavour: 'weather', weather: 'cloudy', stage: 'child' }, ['It\'s all gray. Is the sun asleep?']),
+    at(2.8, { phrFlavour: 'weather', weather: 'cloudy', rift: true }, ['Gray sky. Practically home. Minus the drones.']),
     at(2.7, { phrFlavour: 'weather', weather: 'fog', temper: 'ornery' }, ['Fog. Walked into the gatepost. The gatepost started it.']),
     at(2.7, { phrFlavour: 'weather', weather: 'fog', temper: 'gloomy' }, ['Can\'t see a thing. Not that there\'s much worth seeing.']),
     at(2.7, { phrFlavour: 'weather', weather: 'fog', temper: 'witty' }, ['In this fog you could be anyone. You\'re tall enough to be two people.']),
@@ -633,7 +633,7 @@ talkPack('phrasing', () => {
     at(2.7, { phrFlavour: 'season', season: 'summer', temper: 'cheerful' }, ['Summer! Barefoot weather! Well, it\'s always barefoot weather.']),
     at(2.7, { phrFlavour: 'season', season: 'summer', temper: 'shy' }, ['It\'s warm... I like the shade.']),
     at(2.7, { phrFlavour: 'season', season: 'summer', temper: 'curious' }, ['Why are summer days longer? Is the sun lazy in winter?']),
-    at(2.7, { phrFlavour: 'season', season: 'summer', temper: 'witty' }, ['Summer! The flies have come for their holidays.']),
+    at(2.7, { phrFlavour: 'season', season: 'summer', temper: 'witty' }, ['Summer! The flies have come for their vacations.']),
     at(2.7, { phrFlavour: 'season', season: 'summer', temper: 'proud' }, ['My roses are the finest in the lane this summer.']),
     at(2.7, { phrFlavour: 'season', season: 'summer', temper: 'gloomy' }, ['Hot. It\'ll end in thunder.']),
     at(2.7, { phrFlavour: 'season', season: 'summer', stage: 'child' }, ['SUMMER! Paddling! Can you paddle? Wizards don\'t paddle.']),
@@ -667,7 +667,7 @@ talkPack('phrasing', () => {
     at(2.7, { phrFlavour: 'fond', fond: { max: 0.05 }, temper: 'proud' }, ['Wizard. I suppose you want something.']),
     at(2.7, { phrFlavour: 'fond', fond: { max: 0.05 }, temper: 'gloomy' }, ['Oh, it\'s you. Fine.']),
     at(2.7, { phrFlavour: 'fond', fond: { max: -0.15 }, stage: 'child' }, ['You\'re the one who made me sad. Hmph.']),
-    at(2.7, { phrFlavour: 'fond', fond: { max: -0.15 }, temper: 'witty' }, ['Ah, the wizard. My least favourite tall person.']),
+    at(2.7, { phrFlavour: 'fond', fond: { max: -0.15 }, temper: 'witty' }, ['Ah, the wizard. My least favorite tall person.']),
 
     // registers, more of them
     at(2.6, { phrFlavour: 'register', register: 'fine', stage: 'elder' }, ['Good day to you, sir. In my day one left a card first. But do come in.']),
@@ -744,12 +744,12 @@ talkPack('phrasing', () => {
     at(2.8, { phrFlavour: 'season', band: 'youth' }, ['Another season, still not grown. They say next year. They always say next year.']),
     at(2.8, { phrFlavour: 'fond', band: 'youth', fond: { min: 0.4 } }, ['Oh, it\'s you. Good. I mean, whatever. Good.']),
     at(2.8, { phrFlavour: 'mood', band: 'youth', mood: 'low' }, ['Hi. I\'m fine. I\'m FINE. Everyone keeps asking.']),
-    at(2.8, { phrFlavour: 'meal', band: 'youth' }, ['I\'m always hungry. Mum says it\'s growing. I say it\'s pie.']),
+    at(2.8, { phrFlavour: 'meal', band: 'youth' }, ['I\'m always hungry. Mom says it\'s growing. I say it\'s pie.']),
     at(4.4, { phrDoing: 'lesson', band: 'youth' }, ['Story time. I\'m too old for story time. ...It\'s a good story, though.']),
 
     // the old, in all weathers
     at(2.8, { phrFlavour: 'weather', stage: 'elder', weather: 'fog' }, ['Fog. At my age you get used to not seeing much. Hello, I think.']),
-    at(2.8, { phrFlavour: 'weather', stage: 'elder', weather: 'cloudy' }, ['Grey. Like my hair. Like my beard, if I had one. Hello.']),
+    at(2.8, { phrFlavour: 'weather', stage: 'elder', weather: 'cloudy' }, ['Gray. Like my hair. Like my beard, if I had one. Hello.']),
     at(2.8, { phrFlavour: 'mood', stage: 'elder', mood: 'merry' }, ['I feel twenty years younger today! Well, ten. Five.']),
     at(2.8, { phrFlavour: 'mood', stage: 'elder', mood: 'low' }, ['Hello. The old aches are talking today. They\'ve a lot to say.']),
     at(2.8, { phrFlavour: 'meal', stage: 'elder' }, ['At my age every meal\'s a feast. I eat slowly and enjoy all of it.']),

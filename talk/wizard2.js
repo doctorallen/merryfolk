@@ -2,7 +2,7 @@
 // ---------------------------------------------------------------------------
 // The wizard himself, and what folk want from him (2 of 4): his magic. Folk
 // ask for a trick (and get a small one: a smoke-ring ship, a puff of
-// coloured stars, a light on the staff), ask about the fireworks and the
+// colored stars, a light on the staff), ask about the fireworks and the
 // dragon, challenge him to a smoke-ring contest, beg to be taught magic,
 // hold his staff up to rift-born know-how, and, now and then, tell him to
 // his face that wizards are meddlers.
@@ -56,7 +56,7 @@ talkPack('wizard2', () => {
         { ap: 'ask', say: 'What sort of trick would you like?', to: 'choose' },
       ] },
       choose: { line: 'wiz.magic.choose', go: [
-        { ap: 'tale', say: '*You snap your fingers by their ear, and a puff of coloured stars bursts out.*', label: 'Snap out a puff of stars', to: 'stars', fx: { run: magic('stars') } },
+        { ap: 'tale', say: '*You snap your fingers by their ear, and a puff of colored stars bursts out.*', label: 'Snap out a puff of stars', to: 'stars', fx: { run: magic('stars') } },
         { ap: 'share', say: 'Real magic isn\'t for showing off. But a small one, just for you.', to: 'light', fx: { run: magic('light') } },
         { ap: 'jest', say: 'I\'ve never managed a frog. A toad, once. By accident. At a wedding.', to: 'toad' },
       ] },
@@ -87,7 +87,7 @@ talkPack('wizard2', () => {
         { ap: 'warm', say: 'At the next fireworks, I\'ll do a bigger one. For you.', to: 'promise', fx: { promise: { k: 'wiz.show.trick', t: 'You promised {name} a bigger wonder at the next fireworks', days: 4 } } },
       ] },
       learn: { line: 'wiz.magic.learn', go: [
-        { ap: 'warm', say: 'You\'ve the knack. Practise on the cat.', to: 'knack' },
+        { ap: 'warm', say: 'You\'ve the knack. Practice on the cat.', to: 'knack' },
         { ap: 'jest', say: 'Nearly. Your nose twitched. That\'s always the first step.', to: 'nose' },
       ] },
       foryou: { line: 'wiz.magic.foryou', fx: { fond: 0.03, remember: 'The wizard did a little magic just for me.' }, end: true },
@@ -113,13 +113,13 @@ talkPack('wizard2', () => {
     proud: ['I\'ve seen a conjuror at Bree, you know. Very skilled. Let\'s see how you compare.'],
     gloomy: ['I don\'t suppose you could do a bit of magic? It\'s been that sort of week.'],
     child: ['DO A MAGIC! Do a magic! Do a MAGIC!', 'Can you make my brother disappear? Just for a bit?', 'Can you turn me into a dragon? A small one? Just till teatime?'],
-    elder: ['You did a trick for me when I was six. Coloured stars. I\'ve never forgotten. Would you, again?'],
+    elder: ['You did a trick for me when I was six. Colored stars. I\'ve never forgotten. Would you, again?'],
     rift: ['Show me what you\'ve got. Real-world demo. I\'ll compare it to the specs.', 'Okay. Magic. Do some. I need to see it with my own eyes, not a screen.'],
     meddler: ['I don\'t hold with magic. ...But I\'d like to see what all the fuss is about.'],
     low: ['Could you do something nice? Something to look at? I\'ve had a rotten day.'],
   });
   wz('wiz.magic.choose', {
-    _: ['Stars! Coloured ones! Like at the party, only smaller.', 'Something with lights! I don\'t mind what. Lights!'],
+    _: ['Stars! Colored ones! Like at the party, only smaller.', 'Something with lights! I don\'t mind what. Lights!'],
     cheerful: ['ALL of them! But if it\'s just one, stars! Pink ones!'],
     ornery: ['Something useful. Mend my gate. ...Fine. Lights, then.'],
     shy: ['...Something quiet. And pretty. If you can.'],
@@ -127,9 +127,9 @@ talkPack('wizard2', () => {
     dreamy: ['A light. A little light, like a star you could hold.'],
     witty: ['Turn somebody into a frog. I\'ve a list. I\'ll go and get it.'],
     proud: ['Your best one. I\'ll not be fobbed off with a second-best trick.'],
-    gloomy: ['Anything. Something that isn\'t grey.'],
+    gloomy: ['Anything. Something that isn\'t gray.'],
     child: ['A FROG! Turn something into a FROG! Not me. Well. Maybe me.', 'Make a DRAGON! A tiny one! That doesn\'t burn things!'],
-    elder: ['The stars. The coloured stars. Like you did when I was small.'],
+    elder: ['The stars. The colored stars. Like you did when I was small.'],
     rift: ['Something that breaks physics. Just a little. So I know it\'s real.'],
   });
   wz('wiz.magic.ship', {
@@ -157,7 +157,7 @@ talkPack('wizard2', () => {
     witty: ['I\'ve a seed-cake, yes. I\'ve also seen you at a party. I know where this is going.'],
     proud: ['My own baking. Mind you treat it with respect, whatever you do to it.'],
     gloomy: ['Here. It\'s the last one. It\'ll probably go wrong.'],
-    child: ['I\'ve got a biscuit! Is a biscuit all right? Make it disappear! Don\'t eat it!'],
+    child: ['I\'ve got a cookie! Is a cookie all right? Make it disappear! Don\'t eat it!'],
     elder: ['Ha! Here, then. I\'ve seen this trick before. Seventy years ago. You ate it then too.'],
     rift: ['Here. A protein bar from home. Last one. Don\'t eat it. Actually, eat it. It\'s awful.'],
     baker: ['Here. Fresh this morning. If it disappears, I\'ll know where it went.'],
@@ -168,12 +168,12 @@ talkPack('wizard2', () => {
     ornery: ['Watch it! You\'ll set me alight! ...They\'re not hot. ...Hmph. Pretty.'],
     shy: ['*catches at a falling star and laughs out loud, then goes pink*', '...They were so pretty. Thank you.'],
     curious: ['They\'re cold! Why are they cold? Fire\'s hot! What are they made of?'],
-    dreamy: ['They\'re falling like blossom. Coloured blossom. I\'ll dream about this.'],
+    dreamy: ['They\'re falling like blossom. Colored blossom. I\'ll dream about this.'],
     witty: ['Ah. So THAT\'S where you keep the spare stars. In people\'s ears.'],
     proud: ['Very good. Very good indeed. I shall tell people you did that for me.'],
     gloomy: ['...Oh. That was nice. That was really nice. I didn\'t expect nice.'],
     child: ['AAAAH! STARS! I\'M COVERED IN STARS! Did you see? DID YOU SEE?', 'Do it again! Do it on my friend! Do it on EVERYONE!'],
-    elder: ['Ha! The same stars! Same colours! Seventy years, and the same stars!'],
+    elder: ['Ha! The same stars! Same colors! Seventy years, and the same stars!'],
     rift: ['Particle effect with no emitter. No heat. No residue. I hate this. Do it again.'],
     meddler: ['...Well. I\'ll grant you that. That was very pretty.'],
   });
@@ -241,7 +241,7 @@ talkPack('wizard2', () => {
     shy: ['...Thank you. I\'ll keep it. Somewhere inside.'],
     curious: ['Thank you. I\'ll be thinking about how you did it for weeks.'],
     dreamy: ['I\'ll remember this when I\'m old. The day the wizard made magic for me.'],
-    witty: ['For me! Well, it\'s about time somebody recognised my importance.'],
+    witty: ['For me! Well, it\'s about time somebody recognized my importance.'],
     proud: ['I should think so. Thank you. I\'ll mention it at the Badger.'],
     gloomy: ['...That\'s the nicest thing that\'s happened all week. Thank you.'],
     child: ['FOR ME? I\'m going to tell my WHOLE FAMILY. And the goat.'],
@@ -291,7 +291,7 @@ talkPack('wizard2', () => {
     rift: ['Recycled effects. Back home we\'d call that efficient.'],
   });
   wz('wiz.magic.saw', {
-    _: ['I don\'t know. Home, a bit. The kitchen, with the lamp lit.', 'My mum. Isn\'t that daft. Just my mum, smiling.'],
+    _: ['I don\'t know. Home, a bit. The kitchen, with the lamp lit.', 'My mom. Isn\'t that daft. Just my mom, smiling.'],
     cheerful: ['Everyone I love, all sat round one table. Laughing.'],
     ornery: ['Nothing. A light. ...My old dog. Asleep by the fire. There. Happy?'],
     shy: ['...Someone I\'d like to talk to. And haven\'t, yet.'],
@@ -348,8 +348,8 @@ talkPack('wizard2', () => {
     rift: ['Calendar updated. Don\'t make me file a complaint.'],
   });
   wz('wiz.magic.knack', {
-    _: ['The cat! Ha! She\'ll never forgive me.', 'Do I? Do I really? I\'ll practise every day!'],
-    cheerful: ['I\'ve got the knack! I\'m going to practise on EVERYONE!'],
+    _: ['The cat! Ha! She\'ll never forgive me.', 'Do I? Do I really? I\'ll practice every day!'],
+    cheerful: ['I\'ve got the knack! I\'m going to practice on EVERYONE!'],
     ornery: ['I haven\'t. You\'re just being kind. ...Have I?'],
     shy: ['...Really? *looks at their own hand in wonder*'],
     curious: ['What\'s the knack, exactly? How do you know I\'ve got it?'],
@@ -359,7 +359,7 @@ talkPack('wizard2', () => {
     gloomy: ['...Me? Really? Well. Maybe.'],
     child: ['I\'M MAGIC! THE WIZARD SAYS I\'M MAGIC!'],
     elder: ['Ha! A knack, at my age! I\'ll show my grandchildren.'],
-    rift: ['A knack. Like coding. Okay. I can practise a knack.'],
+    rift: ['A knack. Like coding. Okay. I can practice a knack.'],
   });
   wz('wiz.magic.nose', {
     _: ['My nose twitched! Ha! Is that really the first step?', 'The nose! I knew there was something.'],
@@ -388,7 +388,7 @@ talkPack('wizard2', () => {
         { ap: 'warm', say: 'At the next party. You have my word.', to: 'word', need: { if: { showTonight: false } }, fx: { promise: { k: 'wiz.show.next', t: 'You promised {name} fireworks at the next party', days: 5 } } },
       ] },
       made: { line: 'wiz.fw.made', go: [
-        { ap: 'share', say: 'Saltpetre, starlight and patience. And for the red, a dragon\'s sneeze.', to: 'sneeze' },
+        { ap: 'share', say: 'Saltpeter, starlight and patience. And for the red, a dragon\'s sneeze.', to: 'sneeze' },
         { ap: 'jest', say: 'The rest is a secret. Mostly from myself.', to: 'secret' },
         { ap: 'warm', say: 'Would you like to help me pack one?', to: 'help', need: { open: 1, if: { stage: ['grown', 'elder'] } }, soft: true },
       ] },
@@ -432,7 +432,7 @@ talkPack('wizard2', () => {
     cheerful: ['FIREWORKS! Are there fireworks? Tonight? Say tonight!', 'Will there be the dragon? Tell me there\'ll be the dragon!'],
     ornery: ['When\'s the racket, then? I\'d like to get the hens in first.', 'Are you letting those things off again? Last time my cat didn\'t come home for two days.'],
     shy: ['...Will there be fireworks? I like watching them from the back.', '...Are the fireworks very loud? I like them. I just like to know.'],
-    curious: ['How do fireworks work? Why do they go different colours? What makes the bang?'],
+    curious: ['How do fireworks work? Why do they go different colors? What makes the bang?'],
     dreamy: ['Your fireworks are the only time the sky looks the way it does in my dreams.'],
     witty: ['Is it true you once set fire to your own hat at a wedding? Asking for the fireworks.'],
     proud: ['I hope the fireworks are going to be good this time. Last time was very nearly excellent.'],
@@ -449,7 +449,7 @@ talkPack('wizard2', () => {
     cheerful: ['YES! Is it a secret? I love a secret! Especially a bangy one!'],
     ornery: ['Go on. If it\'s not too dangerous to know.'],
     shy: ['...If you don\'t mind telling. I\'d like to know.'],
-    curious: ['Yes! Everything! What goes in, in what order, and why the colours!'],
+    curious: ['Yes! Everything! What goes in, in what order, and why the colors!'],
     dreamy: ['I imagine you catch little bits of sunset and keep them in jars.'],
     witty: ['Let me guess. Gunpowder and showing off, in equal measure.'],
     proud: ['I\'ve always thought I\'d have the head for it. Go on.'],
@@ -457,7 +457,7 @@ talkPack('wizard2', () => {
     child: ['YES! Do you use STARS? Do you catch them?'],
     elder: ['Seventy years I\'ve wondered. Go on, then. Before I\'m gone.'],
     rift: ['Yes. Full spec. Chemistry and all. I want to compare notes.'],
-    tinker: ['Black powder, metal salts for colour, a fuse and a shell. Am I close? I bet I\'m close.'],
+    tinker: ['Black powder, metal salts for color, a fuse and a shell. Am I close? I bet I\'m close.'],
   });
   wz('wiz.fw.socks', {
     _: ['Socks! Ha! Then why do they hiss?', 'Socks, my foot. I saw a fuse sticking out of one.'],
@@ -471,7 +471,7 @@ talkPack('wizard2', () => {
     gloomy: ['Course they are. Nothing exciting ever happens here.'],
     child: ['NOOO! You\'re fibbing! They\'re FIREWORKS! I can SMELL them!'],
     elder: ['Socks! Ha! You said that to my father, sixty years ago. Same crates.'],
-    rift: ['Socks that smell of sulphur. Sure. Totally believable.'],
+    rift: ['Socks that smell of sulfur. Sure. Totally believable.'],
   });
   wz('wiz.fw.sneeze', {
     _: ['A dragon\'s sneeze! How do you get one of those?', 'You\'re making that up. ...Are you?'],
@@ -485,7 +485,7 @@ talkPack('wizard2', () => {
     gloomy: ['Patience. That\'s the one I\'d never have.'],
     child: ['A DRAGON SNEEZE! Did it go ACHOO? Did it burn you?'],
     elder: ['Ha! My granddad said you told him the very same, at the Old Took\'s party.'],
-    rift: ['Saltpetre, yes. Starlight, okay, maybe photoluminescence. Dragon sneeze. No. Stop.'],
+    rift: ['Saltpeter, yes. Starlight, okay, maybe photoluminescence. Dragon sneeze. No. Stop.'],
   });
   wz('wiz.fw.secret', {
     _: ['From yourself! Ha! That\'s the safest kind.', 'A secret from yourself? How does that work?'],
@@ -548,14 +548,14 @@ talkPack('wizard2', () => {
     cheerful: ['One that goes BANG and then turns into a hundred little ones that go bang too!'],
     ornery: ['One that\'s quiet. A quiet firework. There. Bet you can\'t.'],
     shy: ['...A small one. Just for me. That nobody else sees.'],
-    curious: ['One that\'s a colour nobody\'s ever seen. Is there such a colour?'],
+    curious: ['One that\'s a color nobody\'s ever seen. Is there such a color?'],
     dreamy: ['One shaped like a heron, flying slow across the moon.'],
     witty: ['One shaped like you. With the hat. Exploding gently.'],
-    proud: ['One in our family colours, over our hill. For everyone to see.'],
+    proud: ['One in our family colors, over our hill. For everyone to see.'],
     gloomy: ['One that doesn\'t end. They always end.'],
     child: ['A UNICORN firework! That does a poo! A sparkly poo!', 'A dragon one that chases the other fireworks!'],
     elder: ['The ones you did for the Old Took. The flowers that opened in the smoke. Once more.'],
-    rift: ['One shaped like the Neverdark skyline. In neon colours. So I could see it once more.'],
+    rift: ['One shaped like the Neverdark skyline. In neon colors. So I could see it once more.'],
     spouse: ['One shaped like a heart, for {spouse}. Don\'t tell {spouse}.'],
   });
   wz('wiz.fw.jar', {
@@ -598,11 +598,11 @@ talkPack('wizard2', () => {
     proud: ['Of course I will. It\'ll be the best one, I expect.'],
     gloomy: ['...Mine. A firework of mine. Well. Well!'],
     elder: ['Ha! A firework of mine, at my age. Thank you, wizard.'],
-    rift: ['My first analogue firework. I\'m going to film it. If I can find a camera.'],
+    rift: ['My first analog firework. I\'m going to film it. If I can find a camera.'],
   });
   wz('wiz.fw.brows', {
     _: ['Twice! Ha! I\'ll stand well back.', 'Your eyebrows grew back? They\'re very big eyebrows.'],
-    cheerful: ['Ha! I\'d look marvellous without eyebrows! Very surprised!'],
+    cheerful: ['Ha! I\'d look marvelous without eyebrows! Very surprised!'],
     ornery: ['That\'s exactly the sort of thing I mean about magic.'],
     shy: ['*covers both eyebrows with both hands*'],
     curious: ['Which fireworks? How close were you? Did they grow back the same?'],
@@ -670,7 +670,7 @@ talkPack('wizard2', () => {
       contest: { line: 'wiz.pipe.contest', go: [
         { ap: 'tale', say: '*You blow a smoke ship that sails clean through their ring.*', label: 'Sail a ship through it', to: 'ship', fx: { run: magic('ship') } },
         { ap: 'warm', say: '*You blow a plain, honest ring, a little smaller than theirs.*', label: 'Blow a modest ring', to: 'modest', fx: { run: magic('ring') } },
-        { ap: 'jest', say: '*You cough, splutter, and blow a sort of grey cushion.*', label: 'Let them win', to: 'letwin' },
+        { ap: 'jest', say: '*You cough, splutter, and blow a sort of gray cushion.*', label: 'Let them win', to: 'letwin' },
       ] },
       company: { line: 'wiz.pipe.company', go: [
         { ap: 'listen', say: '*You smoke together a while, and say nothing at all.*', label: 'Smoke in silence a while', to: 'quiet' },
@@ -678,7 +678,7 @@ talkPack('wizard2', () => {
         { ap: 'jest', say: 'Now. Shall we see whose rings are rounder?', to: 'contest' },
       ] },
       leaf: { line: 'wiz.pipe.leaf', go: [
-        { ap: 'share', say: 'Have a pinch of mine. From Bree. It\'s nothing on yours, but it\'s travelled.', to: 'trade', fx: { fond: 0.02 } },
+        { ap: 'share', say: 'Have a pinch of mine. From Bree. It\'s nothing on yours, but it\'s traveled.', to: 'trade', fx: { fond: 0.02 } },
         { ap: 'jest', say: 'Good leaf makes good rings. Shall we find out?', to: 'contest' },
       ] },
       ship: { line: 'wiz.pipe.ship', fx: { joke: { k: 'wiz.pipe.ship', t: 'Your smoke ship sailed through {name}\'s ring. {Name} wants a rematch.' } }, go: [
@@ -719,7 +719,7 @@ talkPack('wizard2', () => {
     shy: ['...Would you like to smoke with me? You don\'t have to.'],
     curious: ['How do you do the rings that change shape? I\'ve watched you. I can\'t work it out.'],
     dreamy: ['Smoke a pipe with me? I like to watch it curl up into the evening.'],
-    witty: ['Ring contest. You and me. Loser buys at the Badger. I\'ve been practising.', 'I\'ve been working on a ring that spells my name. I\'m up to the first letter.'],
+    witty: ['Ring contest. You and me. Loser buys at the Badger. I\'ve been practicing.', 'I\'ve been working on a ring that spells my name. I\'m up to the first letter.'],
     proud: ['I\'ll have you know I hold the record on this lane for rings. Eleven at once.', 'Care for a pipe? I\'ll show you a ring worth looking at.'],
     gloomy: ['Sit and smoke? It\'s about all I\'m good for today.'],
     elder: ['Sit with an old hobbit and have a pipe. I\'ve not had a smoke with a wizard in sixty years.'],
@@ -733,12 +733,12 @@ talkPack('wizard2', () => {
     ornery: ['*blows one perfect ring without a word, and looks at you*'],
     shy: ['*blows a small, careful ring, and watches it anxiously*'],
     curious: ['*blows a ring and watches how it spins* They turn inside themselves, you know. Your go.'],
-    dreamy: ['*blows a ring that drifts off towards the sunset* Mm. Your turn.'],
+    dreamy: ['*blows a ring that drifts off toward the sunset* Mm. Your turn.'],
     witty: ['*blows a ring, and a small one after it like a duckling* Mother and child. Your go, wizard.'],
     proud: ['*blows a large, perfectly round ring* That, wizard, is a ring.'],
     gloomy: ['*blows a ring that breaks at once* Typical. Your go.'],
     elder: ['*blows a slow, thick ring* Seventy years of practice in that. Your go, youngster.'],
-    rift: ['*blows, and coughs, and produces a sort of grey blob* That\'s a ring. In the city that\'s a ring.'],
+    rift: ['*blows, and coughs, and produces a sort of gray blob* That\'s a ring. In the city that\'s a ring.'],
     smoker: ['*blows a ring, a ring through it, and a third through both* Well?'],
   });
   wz('wiz.pipe.company', {
@@ -761,7 +761,7 @@ talkPack('wizard2', () => {
     shy: ['...Just the ordinary. From the market. Is that all right?'],
     curious: ['A blend I made. Three parts Longbottom, one part Southern Star, a pinch of dried apple. It\'s an experiment.'],
     dreamy: ['Something with a bit of honey in it. It smells like summer evenings.'],
-    witty: ['Whatever I could cadge off my neighbour. It\'s the best kind. Free.'],
+    witty: ['Whatever I could cadge off my neighbor. It\'s the best kind. Free.'],
     proud: ['Our own leaf. Nine generations of growing. The best in the valley.'],
     gloomy: ['Whatever\'s left. It\'s gone damp. Everything goes damp.'],
     elder: ['Old Toby. Same as my father. Same as his. We don\'t hold with change.'],
@@ -774,9 +774,9 @@ talkPack('wizard2', () => {
     ornery: ['That\'s magic. That doesn\'t count. ...Rematch.'],
     shy: ['*laughs, properly, for the first time in the talk*'],
     curious: ['How did you get the mast? The mast! Smoke doesn\'t do masts!'],
-    dreamy: ['It sailed right through. Like a ship through a harbour wall that\'s made of cloud.'],
+    dreamy: ['It sailed right through. Like a ship through a harbor wall that\'s made of cloud.'],
     witty: ['A ship. Through my ring. I\'m going to need a lie down and a long think.'],
-    proud: ['...Very good. I demand a rematch. Tomorrow. When I\'ve practised.'],
+    proud: ['...Very good. I demand a rematch. Tomorrow. When I\'ve practiced.'],
     gloomy: ['Course you won. ...It was lovely, though.'],
     elder: ['Ha! The Old Took used to lose to you like that, my father said.'],
     rift: ['Okay. Okay. That\'s not fair, but it\'s amazing.'],
@@ -797,10 +797,10 @@ talkPack('wizard2', () => {
   wz('wiz.pipe.letwin', {
     _: ['Ha! A cushion! The great wizard blows a cushion!', 'Was that... meant to be a ring?'],
     cheerful: ['HA! A CUSHION! I win! I win against a wizard!'],
-    ornery: ['You did that on purpose. Don\'t you patronise me.'],
+    ornery: ['You did that on purpose. Don\'t you patronize me.'],
     shy: ['...Are you all right? You coughed a lot.'],
     curious: ['That wasn\'t a real cough. I watched your eyes. You let me win.'],
-    dreamy: ['A grey cushion, floating off. Somebody\'ll sleep on that tonight.'],
+    dreamy: ['A gray cushion, floating off. Somebody\'ll sleep on that tonight.'],
     witty: ['A cushion. Truly the greatest wizard of the age.'],
     proud: ['A clear win. No doubt about it. I\'ll take it.'],
     gloomy: ['You let me win. ...That\'s kind. Nobody does that.'],
@@ -849,7 +849,7 @@ talkPack('wizard2', () => {
     grower: ['*rubs it between finger and thumb* Cut too early. Cured too fast. I\'ll send you off with some proper.'],
   });
   wz('wiz.pipe.trick', {
-    _: ['*listens hard, and then tries, and gets a sort of boat-shaped ring* ...A RAFT! I made a RAFT!', 'Tongue at the front, a puff, a nudge. ...I\'ll practise. On my own. In the dark.'],
+    _: ['*listens hard, and then tries, and gets a sort of boat-shaped ring* ...A RAFT! I made a RAFT!', 'Tongue at the front, a puff, a nudge. ...I\'ll practice. On my own. In the dark.'],
     cheerful: ['*tries at once* Look! LOOK! It\'s nearly a ship! It\'s a ship that\'s had a bad day!'],
     ornery: ['That\'s all? Hmph. I\'ll have it by Highday. You\'ll see.'],
     shy: ['*tries very quietly, and makes a perfect small ring, and goes pink*'],
@@ -862,8 +862,8 @@ talkPack('wizard2', () => {
     rift: ['*tries, coughs, tries* Okay. It\'s an algorithm. I can do algorithms.'],
   });
   wz('wiz.pipe.oneday', {
-    _: ['One day. Mark my words. I\'ll sail a whole fleet through yours.', 'I\'ll practise. You\'ll see.'],
-    cheerful: ['I\'ll practise EVERY DAY! Next time, I\'ll blow a ship! A pirate ship!'],
+    _: ['One day. Mark my words. I\'ll sail a whole fleet through yours.', 'I\'ll practice. You\'ll see.'],
+    cheerful: ['I\'ll practice EVERY DAY! Next time, I\'ll blow a ship! A pirate ship!'],
     ornery: ['Hmph. I\'ll get you yet.'],
     shy: ['...Maybe. One day.'],
     curious: ['How long did it take you? Years? Centuries?'],
@@ -871,7 +871,7 @@ talkPack('wizard2', () => {
     witty: ['One day. When you\'re old. Older. Ancient.'],
     proud: ['I\'ll beat you next time. I\'m very determined.'],
     gloomy: ['Probably not. But it was fun.'],
-    elder: ['One day? I\'ve not many left. But I\'ll spend one practising.'],
+    elder: ['One day? I\'ve not many left. But I\'ll spend one practicing.'],
     rift: ['Practice loop started. Give me a month.'],
   });
   wz('wiz.pipe.needed', {
@@ -919,7 +919,7 @@ talkPack('wizard2', () => {
       ] },
       hat: { line: 'wiz.learn.hat', go: [
         { ap: 'warm', say: 'Very well. The first lesson, then.', to: 'first' },
-        { ap: 'jest', say: 'And you have to be very, very old. Start ageing now.', to: 'ageing' },
+        { ap: 'jest', say: 'And you have to be very, very old. Start aging now.', to: 'ageing' },
       ] },
       first: { line: 'wiz.learn.first', go: [
         { ap: 'listen', say: 'Look at something properly. Really look, for a whole minute. I\'ll wait.', to: 'looked' },
@@ -935,7 +935,7 @@ talkPack('wizard2', () => {
       noticed: { line: 'wiz.learn.noticed', fx: { fond: 0.03, remember: 'The wizard taught me the first spell. Noticing.', promise: { k: 'wiz.visit.lesson', t: 'You promised {name} a second lesson', days: 3 } }, end: true },
       sneeze: { line: 'wiz.learn.sneeze', fx: { joke: { k: 'wiz.learn.sneeze', t: 'The second spell is a sneeze. Very important.' } }, go: [
         { ap: 'tale', say: '*As they sneeze, you snap your fingers, and a few stars burst out.*', label: 'Make their sneeze sparkle', to: 'sparkled', fx: { run: magic('stars') } },
-        { ap: 'warm', say: 'Excellent. You\'re a natural. Practise both, every day.', to: 'noticed' },
+        { ap: 'warm', say: 'Excellent. You\'re a natural. Practice both, every day.', to: 'noticed' },
       ] },
       sparkled: { line: 'wiz.learn.sparkled', fx: { fond: 0.03, drive: { bored: -0.3 } }, end: true },
     },
@@ -946,7 +946,7 @@ talkPack('wizard2', () => {
     dreamy: ['I think I might have a bit of magic in me. Somewhere. Could you help me find it?'],
     child: ['Can I be a wizard when I grow up? Can I? Can I start NOW?', 'Teach me a spell! A real one! Please please please!', 'If I\'m very good, can I learn ONE spell? Just a little one?'],
     'child+bright': ['I\'ve read every book in our house. None of them are about magic. Will you teach me?'],
-    'child+shyKid': ['...Could I learn magic? Sorry. Mum says I ask silly things.'],
+    'child+shyKid': ['...Could I learn magic? Sorry. Mom says I ask silly things.'],
     rift: ['Can magic be learned? Like a protocol? Can you write it down for me?'],
     riftWays: ['The tinker says magic is just science nobody\'s written down. Can you write some down for me?'],
   });
@@ -954,7 +954,7 @@ talkPack('wizard2', () => {
     _: ['So I could help people. And do fireworks. Mostly fireworks.', 'So I could go anywhere. Like you.'],
     curious: ['To understand. Everything. How the world\'s put together underneath.'],
     dreamy: ['So I could make beautiful things that weren\'t there before.'],
-    child: ['So I can FLY. And turn my brother into a frog. And fly.', 'So I can make it stop raining on my birthday.', 'So I can make Mum better when she\'s poorly.'],
+    child: ['So I can FLY. And turn my brother into a frog. And fly.', 'So I can make it stop raining on my birthday.', 'So I can make Mom better when she\'s poorly.'],
     'child+bright': ['So I could read the books nobody else can. The old ones.'],
     'child+shyKid': ['...So I wouldn\'t be scared of anything.'],
     rift: ['To fix things. Big things. Like getting home. Or getting someone here.'],
@@ -979,7 +979,7 @@ talkPack('wizard2', () => {
   });
   wz('wiz.learn.looked', {
     _: ['*looks hard at the hedge* ...There\'s a snail. And a nest. And a beetle with a gold back. Was that there before?', '*looks at the sky a long minute* ...That cloud\'s going one way and that one the other. How?'],
-    curious: ['*stares at the wall, then gasps* The moss grows thicker on the north side. Every stone. Did you know?', '*looks at the lane* The cobbles are all different colours. I\'ve walked here every day of my life.'],
+    curious: ['*stares at the wall, then gasps* The moss grows thicker on the north side. Every stone. Did you know?', '*looks at the lane* The cobbles are all different colors. I\'ve walked here every day of my life.'],
     dreamy: ['*looks at the river a long while* ...It\'s never the same water twice. It just looks the same. Oh.'],
     child: ['*stares at the hedge, frowning hard* ...A SNAIL! And a nest! And a beetle with a GOLD back!', '*stares at their own hand* ...There\'s a scar I forgot! And my fingers are all different! WHY?', '*stares at the grass* ...There\'s an ant carrying a crumb BIGGER than him!'],
     'child+shyKid': ['*looks very carefully at a daisy* ...It\'s got a tiny bit of pink at the edges. Only at the edges.'],
@@ -1002,14 +1002,14 @@ talkPack('wizard2', () => {
     rift: ['Ha. So you agree. Tech and magic, cousins. I\'ll take that home.'],
   });
   wz('wiz.learn.ageing', {
-    _: ['Ha! I\'m getting older every day. I\'ll catch you up.', 'I\'ll start ageing now. Very hard.'],
+    _: ['Ha! I\'m getting older every day. I\'ll catch you up.', 'I\'ll start aging now. Very hard.'],
     curious: ['How old do you have to be? Exactly? Is there a number?'],
     dreamy: ['Then I\'ll be patient. Wizards must be patient.'],
     child: ['I\'m nearly double figures! That\'s old! Is that old enough?', '*scrunches face up* Am I older yet?'],
     rift: ['Long-term project. Okay. I can do long-term.'],
   });
   wz('wiz.learn.noticed', {
-    _: ['Noticing! That\'s a spell? ...I\'m going to notice EVERYTHING.', 'I\'ll practise. Every day. I\'ll notice so hard.'],
+    _: ['Noticing! That\'s a spell? ...I\'m going to notice EVERYTHING.', 'I\'ll practice. Every day. I\'ll notice so hard.'],
     curious: ['Noticing. Of course. That\'s where everything starts, isn\'t it. Everything.'],
     dreamy: ['I\'ve always noticed. I just didn\'t know it was magic.'],
     child: ['I\'m going to notice my WHOLE HOUSE! And tell you EVERYTHING!', 'Is the second spell harder? Will you teach me the second one? Tomorrow?'],
@@ -1027,7 +1027,7 @@ talkPack('wizard2', () => {
     _: ['Stars! I sneezed stars! Did I do that?', 'Did I do that? Did I really do that? ...I did that.'],
     curious: ['It was you. It was you, wasn\'t it. ...Was it? It might have been me.'],
     dreamy: ['I sneezed stars. I\'ll never be the same.'],
-    child: ['I SNEEZED STARS! MUM! MUM! I SNEEZED STARS!', 'I\'m going to sneeze on EVERYONE!'],
+    child: ['I SNEEZED STARS! MOM! MOM! I SNEEZED STARS!', 'I\'m going to sneeze on EVERYONE!'],
     rift: ['I sneezed stars. That shouldn\'t be possible. I\'m telling the Relay. Nobody will believe me.'],
   });
 
@@ -1110,8 +1110,8 @@ talkPack('wizard2', () => {
     witty: ['Tea. The hill-folk run on it too. Maybe it\'s all one big system.'],
     proud: ['Ha. Funny. I want the real specs.'],
     gloomy: ['Course it does. Something ordinary. And it works. And our grid doesn\'t.'],
-    child: ['TEA? My grandad drinks tea! Is HE magic?'],
-    riftWays: ['Tea! The tinker will be gutted. He was sure it was a coil.'],
+    child: ['TEA? My granddad drinks tea! Is HE magic?'],
+    riftWays: ['Tea! The tinker will be crushed. He was sure it was a coil.'],
   });
   wz('wiz.rift.scan', {
     _: ['*holds up a wrist-screen* No reading. Not heat, not light, not field. It\'s just... light.', 'It\'s not on any spectrum I know. It\'s just there. Being light.'],
@@ -1168,7 +1168,7 @@ talkPack('wizard2', () => {
   wz('wiz.rift.wonder', {
     _: ['...Wondering at. Okay. I\'ll try that. It\'s new.', 'Back home nothing was for wondering at. Everything was for using.'],
     cheerful: ['I can do wondering! I\'m wondering right now! It\'s great!'],
-    ornery: ['Hmph. Fine. I\'ll wonder. I\'ll wonder very sceptically.'],
+    ornery: ['Hmph. Fine. I\'ll wonder. I\'ll wonder very skeptically.'],
     shy: ['...I like that. Wondering at things.'],
     curious: ['But wondering leads to questions. And questions to answers. That\'s the fun bit.'],
     dreamy: ['Yes. That\'s it exactly. That\'s what I feel when I see it.'],
@@ -1322,9 +1322,9 @@ talkPack('wizard2', () => {
   wz('wiz.meddle.amends', {
     _: ['Make it right? ...Well. You could help with the roof. Properly. With your hands.', 'A day\'s work. That\'s all. Show me a wizard can do a day\'s work.'],
     ornery: ['You can rethatch the corner. Yourself. No magic. I\'ll be watching.', 'Fix the henhouse door the rockets blew in. With a hammer. Like a normal person.'],
-    proud: ['I don\'t want anything. ...You could apologise. In front of people.'],
+    proud: ['I don\'t want anything. ...You could apologize. In front of people.'],
     gloomy: ['It\'s too late, really. ...You could help me mend the fence. If you wanted.'],
-    shy: ['...You don\'t have to. ...The gate\'s still a bit burnt. That\'s all.'],
+    shy: ['...You don\'t have to. ...The gate\'s still a bit burned. That\'s all.'],
     cheerful: ['Ha! Buy the Badger a new sign! A lovely one! With a badger on it!'],
     curious: ['Make it right? How would you even do that? With magic? Show me.'],
     dreamy: ['Bring my cousin\'s smile back. ...I know you can\'t. Just help with the garden, then.'],
@@ -1354,7 +1354,7 @@ talkPack('wizard2', () => {
     cheerful: ['Oh, you old softie! Come here! All forgiven!'],
     curious: ['...You mean it? You\'re not just saying it?'],
     dreamy: ['...That was the right thing to say. Thank you.'],
-    witty: ['A wizard apologising. I need to sit down. I need witnesses.'],
+    witty: ['A wizard apologizing. I need to sit down. I need witnesses.'],
     elder: ['...Seventy years I waited for that. Thank you, wizard.'],
     rift: ['...Okay. Apology received. Reboot.'],
   });
@@ -1425,7 +1425,7 @@ talkPack('wizard2', () => {
   });
   wz('wiz.meddle.blue', {
     _: ['BLUE? My gate? ...It IS blue. ...It\'s quite a nice blue, actually.', '...You\'ve turned my gate blue. ...I\'m keeping it.'],
-    ornery: ['BLUE! Turn it back! ...No. Leave it. The neighbours will hate it.'],
+    ornery: ['BLUE! Turn it back! ...No. Leave it. The neighbors will hate it.'],
     proud: ['Blue. Hm. It\'s a very distinguished blue. It can stay.'],
     gloomy: ['...Blue. Like me. Fitting.'],
     shy: ['...I like blue. Thank you. I think.'],

@@ -106,12 +106,12 @@ talkPack('moods3', () => {
   lines('sit.homesick.ask', [{ text: ['Thinking of home, {name}?', 'Where are you, just now? Not here, I think.'] }, H('rift', ['Missing the city?']), H('bree', ['Thinking of Bree again?'])]);
   lines('sit.homesick.warm', [{ text: ['Thistledown\'s glad of you, {name}. I hope you know that.'] }, H('rift', ['You\'ve folk here now, {name}. Hill-folk count.'])]);
   lines('sit.homesick.share', [{ text: ['I\'ve no home either, you know. A wagon and a road.', 'I\'ve been homesick for places that aren\'t there any more.'] }]);
-  lines('sit.homesick.jest', [{ text: ['Cheer up. The hills here hardly ever fall on anyone.'] }, H('rift', ['Lost your signal, {name}?', 'Too quiet for you? I can ask the hens to beep.']), H('bree', ['Bree? Have you SMELT Bree?'])]);
+  lines('sit.homesick.jest', [{ text: ['Cheer up. The hills here hardly ever fall on anyone.'] }, H('rift', ['Lost your signal, {name}?', 'Too quiet for you? I can ask the hens to beep.']), H('bree', ['Bree? Have you SMELLED Bree?'])]);
   lines('sit.homesick.advise', [{ text: ['Find one thing here that feels like home, {name}. Just one.'] }, H('rift', ['Have you been to the mill at night? It hums. Like a city.']), H('bree', ['Give it one more season before you pack, {name}.'])]);
   L('mood.homesick.w.tour', ['If you took me there, what would you show me first?', 'Show me round it. In words.']);
   L('mood.homesick.w.here', ['Is there anything here that\'s a bit like it?', 'Find the bit of here that\'s most like there. Go and sit in it.'], {}, [H('rift', ['The Lamplighter\'s lamps at dusk. Have you watched them come on?', 'The mill-race hums all night. Go and listen. Tell me if it\'s close.'])]);
   L('mood.homesick.w.hope', ['Wherever they are, I hope there\'s tea, and someone thinking of them.', 'Missing them is how you keep them, {name}.']);
-  L('mood.homesick.w.write', ['Write to them. The postie goes as far as the West Road.', 'A letter, {name}. Tell them about the hens. They\'ll want to know.']);
+  L('mood.homesick.w.write', ['Write to them. The mail carrier goes as far as the West Road.', 'A letter, {name}. Tell them about the hens. They\'ll want to know.']);
   L('mood.homesick.w.jest', ['I\'ll put in a request for a few more billboards.', 'I could make the hens glow, if that would help.'], {}, [H('bree', ['Bree has one street and forty puddles. I counted.'])]);
   L('mood.homesick.see', ['They keep looking up, at the place where the sky tore.', 'Their hand has gone to their pocket, and stayed there, holding something.'], {}, [H('rift', ['A little light on their sleeve blinks, slowly, like something asleep.'])]);
 
@@ -123,23 +123,23 @@ talkPack('moods3', () => {
     dreamy: ['When the evening came in, all the windows lit up one by one, like somebody counting.'], proud: ['We were known there. Our name meant something. Here it\'s just a name.'],
     ornery: ['Folk minded their own business. And the bread was better. Don\'t tell the baker.'], child: ['My old room had a hole in the wall where a mouse lived. His name was Biscuit.'],
   }, [
-    H('rift', ['Back home the lights never went off. You fell asleep under a billboard and dreamt in adverts.', 'Neverdark. Never dark, never quiet. Here the night is so BIG. It just keeps going.', 'We had trains that never stopped. Day and night. You set your heart by them.']),
+    H('rift', ['Back home the lights never went off. You fell asleep under a billboard and dreamed in adverts.', 'Neverdark. Never dark, never quiet. Here the night is so BIG. It just keeps going.', 'We had trains that never stopped. Day and night. You set your heart by them.']),
     { if: { moodHomesick: 'rift', moodHomeThing: has }, pri: 2, text: ['I keep thinking of {moodHomeThing}. Isn\'t that daft? Of all the things.', 'You know what I miss? {MoodHomeThing}. I\'d give my last battery to see it.'] },
-    H('road', ['{MoodOldHome}. A long way back down the West Road. Everyone there knew my mum.', 'In {moodOldHome} I knew every stile. Here I keep climbing the wrong ones.']),
+    H('road', ['{MoodOldHome}. A long way back down the West Road. Everyone there knew my mom.', 'In {moodOldHome} I knew every stile. Here I keep climbing the wrong ones.']),
     H('bree', ['My cousin\'s in Bree. Says there\'s room, and work, and an inn with two floors. Two!', 'Bree\'s got Big Folk and a market every day. Imagine. Every day.']),
   ]);
   L('mood.homesick.aches', ['...It\'s not the place. It\'s the people. The ones I left.', '...There was someone. I didn\'t get to say goodbye properly.'], {
     shy: ['...I think about them every night. I say their names. Quietly, so nobody hears.'], ornery: ['...You don\'t just stop missing folk because a wizard asks nicely.'], gloomy: ['...They\'ve probably forgotten me. That\'s the worst bit.'],
   }, [
     { if: { moodHomesick: 'rift', lost: has }, pri: 2, text: ['My {lostRel}. {Lost}. We were meant to come through together. The rift took me and not {lost}.', '{Lost}. My {lostRel}. Somewhere with no signal, I hope. Not nowhere. Please not nowhere.'] },
-    H('road', ['My mum\'s still in {moodOldHome}. She writes. I don\'t write back enough.']), H('bree', ['...It\'s not Bree, really. It\'s that nothing here changes. And I\'m changing.']),
+    H('road', ['My mom\'s still in {moodOldHome}. She writes. I don\'t write back enough.']), H('bree', ['...It\'s not Bree, really. It\'s that nothing here changes. And I\'m changing.']),
   ]);
   L('mood.homesick.notsame', ['It\'s not the same. You chose the road. Nobody asked me.', 'You can go back, wizard. I can\'t.'], {
     ornery: ['Don\'t compare. You\'ve got a wagon. I\'ve got a hole in the sky.'], proud: ['With respect, your wanderings are not my exile.'],
   }, [H('rift', ['You can walk home. Mine\'s on the other side of the sky. With the door shut.'])]);
   L('mood.homesick.swap', ['...Huh. A wagon. Do you get lonely?', 'I never thought of wizards being from anywhere.'], { curious: ['Where WERE you from? Before the road?'], child: ['Can I see the wagon?'] }, [H('rift', ['A wagon. Like a drone with wheels. And no signal. Huh.'])]);
   L('mood.homesick.kindred', ['...So you know. What it\'s like. Being from somewhere that isn\'t here.', '...Nobody\'s said that to me before. That they know.'], {
-    shy: ['...Thank you. I thought I was the only one.'], dreamy: ['Two strays, then. On the same wall, looking at the same hills.'], child: ['You don\'t have a home either? You can share mine. Mum won\'t mind. Much.'],
+    shy: ['...Thank you. I thought I was the only one.'], dreamy: ['Two strays, then. On the same wall, looking at the same hills.'], child: ['You don\'t have a home either? You can share mine. Mom won\'t mind. Much.'],
   }, [H('rift', ['Full signal. ...That means I hear you. Properly.'])]);
   L('mood.homesick.warmed', ['...That\'s kind. I don\'t always feel it. But it\'s kind.', 'Do you mean that? ...You do. Huh.'], { ornery: ['Hmph. Some of them are glad. The baker isn\'t.'], shy: ['*goes pink, and smiles at the ground*'], child: ['Everyone? Even the old one with the stick?'] });
   L('mood.homesick.belongs', ['...You think I could belong here? Properly?', '...Maybe it\'s not a second best. Maybe it\'s just a second home.'], {
@@ -153,7 +153,7 @@ talkPack('moods3', () => {
   L('mood.homesick.heretoo', ['...The mill does hum, doesn\'t it. All night. I never listened.', '...There\'s a spot by the inn where you can hear everyone at once. It\'s nearly like home.'], {
     cheerful: ['Oh! The Badger on a Saturday! That\'s just like home! Louder, even!'], dreamy: ['...The lamps coming on, one by one, down the lane. I\'ll go and watch them tonight.'],
   }, [H('rift', ['The Lamplighter\'s glow on the clouds. Of course. I\'ll go up the hill tonight and look.', 'The Relay Mast blinks at night. Red, then nothing, then red. Like the trains. I\'ll go and look.'])]);
-  L('mood.homesick.tour', ['First the market. Then the bridge at dusk. Then my mum\'s kitchen, for the smell.', 'First I\'d show you the bakehouse, then the hill, then the place where we all sat on summer nights.'], {
+  L('mood.homesick.tour', ['First the market. Then the bridge at dusk. Then my mom\'s kitchen, for the smell.', 'First I\'d show you the bakehouse, then the hill, then the place where we all sat on summer nights.'], {
     child: ['My old room, and the mouse hole. Biscuit might still be there.'],
   }, [H('rift', ['The noodle stall under the overpass. Third from the end. Best noodles in the city. Then the rooftops.'])]);
   L('mood.homesick.hope', ['...I hope so too. Tea. They\'d like tea.', 'Missing them is how you keep them. ...I\'ll keep them, then.'], { ornery: ['Hmph. Pretty words. ...Thank you.'] });
@@ -245,7 +245,7 @@ talkPack('moods3', () => {
   lines('sit.lonely.listen', [{ text: ['*You sit down beside them as if you\'d planned to all along.*', '*You lean on the fence next to them, and just stay.*'] }]);
   lines('sit.lonely.ask', [{ text: ['On your own today, {name}?', 'When did you last have somebody to talk to?'] }, { if: { moodPal: has }, text: ['Not seen {moodPal} about?'] }]);
   lines('sit.lonely.share', [{ text: ['I\'m on my own a lot, you know. On the road. It gets quiet.'] }]);
-  lines('sit.lonely.jest', [{ text: ['Has everyone else been turned into toads? I didn\'t do it.', 'You look like the last biscuit in the tin, {name}.'] }]);
+  lines('sit.lonely.jest', [{ text: ['Has everyone else been turned into toads? I didn\'t do it.', 'You look like the last cookie in the tin, {name}.'] }]);
   lines('sit.lonely.advise', [{ text: ['Go and knock on a door, {name}. Any door.'] }, { if: { moodPal: has }, text: ['Go and see {moodPal}. Today.'] }]);
   L('mood.lonely.w.see', ['Go and knock on a door today. Somebody\'s waiting to be knocked on.', 'Ask someone to tea. They\'ll say yes. Folk always say yes to tea.'], {}, [{ if: { moodPal: has }, text: ['Go and see {moodPal}. Take a bun. Say you were passing.', '{MoodPal} would be glad of you. Go on.'] }]);
   L('mood.lonely.w.jest', ['I\'m very good company. I\'ve been told so by at least one goat.', 'If it helps, the hens think you\'re wonderful.']);
@@ -257,12 +257,12 @@ talkPack('moods3', () => {
   L('mood.lonely.glows', ['Oh! Oh, that\'s... nobody\'s said that in an age.', '*their whole face lights up, and they try to hide it, and fail*'], { shy: ['*goes pink to the ears*'], child: ['Can you stay? Can you stay ALL DAY?'], elder: ['Bless you. You\'ve made an old hobbit\'s week.'] });
   L('mood.lonely.silent', ['*they say nothing, and neither do you, and it goes on a bit too long*', '...'], { cheerful: ['...Sorry. I\'ve got out of the way of talking.'] });
   L('mood.lonely.pours', ['Days, it\'s been. I go to the Store and back. Nobody stops. I don\'t blame them. I don\'t stop either.', 'Everyone\'s busy. I don\'t like to bother anyone. Then a week goes by.'], {
-    cheerful: ['I used to have a friend on every doorstep. I don\'t know where they went. Or where I went.'], gloomy: ['I could vanish and nobody\'d notice till the post piled up.'],
+    cheerful: ['I used to have a friend on every doorstep. I don\'t know where they went. Or where I went.'], gloomy: ['I could vanish and nobody\'d notice till the mail piled up.'],
     shy: ['...I want to go and talk to people. Then I get to the door and turn round.'], proud: ['Folk don\'t call as they used to. Manners have gone to pot.'],
     child: ['Nobody will play with me. They play with each other. I watch.'], elder: ['All my old friends have gone over the hills. The young ones are kind, but they don\'t know the songs.'],
   }, [{ if: { spouse: has }, text: ['{Spouse}\'s always at work. I sit and listen to the clock.'] }, { if: { homeless: true }, text: ['When you\'ve no door of your own, nobody comes to knock on it.'] }]);
   L('mood.lonely.opens', ['...Sometimes I think nobody would notice if I stayed in all week. I tested it once. They didn\'t.', '...I lay the table for two, out of habit. Then I sit at it on my own.'], {
-    shy: ['...I practise conversations in my head. Then nobody talks to me, so I never use them.'], child: ['...Sometimes I pretend I\'ve got a friend called Pip. Pip isn\'t real.'],
+    shy: ['...I practice conversations in my head. Then nobody talks to me, so I never use them.'], child: ['...Sometimes I pretend I\'ve got a friend called Pip. Pip isn\'t real.'],
   });
   L('mood.lonely.pity', ['Don\'t feel sorry for me. I don\'t want pity.', 'I\'m not a charity, wizard.'], { ornery: ['Pity\'s for the poorly. I\'m not poorly.'], proud: ['I don\'t need to be pitied, thank you.'] });
   L('mood.lonely.swap', ['You? On your own? I thought wizards had... I don\'t know. Owls.', '...I never thought of you being lonely.'], { curious: ['What do you do, on the road, on your own? Talk to the horse?'], child: ['You can play with me. If you want.'] });
@@ -270,7 +270,7 @@ talkPack('moods3', () => {
   L('mood.lonely.hurt', ['...Right.', 'That\'s not funny.'], { ornery: ['Oh, laugh. Everyone else does.'], shy: ['*looks down, and says nothing*'], child: ['*lip wobbles*'] });
   L('mood.lonely.smile', ['...Ha. Maybe they have been.', '*a small, surprised smile*'], { child: ['Hee. ...Are they toads?'] });
   L('mood.lonely.laughs', ['Ha! A goat! I believe it.', 'Ha! ...Oh, I\'d forgotten how good that feels.'], { witty: ['Ha! The goat was being polite.'], child: ['AHAHA! The hens LOVE me!'] });
-  L('mood.lonely.prickly', ['I don\'t need telling to make friends. I\'m not six.', 'Easy for you. Everyone\'s pleased to see a wizard.'], { ornery: ['Don\'t organise me.'], child: ['They don\'t WANT me to play.'] });
+  L('mood.lonely.prickly', ['I don\'t need telling to make friends. I\'m not six.', 'Easy for you. Everyone\'s pleased to see a wizard.'], { ornery: ['Don\'t organize me.'], child: ['They don\'t WANT me to play.'] });
   L('mood.lonely.maybe', ['...Maybe. If they\'re in.', 'I might. Tomorrow. If I\'m brave tomorrow.'], { shy: ['...I\'ll walk past. And if the door\'s open...'] });
   L('mood.lonely.plan', ['...All right. I will. I\'ll take a bun.', 'I\'ll go now. Before I talk myself out of it.'], { shy: ['...Now? ...All right. Now.'], ornery: ['Fine. But if they\'re out, I\'m blaming you.'], child: ['I\'ll go and ask if I can play! I\'m going! Watch!'] }, [{ if: { moodPal: has }, text: ['{MoodPal}. Yes. I\'ve been meaning to. I\'ll go now.', 'You\'re right. {MoodPal} always has the kettle on.'] }]);
   L('mood.lonely.whomiss', ['Everyone, a bit. The way it used to be, when we all sat out of an evening.', 'Someone to say good morning to who says it back.'], { child: ['Somebody who\'ll be my best friend. A proper one.'] }, [{ if: { moodPal: has }, text: ['{MoodPal}. We used to see each other every day. I don\'t know when we stopped.'] }]);
@@ -356,7 +356,7 @@ talkPack('moods3', () => {
   L('mood.shy.laughs', ['Ha! ...Oh. I didn\'t mean to laugh so loud.', 'Ha! A biting hat. ...I like you.'], { child: ['AHAHA. Do frogs. Do a frog. Go on.'] });
   L('mood.shy.faces', ['Nobody, really. I say hello and then I panic and talk about the weather.', 'The innkeeper. A dog. That\'s it. The dog was nice.'], { child: ['Nobody. They\'ve all got friends already.'] }, [{ if: { moodNewcomer: { min: 0 } }, text: ['Hardly anyone. I don\'t know where anything is. I\'ve walked past the Store three times.'] }]);
   L('mood.shy.shrinks', ['Oh, I couldn\'t. Not just go up to them. Not yet.', '...I\'d go red. I\'m going red now, just thinking.'], { child: ['NO. They\'ll laugh.'] });
-  L('mood.shy.maybe', ['...Maybe. If I see them on their own.', 'I\'ll try. I\'ll practise first.'], { child: ['...Will you come with me? No? ...Maybe.'] });
+  L('mood.shy.maybe', ['...Maybe. If I see them on their own.', 'I\'ll try. I\'ll practice first.'], { child: ['...Will you come with me? No? ...Maybe.'] });
   L('mood.shy.introduce', ['...All right. {MoodGreeter}. I\'ll go and say hello. Just hello.', '...If you think {moodGreeter} wouldn\'t mind. I\'ll try.'], { child: ['Okay! I\'ll go! ...What do I say? Hello. I\'ll say hello.'] });
   L('mood.shy.done', ['...Thank you. For talking to me.', '...That wasn\'t so bad. Thank you.'], { child: ['Bye, wizard! You\'re my friend now. Okay?'], rift: ['...Thanks. Ping me again some time.'] });
 
@@ -439,13 +439,13 @@ talkPack('moods3', () => {
   L('mood.sulk.grumbles', ['Nobody cares. Nothing goes right. And it\'s raining. Or it will.', 'It\'s everything. It\'s been everything for days.'], {
     ornery: ['Everyone\'s an idiot and the bread\'s stale. That\'s what\'s up.'], gloomy: ['Nothing. Everything. Same thing.'], proud: ['I\'ve been slighted. Repeatedly.'], child: ['Nobody LISTENS to me.'],
   }, [S('comfort', ['I\'m eating. That\'s what I\'m doing. It\'s the only thing that\'s going right.']), S('wander', ['I just walked. Up the valley and back. Nowhere was any better.'])]);
-  L('mood.sulk.spills', ['...I\'ve been low for days. Nothing\'s wrong exactly. Everything\'s just grey.', '...Nobody\'s asked how I am in a week. So I stopped being nice about it.'], {
+  L('mood.sulk.spills', ['...I\'ve been low for days. Nothing\'s wrong exactly. Everything\'s just gray.', '...Nobody\'s asked how I am in a week. So I stopped being nice about it.'], {
     shy: ['...I didn\'t know how to say I was sad. So I hid instead.'], ornery: ['...If you must know, I\'m tired. Tired of being the one who copes.'], child: ['...They said I was too little. I\'m NOT too little.'],
   }, [S('binge', ['...If I stop drinking I have to think. I don\'t want to think.']), S('sharp', ['...I keep snapping at people. I don\'t mean to. It just comes out.'])]);
   L('mood.sulk.shrugs', ['*shrugs, very hard*', 'Mm.'], { ornery: ['Don\'t be nice. It won\'t work.'], child: ['*folds arms and turns away*'] });
   L('mood.sulk.sniffs', ['*sniffs* ...Maybe.', '...Hm. That\'s kind. I\'m still sulking, mind.'], { child: ['*sniff* ...I\'m still cross.'], ornery: ['Hmph. ...Maybe a bit.'] });
   L('mood.sulk.melts', ['...Oh, all right. I\'m done. I\'m done sulking. It\'s tiring.', '*the sulk goes out of them like air out of a pig\'s bladder*'], {
-    child: ['*sniffs, hiccups, and climbs into your lap*', '...Okay. I\'m better. Can I have a biscuit?'], ornery: ['Hmph. Fine. The sulk\'s over. Don\'t gloat.'], cheerful: ['Oh, what a goose I\'ve been. Thank you.'],
+    child: ['*sniffs, hiccups, and climbs into your lap*', '...Okay. I\'m better. Can I have a cookie?'], ornery: ['Hmph. Fine. The sulk\'s over. Don\'t gloat.'], cheerful: ['Oh, what a goose I\'ve been. Thank you.'],
   });
   L('mood.sulk.glare', ['*a look that could curdle milk*', 'Get. Out. Of. My. Light.'], { child: ['I HATE you. ...Not really. But I\'m CROSS.'], proud: ['I don\'t find that amusing.'] });
   L('mood.sulk.snort', ['*a snort, despite everything*', 'Hmph. ...That\'s not funny.'], { child: ['*a giggle, quickly swallowed*'] });
@@ -527,7 +527,7 @@ talkPack('moods3', () => {
   lines('sit.jealous.advise', [{ text: ['Go and shake {moodEnvy}\'s hand, {name}. It costs nothing and it\'ll drive {moodEnvy} mad.', 'Envy\'s a poor lodger, {name}. Turn it out.'] }]);
   L('mood.jealous.w.jest', ['Green suits you. It goes with the hedges.', 'Shall I turn {moodEnvy} into a turnip? I\'d need it in writing.']);
   L('mood.jealous.w.again', ['Pickled onion green. With a hint of cabbage.', 'I can hear your teeth grinding from here.']);
-  L('mood.jealous.w.shake', ['Go and congratulate {moodEnvy}. Mean it, or don\'t. Just do it.', 'Shake {moodEnvy}\'s hand. Then go home and practise for next year.']);
+  L('mood.jealous.w.shake', ['Go and congratulate {moodEnvy}. Mean it, or don\'t. Just do it.', 'Shake {moodEnvy}\'s hand. Then go home and practice for next year.']);
   L('mood.jealous.w.praise', ['If it helps, I\'ve seen your work. It\'s not second to anybody\'s.', 'You lost a prize, not your knack. That\'s still yours.']);
 
   L('mood.jealous.denies', ['Jealous? Of {moodEnvy}? Ha! Don\'t make me laugh.', 'I\'m not bothered. Not at all. Good luck to {moodEnvy}. Hmph.'], {
@@ -535,12 +535,12 @@ talkPack('moods3', () => {
   });
   L('mood.jealous.fumes', ['Everybody\'s talking about {moodEnvy}. All week. {MoodEnvy} this, {moodEnvy} that. I could spit.', 'Did you see the look on {moodEnvy}\'s face? Like the cat with all the cream. And the jug.'], {
     ornery: ['{MoodEnvy} cheated. I can\'t prove it. But I know it in my bones.'], proud: ['My entry was finer. Anybody with eyes could see it. Which rules out the judges.'],
-    gloomy: ['It\'s always {moodEnvy}. Every year. Some folk are just luckier.'], witty: ['{MoodEnvy}\'s marrow was large, I\'ll grant. Large and dull. Like {moodEnvy}.'], child: ['{MoodEnvy} got picked and I didn\'t and it\'s NOT FAIR.'],
+    gloomy: ['It\'s always {moodEnvy}. Every year. Some folk are just luckier.'], witty: ['{MoodEnvy}\'s pumpkin was large, I\'ll grant. Large and dull. Like {moodEnvy}.'], child: ['{MoodEnvy} got picked and I didn\'t and it\'s NOT FAIR.'],
   }, [{ if: { moodEnvyWhy: has }, pri: 1, text: ['{MoodEnvy}. {MoodEnvyWhy}. I\'ve not slept for thinking about it.', 'You heard? {MoodEnvy}, {moodEnvyWhy}. I lost by a whisker. A WHISKER.'] }]);
   L('mood.jealous.admits', ['...All right. Yes. I\'m jealous. It\'s a horrid feeling and I can\'t shake it.', '...It was fair. That\'s what\'s so annoying. It was perfectly fair.'], {
     proud: ['...Very well. {MoodEnvy}\'s was better. This once. Write the day down.'], ornery: ['...Fine. {MoodEnvy} earned it. I hate that {moodEnvy} earned it.'], shy: ['...I wanted it so much. I never want things out loud.'], child: ['...{MoodEnvy}\'s was better. ...A bit.'],
   });
-  L('mood.jealous.stung', ['Oh, that\'s funny, is it? Laugh at the loser.', 'Thanks. Very helpful.'], { ornery: ['Go and laugh with {moodEnvy}, then. You\'ll get on.'], proud: ['I fail to see the humour.'], child: ['That\'s MEAN.'] });
+  L('mood.jealous.stung', ['Oh, that\'s funny, is it? Laugh at the loser.', 'Thanks. Very helpful.'], { ornery: ['Go and laugh with {moodEnvy}, then. You\'ll get on.'], proud: ['I fail to see the humor.'], child: ['That\'s MEAN.'] });
   L('mood.jealous.grudge', ['...Hmph. Pickled onion. ...That\'s quite good.', '*a grudging twitch of the mouth*'], { ornery: ['Hmph. A turnip would be an improvement.'] });
   L('mood.jealous.laughs', ['Ha! A turnip! ...Oh, don\'t tempt me.', 'Ha! All right. I\'m green. I\'m as green as a frog in a hedge.'], { witty: ['Ha! A small hex. Just enough to make it wobble.'], child: ['AHAHA! Do it! Turn {moodEnvy} into a turnip!'] });
   L('mood.jealous.bristle', ['I\'ll shake hands when I\'m good and ready. Which is never.', 'Congratulate {moodEnvy}? I\'d sooner eat a hedgehog.'], { proud: ['I don\'t take instruction in manners.'], child: ['NO. Never ever.'] });
@@ -551,7 +551,7 @@ talkPack('moods3', () => {
   L('mood.jealous.pity', ['Don\'t feel sorry for me. I\'m not a loser. I came second.', 'I don\'t need comforting. I need a recount.'], { proud: ['Pity is for those who deserved to lose.'] });
   L('mood.jealous.pat', ['...Thanks. It does sting.', '...Hm. That\'s decent of you.'], { ornery: ['Hmph. Well. Maybe.'], child: ['...Okay.'] });
   L('mood.jealous.praise', ['...Do you think? Really? Well. I\'ll show them next year.', '...That\'s kind. It helps more than it should.'], { proud: ['Quite so. The knack is mine, whatever the judges said.'], shy: ['...Thank you. Nobody said that.'] });
-  L('mood.jealous.done', ['...Thanks, wizard. It\'s smaller than it was.', 'Next year. Next year it\'s mine.'], { ornery: ['Not a word to {moodEnvy}. Not one word.'], child: ['Bye! I\'m going to practise!'] });
+  L('mood.jealous.done', ['...Thanks, wizard. It\'s smaller than it was.', 'Next year. Next year it\'s mine.'], { ornery: ['Not a word to {moodEnvy}. Not one word.'], child: ['Bye! I\'m going to practice!'] });
 
   // --- More ways of saying it (additive: tempers, stages and facts the first pass left out) ---
   const A = (key, by, more) => lines(key, Object.keys(by || {}).map((k) => ({ if: COND[k] || { temper: k }, text: by[k] })).concat(more || []));
@@ -564,7 +564,7 @@ talkPack('moods3', () => {
   A('sit.homesick.advise', { child: ["Find the best climbing tree here, and make it yours. That's how it starts."] }, [H('road', ["Write to {moodOldHome}, {name}, and then go and knock on a door here."])]);
   A('mood.homesick.w.tour', { child: ["Show me round. Where's the best hiding place?"] }, [H('rift', ["Walk me through Neverdark. Slowly. I'm old.", "If I stepped out of the rift beside you, where would we go first?"]), H('road', ["Walk me down the main lane of {moodOldHome}. Who's on the first doorstep?"])]);
   A('mood.homesick.w.hope', { elder: ["Those we miss are never as far off as the miles say, {name}."] }, [{ if: { moodHomesick: 'rift', lost: has }, pri: 1, text: ["Doors that opened once can open again, {name}. Keep {lost}'s name warm."] }]);
-  A('mood.homesick.w.write', { child: ["Draw them a picture. The postie will carry a picture anywhere."] }, [H('bree', ["Write to your cousin in Bree. Ask what the rain's like. Then decide."])]);
+  A('mood.homesick.w.write', { child: ["Draw them a picture. The mail carrier will carry a picture anywhere."] }, [H('bree', ["Write to your cousin in Bree. Ask what the rain's like. Then decide."])]);
   A('mood.homesick.w.jest', { child: ["I could teach the frogs to sing your old songs. They'd get the words wrong."] }, [H('rift', ["I'll ask the Lamplighter to flicker a bit. For atmosphere.", "Shall I stand on the hill with a lantern and shout adverts?"])]);
   A('mood.homesick.see', { child: ["They're clutching a small, battered toy that came with them from far away."] }, [H('road', ["Their boots are still worn from the West Road, and they haven't mended them."]), H('bree', ["There's a folded letter with a Bree postmark poking out of their pocket."])]);
 
@@ -575,20 +575,20 @@ talkPack('moods3', () => {
   A('mood.homesick.describes', {
     curious: ["Every house had a different door knocker. I used to collect the sounds. I could tell you all of them."], gloomy: ["It was home. That's the whole of it. Nowhere else will be, not really."],
     witty: ["Home was where the gossip was better and the pies were worse. I miss both."], elder: ["When I was young there were orchards right down to the water. I'm told they're houses now."],
-  }, [H('rift', ["You could get noodles at four in the morning. Here at four in the morning you get a rooster.", "The Relay used to hum in my pocket all day. Messages from everyone. Here my pocket's just a pocket."]), H('road', ["In {moodOldHome} the bakehouse opened at five and the whole lane smelt of it by six.", "There's a hill outside {moodOldHome} where you can see three villages at once. I used to count chimneys."])]);
+  }, [H('rift', ["You could get noodles at four in the morning. Here at four in the morning you get a rooster.", "The Relay used to hum in my pocket all day. Messages from everyone. Here my pocket's just a pocket."]), H('road', ["In {moodOldHome} the bakehouse opened at five and the whole lane smelled of it by six.", "There's a hill outside {moodOldHome} where you can see three villages at once. I used to count chimneys."])]);
   A('mood.homesick.aches', {
     cheerful: ["...I try to be bright about it. Mostly I manage. Today I didn't."], curious: ["...I keep wondering if they wonder about me. Isn't that a strange thing to wonder?"],
     dreamy: ["...I dream I'm back, and everyone's there, and nobody's surprised to see me."], proud: ["...I left without a proper farewell. That is not how I was raised."], child: ["...I miss my best friend. She lives far away now. Or I do."],
     elder: ["...Everyone I grew up with is over the hills or far off. I'm the last one who remembers the old songs."],
   }, [H('bree', ["...My cousin's the only one who writes. If I went, I'd have someone. Here I sometimes feel I don't."])]);
   A('mood.homesick.notsame', {
-    shy: ["...It's not quite the same. But thank you for trying."], gloomy: ["Everyone thinks their road is like mine. It isn't."], child: ["But you're a WIZARD. Wizards don't have mums."],
+    shy: ["...It's not quite the same. But thank you for trying."], gloomy: ["Everyone thinks their road is like mine. It isn't."], child: ["But you're a WIZARD. Wizards don't have moms."],
   }, [H('road', ["You can go back down the West Road any day you like. I can't afford the boots."]), H('bree', ["You left because you wanted to. I'm stuck because I'm not sure."])]);
   A('mood.homesick.swap', {
     shy: ["...I didn't know wizards got homesick. That helps, a little."], ornery: ["Hmph. A wagon. At least you can take yours with you."], dreamy: ["A wagon and a road. That sounds like a song. A sad one."],
   }, [H('road', ["Do you ever pass {moodOldHome}? On your wagon? You could wave from me."])]);
   A('mood.homesick.kindred', {
-    cheerful: ["Oh! We should start a club. The Not-From-Here Club. You can be president."], ornery: ["Hmph. So you're a stray as well. Well, that's something."], proud: ["Then we are both travellers of distinction. I can bear that."],
+    cheerful: ["Oh! We should start a club. The Not-From-Here Club. You can be president."], ornery: ["Hmph. So you're a stray as well. Well, that's something."], proud: ["Then we are both travelers of distinction. I can bear that."],
   }, [H('road', ["You're from far off too. I can tell. You look at the hills like I do."])]);
   A('mood.homesick.warmed', {
     cheerful: ["Oh, you are a dear. I'll have a better day for that."], dreamy: ["...Glad of me. I'll keep that, and look at it later."], proud: ["That is most gracious of you, wizard."], elder: ["Bless you. An old body likes to be wanted somewhere."],
@@ -618,7 +618,7 @@ talkPack('moods3', () => {
   }, [{ if: { moodHomesick: 'rift', moodHomeThing: has }, pri: 2, text: ["First, {moodHomeThing}. Then everything else. But {moodHomeThing} first."] }, H('road', ["The stile at the bottom of {moodOldHome}. Everyone falls off it the first time. Everyone."])]);
   A('mood.homesick.hope', { shy: ["...Thank you. I'll say their names tonight. Louder."], dreamy: ["Tea, and someone thinking of them. Yes. I'll think of them."], child: ["Do you think they miss me too?"] });
   A('mood.homesick.promise', { shy: ["...Nobody's ever said they'd look for anyone for me."], ornery: ["Hmph. Don't make promises you can't keep. ...Keep it, though."] }, [{ if: { moodHomesick: 'rift', lost: has }, pri: 1, text: ["{lost}. My {lostRel}. Ping me the second you hear. Day or night."] }]);
-  A('mood.homesick.letter', { ornery: ["A letter. Fine. A short one. With complaints in it."], dreamy: ["I'll write by candlelight. It feels further away that way, and nearer."] }, [H('bree', ["I'll write to my cousin. And ask if the room's still there. Just to know."]), H('road', ["I'll write to {moodOldHome} tonight. My mum will cry at the spelling."])]);
+  A('mood.homesick.letter', { ornery: ["A letter. Fine. A short one. With complaints in it."], dreamy: ["I'll write by candlelight. It feels further away that way, and nearer."] }, [H('bree', ["I'll write to my cousin. And ask if the room's still there. Just to know."]), H('road', ["I'll write to {moodOldHome} tonight. My mom will cry at the spelling."])]);
   A('mood.homesick.done', { ornery: ["Hmph. Talking. It's overrated. ...It helped."], child: ["Bye, wizard! I'm going to find the mouse hole!"], elder: ["Thank you, my dear. Old roots ache. You've warmed them."] }, [H('road', ["Thank you. {MoodOldHome} feels nearer. And so does here, oddly."])]);
 
   // lonely
@@ -645,7 +645,7 @@ talkPack('moods3', () => {
   A('mood.lonely.laughs', { shy: ["*laughs, and then looks startled at the sound*"], ornery: ["Ha! Hmph. A goat. I'll bet it was."], elder: ["Ha! Oh, I haven't laughed out loud in days."] });
   A('mood.lonely.prickly', { shy: ["...I know. I know I should. It's not that easy."], proud: ["I don't need arranging, thank you."], elder: ["Easy for the young. My friends are all over the hills."] });
   A('mood.lonely.maybe', { ornery: ["Hmph. Maybe. If I'm in the mood."], child: ["...Maybe. Will you watch from over there?"], elder: ["I might. If my knees allow."] });
-  A('mood.lonely.plan', { cheerful: ["Yes! Right now! Why didn't I think of it? I'm off!"], proud: ["A call, then. I shall pay a call. That is perfectly proper."], elder: ["I'll go and knock. And take the good biscuits, not the broken ones."] });
+  A('mood.lonely.plan', { cheerful: ["Yes! Right now! Why didn't I think of it? I'm off!"], proud: ["A call, then. I shall pay a call. That is perfectly proper."], elder: ["I'll go and knock. And take the good cookies, not the broken ones."] });
   A('mood.lonely.whomiss', { shy: ["...Anyone who'd just sit with me. Without me having to be interesting."], ornery: ["Nobody. Everybody. Someone who argues back properly."], elder: ["The ones I grew up with. And there's no knocking on their doors now."] }, [{ if: { spouse: has }, text: ["{spouse}, if I'm honest. And {spouse} lives in the same hole."] }]);
   A('mood.lonely.done', { cheerful: ["Thank you! I feel ten times lighter!"], proud: ["Most agreeable. You must call again."], elder: ["Bless you for stopping. Come again. I'm always in."] });
 
@@ -661,9 +661,9 @@ talkPack('moods3', () => {
   A('mood.shy.mumbles', { shy: ["...Oh. Hello. Sorry. I didn't see you. I did see you."], cheerful: ["Oh! Hello! Hello. Sorry, I went all funny."], ornery: ["...Hm. Good day. What?"], elder: ["...Good morning. Afternoon. Whatever it is."] });
   A('mood.shy.named', { shy: ["...{name}. It's {name}. You can forget it if you like."], cheerful: ["{name}! I'm {name}. I should have said straight off."], proud: ["{name}. {name} {surname}. We're a very old family."], elder: ["{name}, they call me. Have done for a long while."] });
   A('mood.shy.origin', { child: ["From a long way away. We came on a cart. I was sick on the cart."], elder: ["From further off than my legs like to remember."] }, [{ if: { rift: true, moodRough: true }, pri: 2, text: ["...Out of the sky. And then under a tree. The tree's nicer than the sky was."] }]);
-  A('mood.shy.opens', { cheerful: ["Oh, you're nice! I didn't know if wizards would be nice."], ornery: ["...Hm. You're not so bad. For someone so loud in the hat."], elder: ["...You've a way with you. My old mum had it."] });
+  A('mood.shy.opens', { cheerful: ["Oh, you're nice! I didn't know if wizards would be nice."], ornery: ["...Hm. You're not so bad. For someone so loud in the hat."], elder: ["...You've a way with you. My old mom had it."] });
   A('mood.shy.titter', { ornery: ["*a snort, quickly turned into a cough*"], rift: ["*a short laugh, half static*"] });
-  A('mood.shy.laughs', { cheerful: ["Ha! Oh, I like you. I can tell already."], ornery: ["Ha! ...Hmph. That was funny. Don't tell anyone I laughed."], elder: ["Ha! A biting hat. My grandad had one of those."] });
+  A('mood.shy.laughs', { cheerful: ["Ha! Oh, I like you. I can tell already."], ornery: ["Ha! ...Hmph. That was funny. Don't tell anyone I laughed."], elder: ["Ha! A biting hat. My granddad had one of those."] });
   A('mood.shy.faces', { cheerful: ["Oh, loads! I've forgotten all their names. Loads, though."], elder: ["The ones I knew are mostly gone. I've not met the new ones."], rift: ["Three folk and a goose. The goose was the least scared of me."] }, [{ if: { moodRough: true }, text: ["The innkeeper said there was no room. And a hedgehog under my tree. That's it."] }]);
   A('mood.shy.shrinks', { ornery: ["I'm not going to go up to strangers. They might talk to me."], elder: ["At my age you don't go introducing yourself. They come to you, or they don't."], rift: ["Nope. Low battery. Can't do people today."] });
   A('mood.shy.maybe', { cheerful: ["Maybe! I'll try! I'll probably panic, but I'll try!"], elder: ["Perhaps. If I see them at the Store."], rift: ["Maybe. When my signal's up."] });
@@ -676,7 +676,7 @@ talkPack('moods3', () => {
   A('sit.sulk.warm', { elder: ["Walk with me a bit, {name}. My old legs want company."] }, [S('comfort', ["Save me a slice, {name}, and sit with me."])]);
   A('mood.sulk.w.jest', { child: ["I'll sulk too. Look. *you stick out your lip* Am I doing it right?"] }, [S('binge', ["Is there any ale left in the cellar, or have you had it all?"])]);
   A('mood.sulk.w.again', { child: ["Look. My lip goes out further than yours. Watch."] }, [S('huffy', ["You huff like a bellows, {name}. You could light the forge."])]);
-  A('mood.sulk.w.home', { elder: ["Go and sit by your own fire, {name}. It's missed you."] }, [S('wander', ["Turn your feet towards home, {name}. They know the way."]), S('sharp', ["Go and say sorry to whoever you snapped at. Then go home."])]);
+  A('mood.sulk.w.home', { elder: ["Go and sit by your own fire, {name}. It's missed you."] }, [S('wander', ["Turn your feet toward home, {name}. They know the way."]), S('sharp', ["Go and say sorry to whoever you snapped at. Then go home."])]);
   A('mood.sulk.leaveme', { cheerful: ["Not today. Not even you. Go on."], curious: ["Don't ask me anything. I've no answers today."], gloomy: ["Leave me. I'm better on my own. I'm worse company than nobody."] }, [S('huffy', ["*huffs, and walks a bit faster*"]), S('comfort', ["Mmph. Busy. *chews*"]), S('wander', ["I'm going for a walk. A long one. On my own."])]);
   A('mood.sulk.grumbles', { cheerful: ["I can't be cheerful all the time. Today I can't at all."], curious: ["I keep asking myself what's wrong. I don't know. That's worse."], elder: ["When you're old, nobody asks. They just say you're in one of your moods."] }, [S('huffy', ["I walked out. I walked out and I'm still walking. Hmph."]), S('sharp', ["Everyone keeps talking to me. I don't want to be talked to."])]);
   A('mood.sulk.spills', { cheerful: ["...I'm always the jolly one. It's exhausting, being jolly. I ran out."], proud: ["...I made a mistake at work and everyone saw it. Everyone."], elder: ["...My hands shake now. I dropped the good teapot. My mother's teapot."] }, [S('comfort', ["...When I'm eating I don't feel the empty bit. That's all it is."]), S('wander', ["...I kept thinking if I walked far enough I'd leave it behind. It walked with me."])]);
@@ -717,14 +717,14 @@ talkPack('moods3', () => {
   // weather, season, hour and household, for a little more of the world in it
   const Wt = (k, text) => ({ if: { weather: k }, text });
   const Sn = (k, text) => ({ if: { season: k }, text });
-  A('mood.homesick.w.here', { child: ["Is there a puddle here as good as your old one? There must be. Go and find it."], elder: ["Find the oldest tree in the village and sit under it. Old trees are the same everywhere."] }, [H('road', ["Ask the postie about {moodOldHome}. Postmen know a bit of everywhere."])]);
+  A('mood.homesick.w.here', { child: ["Is there a puddle here as good as your old one? There must be. Go and find it."], elder: ["Find the oldest tree in the village and sit under it. Old trees are the same everywhere."] }, [H('road', ["Ask the mail carrier about {moodOldHome}. Mail carriers know a bit of everywhere."])]);
   A('mood.homesick.maybe', { proud: ["I shall consider it. In due course."], shy: ["...Maybe. When nobody's looking."] }, [H('rift', ["Maybe. When I've recharged a bit."])]);
   A('mood.homesick.describes', {}, [Sn('winter', ["In winter at home we'd skate on the millpond and come in to hot cider. Nobody skates here."]), Wt('rain', ["Rain like this reminds me of home. That's the trouble with rain."])]);
   A('mood.homesick.shutter', {}, [{ if: { hour: 'evening' }, text: ["It's only the evenings. Evenings are when I think of it. I'll be fine by morning."] }]);
   A('mood.homesick.aches', {}, [{ if: { hour: 'night' }, text: ["...It's worst at night. That's when they're all sitting down to supper, back there, without me."] }]);
   A('mood.homesick.heretoo', {}, [Wt('rain', ["...The rain on the round windows sounds like home. I'll sit by the window tonight and listen."])]);
   A('mood.homesick.hope', { elder: ["Tea and kind thoughts. That's all any of us can send, at my age."], proud: ["A fitting hope. I'll hold to it."] });
-  A('mood.homesick.letter', { child: ["I'll draw the hens! Mum always liked hens."], proud: ["A letter, properly written. On the good paper."] });
+  A('mood.homesick.letter', { child: ["I'll draw the hens! Mom always liked hens."], proud: ["A letter, properly written. On the good paper."] });
   A('mood.homesick.notsame', { cheerful: ["...It isn't quite the same. But it's nice of you to say."], elder: ["You're young, for a wizard. You'll learn there's no going back."] });
   A('mood.homesick.swap', { cheerful: ["A wagon! Does it have a little stove? I'd love a wagon with a stove."], child: ["Does your wagon have a horse? What's its name?"] });
   A('mood.homesick.flat', { child: ["That's not funny! I really miss it!"], elder: ["Hmph. I was enjoying being sad, thank you."] });
@@ -738,18 +738,18 @@ talkPack('moods3', () => {
   A('mood.lonely.maybe', { cheerful: ["Maybe! Oh, maybe. I'll think about it all afternoon."], proud: ["I may pay a call. If it's convenient."] });
   A('mood.lonely.done', { child: ["Bye! Come and play again tomorrow!"], gloomy: ["...That helped. Don't tell anyone it helped."] });
 
-  A('mood.shy.mumbles', { child: ["...My mum says don't talk to strangers. You're a stranger. Hello."] });
+  A('mood.shy.mumbles', { child: ["...My mom says don't talk to strangers. You're a stranger. Hello."] });
   A('mood.shy.named', {}, [{ if: { moodRough: true }, pri: 1, text: ["...{name}. I'm the one sleeping under the big tree. You might have seen my boots."] }]);
   A('mood.shy.faces', { proud: ["A few. The right sort, I think. I'm choosy."], shy: ["...I know their faces. Not their names. I'm too shy to ask names."] });
   A('mood.shy.opens', { proud: ["You have a certain dignity. I find I can talk to you."], child: ["You're funny. Can I touch your staff? I won't break it."] });
   A('mood.shy.titter', { cheerful: ["*a giggle, then a bigger one*"], elder: ["*a creaky little chuckle*"] });
-  A('mood.shy.introduce', { proud: ["Very well. I shall present myself. Properly."], shy: ["...All right. I'll go. I'll practise hello on the way."] });
+  A('mood.shy.introduce', { proud: ["Very well. I shall present myself. Properly."], shy: ["...All right. I'll go. I'll practice hello on the way."] });
   A('mood.shy.done', { shy: ["...That was the longest I've talked to anyone in weeks. Thank you."], proud: ["A pleasure, wizard. A genuine one."] });
   A('mood.shy.freezes', { cheerful: ["*starts to smile, gets flustered, and looks at the sky instead*"], curious: ["*stares at your hat with great interest and no words at all*"] });
 
   A('mood.sulk.leaveme', { elder: ["Leave an old hobbit to the grumbles. Go on. Shoo."] }, [S('holeup', ["*a curtain twitches, and stays shut*"]), S('tantrum', ["NO! I'm NOT TALKING to ANYONE!"])]);
   A('mood.sulk.grumbles', {}, [S('tantrum', ["They said NO and it's NOT FAIR and I HATE it!"]), S('binge', ["One more, I said. Then one more. It's been one more all afternoon."])]);
-  A('mood.sulk.shrugs', { child: ["*flops on the grass and refuses to move*"] }, [S('wander', ["*shrugs, and looks off towards the far end of the valley*"])]);
+  A('mood.sulk.shrugs', { child: ["*flops on the grass and refuses to move*"] }, [S('wander', ["*shrugs, and looks off toward the far end of the valley*"])]);
   A('mood.sulk.sniffs', { shy: ["...*sniff*. Thank you."] }, [S('tantrum', ["*sniff* *hic* ...I'm still a bit cross."])]);
   A('mood.sulk.glare', {}, [S('tantrum', ["*stamps both feet, very hard*"]), S('sharp', ["Is that meant to help? It doesn't."])]);
   A('mood.sulk.snort', { child: ["*snorts, and then is cross about snorting*"] }, [S('comfort', ["*snorts crumbs*"])]);

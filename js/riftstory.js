@@ -21,7 +21,7 @@
 //
 // Each rift-born has a story of their own: a memory of home, someone they lost
 // (who sometimes comes through a later rift), a hidden skill the village comes
-// to value, and a turning point when a wary neighbour becomes a friend.
+// to value, and a turning point when a wary neighbor becomes a friend.
 // Hill-folk invite rift-folk to supper. The two peoples teach each other
 // their customs (mushroom ramen, the Low Battery Blues, second breakfast) and
 // once enough folk know one, it's a Thistledown tradition.
@@ -43,7 +43,7 @@ const FRAGMENTS = {
   lullaby: { title: 'A lullaby', text: 'At the Mersday sing-song one of the rift-folk hummed a Neverdark lullaby, and old folk in the corner sang the words. It\'s "Down by the Willow Lamp". Their grannies sang it.' },
   coin: { title: 'A coin with a round door', text: 'Scavenged from a rift scar: a city coin. On one side, circuitry; on the other, unmistakably, a round green door.' },
   relay: { title: 'Whispers on the Relay', text: 'At dusk the Relay picks up a voice under the static: "...lamp...lighter... is anyone... the kettle\'s gone cold..."' },
-  saint: { title: 'Saint Mungo', text: '"Saint Mungo of the First Lamp," said one of the rift-folk, pointing at a portrait in a hill-family parlour. "He\'s on our coins." "He\'s on our debt ledger," said the hill-folk.' },
+  saint: { title: 'Saint Mungo', text: '"Saint Mungo of the First Lamp," said one of the rift-folk, pointing at a portrait in a hill-family parlor. "He\'s on our coins." "He\'s on our debt ledger," said the hill-folk.' },
   gold: { title: 'Golden edges', text: 'On nights when the dynamos and turbines run strong, the rifts flicker gold at the edges instead of magenta. Something on the other side steadies when Thistledown\'s power reaches it.' },
   ledger: { title: 'The ledger', text: 'Mungo Fernsby, tinker. Walked into green lightning on the Long Meadow carrying a copper kettle. Not returned. Owes the Crooked Kettle threepence.' },
   voice: { title: 'The Lamplighter\'s voice', text: '"Mungo told me of a place where the dark was soft. I sent my children to find it. Thank you for keeping the lamps low."' },
@@ -142,7 +142,7 @@ function giveArc(v) {
     return v;
   };
 }
-// Turning points: a once-wary neighbour becomes a real friend.
+// Turning points: a once-wary neighbor becomes a real friend.
 function arcsDaily() {
   for (const v of riftBorn()) {
     giveArc(v);
@@ -383,7 +383,7 @@ function riftsHTML() {
     for (const v of rb.filter((x) => x.isGrown())) {
       giveArc(v);
       if (!v.arc) continue;
-      h += `<div><a data-v="${v.id}">${escapeHtml(v.name())}</a>: ${ARC_SKILLS[v.arc.skill].label}; misses ${escapeHtml(v.arc.home)}; ${v.arc.lost.found ? `found ${escapeHtml(v.arc.lost.name)} again` : `lost ${v.pron.their} ${v.arc.lost.rel}, ${escapeHtml(v.arc.lost.name)}`}${v.arc.turned ? `; a true friend in ${escapeHtml((personById(v.arc.turned) || {}).first || 'a neighbour')}` : ''}. ${v.homeId >= 0 ? `Lives at ${escapeHtml(v.home().name)}.` : 'Still sleeping rough.'}</div>`;
+      h += `<div><a data-v="${v.id}">${escapeHtml(v.name())}</a>: ${ARC_SKILLS[v.arc.skill].label}; misses ${escapeHtml(v.arc.home)}; ${v.arc.lost.found ? `found ${escapeHtml(v.arc.lost.name)} again` : `lost ${v.pron.their} ${v.arc.lost.rel}, ${escapeHtml(v.arc.lost.name)}`}${v.arc.turned ? `; a true friend in ${escapeHtml((personById(v.arc.turned) || {}).first || 'a neighbor')}` : ''}. ${v.homeId >= 0 ? `Lives at ${escapeHtml(v.home().name)}.` : 'Still sleeping rough.'}</div>`;
     }
     h += '</div>';
   }

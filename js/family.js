@@ -55,9 +55,9 @@ function mindersOf(v) {
 function personById(id) { return id == null ? null : Game.villagers.find((o) => o.id === id) || null; }
 // What a child calls a grown-up.
 function kinWord(kid, o) {
-  if (kid.parents.includes(o.id)) return o.genes.sex === 'f' ? 'Mum' : 'Dad';
+  if (kid.parents.includes(o.id)) return o.genes.sex === 'f' ? 'Mom' : 'Dad';
   if (o.parents.some((p) => kid.parents.some((q) => { const pq = personById(q); return pq && pq.parents.includes(p); }))) return o.genes.sex === 'f' ? 'Auntie ' + o.first : 'Uncle ' + o.first;
-  if (kid.parents.some((p) => { const pp = personById(p); return pp && pp.parents.includes(o.id); })) return o.genes.sex === 'f' ? 'Gran' : 'Grandad';
+  if (kid.parents.some((p) => { const pp = personById(p); return pp && pp.parents.includes(o.id); })) return o.genes.sex === 'f' ? 'Gran' : 'Granddad';
   return o.first;
 }
 
@@ -258,7 +258,7 @@ function followMinder(v, task, dt) {
   if (m.inside) {
     if (v.inside === m.inside) {
       v.path = null; v.pose = 'inside'; task.phase = 'do';
-      // home together: free to potter about
+      // home together: free to putter about
       if (m.inside === v.home()) { v.finish(); return; }
       relief();
       return;
@@ -451,7 +451,7 @@ Object.assign(ACTIONS, {
     label: 'Waiting for a grown-up', icon: 'baby', sat: {}, dur: 45, pose: 'stand', manual: true, queued: true, stages: ['child'],
     target: (v) => (v.inside ? { building: v.inside } : { x: v.x, y: v.y }),
     tick: (v, task, dt) => {
-      if (Math.random() < dt * 0.03) v.say(kidBand(v) === 'toddler' ? R.pick(['Mama?', 'Dada?', 'Waaah!', '*sniff*']) : R.pick(['Mum? Where are you?', 'Hello? Is anybody there?', 'I want to go home...']), 2.4);
+      if (Math.random() < dt * 0.03) v.say(kidBand(v) === 'toddler' ? R.pick(['Mama?', 'Dada?', 'Waaah!', '*sniff*']) : R.pick(['Mom? Where are you?', 'Hello? Is anybody there?', 'I want to go home...']), 2.4);
     },
   },
   nursery: {

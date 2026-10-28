@@ -2,7 +2,7 @@
 // ---------------------------------------------------------------------------
 // The village, part two: talk and opinions. What they make of the latest
 // gossip (and whether the wizard helps it on its way or hushes it), the wild
-// rumours that go round the Badger, what they hold dear (thrift, merrymaking,
+// rumors that go round the Badger, what they hold dear (thrift, merrymaking,
 // the old ways, learning, family, craft, the green valley, tidiness) and how
 // they take it when the wizard agrees or doesn't, how Thistledown has changed,
 // and their turn: asking the wizard's view on a village matter.
@@ -26,7 +26,7 @@ talkPack('village2', () => {
   };
   const VK = (k) => ({ if: { vValueKey: k } });
 
-  // --- Facts: the news they know, a rumour, what they hold dear, a matter of the day ----
+  // --- Facts: the news they know, a rumor, what they hold dear, a matter of the day ----
   const RUMOURS = {
     dragon: 'there\'s a dragon asleep under the far wood', ghost: 'the old mill is haunted by a miller who won\'t stop grinding', treasure: 'there\'s gold buried under the party tree',
     wishing: 'the well grants a wish if you drop in a button at midnight', giant: 'a giant walked past the North Farthing in the fog', wedding: 'there\'s to be a secret wedding before the harvest',
@@ -39,7 +39,7 @@ talkPack('village2', () => {
     school: { what: 'longer school hours for the little ones', pro: ['learning', 'kin'], con: ['tradition', 'merriment'] },
     feast: { what: 'a great feast out of the Common Store', pro: ['merriment', 'kin'], con: ['thrift', 'order'] },
     lamps: { what: 'more lamps along the lanes', pro: ['order', 'kin'], con: ['nature', 'thrift'] },
-    field: { what: 'ploughing the long meadow for barley', pro: ['thrift', 'craft', 'order'], con: ['nature'] },
+    field: { what: 'plowing the long meadow for barley', pro: ['thrift', 'craft', 'order'], con: ['nature'] },
     statue: { what: 'a statue on the green', pro: ['craft', 'tradition'], con: ['thrift', 'nature'] },
     paths: { what: 'paving the lanes with good stone', pro: ['order', 'craft'], con: ['nature', 'tradition'] },
     quiet: { what: 'a quiet hour every afternoon, with no hammering', pro: ['tradition', 'order'], con: ['craft', 'merriment'] },
@@ -181,7 +181,7 @@ talkPack('village2', () => {
     { if: { vNewsKind: 'party' }, text: ['A party! Well, I\'ll be there. Where else would I be?'] },
     { if: { vNewsKind: 'adventure' }, text: ['An adventure! Rather them than me. ...I\'m a bit jealous.', 'Off into the wide world. Brave, or daft. Usually both.'] },
     { if: { vNewsKind: 'build' }, text: ['Something new going up. The village is growing, wizard. I can feel it under my feet.'] },
-    { if: { vNewsKind: 'letter' }, text: ['A letter from far off! I do love it when post comes from somewhere with mountains.'] },
+    { if: { vNewsKind: 'letter' }, text: ['A letter from far off! I do love it when mail comes from somewhere with mountains.'] },
   ]);
   say('village.gossip.embroider', {
     _: ['Three dragons! Ha! It\'ll be four by the time it gets to the mill.', 'Dragons! Don\'t you start. The Badger\'s bad enough.'],
@@ -211,7 +211,7 @@ talkPack('village2', () => {
     { if: { values: 'merriment' }, text: ['Oh, where\'s the fun in that? A tale\'s for telling!'] },
   ]);
   say('village.gossip.source', {
-    _: ['The innkeeper. The innkeeper hears everything. Everything.', 'Had it from the postie, who had it from the back of an envelope.', 'Somebody at the well. You don\'t ask at the well. You just listen.'],
+    _: ['The innkeeper. The innkeeper hears everything. Everything.', 'Had it from the mail carrier, who had it from the back of an envelope.', 'Somebody at the well. You don\'t ask at the well. You just listen.'],
     cheerful: ['Oh, everybody! It came from all sides at once!'],
     ornery: ['Half the lane. Shouting it. Over my hedge.'],
     shy: ['I overheard it. At the Badger. From behind a pillar.'],
@@ -261,10 +261,10 @@ talkPack('village2', () => {
   });
 
   // =================================================================================
-  // Wild rumours
+  // Wild rumors
   // =================================================================================
   addThread({
-    id: 'village.rumour', label: 'Any wild rumours going round?', weight: 0.8, cool: 4,
+    id: 'village.rumour', label: 'Any wild rumors going round?', weight: 0.8, cool: 4,
     when: (F) => has(F.vRumour),
     open: { jest: 'village.rumour.open' },
     beats: {
@@ -296,16 +296,16 @@ talkPack('village2', () => {
     },
     end: { fond: 0.015 },
   });
-  lines('village.rumour.open', [{ text: ['Any wild rumours going round, {name}? The wilder the better.', 'Tell me the most ridiculous thing you\'ve heard this week, {name}.', 'What nonsense is the Badger talking now, {name}?'] }]);
+  lines('village.rumour.open', [{ text: ['Any wild rumors going round, {name}? The wilder the better.', 'Tell me the most ridiculous thing you\'ve heard this week, {name}.', 'What nonsense is the Badger talking now, {name}?'] }]);
   say('village.rumour.start', {
     _: ['Well, they\'re saying {vRumour}. Is it true? You\'d know.', 'You\'ll laugh. They say {vRumour}.', 'The old-timers at the Badger swear {vRumour}. Swear on their pipes.'],
-    cheerful: ['Ooh! They say {vRumour}! Isn\'t it marvellous? Is it true?'],
+    cheerful: ['Ooh! They say {vRumour}! Isn\'t it marvelous? Is it true?'],
     ornery: ['Nonsense, all of it. They say {vRumour}. I ask you.'],
     shy: ['...Is it true {vRumour}? I didn\'t sleep.'],
     curious: ['I\'ve been investigating. They say {vRumour}. I\'ve three theories.'],
     dreamy: ['They say {vRumour}. I want it to be true so badly.'],
     witty: ['The latest from the Badger\'s finest minds: {vRumour}.'],
-    proud: ['I don\'t hold with rumours. But they do say {vRumour}.'],
+    proud: ['I don\'t hold with rumors. But they do say {vRumour}.'],
     gloomy: ['They say {vRumour}. It\'ll be bad news, whatever it is.'],
     child: ['Is it TRUE that {vRumour}? Somebody\'s big brother said so!', 'Someone said {vRumour}! Is it true? Is it?'],
     rift: ['Unverified report: {vRumour}. Can you confirm?'],
@@ -340,7 +340,7 @@ talkPack('village2', () => {
     shy: ['Oh, good. I can sleep tonight.'],
     curious: ['Are you sure? Have you checked? Properly?'],
     dreamy: ['Oh. I\'d rather it were true. Things are nicer when they\'re true.'],
-    witty: ['A wizard debunking rumours. That\'s a rumour in itself.'],
+    witty: ['A wizard debunking rumors. That\'s a rumor in itself.'],
     proud: ['As I suspected. I never believed a word.'],
     gloomy: ['Of course not. Nothing exciting ever happens here.'],
     child: ['Awww. Are you SURE? Not even a little bit?'],
@@ -350,7 +350,7 @@ talkPack('village2', () => {
   ]);
   say('village.rumour.who', {
     _: ['The innkeeper\'s cousin, who had it from a dwarf.', 'Somebody\'s uncle. It\'s always somebody\'s uncle.', 'The children. They had it from the old folk, who had it from the children.'],
-    cheerful: ['Oh, everyone! It\'s the best kind of rumour, the kind with no beginning.'],
+    cheerful: ['Oh, everyone! It\'s the best kind of rumor, the kind with no beginning.'],
     ornery: ['Some fool at the Badger. There\'s always one. There\'s usually six.'],
     shy: ['I heard it through the window. I wasn\'t listening. I was a bit.'],
     curious: ['I\'ve traced it to the Bree carter. After that, the trail\'s all cheese.'],
@@ -376,7 +376,7 @@ talkPack('village2', () => {
     witty: ['Bree. Where all the interesting things go to be ordinary.'],
   });
   say('village.rumour.polite', {
-    _: ['Polite! Well, that\'s a relief. I don\'t like a rude rumour.', 'All very polite. Like a vicar. With scales.'],
+    _: ['Polite! Well, that\'s a relief. I don\'t like a rude rumor.', 'All very polite. Like a vicar. With scales.'],
     shy: ['...Polite is good. I like polite.'],
   });
   say('village.rumour.wonder', {
@@ -421,7 +421,7 @@ talkPack('village2', () => {
         { ap: 'ask', say: 'Does the whole village feel the same?', to: 'village' },
       ] },
       bristle: { line: 'village.values.bristle', fx: { respect: -0.02, fond: -0.01 }, go: [
-        { ap: 'warm', say: 'I meant no offence. You\'re right to hold to it.', to: 'smooth' },
+        { ap: 'warm', say: 'I meant no offense. You\'re right to hold to it.', to: 'smooth' },
         { ap: 'listen', say: '*You let them have their say.*', label: 'Let them have their say', to: 'smooth' },
       ] },
       village: { line: 'village.values.village', go: [
@@ -473,7 +473,7 @@ talkPack('village2', () => {
   say('village.values.why', {
     _: ['My {parent} always said "{vValueSay}". It stuck.', 'I\'ve seen what happens without it. That\'s why.', 'Because it\'s right. Some things you just know.'],
     cheerful: ['Because it makes folk happy! What better reason is there?'],
-    ornery: ['Because the alternative is rubbish. Look around.'],
+    ornery: ['Because the alternative is worse. Look around.'],
     shy: ['It makes me feel safe. Like a wall at my back.'],
     curious: ['I tried the other way once. It didn\'t answer.'],
     dreamy: ['Because one day I\'ll be gone, and I\'d like to leave something good behind.'],
@@ -766,7 +766,7 @@ talkPack('village2', () => {
     { ...M('school'), text: ['Longer school hours for the little ones. More letters, less mud. Is that right?'] },
     { ...M('feast'), text: ['A great feast from the Common Store. Some say celebrate. Some say winter\'s coming. Which?'] },
     { ...M('lamps'), text: ['More lamps on the lanes. Safer, they say. But you\'d lose the stars. What do you think?'] },
-    { ...M('field'), text: ['Ploughing the long meadow for barley. More bread. Fewer buttercups. Your view?'] },
+    { ...M('field'), text: ['Plowing the long meadow for barley. More bread. Fewer buttercups. Your view?'] },
     { ...M('statue'), text: ['A statue on the green! Of whom, nobody can agree. Should we at all?'] },
     { ...M('paths'), text: ['Paving the lanes. No more mud. No more daisies in the ruts either. Well?'] },
     { ...M('quiet'), text: ['The elders want a quiet hour every afternoon. No hammering. Sensible, or stuffy?'] },
@@ -813,7 +813,7 @@ talkPack('village2', () => {
     shy: ['Oh! I\'m glad. I thought I was the only one.'],
     curious: ['Same conclusion, different reasons, I expect. I\'d like to hear yours.'],
     dreamy: ['I hoped you\'d say that.'],
-    witty: ['A wizard of excellent judgement. I\'ll put that about.'],
+    witty: ['A wizard of excellent judgment. I\'ll put that about.'],
     proud: ['Naturally. Wise minds think alike.'],
     gloomy: ['Well. That\'s one thing that\'s gone right today.'],
     rift: ['Aligned. Good. I\'ll quote you.'],
@@ -886,7 +886,7 @@ talkPack('village2', () => {
     shy: ['...I think so too. I walk the long way round, just to see it.'],
     curious: ['Do you know, there are more chimneys than last year? I counted.'],
     dreamy: ['Some mornings it looks painted. As if someone loved it into being.'],
-    witty: ['It\'s been practising. Mostly in the rain.'],
+    witty: ['It\'s been practicing. Mostly in the rain.'],
     proud: ['We keep it well. The whole village takes pride.'],
     gloomy: ['For now. Give it a week of rain.'],
     child: ['It\'s the best place in the WORLD. I\'ve never been anywhere else but I know.'],
@@ -986,11 +986,11 @@ talkPack('village2', () => {
     elder: ['My grandmother always said so. I owe her an apology.'],
   });
   say('village.rumour.deny', {
-    _: ['Ah well. There\'ll be another rumour along by Trewsday.'],
+    _: ['Ah well. There\'ll be another rumor along by Trewsday.'],
     elder: ['Nonsense, eh? Well. It was nonsense when I was young, too.'],
   });
   say('village.rumour.who', {
-    dreamy: ['It came on the wind. Rumours do.'],
+    dreamy: ['It came on the wind. Rumors do.'],
     proud: ['I don\'t name my sources. I have standards.'],
     gloomy: ['Somebody who wanted to frighten folk. It worked.'],
   });
@@ -1071,7 +1071,7 @@ talkPack('village2', () => {
     proud: ['Then I shall put in only good things. Naturally.'],
   });
   say('village.changes.remember', {
-    _: ['Younger and less grey, both of us. Well. You were already grey.'],
+    _: ['Younger and less gray, both of us. Well. You were already gray.'],
     rift: ['You were here before the rifts? What was it like, all quiet?'],
   });
   say('village.changes.keep', {

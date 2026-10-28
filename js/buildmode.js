@@ -7,12 +7,12 @@
 // filling them in, staking out new hobbit-holes and wells, and choosing where
 // the village's next public buildings go.
 //
-// Nothing appears by magic. Every stroke becomes a plan: a pencilled ghost on
+// Nothing appears by magic. Every stroke becomes a plan: a penciled ghost on
 // the map with stakes and a progress bar. Grown-ups with time on their hands
 // (woodwrights first) come and do the work, carrying what's needed from the
 // Common Store, so a path is laid tile by tile as you watch. Benches and lamps
 // cost a little timber; if the Store is short, the plan waits. Plans can be
-// undone (Ctrl+Z) or cancelled with a click before work starts, with no
+// undone (Ctrl+Z) or canceled with a click before work starts, with no
 // penalty. Finished work is admired by passers-by, and the one who built it
 // is proud of it. Everything is saved and rebuilt with the valley.
 // ---------------------------------------------------------------------------
@@ -425,7 +425,7 @@ function drawBuildOverlay() {
   const S = (wx, wy) => [(wx - cx) * z, (wy - cy) * z];
   octx.save();
   octx.imageSmoothingEnabled = false;
-  // the plans: pencilled tiles, stakes, progress
+  // the plans: penciled tiles, stakes, progress
   for (const p of plansList()) {
     const waiting = !openPlans().includes(p);
     octx.globalAlpha = Build.on ? 0.9 : 0.6;

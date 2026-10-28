@@ -5,11 +5,11 @@
 // backwards, a vase shaped like a frog), and the trouble with birthdays, where
 // it's the birthday hobbit who gives the presents, is that many of those
 // presents are mathoms, given on. Some have been round the whole village and
-// come back again. Travellers bring new ones home from their adventures.
+// come back again. Travelers bring new ones home from their adventures.
 // ---------------------------------------------------------------------------
 
 const MATHOM_ADJ = ['chipped', 'odd', 'lopsided', 'faded', 'dented', 'one-eared', 'mysterious', 'slightly singed', 'rather ugly', 'enormous', 'tiny', 'tarnished', 'much-mended', 'cracked'];
-const MATHOM_THING = ['blue teapot', 'umbrella stand', 'brass doorknob', 'pewter mug', 'clock that runs backwards', 'vase shaped like a frog', 'fire-screen', 'pair of bookends', 'toast rack', 'bird cage', 'embroidered cushion', 'tea cosy', 'barometer', 'wooden duck', 'hat-stand', 'pickle fork', 'music box', 'painted plate', 'candlestick', 'gravy boat', 'paperweight', 'pipe-rack', 'egg-timer', 'bellows'];
+const MATHOM_THING = ['blue teapot', 'umbrella stand', 'brass doorknob', 'pewter mug', 'clock that runs backwards', 'vase shaped like a frog', 'fire-screen', 'pair of bookends', 'toast rack', 'bird cage', 'embroidered cushion', 'tea cozy', 'barometer', 'wooden duck', 'hat-stand', 'pickle fork', 'music box', 'painted plate', 'candlestick', 'gravy boat', 'paperweight', 'pipe-rack', 'egg-timer', 'bellows'];
 function newMathom(home, origin = 'old') {
   Game.mathoms = Game.mathoms || [];
   const m = { id: (Game.mathomSeq = (Game.mathomSeq || 0) + 1), name: `${R.pick(MATHOM_ADJ)} ${R.pick(MATHOM_THING)}`, home: home.id, passed: 0, homes: [home.id], origin };

@@ -137,7 +137,7 @@ talkPack('children3', () => {
         { ap: 'jest', say: 'And his breath! Like a smithy full of old eggs.', to: 'breath' },
       ] },
       advice: { line: 'child.q.dragons.advice', fx: { respect: 0.03 }, end: true },
-      breath: { line: 'child.q.dragons.breath', fx: { fond: 0.03, joke: { k: 'child.dragons.breath', t: 'The dragon\'s breath smelt like a smithy full of old eggs.' } }, end: true },
+      breath: { line: 'child.q.dragons.breath', fx: { fond: 0.03, joke: { k: 'child.dragons.breath', t: 'The dragon\'s breath smelled like a smithy full of old eggs.' } }, end: true },
       far: { line: 'child.q.dragons.far', fx: { trust: 0.03 }, end: true },
     },
     end: { fond: 0.02 },
@@ -173,7 +173,7 @@ talkPack('children3', () => {
   lines('child.q.dragons.met', [
     { text: ['You MET one? What was he like?', 'RUDE? What did he say?', 'You\'re joking. You\'re not joking. You\'re NOT joking!'] },
     { if: { childTemper: 'shy' }, text: ['*very quietly* ...was he big?'] },
-    { if: { childTemper: 'ornery' }, text: ['I don\'t believe you. ...What colour was he?'] },
+    { if: { childTemper: 'ornery' }, text: ['I don\'t believe you. ...What color was he?'] },
   ]);
   lines('child.q.dragons.what', [
     { text: ['Jewels? On his TUMMY?', 'Like a forge? Like the smithy? Louder?', 'I want to see one. Just once. From a long way off.'] },
@@ -208,7 +208,7 @@ talkPack('children3', () => {
         { ap: 'tale', say: 'I remember when this valley was all trees, and not a single door.', to: 'trees' },
       ] },
       guess: { line: 'child.q.age.guess', go: [
-        { ap: 'jest', say: 'Close! Add a few more noughts.', to: 'more' },
+        { ap: 'jest', say: 'Close! Add a few more zeros.', to: 'more' },
         { ap: 'warm', say: 'You flatter me. I\'ll take it.', to: 'flatter' },
       ] },
       more: { line: 'child.q.age.more', go: [
@@ -245,7 +245,7 @@ talkPack('children3', () => {
     { if: { band: 'school' }, text: ['Your beard\'s about three foot. If it grows an inch a year... thirty-six? That can\'t be right.'] },
   ]);
   lines('child.q.age.more', [
-    { text: ['NOUGHTS? A thousand? Two thousand?', 'More noughts! You\'re older than THOUSANDS?', 'That\'s impossible. ...Is it?'] },
+    { text: ['ZEROS? A thousand? Two thousand?', 'More zeros! You\'re older than THOUSANDS?', 'That\'s impossible. ...Is it?'] },
     { if: { childTemper: 'curious' }, text: ['Then you knew the first hobbits! What were they like? Did they have doors yet?'] },
   ]);
   lines('child.q.age.trees', [
@@ -427,7 +427,7 @@ talkPack('children3', () => {
     { text: ['By TEATIME? I\'ll need a hat!', 'I\'m going to be a wizard! I\'m telling everyone!', 'A wizard! Can hobbits be wizards? I\'m going to be the first!'] },
   ]);
   lines('child.q.hat.more', [
-    { text: ['Yes! Why are your eyebrows so big?', 'Do you have a mum?', 'What do you eat? Do wizards eat?'] },
+    { text: ['Yes! Why are your eyebrows so big?', 'Do you have a mom?', 'What do you eat? Do wizards eat?'] },
     { if: { band: 'school' }, text: ['Lots. I\'ve got a list. Number one: do you sleep?'] },
     { if: { childTemper: 'shy' }, text: ['...No. That was enough. Thank you.'] },
   ]);
@@ -483,7 +483,7 @@ talkPack('children3', () => {
     { if: { band: 'youth' }, text: ['Anywhere that isn\'t here. ...Not because here\'s bad. Because it\'s here.'] },
   ]);
   lines('child.q.come.w.tale', [
-    { text: ['The Sea, then. Grey as a dove and bigger than the sky.', 'The Mountain. Snow on top even in summer, and the wind sings.', 'Bree. A town of Big Folk and little, and the best inn in the world.'] },
+    { text: ['The Sea, then. Gray as a dove and bigger than the sky.', 'The Mountain. Snow on top even in summer, and the wind sings.', 'Bree. A town of Big Folk and little, and the best inn in the world.'] },
     { if: { childRiftStage: { min: 2 } }, text: ['Neverdark. All rain and neon, and towers that hum, and noodles on every corner.'] },
   ]);
   lines('child.q.come.describe', [
@@ -548,7 +548,7 @@ talkPack('children3', () => {
   });
   lines('child.q.home.start', [
     { text: ['Where do you live? When you\'re not here?', 'Have you got a house? A wizard house?', 'Where do wizards sleep? In beds?'] },
-    { if: { band: 'young' }, text: ['Do you have a mum? Where does your mum live?', 'Is your house in a tree? A big tree?'] },
+    { if: { band: 'young' }, text: ['Do you have a mom? Where does your mom live?', 'Is your house in a tree? A big tree?'] },
     { if: { band: 'school' }, text: ['Where\'s your hole? Do wizards have holes or houses? I\'ve always wondered.'] },
     { if: { band: 'youth' }, text: ['Where do you actually go, between visits? Do you have a home somewhere?'] },
     { if: { childTemper: 'shy' }, text: ['...Do you have somewhere warm to go? At night?'] },
@@ -600,7 +600,7 @@ talkPack('children3', () => {
       ] },
       why: { line: 'child.grown.why', go: [
         { ap: 'warm', say: 'You\'d make a fine {childCalling}.', to: 'fine', fx: { fond: 0.02 } },
-        { ap: 'advise', say: 'The old trades keep a village fed. There\'s honour in that.', to: 'honour', fx: { lean: 'hill' } },
+        { ap: 'advise', say: 'The old trades keep a village fed. There\'s honor in that.', to: 'honour', fx: { lean: 'hill' } },
         { ap: 'advise', say: 'There\'s more to the world than the trades we know. Keep your eyes open.', to: 'wider', fx: { lean: 'rift' } },
       ] },
       fine: { line: 'child.grown.fine', fx: { remember: 'The wizard says I\'d make a fine {childCalling}.', rv: 2 }, end: true },
@@ -637,7 +637,7 @@ talkPack('children3', () => {
     { if: { childCallingKey: 'herbalist' }, text: ['An herbalist. I know eleven plants already. Three of them are poison.', 'Herbalist. I like mixing things. And people getting better.'] },
     { if: { childCallingKey: 'orchardist' }, text: ['I\'ll keep the orchard. Up the trees all day. Officially.', 'Orchards! Apples, pears, plums. And climbing.'] },
     { if: { childCallingKey: 'herder' }, text: ['A herder. The sheep are my friends. Even the cross one.', 'Herder. With a dog. A clever dog.'] },
-    { if: { childCallingKey: 'postie' }, text: ['A postie! I\'d go everywhere and read all the... I mean deliver all the letters.', 'Postie. Everyone\'s happy to see the postie.'] },
+    { if: { childCallingKey: 'postie' }, text: ['A mail carrier! I\'d go everywhere and read all the... I mean deliver all the letters.', 'Mail carrier. Everyone\'s happy to see the mail carrier.'] },
     { if: { childCallingKey: 'storyteller' }, text: ['A storyteller. Under the old oak. With all the little ones listening.', 'I\'m going to tell stories. I\'ve got loads already. Some are true.'] },
     { if: { childCallingKey: 'tinker' }, text: ['A tinker! With the rift-folk! Wiring and sparks and neon!', 'Tinker. I want to know how everything works. Everything.'] },
     { if: { band: 'young' }, text: ['A DRAGON. ...Or {childCallingA}. But a dragon first.', 'A pirate! Or {childCallingA}. Whichever has more cake.'] },
@@ -658,7 +658,7 @@ talkPack('children3', () => {
     { if: { childTemper: 'shy' }, text: ['*very quietly* ...really?'] },
   ]);
   lines('child.grown.honour', [
-    { text: ['Honour. Like in the stories. A farmer with honour.', 'I like that. Keeping everyone fed. That\'s a big job.', 'That\'s what Gran says. Every trade\'s a good trade if you do it well.'] },
+    { text: ['Honor. Like in the stories. A farmer with honor.', 'I like that. Keeping everyone fed. That\'s a big job.', 'That\'s what Gran says. Every trade\'s a good trade if you do it well.'] },
   ]);
   lines('child.grown.wider', [
     { text: ['More than the trades we know? Like what?', 'Like the rift-folk trades? Wiring and that?', 'I\'ll keep my eyes open. Wide open.'] },
@@ -700,7 +700,7 @@ talkPack('children3', () => {
     { if: { childTween: true }, pri: 1, text: ['The old ones say it\'s an ill wind. The rift-folk say it\'s a road. I think the old ones are scared.'] },
     { if: { childTemper: 'shy' }, text: ['...I think it\'s someone crying. Up there. Is that silly?'] },
     { if: { childTemper: 'cheerful' }, text: ['I think it\'s a present! Things come out of it! People! Lights!'] },
-    { if: { childTemper: 'gloomy' }, text: ['I think the sky\'s getting old and wearing out. Like Grandad\'s knees.'] },
+    { if: { childTemper: 'gloomy' }, text: ['I think the sky\'s getting old and wearing out. Like Granddad\'s knees.'] },
   ]);
   lines('child.q.sky.door', [
     { if: { childTween: true }, pri: 1, text: ['A door. That\'s what the rift-folk say. I didn\'t believe them till you said it.'] },
@@ -726,7 +726,7 @@ talkPack('children3', () => {
     { if: { childTemper: 'curious' }, text: ['How big? Bigger than the mill? What did he smell like? Did he have a name?'] },
   ]);
   lines('child.q.dragons.what', [
-    { if: { childTemper: 'shy' }, text: ['*holding your sleeve* ...and you weren\'t burnt?'] },
+    { if: { childTemper: 'shy' }, text: ['*holding your sleeve* ...and you weren\'t burned?'] },
     { if: { childTemper: 'cheerful' }, text: ['Jewels on his TUMMY! I want jewels on MY tummy!'] },
     { if: { childTemper: 'ornery' }, text: ['I\'d have fought him. With a stick. A big stick.'] },
   ]);
@@ -827,7 +827,7 @@ talkPack('children3', () => {
     { if: { childTween: true }, pri: 1, text: ['There\'s more than the trades. Yes. I\'ve been thinking that for a while.'] },
   ]);
   lines('child.grown.honour', [
-    { if: { childTween: true }, pri: 1, text: ['Honour in it. ...Yes. I\'d like to be the sort folk depend on.'] },
+    { if: { childTween: true }, pri: 1, text: ['Honor in it. ...Yes. I\'d like to be the sort folk depend on.'] },
   ]);
   // =====================================================================================
   // Tell us a story! (theirs): the moral the wizard chooses goes into their upbringing
@@ -869,10 +869,10 @@ talkPack('children3', () => {
       ] },
       means: { line: 'child.q.tale.means', fx: { respect: 0.02, remember: 'The wizard told me a story, just for me.' }, go: [
         { ap: 'warm', say: 'That\'s exactly it. You were listening.', to: 'right' },
-        { ap: 'jest', say: 'It means always carry a spare biscuit.', to: 'biscuit' },
+        { ap: 'jest', say: 'It means always carry a spare cookie.', to: 'biscuit' },
       ] },
       right: { line: 'child.q.tale.right', fx: { fond: 0.03 }, end: true },
-      biscuit: { line: 'child.q.tale.biscuit', fx: { joke: { k: 'child.tale.biscuit', t: 'The moral of every story is: always carry a spare biscuit.' } }, end: true },
+      biscuit: { line: 'child.q.tale.biscuit', fx: { joke: { k: 'child.tale.biscuit', t: 'The moral of every story is: always carry a spare cookie.' } }, end: true },
       off: { line: 'child.q.tale.off', end: true },
     },
     end: { fond: 0.03 },
@@ -924,14 +924,14 @@ talkPack('children3', () => {
     { text: ['I WAS listening! I always listen! Mostly.', 'Ha! I knew it! I\'m going to tell everyone what it means.', 'You can tell me another one tomorrow. That\'s a rule now.'] },
   ]);
   lines('child.q.tale.biscuit', [
-    { text: ['That\'s not what it means! ...Is it?', 'Ha! I always carry a biscuit. I\'ve got one now. You can\'t have it.', 'A BISCUIT. You\'re silly.'] },
+    { text: ['That\'s not what it means! ...Is it?', 'Ha! I always carry a cookie. I\'ve got one now. You can\'t have it.', 'A COOKIE. You\'re silly.'] },
   ]);
   lines('child.q.tale.off', [
     { text: ['Aww. Tomorrow, then. You promised. You didn\'t but you did.', 'Fine! I\'m going to tell it to the little ones! Wrong!', '*runs off, already telling it to someone*'] },
   ]);
   // bright little ones, the rift-born, and the seasons
   lines('child.q.sky.start', [
-    { if: { register: 'bright' }, text: ['I\'ve been keeping a record of the rifts. Times, colours, size. Would you like to see my findings?'] },
+    { if: { register: 'bright' }, text: ['I\'ve been keeping a record of the rifts. Times, colors, size. Would you like to see my findings?'] },
     { if: { childRiftFriend: true, childRiftName: has }, text: ['{ChildRiftName} came out of the sky. So the sky\'s got people in. How many people?'] },
   ]);
   lines('child.q.sky.sat', [

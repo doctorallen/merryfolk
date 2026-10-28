@@ -1,7 +1,7 @@
 'use strict';
 // ---------------------------------------------------------------------------
 // Production you lay out yourself, and land that matters (Banished, Anno,
-// Farthest Frontier): plough new barley fields where the soil is good, plant
+// Farthest Frontier): plow new barley fields where the soil is good, plant
 // orchards and woodlots, set out beehives. Crops grow faster on rich soil
 // (river alluvium best, then loam, heavy clay, and thin stony ground worst),
 // and the build ghost tells you what the ground is like before you commit.
@@ -21,7 +21,7 @@ function soilYield(tx, ty) { return SOIL_YIELD[soilAt(tx, ty)] ?? 1; }
 
 // --- The tools -------------------------------------------------------------------
 BUILD_TOOLS.splice(BUILD_TOOLS.findIndex((t) => t.id === 'home'), 0,
-  { id: 'field', label: 'Field', icon: 'grain', kind: 'site', hint: 'Click to have the farmers clear and plough a new barley field (9×6). Better soil, better barley.' },
+  { id: 'field', label: 'Field', icon: 'grain', kind: 'site', hint: 'Click to have the farmers clear and plow a new barley field (9×6). Better soil, better barley.' },
   { id: 'orchard', label: 'Orchard', icon: 'apple', kind: 'box', unit: 25, cost: { wood: 1 }, hint: 'Drag a box to plant apple trees in rows (1 timber). The orchard-keeper picks them once they bear.' },
   { id: 'woodlot', label: 'Woodlot', icon: 'axe', kind: 'box', unit: 15, hint: 'Drag a box to plant a woodlot: saplings that grow into timber the woodwrights can fell, again and again.' },
   { id: 'hive', label: 'Hive', icon: 'honey', kind: 'point', unit: 30, cost: { wood: 1 }, hint: 'Click to set out a beehive (1 timber). Honey for the bakers, best near flowers.' },
@@ -71,7 +71,7 @@ const onGrid = (tool, x, y) => (tool === 'orchard' ? x % 3 === 0 && y % 3 === 1 
   siteFor = function (tool, tx, ty) {
     if (tool !== 'field') return sf(tool, tx, ty);
     const x0 = tx - 4, y0 = ty - 3, x1 = x0 + FW - 1, y1 = y0 + FH - 1;
-    // scrub, stones and trees are cleared as it's ploughed; a knoll only surveyed for a
+    // scrub, stones and trees are cleared as it's plowed; a knoll only surveyed for a
     // hobbit-hole can be given over to it; buildings, water, paths and dug plots can't
     if (x0 < 3 || x1 > 118 || y0 < 4 || y1 > 91) return { why: 'Too near the edge of the valley' };
     const knolls = new Set();
@@ -107,7 +107,7 @@ const onGrid = (tool, x, y) => (tool === 'orchard' ? x % 3 === 0 && y % 3 === 1 
     if (!quiet) {
       (Game.playerLots || (Game.playerLots = [])).push({ kind: 'field', x0: s.x0, y0: s.y0, spur: s.spur });
       startProject(lot);
-      chronicle(`The farmers are fencing and ploughing ${name} where you showed them: ${SOIL_WORD[soilAt(tx, ty)]}, ${s.soil >= 1.1 ? 'and they\'re pleased with it' : s.soil < 0.85 ? 'and they\'re doubtful' : 'fair enough'}.`, 'build');
+      chronicle(`The farmers are fencing and plowing ${name} where you showed them: ${SOIL_WORD[soilAt(tx, ty)]}, ${s.soil >= 1.1 ? 'and they\'re pleased with it' : s.soil < 0.85 ? 'and they\'re doubtful' : 'fair enough'}.`, 'build');
     }
     return lot;
   };

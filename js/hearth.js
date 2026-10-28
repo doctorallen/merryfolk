@@ -20,7 +20,7 @@ MOODLETS.hearth_supper = ['Supper with the wizard', 0.08, 720, ['The wizard ate 
 MOODLETS.hearth_toast = ['A toast at supper', 0.06, 720, ['They raised a mug to me at supper. To me!']];
 MOODLETS.drawn_out = ['The wizard listened to me', 0.1, 1440, ['The wizard asked me what I thought. And then he listened.']];
 MOODLETS.taken_in = ['Taken in by the {x}s', 0.16, 2880, ['A bed, a door that shuts, and someone saying goodnight. I\'d forgotten.']];
-MOODLETS.wizard_lodges = ['The wizard lodges with us', 0.08, 2880, ['We\'ve the wizard in the spare room! The neighbours are green.']];
+MOODLETS.wizard_lodges = ['The wizard lodges with us', 0.08, 2880, ['We\'ve the wizard in the spare room! The neighbors are green.']];
 
 function hearthState() { return Game.hearth || null; }
 // The hole that keeps a room for him, if it's still a home.
@@ -75,7 +75,7 @@ addTalkOption({
       T.reply(R.pick(['A room? For you? Well, I never. Of course you can! I\'ll air the sheets.', 'You\'d be very welcome. The little ones will be beside themselves.', 'Our spare room\'s yours whenever you\'re in the valley. Mind the low beam.']));
       takeRoom(v);
     } else if (r.why === 'full') T.reply(R.pick(['Oh, I would, I truly would. But we\'re packed to the rafters as it is.', 'There\'s not a spare inch. The children sleep two to a drawer.']));
-    else T.reply(R.pick(['Well... I\'d have to ask the others. Let\'s see how we go, shall we?', 'Hmm. Perhaps. When we know you a little better.', 'I don\'t think it would suit, just now. No offence meant.']));
+    else T.reply(R.pick(['Well... I\'d have to ask the others. Let\'s see how we go, shall we?', 'Hmm. Perhaps. When we know you a little better.', 'I don\'t think it would suit, just now. No offense meant.']));
   },
 });
 
@@ -99,7 +99,7 @@ function notableTies(v, res) {
   for (const o of Game.villagers) {
     if (o === v) continue;
     const s = sentimentsOf(v, o)[0];
-    if (s && SENT[s.tag]) { out.push(`${SENT[s.tag][0]} towards ${o.first} (${s.why})`); break; }
+    if (s && SENT[s.tag]) { out.push(`${SENT[s.tag][0]} toward ${o.first} (${s.why})`); break; }
   }
   const rv = typeof rivalOf === 'function' ? rivalOf(v) : null;
   if (rv) out.push(`Rivals with ${rv.first}`);

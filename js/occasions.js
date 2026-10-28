@@ -21,7 +21,7 @@
 //
 // The long tables are trestles with white cloths, set out in the party field
 // (or the square, if the field has no room) only while a feast is on. The
-// courses come out one after another (soup, the mains, pudding), each drawn
+// courses come out one after another (soup, the main course, pudding), each drawn
 // from the Common Store, and the dinner ends with a toast.
 // ---------------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ addPartyKind('harvest', { rank: 5,
   note: 'The Harvest Feast is laid on the long tables! Pies, stews and cider for everyone.',
   start: () => { Village.produce('pie', 10); Village.produce('stew', 12); },
   toast: () => `To the harvest, and to every hand that brought it in! ${World.fields.length ? 'And the barley.' : ''}`,
-  lines: ['To the harvest!', 'Best year for marrows I can remember.'],
+  lines: ['To the harvest!', 'Best year for pumpkins I can remember.'],
 });
 addPartyKind('yule', { rank: 5,
   label: 'Yule', hud: 'Yule!', note: 'The Yule bonfire is roaring. Mulled ale and carols in the snow!', bonfire: true,
@@ -291,7 +291,7 @@ const holidayToday = () => !!(Game.holiday && Game.holiday.day === Game.day);
 // --- The long tables --------------------------------------------------------------
 const COURSES = [
   { key: 'soup', at: 75, label: 'the soup', food: ['stew', 'veg', 'mush'], say: ['Ooh, leek and potato.', 'Pass the bread, {name}.', 'Mind, it\'s hot!', 'More soup? Don\'t mind if I do.'] },
-  { key: 'main', at: 110, label: 'the mains', food: ['pie', 'fish', 'cheese', 'egg', 'bread', 'veg', 'stew'], say: ['Pass the gravy, {name}!', 'Is there more pie? There\'s always more pie.', 'This is the best mushroom pie I\'ve had all year.', 'Don\'t hog the taters, {name}.', 'I\'ll just have a sliver. A big sliver.'] },
+  { key: 'main', at: 110, label: 'the main course', food: ['pie', 'fish', 'cheese', 'egg', 'bread', 'veg', 'stew'], say: ['Pass the gravy, {name}!', 'Is there more pie? There\'s always more pie.', 'This is the best mushroom pie I\'ve had all year.', 'Don\'t hog the taters, {name}.', 'I\'ll just have a sliver. A big sliver.'] },
   { key: 'pudding', at: 145, label: 'pudding', food: ['cake', 'apple', 'honey', 'pie'], say: ['Pudding! I saved room. Mostly.', 'Seed-cake and cream!', 'Is that honey cake? {name}, is that honey cake?', 'I couldn\'t. ...Well, a small one.'] },
   { key: 'toast', at: 175, label: 'the toast', food: [] },
 ];
@@ -388,7 +388,7 @@ function setTableCourse(c) {
 // A trestle table seen from above, a white cloth hanging over its front edge:
 // a plate and a cup at every place, candles in brass sticks down the middle,
 // and whatever's being served. -1 is the table laid; then the soup (tureens,
-// bowls, loaves), the mains (pies, a roast bird, taters, greens), pudding (a
+// bowls, loaves), the main course (pies, a roast bird, taters, greens), pudding (a
 // tall cake, apples, a honey pot, a jug of cream) and last the crumbs, with
 // a mug of ale at every place for the toast.
 const TABLE_IMGS = {};

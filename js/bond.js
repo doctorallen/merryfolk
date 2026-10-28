@@ -58,7 +58,7 @@ function panelYou(v) {
   const bf = typeof bondFull === 'function' ? bondFull(v) : b;
   const resp = bf.respect || 0;
   h += `<div class="bond-row"><span>Respect</span><span class="bond-bar big"><i style="width:${Math.round(((resp + 1) / 2) * 100)}%" class="respect"></i></span><b>${escapeHtml(resp > 0.4 ? 'Hangs on your word' : resp > 0.15 ? 'Listens to you' : resp < -0.2 ? 'Thinks you a meddler' : 'Makes up their own mind')}</b></div>`;
-  if (bf.owe > 0) h += `<p class="sub">${escapeHtml(v.first)} owes you a favour.</p>`; else if (bf.owe < 0) h += `<p class="sub">You owe ${escapeHtml(v.first)} a favour.</p>`;
+  if (bf.owe > 0) h += `<p class="sub">${escapeHtml(v.first)} owes you a favor.</p>`; else if (bf.owe < 0) h += `<p class="sub">You owe ${escapeHtml(v.first)} a favor.</p>`;
   if (bf.told && bf.told.length) h += `<h4>Things ${escapeHtml(v.first)} has told you</h4><ul class="bond-list">${bf.told.slice(0, 8).map((x) => `<li>${x.secret ? '🤫 ' : ''}${escapeHtml(x.t)}</li>`).join('')}</ul>`;
   if (bf.jokes && bf.jokes.length) h += `<h4>Between you</h4><ul class="bond-list">${bf.jokes.slice(0, 5).map((x) => `<li>${escapeHtml(x.t)}</li>`).join('')}</ul>`;
   const ps = (bf.promises || []).slice(0, 6);

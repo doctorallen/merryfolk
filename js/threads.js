@@ -169,7 +169,7 @@ function settlePromises() {
 }
 // What you last talked about, as a phrase that fits "we were talking about …":
 // the thread's topic if it has one, else its label if it reads as a subject
-// (not a question, not one of theirs, a pastime or a mood, which are labelled
+// (not a question, not one of theirs, a pastime or a mood, which are labeled
 // as what happens, and not one put to them: "Your rival", "Tell me a story").
 // It's said by them, so a topic is written their way round ("my evenings").
 function lastTopic(id) {

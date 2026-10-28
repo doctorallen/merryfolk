@@ -104,7 +104,7 @@ function riftSpot() {
 // Curious but cautious. While the Riftfolk are new, hill-folk watch them from
 // a safe distance, whisper about them and make their excuses when one comes
 // over to say hello. The bold and sociable go and introduce themselves, and
-// make the first friendships. The novelty wears off over a fortnight or so,
+// make the first friendships. The novelty wears off over two weeks or so,
 // and anyone with a rift-born friend stops being wary.
 // ---------------------------------------------------------------------------
 function riftNovelty() {
@@ -124,7 +124,7 @@ function riftWary(v) {
 
 const RIFT_WATCH_SAY = {
   adult: ['Don\'t stare. But do look at that hair!', 'Is that eye... glowing?', 'They seem harmless enough. Probably.', 'What do you suppose they eat?', 'Keep your voice down, they\'ll hear.', 'I\'ll say hello tomorrow. Maybe.'],
-  kid: ['Mum says not to stare.', 'Is it a robot? Is it?', 'I bet she can see in the dark!', 'Psst! Look at his eye!'],
+  kid: ['Mom says not to stare.', 'Is it a robot? Is it?', 'I bet she can see in the dark!', 'Psst! Look at his eye!'],
 };
 const RIFT_NOTICE_SAY = ['Hey! I don\'t bite.', 'Hello there! You can come closer.', 'Ping! I mean... hello!', 'Morning! Nice village you have.'];
 const RIFT_STARTLED_SAY = {
@@ -308,7 +308,7 @@ function shiftWays(v, d) {
 }
 
 // Talking it over: the less rift-minded of the two picks up a little, and
-// the more rift-minded softens a touch towards hill-folk ways.
+// the more rift-minded softens a touch toward hill-folk ways.
 function shareWays(a, b) {
   if (a.stage === 'baby' || b.stage === 'baby') return;
   const gap = Math.abs(a.tech - b.tech);
@@ -410,9 +410,9 @@ const RIFT_LOST_SAY = {
   adult: [
     'Which sector is this? Nobody here has heard of the sectors.', 'Where are the towers? Where is... anything?', 'I keep reaching for my feed. There is no feed.',
     'If I find the frequency, I can get back. I have to get back.', 'Is this tree a hologram? It doesn\'t flicker.', 'Somebody back home is wondering where I went.',
-    'The sky\'s the wrong colour. Too blue. Too much of it.', 'Excuse me, which way to the city? ...What do you mean, what city?',
+    'The sky\'s the wrong color. Too blue. Too much of it.', 'Excuse me, which way to the city? ...What do you mean, what city?',
   ],
-  kid: ['I want to go home.', 'Where\'s our flat? Where\'s the lift?', 'Are we lost? We\'re lost, aren\'t we.'],
+  kid: ['I want to go home.', 'Where\'s our apartment? Where\'s the elevator?', 'Are we lost? We\'re lost, aren\'t we.'],
 };
 const RIFT_SEEK_SAY = [
   'Hold the sensor steady!', 'Same signature as the night we came through.', 'If we match the frequency, it should open.', 'Anyone remember the coordinates for home?',
@@ -576,7 +576,7 @@ function drawRiftScar(ctx, s) {
     ctx.fillStyle = '#2a1a3a'; ctx.fillRect(x + i, yy, 1, 2);
     if (hash2(i + s.seed, Math.floor(tReal * 2)) > 0.85) { ctx.fillStyle = '#c050ff'; ctx.fillRect(x + i, yy - 1, 1, 1); }
   }
-  // scattered salvage: bits of grey metal and glowing glass
+  // scattered salvage: bits of gray metal and glowing glass
   for (let k = 0; k < s.stock * 3; k++) {
     const dx = Math.round((hash2(k, s.seed) - 0.5) * 60), dy = Math.round((hash2(s.seed, k) - 0.5) * 20);
     ctx.fillStyle = k % 3 ? '#8a9098' : '#3af0ff'; ctx.fillRect(x + dx, y + dy, 3, k % 2 + 2);
@@ -694,7 +694,7 @@ function riftLights(L) {
 // ways slip into this talk more and more as they take them up.
 // ---------------------------------------------------------------------------
 const RIFT_LINES = {
-  greet: { adult: ['Ping, {name}. Signal\'s good today.', 'Hey, {name}. You look very... analogue. In a good way.', 'Morning, {name}. Still no grid. Still not complaining.'], kid: ['Ping ping, {name}!', 'Hi {name}! Wanna see my blinky?'] },
+  greet: { adult: ['Ping, {name}. Signal\'s good today.', 'Hey, {name}. You look very... analog. In a good way.', 'Morning, {name}. Still no grid. Still not complaining.'], kid: ['Ping ping, {name}!', 'Hi {name}! Wanna see my blinky?'] },
   weather: { adult: ['Free light from the sky, all day, no subscription.', 'Back home the rain stung. This stuff tastes of clover.', 'Weather\'s running smooth today.'], kid: ['The sky\'s a big screen and it\'s showing clouds!'] },
   sunny: { adult: ['Sun\'s charging my panels and my mood.', 'Free light from the sky, all day, no subscription.'], kid: ['Sunshine! Full battery!'] },
   rain: { adult: ['Water falling out of the sky, unfiltered. Wild.', 'Back home the rain was acid. This stuff tastes of clover.'], kid: ['Rain! Is it safe? It\'s safe!'] },
@@ -710,7 +710,7 @@ const RIFT_LINES = {
   tipsy: { adult: ['Ale\'s a better patch than anything I ever ran.', 'Whoa. My gyros are off. Hic.'] },
   work: { adult: ['Every tool here\'s hand-made. Beautiful firmware.', 'Being a {job} is honest work. Like code, but with dirt.'] },
   building: { adult: ['Wood and turf, but solid. I\'ll add some glow.', '{building} wants a few cables, I reckon.'] },
-  newhome: { adult: ['Moved into a hole in a hill. Zero rent. Maximum cosy.'] },
+  newhome: { adult: ['Moved into a hole in a hill. Zero rent. Maximum cozy.'] },
   love: { adult: ['{sweet} makes my heart rate do things my monitor would flag.'] },
   ourbaby: { adult: ['The little one already tugs at my cables.', 'Half hill, half rift, all trouble. Love it.'] },
   sick: { adult: ['System error. Sniffles.', 'Something\'s corrupted my sinuses.'], kid: ['I\'ve got a virus! A real one!'] },
@@ -724,7 +724,7 @@ const RIFT_LINES = {
   books: { adult: ['Read a paper book today. Paper! It doesn\'t even need charging.', 'Your libraries have no search bar, but they smell wonderful.', 'Found a map of this world. Hand-drawn. I\'m keeping it forever.'], kid: ['Books are like screens that never run out!'] },
   simple: { adult: ['Plain work, plain food, plain sky. Best patch ever.'] },
   school: { kid: ['The story oak is better than any feed!', 'I learned a hill-song AND a rift-song today!'] },
-  explain: { adult: ['It\'s like a letter, {name}, only it flies through the air in a blink.', 'Think of the Relay as a very tall, very clever postie.', 'Light can carry words, if you ask it nicely.'] },
+  explain: { adult: ['It\'s like a letter, {name}, only it flies through the air in a blink.', 'Think of the Relay as a very tall, very clever mail carrier.', 'Light can carry words, if you ask it nicely.'] },
   court: { adult: ['You\'re the only signal I need, {name}.', 'My eye goes fuzzy when you\'re near. Might be a fault. Might be you.'] },
   quarrel: { adult: ['Back off, {name}, before I reboot you.', 'You\'re corrupting my calm, {name}.'] },
 };

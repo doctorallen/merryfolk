@@ -1,6 +1,6 @@
 'use strict';
 // ---------------------------------------------------------------------------
-// Expeditions (Heroes of Might and Magic's scouting, cosy). From the Charter,
+// Expeditions (Heroes of Might and Magic's scouting, cozy). From the Charter,
 // send a brave hobbit off to explore beyond the valley: the north hills, the
 // east forest, the southern fens or along the West Road. It costs pennies and
 // food for the pack, and they're gone two days. They come back with a tale
@@ -22,7 +22,7 @@ const REGIONS = {
   west: { name: 'along the West Road', finds: ['cache', 'hamlet'] },
 };
 const FINDS = {
-  quarry: { name: 'a stone quarry', text: 'There\'s good grey stone in the north hills, a day\'s walk off. The woodwrights can cut it: stone sells well, and statues cost half as much.', apply: () => { RES_INFO.stone = RES_INFO.stone || { label: 'Stone', icon: 'sack' }; if (!STORE_KEYS.includes('stone')) STORE_KEYS.push('stone'); STORE_CAP.stone = 80; PRICE.stone = 3; RES_WORD.stone = 'stone'; for (const t of TRADERS) if (t.key === 'bree' && !t.buys.includes('stone')) t.buys.push('stone'); } },
+  quarry: { name: 'a stone quarry', text: 'There\'s good gray stone in the north hills, a day\'s walk off. The woodwrights can cut it: stone sells well, and statues cost half as much.', apply: () => { RES_INFO.stone = RES_INFO.stone || { label: 'Stone', icon: 'sack' }; if (!STORE_KEYS.includes('stone')) STORE_KEYS.push('stone'); STORE_CAP.stone = 80; PRICE.stone = 3; RES_WORD.stone = 'stone'; for (const t of TRADERS) if (t.key === 'bree' && !t.buys.includes('stone')) t.buys.push('stone'); } },
   pasture: { name: 'upland pasture', text: 'Sweet upland grazing in the north hills: the herders can summer the sheep there. Half as much wool again.', apply: () => {} },
   timber: { name: 'old-growth timber', text: 'A stand of huge old oaks deep in the east forest, enough timber for years. The woodwrights bring in more with every trip.', apply: () => {} },
   bees: { name: 'wild bees', text: 'Wild bees in hollow trees in the east forest. The orchard-keepers bring back honeycomb.', apply: () => {} },
@@ -64,7 +64,7 @@ window.addEventListener('DOMContentLoaded', () => {
       FINDS[k].apply(true);
       Game.renown = (Game.renown || 0) + 10;
       const v = Game.villagers.find((o) => o.id === entry.id);
-      if (v) { v.remember(`Explored ${REGIONS[region].name} and found ${FINDS[k].name}.`, 3); feel(v, 'won', 'the honour of the expedition'); }
+      if (v) { v.remember(`Explored ${REGIONS[region].name} and found ${FINDS[k].name}.`, 3); feel(v, 'won', 'the honor of the expedition'); }
       chronicle(`${v ? v.first : 'The explorer'} is back from ${REGIONS[region].name}, footsore and very pleased: ${v ? v.pron.they : 'they'} found ${FINDS[k].name}! ${FINDS[k].text} (+10 renown)`, 'adventure');
     }
     return r;

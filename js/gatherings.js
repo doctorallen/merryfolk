@@ -63,7 +63,7 @@ const GATHERINGS = {
     who: (v) => v.isGrown(),
     spot: () => (World.wellSpot ? groundNear(World.wellSpot.x / 16, World.wellSpot.y / 16 + 1) : null),
     news: true,
-    calls: ['Well now. Who\'s heard what?', 'I\'m saying nothing. But I will say this.', 'Not a word of this outside this circle, mind.', 'And that\'s not the half of it.', 'I had it from the innkeeper, and she had it from the postie.', 'You didn\'t hear it from me.', 'Between these three walls, as they say. Or no walls.'],
+    calls: ['Well now. Who\'s heard what?', 'I\'m saying nothing. But I will say this.', 'Not a word of this outside this circle, mind.', 'And that\'s not the half of it.', 'I had it from the innkeeper, and she had it from the mail carrier.', 'You didn\'t hear it from me.', 'Between these three walls, as they say. Or no walls.'],
     reacts: { cheerful: ['Well I never! How lovely.', 'Ha! That\'s the best thing I\'ve heard all week.'], ornery: ['Hm. None of our business.', 'Folk should mind their own.'], shy: ['Oh. ...Oh dear.', '*listens, says nothing, remembers everything*'], curious: ['And then? Who said that?', 'When was this? Before or after the market?'], dreamy: ['Fancy. The whole village in a bucket of water.', 'I wonder what they say about us.'], witty: ['My lips are sealed. My ears, less so.', 'I could sell tickets to this.'], proud: ['I knew that on Sterday.', 'I could tell you things that would curl your hair.'], gloomy: ['People talk. People always talk.', 'Mm.'] },
   },
   sunset: {

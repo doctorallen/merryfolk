@@ -65,7 +65,7 @@ const SCENES = [
   {
     id: 'rivals', when: (h) => h >= 9 && h < 16,
     pair: (a, b) => a.rival === b.id,
-    lines: (a, b) => [[a, `Morning, ${b.first}. Practising for the fair?`], [b, 'Don\'t need to practise. Unlike some.'], [a, 'We\'ll see about that.'], [b, 'We will.']],
+    lines: (a, b) => [[a, `Morning, ${b.first}. Practicing for the fair?`], [b, 'Don\'t need to practice. Unlike some.'], [a, 'We\'ll see about that.'], [b, 'We will.']],
     after: (a, b) => { if (R.chance(0.3)) { a.bond(b, 0.05); } },
     chron: (a, b) => `${a.first} and ${b.first} traded barbs in the square. The rivalry is alive and well.`,
   },

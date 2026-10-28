@@ -5,13 +5,13 @@
 // "Danced at the party", "Had words with Rose", "Slept rough". Each lifts or
 // sinks their mood a little, they show in the villager's panel, and the
 // strongest of them comes out now and then when they muse aloud. A few are
-// states rather than events (tipsy, cosy by a lit hearth, no roof of their
+// states rather than events (tipsy, cozy by a lit hearth, no roof of their
 // own) and last exactly as long as the state does.
 // ---------------------------------------------------------------------------
 
 // key: [label ({x} is filled in), lift (−/+), minutes it lasts, musings]
 const MOODLETS = {
-  fav_food: ['Had my favourite: {x}', 0.1, 240, ['I could eat {x} every day.', 'Nothing beats {x}.']],
+  fav_food: ['Had my favorite: {x}', 0.1, 240, ['I could eat {x} every day.', 'Nothing beats {x}.']],
   bad_food: ['Had to eat {x}', -0.05, 120, ['I can still taste that {x}. Ugh.']],
   well_slept: ['Slept soundly', 0.07, 360, ['What a night\'s sleep!', 'Fresh as a daisy, I am.']],
   slept_rough: ['Slept rough', -0.14, 600, ['My back... a hedge is no bed.', 'One night under a roof, that\'s all I ask.']],
@@ -38,7 +38,7 @@ const MOODLETS = {
   got_letter: ['A letter from {x}', 0.1, 720, ['Fancy {x} writing to me!']],
   pet: ['Cuddled {x}', 0.06, 240, ['Who\'s a good {x}?']],
   missed: ['Missing {x}', -0.12, 2880, ['I keep setting a place for {x}.', 'The house is quiet without {x}.']],
-  inspired: ['Inspired!', 0.15, 600, ['I\'ve had the most marvellous idea.']],
+  inspired: ['Inspired!', 0.15, 600, ['I\'ve had the most marvelous idea.']],
   gossip: ['Heard some juicy news', 0.04, 240, ['You\'ll never guess what I heard.']],
   larder_full: ['Larder stocked for winter', 0.06, 1440, ['Let the snow come. We\'ve jars a-plenty.']],
   larder_bare: ['Worried about winter', -0.07, 1440, ['The shelves look thin for winter.']],
@@ -71,7 +71,7 @@ function stateFeelings(v) {
   if (v.chem.ale > 0.45) out.push(['Merrily tipsy', 0.06]);
   if (v.chem.hangover > 0.25) out.push(['Sore head', -0.08]);
   if (home && at === home && home.chilly) out.push(['Cold hearth at home', -0.08]);
-  else if (home && at === home && (World.season === 'winter' || World.season === 'autumn') && Game.hour >= 18) out.push(['Warm and cosy by the fire', 0.06]);
+  else if (home && at === home && (World.season === 'winter' || World.season === 'autumn') && Game.hour >= 18) out.push(['Warm and cozy by the fire', 0.06]);
   if (v.homeId < 0 && v.isGrown()) out.push(['No roof of my own', -0.09]);
   if (v.spouse && person(v.spouse) && !person(v.spouse).gone && Game.villagers.includes(person(v.spouse))) out.push(['Happily married', 0.04]);
   return out;

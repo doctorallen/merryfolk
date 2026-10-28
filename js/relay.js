@@ -10,7 +10,7 @@
 //
 // In the wizard's game you can read it (the bar's "The Relay"), post on it
 // once a day, and pin a post so the whole village sees it. A kind word about
-// a wary old hobbit softens them towards the rift-folk; a post about the
+// a wary old hobbit softens them toward the rift-folk; a post about the
 // Long Dim sways whoever reads it; a joke warms the young and the rift-minded
 // and goes down less well with the elders, who grumble about the whole
 // business at the inn.
@@ -43,7 +43,7 @@ function relayAuthor(prefer) {
 const SIGN_OFF = ['full signal.', 'no lag.', '10/10.', 'respect.', '*static*', 'ping.', 'battery low, morale high.'];
 const AMBIENT = {
   rift: [(v) => `miss ${v.arc ? v.arc.home : 'the city'} tonight. battery low.`, () => 'second breakfast is a whole protocol here. respect.', () => 'the river does what our whole grid did. and it never sends an invoice.', () => 'rained again. REAL rain. still not over it.', () => 'anyone got a spare power cell? asking for a friend (me).', () => 'a hobbit asked me if my eye is "a sort of brooch". full signal.', () => 'learned the willow lamp song. it\'s ours too?? *static*', () => 'they call it "elevenses". it is a sixth meal. i love it here.'],
-  kid: [() => 'i can count to 1010 in acorns', () => 'mum says the relay rots your brain. it does not. *static*', () => 'the wizard did a squib for me!!! BANG', () => 'who wants to play rift-tag by the pond', () => 'my gran thinks this is a wireless. ping gran'],
+  kid: [() => 'i can count to 1010 in acorns', () => 'mom says the relay rots your brain. it does not. *static*', () => 'the wizard did a squib for me!!! BANG', () => 'who wants to play rift-tag by the pond', () => 'my gran thinks this is a wireless. ping gran'],
   hill: [() => 'Is this thing on', () => 'How do you make the letters bigger', () => 'Hello Relay. Turnips are doing well this year. Yours sincerely.', () => 'In my day we shouted over the hedge.'],
 };
 function authorKind(v) { return v.isRiftborn() ? 'rift' : v.isChild() ? 'kid' : 'hill'; }
@@ -128,7 +128,7 @@ function relaySheet(mode) {
 window.addEventListener('DOMContentLoaded', () => {
   registerField('relay', null, { nullish: true });
   patch(window, 'chronicle', (ch) => function (text, kind) { const r = ch.apply(this, arguments); if (typeof playMode === 'function' && playMode()) try { relayHears(text, kind); } catch (e) { /* the Relay is only gossip */ } return r; }, 'relay');
-  // a kind word softens a wary elder towards the rift-folk
+  // a kind word softens a wary elder toward the rift-folk
   patch(window, 'riftWary', (rw) => function (v) { const soft = Game.relay && Game.relay.soft; return rw.apply(this, arguments) * (1 - ((soft && soft[v.id]) || 0)); }, 'relay');
   addWizardAction({ id: 'relay', order: 32, icon: 'note', label: () => 'The Relay', when: () => typeof playMode === 'function' && playMode() && relayOpen(), run: () => relaySheet() });
   addHook('onHour', (h) => {

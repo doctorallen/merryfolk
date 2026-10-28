@@ -28,7 +28,7 @@ function sayToBoth(T, tone, text) {
   }
 }
 const PAIR_LINES = {
-  warm: ['Now here are two of my favourite people in all the Shire.', 'It does me good to see the two of you together.'],
+  warm: ['Now here are two of my favorite people in all the Shire.', 'It does me good to see the two of you together.'],
   witty: ['Plotting something, are we? I want in.', 'Don\'t stop on my account. I love a scandal.'],
   curious: ['What are you two talking about? You both look very serious.', 'Settle something for me: which of you is the better cook?'],
 };

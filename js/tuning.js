@@ -36,11 +36,11 @@ const TUNE = {
     strong: 1,          // |valence| at and above which a memory is strong (pats and tuts never count)
   },
   // --- dreams pull like wishes ---
-  dream: { pull: 1.2 }, // ×score of actions that carry someone towards their dream
+  dream: { pull: 1.2 }, // ×score of actions that carry someone toward their dream
   // --- nature in the mouth ---
   manner: {
     threshold: 0.68,    // a trait at or above this gives someone a manner of speaking
-    rate: 0.45,         // how often (0..1) a line is coloured by their manner
+    rate: 0.45,         // how often (0..1) a line is colored by their manner
   },
   // --- breaks: sulks, tantrums and the rest ---
   breaks: {
@@ -60,7 +60,7 @@ const TUNE = {
     coldBoost: 1.5,     // ×rate when chilled
     wetBoost: 1.2,      // ×rate when out in the rain
     homeGood: 0.05,     // mood lift from a well-kept hole (state feeling)
-    homeBare: -0.05,    // mood sink from a bare, draughty hole
+    homeBare: -0.05,    // mood sink from a bare, drafty hole
     reliefHome: 1.25,   // ×comfort relief at home when the hole is well-kept (0.75 when bare)
   },
   // --- purpose: everyone wants to be useful ---
@@ -82,7 +82,7 @@ const TUNE = {
     hazardWarn: 0.04,   // per hour while a hazard is forecast
     hazardOn: 0.08,     // per hour while one is on
     rifts: 0.05,        // per hour per open rift (hill-folk only; rift-folk feel none)
-    sickness: 0.03,     // per hour when a few neighbours are poorly
+    sickness: 0.03,     // per hour when a few neighbors are poorly
     nightOut: 0.03,     // per hour out of doors after dark
     ease: 0.1,          // per hour of calm (double indoors at home)
     braveryScale: 1.3,  // rises ×(braveryScale − bravery): the brave shrug it off

@@ -2,7 +2,7 @@
 // ---------------------------------------------------------------------------
 // Work and the trades, the third pack: the crafts that aren't about food.
 // The fisher and the one that got away, the woodwright's round doors, the
-// herbalist's remedies and the poorly, the postie's round and the letters
+// herbalist's remedies and the poorly, the mail carrier's round and the letters
 // folk write, the storyteller's little scholars under the old oak, the nanny
 // and her nursery, the tinker with rift scrap and the Relay, and the
 // lamplighter's round at dusk. One thread each, about the craft itself (the
@@ -64,7 +64,7 @@ talkPack('work3', () => {
         { ap: 'listen', say: '*You sit down on the bank beside them.*', label: 'Sit on the bank with them', to: 'quiet' },
       ] },
       spot: { line: 'work.fisher.spot', go: [
-        { ap: 'warm', say: 'I\'d never tell a soul. Wizard\'s honour.', to: 'secret', need: { open: 2 }, soft: true },
+        { ap: 'warm', say: 'I\'d never tell a soul. Wizard\'s honor.', to: 'secret', need: { open: 2 }, soft: true },
         { ap: 'jest', say: 'Then I\'ll just follow you, very quietly.', to: 'follow' },
         { ap: 'ask', say: 'Then what bait do you swear by?', to: 'bait' },
       ] },
@@ -155,7 +155,7 @@ talkPack('work3', () => {
   });
   W('work.fisher.secret', {
     _: ['...Under the old willow, where the river bends back on itself. There\'s a hole there deeper than a well.', '...All right. The willow at the bend. Go at dusk, when the light\'s on the water.'],
-    cheerful: ['Oh, go on then! The old willow at the bend. They queue up under the roots like folk at the Bakehouse.'],
+    cheerful: ['Oh, go on then! The old willow at the bend. They line up under the roots like folk at the Bakehouse.'],
     ornery: ['...The willow at the bend. And if I see anyone else there, I\'ll know who to blame.'],
     shy: ['...The willow. At the bend. Don\'t... don\'t bring anyone.'],
     curious: ['The willow at the bend! The roots make a sort of cave. The current drops everything right into it.'],
@@ -385,7 +385,7 @@ talkPack('work3', () => {
     'rift': ['Back home everything was plastic and alloy. Wood smells alive. I can\'t get over it.'],
   });
   W('work.wood.choose', {
-    _: ['You look for one that\'s ready. Leaning, crowding its neighbours, or a bit tired at the top.', 'Never the best tree. Never the worst. The one the wood can spare.'],
+    _: ['You look for one that\'s ready. Leaning, crowding its neighbors, or a bit tired at the top.', 'Never the best tree. Never the worst. The one the wood can spare.'],
     cheerful: ['I walk round and ask! Well. I look. But it feels like asking.'],
     ornery: ['The one that\'s in the way. There\'s always one in the way.'],
     shy: ['...I take my time. I don\'t like to rush it.'],
@@ -629,7 +629,7 @@ talkPack('work3', () => {
     'register=plain': ['Herbs is herbs. You know which does what, or you don\'t.'],
     'stage=elder': ['Fifty years of remedies, and still the cold\'s the one I can\'t cure.'],
     'sick ^2': ['The herbalist, poorly. Don\'t look at me like that. I know.'],
-    'rift': ['Back home we had pills. Little coloured ones. These leaves work better, honestly. Don\'t tell Neverdark.'],
+    'rift': ['Back home we had pills. Little colored ones. These leaves work better, honestly. Don\'t tell Neverdark.'],
   });
   W('work.herb.remedy', {
     _: ['Feverfew for a fever, willow bark for an ache, mint for a belly and camomile for a bad night.', 'Elderflower, honey and a pinch of ginger, steeped till it\'s gold. And rest. Rest\'s half of it.'],
@@ -773,7 +773,7 @@ talkPack('work3', () => {
     cheerful: ['Off I go! Barley, here I come!'],
   });
 
-  // --- The postie: the round, the letters, and the dogs -------------------------------------
+  // --- The mail carrier: the round, the letters, and the dogs -------------------------------------
   addThread({
     id: 'work.postie', label: 'What\'s in the post bag today?', about: 'work', weight: 1, cool: 4,
     when: job('postie'), rel: (F) => (F.workLetters > 3 ? 1.4 : 1.2),
@@ -847,19 +847,19 @@ talkPack('work3', () => {
     'season=spring': ['Spring\'s letters are full of seeds and plans. Folk write when they\'re hopeful.'],
     'weather=rain ^1': ['Wet! I\'ve the letters wrapped in oilcloth and myself in nothing useful.'],
     'weather=snow ^1': ['Snowed in up the hill, so I\'ve been posting through drifts. Nearly lost a parcel.'],
-    'register=fine': ['A most interesting post today. One bears a wax seal I don\'t recognise.'],
+    'register=fine': ['A most interesting post today. One bears a wax seal I don\'t recognize.'],
     'register=plain': ['Letters. Folk write \'em, I carry \'em. Some of \'em I can even read the outside of.'],
     'rift': ['Paper letters! It\'s like messaging but slower, and you have to walk. I love it, weirdly.'],
   });
   W('work.post.read', {
-    _: ['Read them! I never! ...Well, not the inside.', 'Certainly not. A postie who reads the post is no postie at all.'],
+    _: ['Read them! I never! ...Well, not the inside.', 'Certainly not. A mail carrier who reads the post is no mail carrier at all.'],
     cheerful: ['Never! ...Though you can tell a lot from the handwriting. Happy letters have big loops.'],
     ornery: ['I\'ll have you know I\'ve never read a single letter. Except my own. Which nobody sends.'],
     shy: ['...No. Never. ...I look at the drawings on the outside, sometimes.'],
     curious: ['Never the insides. But the outsides! Who\'s writing to who, how often, how thick. It\'s a map.'],
     dreamy: ['Never. I make up what\'s in them instead. Mine are probably nicer.'],
     witty: ['I don\'t need to. Folk tell me what\'s in them anyway. Before I\'ve even handed them over.'],
-    proud: ['Not one. In all my years. The postie\'s word is as good as a wax seal.'],
+    proud: ['Not one. In all my years. The mail carrier\'s word is as good as a wax seal.'],
     gloomy: ['No. And if I did, I expect it\'d be more bills.'],
   });
   W('work.post.open2', {
@@ -876,7 +876,7 @@ talkPack('work3', () => {
     shy: ['...I\'ve a letter in my bag that I\'ll never be able to deliver. I can\'t throw it away.'],
     curious: ['...There\'s a letter that\'s been everywhere. Every door. Nobody will take it. No name, only "to the one who\'ll know".'],
     dreamy: ['...I carry a letter for someone who went over the hills. I like to think they\'ll come back for it.'],
-    witty: ['...My one failure. A letter with nowhere to go. It\'s in the bottom of the bag. It\'s very well travelled.'],
+    witty: ['...My one failure. A letter with nowhere to go. It\'s in the bottom of the bag. It\'s very well traveled.'],
     proud: ['...I\'ve delivered every letter given me, but one. It\'s for someone gone. It stays with me.'],
     gloomy: ['...There\'s a letter for someone who left. It\'ll never be read. I carry it anyway.'],
   });
@@ -891,8 +891,8 @@ talkPack('work3', () => {
     proud: ['...It\'s my letter to carry. But. ...Perhaps. Perhaps you could.'],
   });
   W('work.post.honest', {
-    _: ['Too honest by half, my old mum said.', 'Somebody has to be.'],
-    witty: ['Honest, nosy and very well informed. A postie.'],
+    _: ['Too honest by half, my old mom said.', 'Somebody has to be.'],
+    witty: ['Honest, nosy and very well informed. A mail carrier.'],
     proud: ['I am. It\'s the whole job, really.'],
   });
   W('work.post.writes', {
@@ -903,7 +903,7 @@ talkPack('work3', () => {
     curious: ['I keep a tally. The baker writes more than anyone. Thank-you letters, for thank-you letters.'],
     dreamy: ['Grandmothers. To grandchildren. Their letters are always the heaviest.'],
     witty: ['Whoever had a row at the Badger the night before. Apologies by noon.'],
-    proud: ['Everyone, since I\'ve been postie. Folk write more when they trust it\'ll arrive.'],
+    proud: ['Everyone, since I\'ve been mail carrier. Folk write more when they trust it\'ll arrive.'],
     gloomy: ['The ones who\'ve fallen out. Long letters. Then nothing.'],
   });
   W('work.post.twodoors', {
@@ -913,7 +913,7 @@ talkPack('work3', () => {
     cheerful: ['Because getting a letter\'s lovely, even from next door!'],
   });
   W('work.post.toyou', {
-    _: ['...Me? Nobody, much. The postie\'s the one person nobody thinks to write to.', '...Funnily enough, nobody. I post myself one at Yule, sometimes. Don\'t tell.'],
+    _: ['...Me? Nobody, much. The mail carrier\'s the one person nobody thinks to write to.', '...Funnily enough, nobody. I post myself one at Yule, sometimes. Don\'t tell.'],
     cheerful: ['Oh, now and then! A thank-you for the round! ...Well. Once.'],
     ornery: ['Nobody. And I like it that way. ...Mostly.'],
     shy: ['...Nobody. It\'s all right.'],
@@ -921,7 +921,7 @@ talkPack('work3', () => {
     dreamy: ['...I sometimes imagine one comes. With my name on it. In a hand I don\'t know.'],
     witty: ['The Store, with a bill. We\'re very close.'],
     proud: ['Folk know where to find me. They don\'t need to write.'],
-    gloomy: ['Nobody. Nobody writes to the postie.'],
+    gloomy: ['Nobody. Nobody writes to the mail carrier.'],
     'spouse': ['{Spouse}, once, when we were courting. I still have it. It\'s worn soft.'],
   });
   W('work.post.promise', {
@@ -948,10 +948,10 @@ talkPack('work3', () => {
     gloomy: ['Now and then. Usually saying they\'re not coming home yet.'],
   });
   W('work.post.tale', {
-    _: ['Over the mountains! You must tell me. Was it ever lost?', 'You\'re a postie too, then! Of sorts. Did you ever get bitten?'],
+    _: ['Over the mountains! You must tell me. Was it ever lost?', 'You\'re a mail carrier too, then! Of sorts. Did you ever get bitten?'],
     cheerful: ['Oh, tell me! Every bit! Did it get there?'],
     curious: ['Over the mountains? How long did it take? Was it sealed? What happened to it?'],
-    witty: ['A wizard postie. Do you charge extra for the fireworks?'],
+    witty: ['A wizard mail carrier. Do you charge extra for the fireworks?'],
   });
   W('work.post.follow', {
     _: ['...Sometimes. Just to see where they come from. Then come home and tell everyone.', '...Some days. Then I see the bag and I think: who\'d take these round?'],
@@ -961,7 +961,7 @@ talkPack('work3', () => {
   });
   W('work.post.dogs', {
     _: ['There\'s one up the lane who sits in the middle and won\'t move. Just looks at me. Every morning.', 'Dogs! I know every dog by name. They know me by smell.'],
-    cheerful: ['Oh, they\'re lovely, mostly! I carry biscuits. I\'m very popular.'],
+    cheerful: ['Oh, they\'re lovely, mostly! I carry cookies. I\'m very popular.'],
     ornery: ['Dogs, geese and one cat that\'s worse than both.'],
     shy: ['...I go round the back way. It\'s longer, but the dog doesn\'t know about it.'],
     witty: ['The dogs and I have an arrangement. They bark, I run.'],
@@ -1059,7 +1059,7 @@ talkPack('work3', () => {
     dreamy: ['The old tales. Of the wandering days, before the Shire. They need to know where we came from.'],
     witty: ['How to sit still. It\'s the hardest lesson. I haven\'t mastered it either.'],
     proud: ['Letters, sums, the farthings and the old tales. A proper schooling. None of this play all day.'],
-    gloomy: ['Their letters. They\'ll forget half of them and write to me in thirty years misspelt.'],
+    gloomy: ['Their letters. They\'ll forget half of them and write to me in thirty years misspelled.'],
   });
   W('work.story.brightest', {
     _: ['Oh, I couldn\'t say. ...The quiet one at the back. Always the quiet one at the back.', 'Bright\'s not the thing. Kind is. And the kindest is the smallest.'],
@@ -1157,7 +1157,7 @@ talkPack('work3', () => {
     gloomy: ['...Maybe. Maybe that\'s enough.'],
   });
   W('work.story.theirturn', {
-    _: ['Let them tell me one! Ha! Yes. I\'d hear some marvellous nonsense.', 'Their turn... yes. Then I\'d always have new ones.'],
+    _: ['Let them tell me one! Ha! Yes. I\'d hear some marvelous nonsense.', 'Their turn... yes. Then I\'d always have new ones.'],
     cheerful: ['Oh, yes! A story day! Everyone tells one!'],
     proud: ['Hm. It would teach them to speak up. Very well.'],
   });
@@ -1225,7 +1225,7 @@ talkPack('work3', () => {
     shy: ['...They\'re good. They\'re easier than grown-ups. They just want to be held and fed.'],
     curious: ['One of them has worked out how to open the pantry. I\'m quite impressed. And quite worried.', 'They each have their own way of falling asleep. I\'ve been noticing.'],
     dreamy: ['They\'re all asleep in a heap like puppies just now. I could watch them for hours.', 'Little ones see everything new. Spend a day with them and the world is new again.'],
-    witty: ['I\'ve a nursery of tiny bandits. They\'ve taken the biscuits and the cat.', 'All present. Some of them twice, by the noise.'],
+    witty: ['I\'ve a nursery of tiny bandits. They\'ve taken the cookies and the cat.', 'All present. Some of them twice, by the noise.'],
     proud: ['Not a single tumble this week that didn\'t mend with a kiss. My nursery\'s the safest in the Shire.'],
     gloomy: ['Every one\'s got a cold. Every one\'s given it to me.'],
     'workLittle>5 ^1': ['{WorkLittle} of them today! I count heads every few minutes like a shepherd.'],
@@ -1234,13 +1234,13 @@ talkPack('work3', () => {
     'season=summer': ['We\'ve been in the garden all day. They\'re brown as nuts and twice as wriggly.'],
     'weather=rain': ['Rain, so we\'re indoors. Everyone\'s climbed everything.'],
     'hour=evening': ['Nearly home time. I can hear the parents coming. I\'ll miss them. For about ten minutes.'],
-    'kid': ['{Kid}\'s in with the rest. Doesn\'t get special treatment. Gets a special biscuit.'],
+    'kid': ['{Kid}\'s in with the rest. Doesn\'t get special treatment. Gets a special cookie.'],
     'register=fine': ['The children are thriving, thank you. One has learned to say "please" unprompted.'],
     'register=plain': ['Fed, washed, napped, fed again. That\'s the whole of it.'],
     'rift': ['Back home kids had screens. Here they\'ve got mud and me. Honestly? Better.'],
   });
   W('work.nanny.secret', {
-    _: ['A song for sleep, a story for quiet and a biscuit for everything else.', 'Same thing every day, at the same time. Little ones love knowing what\'s next.'],
+    _: ['A song for sleep, a story for quiet and a cookie for everything else.', 'Same thing every day, at the same time. Little ones love knowing what\'s next.'],
     cheerful: ['Singing! I sing everything. "Now we put our boots on" has a tune. So does "don\'t eat that".'],
     ornery: ['Never let them see you blink.'],
     shy: ['...I talk very softly. They lean in to listen and forget to shout.'],
@@ -1261,7 +1261,7 @@ talkPack('work3', () => {
     gloomy: ['"Night comes down and the day is done, and tomorrow\'s another one." ...It\'s not cheerful. It works.'],
   });
   W('work.nanny.sendoff', {
-    _: ['Ha! I\'ve sent off grown hobbits with it. The postie, once. In the doorway.', 'It does! I\'ve nodded off to it myself, mid-verse.'],
+    _: ['Ha! I\'ve sent off grown hobbits with it. The mail carrier, once. In the doorway.', 'It does! I\'ve nodded off to it myself, mid-verse.'],
     shy: ['...Thank you.'],
     witty: ['That\'s the idea. Half the parents come to collect and stay for a nap.'],
   });
@@ -1275,7 +1275,7 @@ talkPack('work3', () => {
     ornery: ['You come near my nursery with a squib and I\'ll turn you into a toad myself.'],
   });
   W('work.nanny.lost', {
-    _: ['None! ...Mislaid two. One was in the bread bin, asleep. One was in the coal scuttle, not asleep.', 'Lost? Never. Hidden from, frequently.'],
+    _: ['None! ...Mislaid two. One was in the bread box, asleep. One was in the coal scuttle, not asleep.', 'Lost? Never. Hidden from, frequently.'],
     cheerful: ['Ha! Only for a minute! He was under the table eating the cat\'s dinner!'],
     ornery: ['None. And it\'s not funny. Nearly once. It wasn\'t funny then either.'],
     shy: ['...None. I count them all the time. In my head. Even in my sleep.'],
@@ -1292,7 +1292,7 @@ talkPack('work3', () => {
   W('work.nanny.tired', {
     _: ['...It\'s the never sitting down. From the first one in to the last one out.', '...I\'m tired, if I\'m honest. Not cross-tired. Just tired in my bones.'],
     cheerful: ['...Oh, I\'m fine! I\'m fine. ...I could sleep standing up. But I\'m fine!'],
-    ornery: ['Tired? You try minding a nursery of hobbit children. Tired\'s a holiday.'],
+    ornery: ['Tired? You try minding a nursery of hobbit children. Tired\'s a vacation.'],
     shy: ['...I don\'t mind. It\'s just... a lot, some days.'],
     curious: ['I\'ve counted. I pick up a child two hundred times a day. My arms have noticed.'],
     dreamy: ['...The days are long but the years are short. That\'s what they say. They\'re right.'],
@@ -1303,7 +1303,7 @@ talkPack('work3', () => {
   W('work.nanny.tea', {
     _: ['A whole cup... I can\'t remember the last time I drank one hot. I\'ll do it. Today.', 'Tea. While they nap. Yes. Doctor\'s orders. Wizard\'s orders.'],
     ornery: ['Hmph. And who\'ll watch them? ...They\'re asleep. Fine. Tea.'],
-    cheerful: ['Ooh, yes! With a biscuit! A grown-up biscuit!'],
+    cheerful: ['Ooh, yes! With a cookie! A grown-up cookie!'],
     proud: ['I don\'t need a sit-down. ...But I\'ll have one.'],
   });
   W('work.nanny.sees', {
@@ -1359,7 +1359,7 @@ talkPack('work3', () => {
         { ap: 'jest', say: 'The Proudfoots will want it on their gate next.', to: 'proudfoots' },
         { ap: 'listen', say: '*You wait for the rest.*', label: 'Wait for the rest', to: 'deep', need: { open: 2 }, soft: true },
       ] },
-      home: { line: 'work.tinker.home', fx: { confide: { k: 'work.tinker.ping', t: '{Name} sends a ping towards home from the Relay every night, and nothing ever comes back', secret: true }, feel: 'drawn_out' }, go: [
+      home: { line: 'work.tinker.home', fx: { confide: { k: 'work.tinker.ping', t: '{Name} sends a ping toward home from the Relay every night, and nothing ever comes back', secret: true }, feel: 'drawn_out' }, go: [
         { ap: 'warm', say: 'Then keep sending. Somebody may be listening.', to: 'keep' },
         { ap: 'comfort', say: 'You\'re heard here. Every word.', to: 'heard' },
       ] },
@@ -1413,7 +1413,7 @@ talkPack('work3', () => {
     'register=plain': ['Wires and lamps and the tall thing. I keep \'em going. Don\'t ask me how.'],
   });
   W('work.tinker.relay', {
-    _: ['It\'s like a postie made of light. Words go up the mast and out through the air to anyone listening.', 'It catches voices from the air and passes them on. Like a well catches rain.'],
+    _: ['It\'s like a mail carrier made of light. Words go up the mast and out through the air to anyone listening.', 'It catches voices from the air and passes them on. Like a well catches rain.'],
     cheerful: ['It\'s magic! Well. Not magic. But it might as well be! You talk into it and someone hears you, miles off!'],
     ornery: ['It\'s a mast that does a job, and it\'d do it better if folk stopped hanging bunting on it.'],
     shy: ['...It listens. And it passes on what it hears. Like I do, sort of.'],
@@ -1422,11 +1422,11 @@ talkPack('work3', () => {
     witty: ['A very tall ear with opinions about weather.'],
     proud: ['The cleverest thing in this valley. And I keep it running. Draw your own conclusions.'],
     gloomy: ['A tall thing that breaks. And I\'m the one who climbs it.'],
-    'rift': ['It\'s a node. It meshes signal. Uh. A very tall postie. Made of light. Yeah, that.'],
+    'rift': ['It\'s a node. It meshes signal. Uh. A very tall mail carrier. Made of light. Yeah, that.'],
     '!rift': ['Honestly? I only know what the rift-folk told me. It talks to the sky. The sky talks back, sometimes.'],
   });
   W('work.tinker.home', {
-    _: ['...Every night I send a ping. Towards Neverdark. Just my name and "still here". Nothing comes back. I send it anyway.', '...It can\'t. I\'ve tried. Every night. Static. But I keep the channel open.'],
+    _: ['...Every night I send a ping. Toward Neverdark. Just my name and "still here". Nothing comes back. I send it anyway.', '...It can\'t. I\'ve tried. Every night. Static. But I keep the channel open.'],
     shy: ['...I send a little signal every night. Home. Nobody\'s answered. Don\'t tell anyone I do it.'],
     proud: ['...No. But I\'ve rigged it so it\'ll try forever, long after I stop climbing the mast.'],
     gloomy: ['...No. Static, every time. I don\'t know why I keep listening.'],
@@ -1453,7 +1453,7 @@ talkPack('work3', () => {
   });
   W('work.tinker.scrap', {
     _: ['The rifts drop it. Bits of the other side: wire, alloy, glass that glows. I go and pick it up when it\'s cooled.', 'From the scars the rifts leave. The grass grows back funny there, and there\'s treasure in the dirt.'],
-    cheerful: ['From the sky! Isn\'t that marvellous? The sky just drops it! Like apples!'],
+    cheerful: ['From the sky! Isn\'t that marvelous? The sky just drops it! Like apples!'],
     ornery: ['From where nobody else will go. Which is why I go.'],
     shy: ['...From the scars. I go early, before anyone\'s about.'],
     curious: ['Rift scars. Every piece is a puzzle. I found a little cog last week that turns by itself. By itself!'],
@@ -1471,7 +1471,7 @@ talkPack('work3', () => {
     'rift': ['Way safer than Neverdark. Nobody here\'s ever tried to sell me the scrap I just found.'],
   });
   W('work.tinker.throwaway', {
-    _: ['...Yes. I never thought of it like that. The sky\'s rubbish, made into lamps.', '...That\'s lovely. I might put that over the workshop door.'],
+    _: ['...Yes. I never thought of it like that. The sky\'s junk, made into lamps.', '...That\'s lovely. I might put that over the workshop door.'],
     shy: ['...Thank you. That\'s nice.'],
     'rift': ['...That\'s kind of my whole life, actually. Huh. Thanks, wizard.'],
   });
@@ -1544,11 +1544,11 @@ talkPack('work3', () => {
     open: { ask: 'work.lamp.open' },
     beats: {
       start: { line: 'work.lamp.start', go: [
-        { ap: 'ask', say: 'Which lamp\'s your favourite?', to: 'fav' },
+        { ap: 'ask', say: 'Which lamp\'s your favorite?', to: 'fav' },
         { ap: 'listen', say: '*You walk a little way with them.*', label: 'Walk a little way with them', to: 'walk' },
         { ap: 'jest', say: 'Why not ask the tinker for sun-glass and lie in?', to: 'sunglass' },
       ] },
-      fav: { line: 'work.lamp.fav', fx: { learn: ['work.lamp.fav', '{Name} has a favourite lamp on the round, and saves it for last.'] }, go: [
+      fav: { line: 'work.lamp.fav', fx: { learn: ['work.lamp.fav', '{Name} has a favorite lamp on the round, and saves it for last.'] }, go: [
         { ap: 'ask', say: 'Why that one?', to: 'why', need: { open: 2 }, soft: true },
         { ap: 'warm', say: 'I\'ll look for it tonight.', to: 'look' },
       ] },
@@ -1692,7 +1692,7 @@ talkPack('work3', () => {
   W('work.lamp.oncemore', {
     _: ['Once more round... aye, I\'ll check the green and the bridge. They\'re the windy ones.', 'Very well. One more look. A lamp left dark nags at me all night.'],
     proud: ['They\'ll all be lit. But I\'ll look. For you.'],
-    curious: ['Yes! I\'ll see which went out first. Then I\'ll know where the draught is.'],
+    curious: ['Yes! I\'ll see which went out first. Then I\'ll know where the draft is.'],
   });
 
   // --- The tinker again: wiring a hobbit-hole, and who taught them ------------------------
@@ -1748,7 +1748,7 @@ talkPack('work3', () => {
     proud: ['Properly. Every one of mine is tidy as a sampler. You can\'t see a single wire.'],
     gloomy: ['Badly, the first time. Then you go back and do it again. Then it works.'],
     'workCraftRetrofit ^1': ['There\'s one on now. The family\'s moved in with the grandparents while I crawl about. They bring me scones.'],
-    'rift': ['Basically a home retrofit. Light strip, a dish, a panel. Back home we did whole towers. This is cosier.'],
+    'rift': ['Basically a home retrofit. Light strip, a dish, a panel. Back home we did whole towers. This is cozier.'],
     '!rift': ['I do what the rift-folk showed me. Bend the glass, tuck the wire, and never let it near the bath.'],
   });
   W('work.wire.mess', {
@@ -1758,8 +1758,8 @@ talkPack('work3', () => {
     shy: ['...They\'re very kind. They leave me alone, which is what I like.'],
     curious: ['The children follow me everywhere. They want to know where the wire goes. So do I, sometimes.'],
     dreamy: ['They\'re quiet the night it comes on. Like they\'re seeing their own home new.'],
-    witty: ['They mind. Then they show it off to the neighbours. Then the neighbours ask me.'],
-    proud: ['They\'re honoured. I don\'t do just anyone\'s hole.'],
+    witty: ['They mind. Then they show it off to the neighbors. Then the neighbors ask me.'],
+    proud: ['They\'re honored. I don\'t do just anyone\'s hole.'],
     gloomy: ['There\'s always someone who hates it. You do the work anyway.'],
   });
   W('work.wire.grannies', {
@@ -1774,7 +1774,7 @@ talkPack('work3', () => {
     'rift': ['There\'s a granny who thinks I\'m a sort of goblin. Honestly? Fair.'],
   });
   W('work.wire.reading', {
-    _: ['Ha! Has she? Sitting under the neighbour\'s glow? I knew it!', 'Ha! I\'ll not say a word to her. Not a single word.'],
+    _: ['Ha! Has she? Sitting under the neighbor\'s glow? I knew it!', 'Ha! I\'ll not say a word to her. Not a single word.'],
     cheerful: ['Ha! Oh, that\'s wonderful! I\'ll leave her a little lamp on the step!'],
     witty: ['Then she\'s a customer. She just doesn\'t know it yet.'],
     ornery: ['Hmph. Typical. Wants the light and not the wire.'],
@@ -1782,7 +1782,7 @@ talkPack('work3', () => {
   W('work.wire.leave', {
     _: ['Let the lane persuade her. Yes. That\'s wise. I\'ll leave her be.', 'Fair. Nobody likes being talked into things. I\'ll wait.'],
     proud: ['I wasn\'t going to push. ...But yes. I\'ll wait.'],
-    curious: ['Let her see it in her neighbours\' windows. Yes. That\'s cleverer than arguing.'],
+    curious: ['Let her see it in her neighbors\' windows. Yes. That\'s cleverer than arguing.'],
   });
   W('work.wire.cares', {
     _: ['...I do care. Thanks for seeing it.', '...Ha. Don\'t tell anyone. I\'ve a reputation as a sparky menace.'],
@@ -1800,7 +1800,7 @@ talkPack('work3', () => {
     proud: ['I taught myself, and then taught the rift-folk a thing or two.'],
     gloomy: ['Mistakes. Lots of singed mistakes.'],
     'rift': ['My dad, back in Neverdark. He fixed signal towers. I fix one tower now. Feels like keeping him close.'],
-    '!rift': ['The rift-folk. I was the first hill-hobbit who asked. My mum still won\'t sit near the lamp.'],
+    '!rift': ['The rift-folk. I was the first hill-hobbit who asked. My mom still won\'t sit near the lamp.'],
   });
   W('work.wire.teach', {
     _: ['If they asked properly, and promised not to lick anything. Yes.', 'I would. I\'d like to. Somebody should know when I\'m up the mast.'],

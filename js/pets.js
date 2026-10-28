@@ -2,19 +2,19 @@
 // ---------------------------------------------------------------------------
 // Pets. Now and then a household takes one in: a stray tabby that's been
 // hanging round the inn yard, a puppy from a farm litter. The little ones
-// usually get to name it. Dogs go everywhere with their favourite person,
+// usually get to name it. Dogs go everywhere with their favorite person,
 // trotting at their heels down the lanes (and out to the pens with a herder);
 // cats keep near home, sit in the sun on the doorstep and wander off on their
 // own business. Both come in at night and out of the rain. Folk stop to
 // stroke them, which does everybody good, and a pet by the fire makes a
-// home cosier.
+// home cozier.
 // ---------------------------------------------------------------------------
 
 const PET_NAMES = { cat: ['Pudding', 'Mittens', 'Smudge', 'Biscuit', 'Tansy', 'Marmalade', 'Socks', 'Pip', 'Nutmeg', 'Thimble', 'Crumpet', 'Bramble'], dog: ['Grip', 'Fang', 'Wolf', 'Bounder', 'Rufus', 'Patch', 'Barley', 'Toby', 'Scamp', 'Bess', 'Nell', 'Biscuit'] };
-const PET_COATS = { cat: [['#d8873a', '#b86a2a', 'ginger'], ['#3a3438', '#24202a', 'black'], ['#9a948e', '#6e6a66', 'grey'], ['#e8e0d0', '#3a3438', 'black-and-white'], ['#8a6a4a', '#5a4430', 'tabby']], dog: [['#8a5a32', '#5a3a1e', 'brown'], ['#2a2628', '#f0ece4', 'black-and-white'], ['#d8a85a', '#b8883a', 'golden'], ['#a89a8a', '#7a6e62', 'grey']] };
+const PET_COATS = { cat: [['#d8873a', '#b86a2a', 'ginger'], ['#3a3438', '#24202a', 'black'], ['#9a948e', '#6e6a66', 'gray'], ['#e8e0d0', '#3a3438', 'black-and-white'], ['#8a6a4a', '#5a4430', 'tabby']], dog: [['#8a5a32', '#5a3a1e', 'brown'], ['#2a2628', '#f0ece4', 'black-and-white'], ['#d8a85a', '#b8883a', 'golden'], ['#a89a8a', '#7a6e62', 'gray']] };
 MOODLETS.new_pet = ['We\'ve a new {x}!', 0.14, 1440, ['Our very own pet!', 'I\'ve never been so happy.']];
 
-// --- Sprites: side-on facing right (sit, walk ×2, sleep), and coming towards
+// --- Sprites: side-on facing right (sit, walk ×2, sleep), and coming toward
 // you or going away (walk ×2 each), so a pet crossing the screen up or down
 // doesn't slide along sideways ---------------------------------------------------
 const PET_SPR = {};
@@ -88,7 +88,7 @@ function petsDaily() {
   adoptPet(h, kind, res.find((v) => v.isChild()) || null);
 }
 
-// --- Behaviour ---------------------------------------------------------------
+// --- Behavior ---------------------------------------------------------------
 function petWalkable(x, y) { const tx = Math.floor(x / 16), ty = Math.floor((y - 2) / 16); return inMap(tx, ty) && walkable(tx, ty); }
 function petClear(x0, y0, x1, y1) {
   const n = Math.ceil(dist(x0, y0, x1, y1) / 6);
@@ -127,7 +127,7 @@ function stepPet(p, tx, ty, speed, dt) {
   p.walk = (p.walk || 0) + moved;
   return false;
 }
-// Which way a pet shows as it moves: side-on, towards you or away, keeping
+// Which way a pet shows as it moves: side-on, toward you or away, keeping
 // the view it has until the other axis clearly wins; and it only turns round
 // once it has been heading the other way for a moment, so a dog dithering
 // about a spot doesn't flick left and right.
@@ -194,7 +194,7 @@ function updatePets(dtMin, hour) {
       }
       continue;
     }
-    // otherwise pottering about near home: sit a while, wander a bit
+    // otherwise puttering about near home: sit a while, wander a bit
     p.t -= dtMin;
     if (p.state === 'walk' && p.tx == null) p.state = 'sit'; // left behind by its person
     if (p.state === 'walk' && p.tx != null) { if (stepPet(p, p.tx, p.ty, p.kind === 'cat' ? 9 : 14, dtMin)) { p.state = Math.random() < (p.kind === 'cat' ? 0.4 : 0.15) ? 'sleep' : 'sit'; p.t = R.f(8, p.kind === 'cat' ? 60 : 25); p.tx = null; } continue; }
@@ -237,7 +237,7 @@ ACTIONS.pet_pet = {
 ACTION_NAMES.pet_pet = 'Fussing over pets';
 HABIT_KEYS.push('pet_pet');
 
-// A pet by the fire makes home cosier.
+// A pet by the fire makes home cozier.
 {
   const sf = stateFeelings;
   stateFeelings = function (v) {

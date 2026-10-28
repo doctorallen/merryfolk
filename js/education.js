@@ -18,7 +18,7 @@ const EDU_LEVELS = [
 function eduLevel(e) { let out = EDU_LEVELS[0]; for (const l of EDU_LEVELS) if (e >= l[0]) out = l; return out; }
 function eduLevelIndex(e) { let i = 0; EDU_LEVELS.forEach((l, k) => { if (e >= l[0]) i = k; }); return i; }
 
-// Grown-ups arriving from elsewhere (founders, travellers) bring some schooling.
+// Grown-ups arriving from elsewhere (founders, travelers) bring some schooling.
 function startingEducation(genes, age) {
   const base = clamp(0.08 + genes.wit * 0.38 + genes.curiosity * 0.22 + R.f(-0.12, 0.16), 0.04, 0.92);
   if (age >= CHILD_DAYS) return base;
@@ -89,7 +89,7 @@ function eduEffects(v) {
   if (e >= 0.4) out.push('Prefers a book or a cup of tea to a rowdy evening');
   else if (v.isGrown()) out.push('Happiest with simple pleasures: a pint, a pipe, a song');
   if (e >= 0.5) out.push('Knows a toadstool from a mushroom');
-  if (e >= 0.45 && v.isGrown()) out.push('Suited to lettered trades (herbalist, postie, storyteller, brewer)');
+  if (e >= 0.45 && v.isGrown()) out.push('Suited to lettered trades (herbalist, mail carrier, storyteller, brewer)');
   if (e >= 0.6 && v.isGrown()) out.push('Teaches little ones and passes on what they know in conversation');
   return out;
 }
@@ -197,7 +197,7 @@ const LINES = {
     fine: ['A soft rain, the farmers\' friend, though I\'d rather it fell on someone else\'s hat.', 'Splendid weather for reading by the window.'],
   },
   snow: {
-    child: ['Snow! Let\'s make a snow-hobbit!', 'Can we go sledging?'],
+    child: ['Snow! Let\'s make a snow-hobbit!', 'Can we go sledding?'],
     plain: ['Snow\'s coming down thick. Mind the path.', 'Cold enough to freeze your pipe.'],
     common: ['The snow makes everything look so peaceful.', 'I do love a snowy morning, as long as I\'m indoors.'],
     fine: ['There is a particular hush to a snowy day that I find most agreeable.', 'Winter has drawn its white blanket over the Shire again.'],
@@ -307,7 +307,7 @@ const CHAT = {
   // a better-read villager passes something on
   explain: {
     common: ['Did you know you can tell the time by which flowers are open?', 'If you plant beans near the corn, they help each other grow.', 'Willow bark is good for a headache, you know.'],
-    fine: ['The reason the river floods in spring is the snow melting in the far hills.', 'Mint and feverfew together will see off a cold, if you catch it early.', 'Bees visit one kind of flower at a time, which is why the honey tastes of clover.', 'The stars that look like a plough point the way north.'],
+    fine: ['The reason the river floods in spring is the snow melting in the far hills.', 'Mint and feverfew together will see off a cold, if you catch it early.', 'Bees visit one kind of flower at a time, which is why the honey tastes of clover.', 'The stars that look like a plow point the way north.'],
   },
   puzzled: {
     child: ['What does that mean?', 'Ooh! Tell me more!'],
@@ -329,7 +329,7 @@ const CHAT = {
   court: {
     plain: ['You look a picture today.', 'Fancy a walk down by the river?', '*blushes*'],
     common: ['You look lovely today.', 'Would you walk with me a while?', 'Fancy a picnic tomorrow?'],
-    fine: ['Your company is the brightest part of my day.', 'Might I recite you a little verse? I wrote it myself.', 'Would you do me the honour of a stroll?'],
+    fine: ['Your company is the brightest part of my day.', 'Might I recite you a little verse? I wrote it myself.', 'Would you do me the honor of a stroll?'],
   },
 };
 
@@ -344,7 +344,7 @@ function fillLine(v, text, ctx = {}) {
     .replace(/\{friend\}/g, friendId ? friendId.first : 'old friends')
     .replace(/\{sweet\}/g, sweet ? sweet.first : 'a certain someone')
     .replace(/\{job\}/g, ctx.job || (v.job ? JOBS[v.job].label.toLowerCase() : 'worker'))
-    .replace(/\{parent\}/g, parent ? (parent.genes.sex === 'f' ? 'mum' : 'dad') : 'mum')
+    .replace(/\{parent\}/g, parent ? (parent.genes.sex === 'f' ? 'mom' : 'dad') : 'mom')
     .replace(/\{season\}/g, World.season)
     .replace(/\{home\}/g, v.home() ? v.home().name : 'home')
     .replace(/\{building\}/g, proj ? projectLabel(proj).replace(/^The /, 'the ') : 'the new hole')
@@ -363,7 +363,7 @@ function lineFor(v, topic, ctx) {
   const table = LINES[topic] || CHAT[topic];
   if (!table) return null;
   if (reg === 'baby') return R.pick(LINES.baby.baby);
-  if (reg === 'toddler') return fillLine(v, R.pick(TODDLER[topic] || TODDLER.idle), ctx).replace(/\bmum\b/, 'Mama').replace(/\bdad\b/, 'Dada');  // the rift-minded slip into rift-talk, more often the further they've gone
+  if (reg === 'toddler') return fillLine(v, R.pick(TODDLER[topic] || TODDLER.idle), ctx).replace(/\bmom\b/, 'Mama').replace(/\bdad\b/, 'Dada');  // the rift-minded slip into rift-talk, more often the further they've gone
   const rl = riftLine(v, topic, ctx);
   if (rl) return rl;
   // little ones don't say grown-up things

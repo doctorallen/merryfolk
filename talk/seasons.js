@@ -101,7 +101,7 @@ talkPack('seasons', () => {
   frags('season.sky', ['the sky', 'the weather', 'the clouds', 'whatever\'s up there']);
 
   // --- Today's weather ----------------------------------------------------------------
-  const WX_LABEL = { rain: 'Wet enough for you?', snow: 'Snow on the lanes', fog: 'This fog', clear: 'A fine day for it', cloudy: 'A grey old sky' };
+  const WX_LABEL = { rain: 'Wet enough for you?', snow: 'Snow on the lanes', fog: 'This fog', clear: 'A fine day for it', cloudy: 'A gray old sky' };
   addThread({
     id: 'season.weather', cool: 1, weight: 1,
     label: (F) => (F.storm ? 'This storm' : WX_LABEL[F.weather] || 'The weather'),
@@ -161,7 +161,7 @@ talkPack('seasons', () => {
       memory2: { line: 'season.weather.memory2', fx: { trust: 0.03, remember: 'Told the wizard about the worst weather I ever saw.', rv: 1 }, end: true },
       shared: { line: 'season.weather.shared', fx: { trust: 0.03, joke: { k: 'season.drift', t: 'The wizard got stuck in a snowdrift halfway to Bree.' } }, end: true },
       tale: { line: 'season.weather.tale', fx: { fond: 0.02 }, go: [
-        { ap: 'tale', say: 'Grey ones, knitted by a very patient witch. Earflaps and all.', to: 'hats' },
+        { ap: 'tale', say: 'Gray ones, knitted by a very patient witch. Earflaps and all.', to: 'hats' },
         { ap: 'jest', say: 'I may have made up the hats. The wolves were real.', to: 'end' },
       ] },
       hats: { line: 'season.weather.hats', fx: { joke: { k: 'season.wolfhats', t: 'The wolves of the north wear knitted hats with earflaps.' } }, end: true },
@@ -177,7 +177,7 @@ talkPack('seasons', () => {
     { if: { weather: 'snow' }, text: ['Snow at last, {name}! Are your toes still with you?', 'There\'s snow on your eyebrows, {name}. It suits you.'] },
     { if: { weather: 'fog' }, text: ['Is that you, {name}? In all this fog I can\'t be sure.', 'Thick fog this morning, {name}. I nearly greeted a haystack.'] },
     { if: { weather: 'clear' }, text: ['A fine day, {name}. Not a cloud from here to the hills.', 'What a sky, {name}! Somebody\'s polished it.'] },
-    { if: { weather: 'cloudy' }, text: ['Grey old sky today, {name}. Can\'t make up its mind.', 'Clouds sitting on the hill, {name}. Rain later, do you think?'] },
+    { if: { weather: 'cloudy' }, text: ['Gray old sky today, {name}. Can\'t make up its mind.', 'Clouds sitting on the hill, {name}. Rain later, do you think?'] },
     { if: { stage: 'child' }, text: ['What do you make of the sky today, young {name}?', 'Have you been out in it yet, {name}? The weather, I mean.'] },
   ]);
   lines('season.weather.start', [
@@ -187,7 +187,7 @@ talkPack('seasons', () => {
     { if: { weather: 'snow' }, text: ['Snow! Proper snow, the squeaky kind.', 'The lane\'s a foot deep and the children are a foot deeper.', 'Snow on the hill and snow in my boots.'] },
     { if: { weather: 'fog' }, text: ['Can\'t see the end of my own garden. I counted the cabbages to be sure.', 'Fog like porridge this morning. I said good morning to a gatepost.', 'Thick as wool, this fog. The geese keep walking into each other.'] },
     { if: { weather: 'clear' }, text: ['Not a cloud. I keep looking for the catch.', 'A blue sky like this wants a picnic in it.', 'Lovely day. Lovely. The sort you remember in winter.'] },
-    { if: { weather: 'cloudy' }, text: ['Grey and grumpy, the sky is. Like somebody\'s uncle.', 'Can\'t make up its mind, this sky.', 'Clouds sitting on the hill like a hen on eggs.'] },
+    { if: { weather: 'cloudy' }, text: ['Gray and grumpy, the sky is. Like somebody\'s uncle.', 'Can\'t make up its mind, this sky.', 'Clouds sitting on the hill like a hen on eggs.'] },
     { if: { temper: 'ornery', weather: 'rain' }, text: ['Rain. Again. I\'ve stopped speaking to it.', 'If it rains on my washing once more I\'m moving to Bree.'] },
     { if: { temper: 'ornery', weather: 'clear' }, text: ['Too hot. Mark my words, we\'ll pay for this later.', 'Sunshine. Everyone grinning like fools. Hmph.'] },
     { if: { temper: 'ornery', weather: 'snow' }, text: ['Snow. Pretty for an hour, then a nuisance till spring.', 'Who\'s going to sweep all this? Not the sky, I\'ll tell you that.'] },
@@ -208,14 +208,14 @@ talkPack('seasons', () => {
     { if: { temper: 'witty', weather: 'fog' }, text: ['Fog. Lovely. Now I can\'t see the people I\'m avoiding either.'] },
     { if: { temper: 'proud' }, text: ['Thistledown weather. Better than anyone else\'s, even when it isn\'t.', 'We get a better class of weather here. Everyone says so.'] },
     { if: { temper: 'proud', weather: 'rain' }, text: ['My hole hasn\'t let in a drop. Not one. I did the drains myself.'] },
-    { if: { temper: 'gloomy' }, text: ['It\'ll rain. If it isn\'t raining, it\'s about to.', 'Grey again. Suits me, I suppose.'] },
+    { if: { temper: 'gloomy' }, text: ['It\'ll rain. If it isn\'t raining, it\'s about to.', 'Gray again. Suits me, I suppose.'] },
     { if: { temper: 'gloomy', weather: 'clear' }, text: ['Sunny. It won\'t last. Nothing does.', 'Bright today. That only means tomorrow will be worse.'] },
     { if: { temper: 'gloomy', weather: 'rain' }, text: ['Rain. Well. At least it\'s honest about it.'] },
     { if: { temper: 'curious' }, text: ['Do you know why clouds go that way and not the other? I\'ve been wondering all morning.', 'Where does weather come from? Is there a place? Have you been?'] },
     { if: { temper: 'curious', weather: 'fog' }, text: ['Where does fog go when it lifts? Does it just go up? Into what?'] },
     { if: { temper: 'curious', weather: 'snow' }, text: ['I caught a snowflake on my sleeve. Six points. Always six. Why six?'] },
     { if: { stage: 'child' }, text: ['Is weather magic? Is it YOUR magic?', 'I don\'t care what the weather does as long as there\'s pudding.'] },
-    { if: { stage: 'child', weather: 'rain' }, text: ['I jumped in EVERY puddle. Mum says that\'s too many.', 'It\'s raining! Can you make it rain lemonade?'] },
+    { if: { stage: 'child', weather: 'rain' }, text: ['I jumped in EVERY puddle. Mom says that\'s too many.', 'It\'s raining! Can you make it rain lemonade?'] },
     { if: { stage: 'child', weather: 'snow' }, text: ['SNOW! Can you make more? A LOT more?', 'I ate some snow. It tasted of nothing. Brilliant.'] },
     { if: { stage: 'child', weather: 'clear' }, text: ['It\'s sunny so we\'re not allowed indoors. Brilliant.', 'The sun\'s out! I\'m going to be out ALL day.'] },
     { if: { stage: 'child', weather: 'fog' }, text: ['I got lost in the fog and found a frog. A FOG frog.', 'I can\'t see my house! I can\'t see YOUR house! Wizard, where are we?'] },
@@ -226,13 +226,13 @@ talkPack('seasons', () => {
     { if: { rift: true }, text: ['Real weather. Water just falling out of the sky, for free. Still not used to it.', 'In Neverdark the rain was warm and tasted of battery. This is better.'] },
     { if: { rift: true, weather: 'snow' }, text: ['Snow is frozen rain that falls slow on purpose. Nobody told me. It\'s amazing.'] },
     { if: { rift: true, weather: 'fog' }, text: ['Fog here is just fog. No neon in it. Feels undressed.'] },
-    { if: { rift: true, weather: 'clear' }, text: ['Blue. The whole sky, blue. Back home it was ad-coloured. Mostly pink.'] },
+    { if: { rift: true, weather: 'clear' }, text: ['Blue. The whole sky, blue. Back home it was ad-colored. Mostly pink.'] },
     { if: { job: 'farmer', weather: 'rain' }, text: ['Rain\'s good for the barley. Bad for my back. Can\'t have both.'] },
     { if: { job: 'farmer', weather: 'clear' }, text: ['Good drying weather. If it holds, we\'ll have the hay in by Highday.'] },
     { if: { job: 'fisher', weather: 'rain' }, text: ['Fish bite better in the rain. So do midges.'] },
     { if: { job: 'fisher', weather: 'fog' }, text: ['Fog on the river. Can\'t see the float, can\'t see the fish. Peaceful, though.'] },
     { if: { job: 'postie', weather: 'rain' }, text: ['Every letter in my bag is soggy. Somebody\'s getting a love letter in blots.'] },
-    { if: { job: 'postie', weather: 'snow' }, text: ['Snow\'s up to the letterboxes. I\'ve posted three letters into drifts.'] },
+    { if: { job: 'postie', weather: 'snow' }, text: ['Snow\'s up to the mailboxes. I\'ve mailed three letters into drifts.'] },
     { if: { job: 'miller', weather: 'rain' }, text: ['River\'s up, so the wheel\'s fairly singing. Good milling weather.'] },
     { if: { job: 'herder', weather: 'rain' }, text: ['Wet sheep. There\'s no smell like it. Thank goodness.'] },
     { if: { job: 'brewer' }, text: ['Any weather\'s brewing weather. Hot, they want it cold. Cold, they want it mulled.'] },
@@ -246,7 +246,7 @@ talkPack('seasons', () => {
     { if: { likes: 'sunshine', weather: 'clear' }, pri: 1, text: ['Sun on my face. Give me this and you can keep the rest.'] },
     { if: { likes: 'sunshine', weather: 'rain' }, pri: 1, text: ['I miss the sun. It\'s been gone a whole morning and I miss it already.'] },
     { if: { sick: true }, pri: 2, text: ['This weather\'s got into my chest. *cough* Sorry.'] },
-    { if: { hazard: 'drought', hazardOn: true }, pri: 2, text: ['Still no rain. The garden\'s crackling like a fire.', 'Dry as a biscuit. The well bucket comes up half empty.'] },
+    { if: { hazard: 'drought', hazardOn: true }, pri: 2, text: ['Still no rain. The garden\'s crackling like a fire.', 'Dry as a cookie. The well bucket comes up half empty.'] },
     { if: { hazard: 'frost', hazardOn: true }, pri: 2, text: ['Hard frost. My breath froze on the door-knob.', 'Cold enough to freeze the words in your mouth. Listen: they\'re clinking.'] },
     { if: { hazard: 'flood', hazardOn: true }, pri: 2, text: ['The river\'s in the meadow. Right in it! Like it owns the place.'] },
     { if: { season: 'winter', weather: 'clear' }, text: ['Bright and bitter. The kind of cold that stings your nose.'] },
@@ -263,7 +263,7 @@ talkPack('seasons', () => {
     { if: { weather: 'rain' }, text: ['Not my doing, I swear. I asked for a light drizzle.', 'I\'ve had a word with the clouds. They said no.'] },
     { if: { weather: 'clear' }, text: ['You\'re welcome. It took all morning.', 'I polished it myself. Mind the corners.'] },
     { if: { weather: 'snow' }, text: ['I sneezed. Sorry. It happens with wizards.', 'I may have shaken out my hat a bit hard.'] },
-    { if: { weather: 'fog' }, text: ['My pipe got a bit out of hand. I do apologise.', 'That\'s my pipe-smoke. I had a very long think.'] },
+    { if: { weather: 'fog' }, text: ['My pipe got a bit out of hand. I do apologize.', 'That\'s my pipe-smoke. I had a very long think.'] },
     { if: { weather: 'cloudy' }, text: ['The sky\'s in a sulk. I said something about its blue.', 'I\'ve folded the sun away for cleaning.'] },
   ]);
   lines('season.weather.far', [
@@ -281,7 +281,7 @@ talkPack('seasons', () => {
     { if: { temper: 'proud' }, text: ['I\'d not want it fixed. I\'ve managed weather all my life.'] },
     { if: { temper: 'gloomy' }, text: ['No. Nobody can fix it. That\'s rather the point of weather.'] },
     { if: { temper: 'dreamy' }, text: ['I think the weather fixes itself, in the end. We\'re just here for it.'] },
-    { if: { stage: 'child' }, text: ['You CAN do weather. I know you can. Do snow! Do snow now!', 'Make it rain sweets. Go on. I won\'t tell.'] },
+    { if: { stage: 'child' }, text: ['You CAN do weather. I know you can. Do snow! Do snow now!', 'Make it rain candy. Go on. I won\'t tell.'] },
     { if: { stage: 'elder' }, text: ['Your sort said that eighty years ago, and it\'s rained ever since.'] },
     { if: { rift: true }, text: ['Back home they sold weather. You paid extra for sun. Here it just... happens.'] },
     { if: { weather: 'snow' }, text: ['Well, whatever you did, stop doing it, or we\'ll never see the road again.'] },
@@ -294,7 +294,7 @@ talkPack('seasons', () => {
     { if: { temper: 'cheerful' }, text: ['Ha! I\'ll bake you two, and you can throw in a sunset.'] },
     { if: { temper: 'proud' }, text: ['My seed-cake is worth a week of sun, I\'ll have you know.'] },
     { if: { temper: 'shy' }, text: ['...I could bake one. If you really wanted.'] },
-    { if: { stage: 'child' }, text: ['I haven\'t got a seed-cake. I\'ve got half a biscuit. Is that a Highday?'] },
+    { if: { stage: 'child' }, text: ['I haven\'t got a seed-cake. I\'ve got half a cookie. Is that a Highday?'] },
     { if: { job: 'baker' }, pri: 1, text: ['A baker\'s seed-cake for a fine Highday? You\'re robbing me. Done.'] },
   ]);
   lines('season.weather.rainbow', [
@@ -304,13 +304,13 @@ talkPack('seasons', () => {
     { if: { temper: 'dreamy' }, text: ['A rainbow\'s worth more than seed-cake. I\'d give three.'] },
   ]);
   lines('season.weather.choose', [
-    { text: ['A soft grey morning, then sun after second breakfast. Then rain at night, on the window.', 'Warm, with a breeze. The kind that brings the smell of the bakery.'] },
+    { text: ['A soft gray morning, then sun after second breakfast. Then rain at night, on the window.', 'Warm, with a breeze. The kind that brings the smell of the bakery.'] },
     { if: { likes: 'rain' }, text: ['Rain. Soft, all day, and nowhere to be. That\'s my perfect day.'] },
     { if: { likes: 'sunshine' }, text: ['Sun. Hot sun. Me on the bank with my boots off.'] },
     { if: { temper: 'ornery' }, text: ['I\'d have it do as it\'s told, for once.'] },
     { if: { temper: 'dreamy' }, text: ['Snow at night and sun in the morning, so you wake up to a new world.'] },
     { if: { temper: 'gloomy' }, text: ['Overcast. Nothing expected of anybody. That\'s my sort of day.'] },
-    { if: { temper: 'witty' }, text: ['Rain on my neighbours\' washing and sun on mine.'] },
+    { if: { temper: 'witty' }, text: ['Rain on my neighbors\' washing and sun on mine.'] },
     { if: { stage: 'child' }, text: ['Snow in summer! Then we could have snowballs AND strawberries.'] },
     { if: { job: 'farmer' }, text: ['Rain at night, sun by day. Then the barley grows and I sleep. Perfect.'] },
     { if: { job: 'fisher' }, text: ['Overcast and still, with a bit of drizzle on the water. Fish love it.'] },
@@ -336,7 +336,7 @@ talkPack('seasons', () => {
     { if: { rift: true }, text: ['Mind it? I still go out and stand in it. Just to feel it.'] },
   ]);
   lines('season.weather.cosy', [
-    { text: ['Stay in. Put the kettle on. Find a biscuit I\'d forgotten about.', 'Sit by the window and watch everyone else get wet.'] },
+    { text: ['Stay in. Put the kettle on. Find a cookie I\'d forgotten about.', 'Sit by the window and watch everyone else get wet.'] },
     { if: { weather: 'rain' }, text: ['Fire lit, feet up, and the rain on the round window. Bliss.', 'Bake something. The smell\'s better on a wet day.'] },
     { if: { weather: 'snow' }, text: ['Snowballs, then hot cocoa, then more snowballs.', 'Stay in by the fire with my toes in a basin of hot water.'] },
     { if: { weather: 'clear' }, text: ['Picnic. Down by the river with the good basket.', 'Lie in the long grass and do nothing at all, very slowly.'] },
@@ -351,14 +351,14 @@ talkPack('seasons', () => {
     { if: { temper: 'dreamy' }, text: ['Sit at the window and watch the drops race. I always back the slow one.'] },
     { if: { temper: 'witty' }, text: ['Nap. Then a nap to recover from the nap.'] },
     { if: { temper: 'gloomy' }, text: ['Sit. Think about things. Not good things, mostly.'] },
-    { if: { stage: 'child' }, text: ['Build a den out of all the chairs. Mum hates it.', 'Go OUT in it! Obviously!'] },
+    { if: { stage: 'child' }, text: ['Build a den out of all the chairs. Mom hates it.', 'Go OUT in it! Obviously!'] },
     { if: { spouse: (s) => !!s }, text: ['Me and {spouse} by the fire, and the door shut on the world.'] },
     { if: { hour: 'evening' }, text: ['Supper early, bed early, and the rain to sing me off.'] },
   ]);
   lines('season.weather.supper', [
     { text: ['Two second suppers. I\'ve been training for years.', 'Ha! Second supper\'s not optional on a day like this.'] },
     { if: { temper: 'witty' }, text: ['Second supper is the safe amount. Third is when it gets exciting.'] },
-    { if: { stage: 'child' }, text: ['Second SUPPER? Is that allowed? Don\'t tell Mum.'] },
+    { if: { stage: 'child' }, text: ['Second SUPPER? Is that allowed? Don\'t tell Mom.'] },
     { if: { temper: 'proud' }, text: ['My second supper is better than most folk\'s first.'] },
   ]);
   lines('season.weather.invite', [
@@ -373,7 +373,7 @@ talkPack('seasons', () => {
     { text: ['Everything takes twice as long and comes out half as well.', 'You learn the weather, in a trade. It\'s the first thing you learn.'] },
     { if: { job: 'farmer' }, text: ['The rain and I have an arrangement. It comes when I don\'t want it.', 'Sow in the wet, reap in the dry, and pray the two don\'t swap.'] },
     { if: { job: 'fisher' }, text: ['The fish don\'t care about the weather. I do. My feet do.'] },
-    { if: { job: 'postie' }, text: ['Rain, snow, fog. The post goes through. Soggy, but through.'] },
+    { if: { job: 'postie' }, text: ['Rain, snow, fog. The mail goes through. Soggy, but through.'] },
     { if: { job: 'miller' }, text: ['Too much rain and the wheel races. Too little and it sulks. Like a pony.'] },
     { if: { job: 'baker' }, text: ['Damp gets in the flour. Then the bread won\'t rise, and nor will I.'] },
     { if: { job: 'brewer' }, text: ['Hot days spoil a brew. Cold days slow it. I mostly worry.'] },
@@ -381,7 +381,7 @@ talkPack('seasons', () => {
     { if: { job: 'woodwright' }, text: ['Timber moves with the weather. Swells in the wet, splits in the dry. Like a cat.'] },
     { if: { job: 'herder' }, text: ['Sheep hate rain. Cows ignore it. Pigs love it. I\'m with the sheep.'] },
     { if: { job: 'orchardist' }, text: ['A late frost and the blossom\'s gone. One night, and no apples all year.'] },
-    { if: { job: 'grower' }, text: ['Leaf wants sun to cure. Rain at the wrong time and it\'s mould.'] },
+    { if: { job: 'grower' }, text: ['Leaf wants sun to cure. Rain at the wrong time and it\'s mold.'] },
     { if: { job: 'herbalist' }, text: ['Each herb wants picking in its weather. Mint in the wet, thyme in the sun.'] },
     { if: { job: 'tinker' }, text: ['Rust. Weather means rust. I spend half my life oiling things.'] },
     { if: { job: 'storyteller' }, text: ['Bad weather fills my benches. Nobody wants a story in the sunshine.'] },
@@ -390,7 +390,7 @@ talkPack('seasons', () => {
   ]);
   lines('season.weather.tip', [
     { text: ['Do the dry work first, and save the wet work for when you\'re wet anyway.', 'Goose grease on your boots. Old trick. Smells, but works.'] },
-    { if: { job: 'farmer' }, text: ['Plough across the slope, not down it. The rain stays where you want it.'] },
+    { if: { job: 'farmer' }, text: ['Plow across the slope, not down it. The rain stays where you want it.'] },
     { if: { job: 'fisher' }, text: ['Try the deep pool under the willow in the rain. Trout hide there.'] },
     { if: { job: 'baker' }, text: ['Keep the flour by the oven wall. Warm and dry, like a cat.'] },
     { if: { job: 'postie' }, text: ['Oilcloth round the letters, and run on the downhill bits.'] },
@@ -434,10 +434,10 @@ talkPack('seasons', () => {
   lines('season.weather.memory2', [
     { text: ['What anyone does. Put the kettle on and waited it out, all together.', 'We crowded into the biggest hole and sang till it stopped. Took two days.'] },
     { if: { stage: 'elder' }, text: ['We shared everything. Every jar, every log. Nobody went short. That was the old way.'] },
-    { if: { stage: 'child' }, text: ['I cried a bit. Then Mum made toast. Then it was fine.'] },
+    { if: { stage: 'child' }, text: ['I cried a bit. Then Mom made toast. Then it was fine.'] },
     { if: { temper: 'gloomy' }, text: ['Nothing. There was nothing to be done. You just watch, and then you dig.'] },
     { if: { temper: 'cheerful' }, text: ['Laughed! What else? And there was cake, which helped.'] },
-    { if: { temper: 'proud' }, text: ['I organised the lot. Who went where, who carried what. Somebody had to.'] },
+    { if: { temper: 'proud' }, text: ['I organized the lot. Who went where, who carried what. Somebody had to.'] },
     { if: { temper: 'dreamy' }, text: ['I stood at the window all night. I\'ve never seen anything so beautiful, or so frightening.'] },
     { if: { temper: 'witty' }, text: ['Complained, mostly. It didn\'t help, but it passed the time.'] },
     { if: { stage: 'child' }, text: ['Hid in the pantry. With the jam. It was fine in the end.'] },
@@ -492,7 +492,7 @@ talkPack('seasons', () => {
       start: { line: 'season.season.start', go: [
         { ap: 'ask', say: 'And the work? What does {season} ask of you?', to: 'work' },
         { ap: 'share', say: 'season.season.road', label: 'Tell them how {season} is on the road', to: 'road' },
-        { ap: 'ask', say: 'Is it your favourite time of year?', to: 'fav' },
+        { ap: 'ask', say: 'Is it your favorite time of year?', to: 'fav' },
       ] },
       work: { line: 'season.season.work', go: [
         { ap: 'warm', say: 'Hard work, that. The valley\'s lucky to have you.', to: 'hard' },
@@ -579,7 +579,7 @@ talkPack('seasons', () => {
     { if: { stage: 'child', season: 'autumn' }, text: ['Conkers! I\'ve got a fourteener. It\'s beaten everyone.'] },
     { if: { stage: 'child', season: 'spring' }, text: ['Baby lambs! And frogspawn! I\'ve got a jar of it under my bed.'] },
     { if: { stage: 'elder' }, text: ['At my age? That I\'m here to see another one. Everything else is gravy.'] },
-    { if: { rift: true }, text: ['Seasons! Back home it was the same every day. Same heat, same rain, same neon.', 'The way the whole world changes colour. Nobody had to program it.'] },
+    { if: { rift: true }, text: ['Seasons! Back home it was the same every day. Same heat, same rain, same neon.', 'The way the whole world changes color. Nobody had to program it.'] },
     { if: { job: 'farmer', season: 'spring' }, text: ['Sowing. The first furrow of the year. Nothing like it.'] },
     { if: { job: 'orchardist', season: 'spring' }, text: ['Blossom. A whole orchard of it. I walk through it slow, like a bride.'] },
     { if: { job: 'fisher', season: 'summer' }, text: ['The evening rise. Fish jumping all down the river, gold in the sun.'] },
@@ -604,7 +604,7 @@ talkPack('seasons', () => {
     { if: { temper: 'ornery' }, text: ['Your own fault. Nobody makes you wander.'] },
     { if: { temper: 'dreamy' }, text: ['I\'d like that, once. Waking somewhere I\'d never been.'] },
     { if: { temper: 'witty', season: 'summer' }, text: ['Beetles. That explains the hat.'] },
-    { if: { temper: 'witty' }, text: ['You make it sound like a holiday. It sounds like a cold.'] },
+    { if: { temper: 'witty' }, text: ['You make it sound like a vacation. It sounds like a cold.'] },
     { if: { temper: 'gloomy' }, text: ['Sounds cold. Most things are, in the end.'] },
     { if: { stage: 'child', season: 'summer' }, text: ['Beetles? On your FACE? Can I come next time?'] },
     { if: { stage: 'child' }, text: ['Can I come next time? I\'ll carry the kettle.'] },
@@ -627,7 +627,7 @@ talkPack('seasons', () => {
     { if: { season: 'summer' }, text: ['Weeding. Watering. Weeding again. The weeds love summer more than I do.'] },
     { if: { season: 'autumn' }, text: ['Bringing it all in, before the weather turns. And putting it all by.'] },
     { if: { season: 'winter' }, text: ['Keeping warm. Keeping fed. Chopping wood and mending what broke.'] },
-    { if: { job: 'farmer', season: 'spring' }, text: ['Plough, harrow, sow. Then watch the sky like a hawk for frost.'] },
+    { if: { job: 'farmer', season: 'spring' }, text: ['Plow, harrow, sow. Then watch the sky like a hawk for frost.'] },
     { if: { job: 'farmer', season: 'summer' }, text: ['Hay. Then hoeing. Then more hay. Then it\'s harvest and you wonder where summer went.'] },
     { if: { job: 'farmer', season: 'autumn' }, text: ['Harvest. Every hand in the valley in the fields, and the barley in before the rain.'] },
     { if: { job: 'farmer', season: 'winter' }, text: ['Mending tools. Planning. Looking at the fields under snow and thinking about spring.'] },
@@ -679,7 +679,7 @@ talkPack('seasons', () => {
     { if: { rift: true }, text: ['The hill-folk, a bit at a time. They laugh when I get it wrong. Kindly, mostly.'] },
   ]);
   lines('season.season.fav', [
-    { text: ['My favourite\'s {favSeason}. Always has been.', 'Honestly? {FavSeason}. Don\'t tell {season}.'] },
+    { text: ['My favorite\'s {favSeason}. Always has been.', 'Honestly? {FavSeason}. Don\'t tell {season}.'] },
     { if: { favSeason: (s, F) => s === F.season }, text: ['This one! {Season}. I\'ve been waiting all year.', 'It is. {Season}\'s mine. I\'d keep it all year if I could.'] },
     { if: { temper: 'ornery' }, text: ['{FavSeason}. The least bad of them.'] },
     { if: { temper: 'dreamy' }, text: ['{FavSeason}. I think I was born a {favSeason} sort of hobbit.'] },
@@ -696,7 +696,7 @@ talkPack('seasons', () => {
     { if: { temper: 'witty', favSeason: 'summer' }, text: ['Summer\'s the only time the river\'s warm enough to fall in properly.'] },
     { if: { temper: 'dreamy', favSeason: 'autumn' }, text: ['Autumn smells like stories. Every leaf\'s got one.'] },
     { if: { temper: 'cheerful', favSeason: 'spring' }, text: ['It\'s the cheerfullest season! Everything\'s just so glad to be here!'] },
-    { if: { temper: 'gloomy', favSeason: 'winter' }, text: ['Everyone\'s as grey as me in winter. It\'s restful.'] },
+    { if: { temper: 'gloomy', favSeason: 'winter' }, text: ['Everyone\'s as gray as me in winter. It\'s restful.'] },
     { if: { stage: 'child', favSeason: 'winter' }, text: ['Because PRESENTS. And snow. Mostly presents.'] },
     { if: { stage: 'child', favSeason: 'summer' }, text: ['Because swimming! And no bedtime till it\'s dark, and it\'s never dark!'] },
     { if: { rift: true }, text: ['I\'ve only had a few of them. But that one felt like the city, a bit. In a good way.'] },
@@ -742,7 +742,7 @@ talkPack('seasons', () => {
   lines('season.season.shared', [
     { text: ['The first day! I like that. Everything still to come.', 'Ha! A wizard who likes beginnings. That figures.'] },
     { if: { temper: 'dreamy' }, text: ['Oh, that\'s lovely. I\'ll think of that tomorrow morning.'] },
-    { if: { temper: 'witty' }, text: ['The first day of a season. Clever. That\'s four favourites.'] },
+    { if: { temper: 'witty' }, text: ['The first day of a season. Clever. That\'s four favorites.'] },
   ]);
 
   // --- The season's trial: flood, drought, blight, frost -------------------------------
@@ -783,7 +783,7 @@ talkPack('seasons', () => {
       shared: { line: 'season.hazard.shared', fx: { trust: 0.04 }, end: true },
       plan: { line: 'season.hazard.plan', fx: { respect: 0.02 }, go: [
         { ap: 'warm', say: 'Good. That\'s just the thing.', to: 'end' },
-        { ap: 'advise', say: 'And look in on your neighbours, while you\'re at it.', to: 'neighbours' },
+        { ap: 'advise', say: 'And look in on your neighbors, while you\'re at it.', to: 'neighbours' },
       ] },
       neighbours: { line: 'season.hazard.neighbours', fx: { respect: 0.02, drive: { lonely: -0.05 } }, end: true },
       badger: { line: 'season.hazard.badger', fx: { fond: 0.02 }, end: true },
@@ -801,7 +801,7 @@ talkPack('seasons', () => {
     { if: { hazard: 'drought', hazardSoon: true }, text: ['Not a cloud for days, and the well\'s rope is getting longer.', 'The ground\'s going hard. You can hear it crack if you listen.'] },
     { if: { hazard: 'drought', hazardOn: true }, text: ['Dust everywhere. In the bread, in the bed, in my teeth.', 'The barley\'s wilting. I carry water till my arms give out, and it drinks it like nothing.'] },
     { if: { hazard: 'blight', hazardSoon: true }, text: ['The farmers are muttering about the barley. Spots on the leaves.', 'Blight, they say. It goes through a field like gossip through a wedding.'] },
-    { if: { hazard: 'blight', hazardOn: true }, text: ['The blight\'s in the barley. You can smell it. Sour, like old dishcloths.', 'A whole field gone grey. Poor barley. Poor us, come winter.'] },
+    { if: { hazard: 'blight', hazardOn: true }, text: ['The blight\'s in the barley. You can smell it. Sour, like old dishcloths.', 'A whole field gone gray. Poor barley. Poor us, come winter.'] },
     { if: { hazard: 'frost', hazardSoon: true }, text: ['The air\'s got teeth in it. There\'s a hard frost coming, sure as eggs.', 'Clear sky and a bite in the wind. Frost tonight, and a hard one.'] },
     { if: { hazard: 'frost', hazardOn: true }, text: ['Everything\'s white and stiff. The washing froze on the line like boards.', 'The woodpile\'s going down like ale at a wedding. Two fires a day just to stay warm.'] },
     { if: { temper: 'ornery' }, text: ['Every year something. If it\'s not one thing it\'s the weather.', 'Nobody listens till it\'s at the door. I said this would happen.'] },
@@ -813,7 +813,7 @@ talkPack('seasons', () => {
     { if: { temper: 'dreamy' }, text: ['The land has moods, like we do. This is one of its bad days.'] },
     { if: { temper: 'witty' }, text: ['Ah, the season\'s little surprise. It never forgets to bring one.'] },
     { if: { stage: 'elder' }, text: ['I\'ve seen a good few of these. Doesn\'t make the next one easier.'] },
-    { if: { stage: 'child' }, text: ['Mum keeps looking at the sky and not saying anything. Is it bad?', 'Is it going to be a big one? Will our house be all right?'] },
+    { if: { stage: 'child' }, text: ['Mom keeps looking at the sky and not saying anything. Is it bad?', 'Is it going to be a big one? Will our house be all right?'] },
     { if: { rift: true }, text: ['Back home the weather was all inside the domes. Out here it\'s... real. It can hurt you.'] },
     { if: { job: 'farmer', hazard: ['flood', 'drought', 'blight'] }, pri: 1, text: ['It\'s my fields. My barley. A whole year\'s work and the sky can take it in a night.'] },
     { if: { job: 'woodwright', hazard: 'frost' }, pri: 1, text: ['Everyone wants logs and I\'ve only two arms. The woodpile won\'t last at this rate.'] },
@@ -824,7 +824,7 @@ talkPack('seasons', () => {
     { text: ['Stick together, and share what you\'ve got. That\'s always the answer.'] },
     { if: { hazard: 'flood' }, text: ['Raise the banks along the river. Earth holds back water better than worry does.'] },
     { if: { hazard: 'drought' }, text: ['Dig a pond near the fields, or a well. Water close to the crops is what saves them.'] },
-    { if: { hazard: 'blight' }, text: ['Get the herbalist to the barley quick. Herbs will clear it, or dwarf sulphur.'] },
+    { if: { hazard: 'blight' }, text: ['Get the herbalist to the barley quick. Herbs will clear it, or dwarf sulfur.'] },
     { if: { hazard: 'frost' }, text: ['Fill the woodpile now, while you can. Every hearth will burn twice as much.'] },
   ]);
   lines('season.hazard.comforted', [
@@ -892,7 +892,7 @@ talkPack('seasons', () => {
     { if: { hazard: 'flood' }, text: ['Move everything up off the floor. Hens up the hill. Then wait.'] },
     { if: { hazard: 'drought' }, text: ['Carry water. Morning and evening. Every can I own.'] },
     { if: { hazard: 'blight' }, text: ['Pull the worst stalks and burn them, so it doesn\'t spread.'] },
-    { if: { hazard: 'frost' }, text: ['Stack logs, stuff the draughts with socks, and wear three jumpers.'] },
+    { if: { hazard: 'frost' }, text: ['Stack logs, stuff the drafts with socks, and wear three sweaters.'] },
     { if: { temper: 'proud' }, text: ['Lead from the front. Somebody has to show them how.'] },
     { if: { temper: 'cheerful' }, text: ['Bake! Everyone works better with a bun in them.'] },
     { if: { temper: 'ornery' }, text: ['My own business, and make sure everyone else minds theirs.'] },
@@ -902,7 +902,7 @@ talkPack('seasons', () => {
   lines('season.hazard.neighbours', [
     { text: ['I will. Old {friend} lives on their own. I\'ll take soup.', 'Yes. You\'re right. I\'ll knock on a few doors.'] },
     { if: { friend: (f) => !f }, text: ['I will. I don\'t know them all that well. Maybe this is the time.'] },
-    { if: { temper: 'ornery' }, text: ['Neighbours. Hmph. Fine. Even that lot.'] },
+    { if: { temper: 'ornery' }, text: ['Neighbors. Hmph. Fine. Even that lot.'] },
     { if: { temper: 'shy' }, text: ['...I\'ll try. Knocking\'s the hard part.'] },
   ]);
   lines('season.hazard.badger', [
@@ -975,7 +975,7 @@ talkPack('seasons', () => {
     { text: ['The smell of it. Every season smells different at the end.', 'The light in the evenings, just as it is now.'] },
     { if: { season: 'spring' }, text: ['The blossom, falling like snow. And the lambs being small.'] },
     { if: { season: 'summer' }, text: ['Swimming. Supper on the step. The bats at dusk.'] },
-    { if: { season: 'autumn' }, text: ['The mushrooms. The colours in the woods. Conkers in my pockets.'] },
+    { if: { season: 'autumn' }, text: ['The mushrooms. The colors in the woods. Conkers in my pockets.'] },
     { if: { season: 'winter' }, text: ['The snow. The quiet. I know, I know. I\'ll miss it, though.'] },
     { if: { temper: 'ornery' }, text: ['Nothing. I\'ll miss nothing. ...The blackberries. Fine.'] },
     { if: { temper: 'gloomy' }, text: ['All of it. Even the bad bits. Especially the bad bits.'] },
@@ -1009,7 +1009,7 @@ talkPack('seasons', () => {
     { if: { seasonNext: 'winter' }, text: ['Yule. The bonfire, the carols, the presents. And a long lie-in.'] },
     { if: { temper: 'gloomy' }, text: ['Looking forward? I try not to. It only disappoints.'] },
     { if: { temper: 'dreamy' }, text: ['Something I can\'t name yet. That\'s the best thing to look forward to.'] },
-    { if: { stage: 'child' }, text: ['Being BIGGER. I\'ll be bigger by {seasonNext}. Mum says.'] },
+    { if: { stage: 'child' }, text: ['Being BIGGER. I\'ll be bigger by {seasonNext}. Mom says.'] },
     { if: { rift: true }, text: ['Seeing what it does. I haven\'t had a {seasonNext} here before. Or ever, really.'] },
   ]);
   lines('season.turning.resolve', [
@@ -1095,7 +1095,7 @@ talkPack('seasons', () => {
   lines('season.forecast.lore2', [
     { text: ['My gran used to say that! The very same.', 'I\'ll look out for that tonight. I\'ll be watching the sky all evening.'] },
     { if: { temper: 'curious' }, text: ['Does it work, though? Why would it? There must be a reason under it.'] },
-    { if: { temper: 'ornery' }, text: ['Old wives\' rubbish. ...I\'ll check, mind. Just in case.'] },
+    { if: { temper: 'ornery' }, text: ['Old wives\' nonsense. ...I\'ll check, mind. Just in case.'] },
     { if: { stage: 'child' }, text: ['I\'ll stay up and check! Can I stay up and check?'] },
     { if: { job: 'herder', season: 'summer' }, pri: 1, text: ['The cows lie down when they please, I\'ll tell you that for nothing.'] },
   ]);

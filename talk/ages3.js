@@ -150,13 +150,13 @@ talkPack('ages3', () => {
     child: ['Can I go NOW?', 'The next hill! Then the next! Then the SEA!'],
   });
   L('ages.beyond.comes', {
-    _: ['The best of it comes to me? ...Like you, you mean.', 'Comes to me. Hm. Like the travellers, and the letters.'],
+    _: ['The best of it comes to me? ...Like you, you mean.', 'Comes to me. Hm. Like the travelers, and the letters.'],
     cheerful: ['Like you! You came to us!'],
     ornery: ['It\'d better bring something useful.'],
     shy: ['...That suits me. I\'ll wait for it.'],
     curious: ['Like the rift-folk. They brought a whole world with them.'],
     dreamy: ['The world comes knocking. Yes. I\'ll leave the door open.'],
-    witty: ['Like the post. Late, and damp.'],
+    witty: ['Like the mail. Late, and damp.'],
     proud: ['As it should.'],
     gloomy: ['...I hope so.'],
     child: ['Like YOU!'],
@@ -231,7 +231,7 @@ talkPack('ages3', () => {
     witty: ['Do you get lonely? Or do you just talk to the horse?'],
     proud: ['A wizard on his own. Does it never trouble you?'],
     gloomy: ['Do you get lonely? I do. I wondered if everyone did.'],
-    child: ['Do you have a mum? Who do you live with? Are you lonely?', 'Do wizards have friends? Who\'s your best friend?'],
+    child: ['Do you have a mom? Who do you live with? Are you lonely?', 'Do wizards have friends? Who\'s your best friend?'],
   }, [
     { if: { stage: 'elder' }, text: ['You\'ve outlived everyone you ever knew, I expect. Doesn\'t that get lonely?'] },
   ]);
@@ -256,9 +256,9 @@ talkPack('ages3', () => {
     curious: ['What do you think about, at night? No. Come and tell me over supper.'],
     dreamy: ['Then think of my window, with the lamp lit. It\'ll be lit for you.'],
     witty: ['Then come to ours. You\'ll never be lonely again. You\'ll wish you were.'],
-    proud: ['You\'re always welcome at my door. I\'d be honoured.'],
+    proud: ['You\'re always welcome at my door. I\'d be honored.'],
     gloomy: ['...Me too. Maybe we could be lonely together. That\'s less lonely.'],
-    child: ['You can sleep at ours! In the spare room! I\'ll ask Mum!', 'You can be MY friend! Then you\'re not lonely!'],
+    child: ['You can sleep at ours! In the spare room! I\'ll ask Mom!', 'You can be MY friend! Then you\'re not lonely!'],
   });
   L('ages.lonely.hat', {
     _: ['Ha! A know-it-all hat. That explains a lot.', 'Ha! But truly?'],
@@ -309,7 +309,7 @@ talkPack('ages3', () => {
     witty: ['I\'ll warn the larder.'],
     proud: ['I\'ll set the good china.'],
     gloomy: ['...That\'s cheered me.'],
-    child: ['YAY! I\'m telling Mum!'],
+    child: ['YAY! I\'m telling Mom!'],
   });
   L('ages.lonely.eat', {
     _: ['Ha! I\'ve seen you at a party. I\'ll stock up.', 'Then I\'ll bake two of everything.'],
@@ -318,7 +318,7 @@ talkPack('ages3', () => {
     shy: ['...Ha. That\'s all right.'],
     curious: ['How much does a wizard eat? Exactly?'],
     dreamy: ['A full table and a wizard at it. Lovely.'],
-    witty: ['I\'ll hide the good biscuits. You\'ll find them.'],
+    witty: ['I\'ll hide the good cookies. You\'ll find them.'],
     proud: ['My larder can take it.'],
     gloomy: ['Ha. That\'s all right.'],
     child: ['I\'ll give you my pudding!'],
@@ -403,7 +403,7 @@ talkPack('ages3', () => {
   ]);
   lines('ages.afraid.a.jest', [
     { text: ['Spiders. Large ones. And the Moot, when it has opinions.'] },
-    { if: { stage: 'child' }, text: ['Spiders! Big hairy ones! And your mum, when I\'ve kept you out late.'] },
+    { if: { stage: 'child' }, text: ['Spiders! Big hairy ones! And your mom, when I\'ve kept you out late.'] },
   ]);
   lines('ages.afraid.a.tale', [
     { text: ['Once, under a mountain, in the dark, with something old and terrible on the bridge. I was very afraid.'] },
@@ -475,7 +475,7 @@ talkPack('ages3', () => {
     witty: ['Early for supper. Your priorities are sound.'],
     proud: ['Punctual for meals. That\'s proper.'],
     gloomy: ['Ha. That helps.'],
-    child: ['Come early to ours! Mum makes pie!'],
+    child: ['Come early to ours! Mom makes pie!'],
   });
   L('ages.afraid.light', {
     _: ['Light something. I\'ll remember that. Next time it\'s dark.', 'When it\'s dark, make a light. That\'s good. That\'s really good.'],
@@ -554,7 +554,7 @@ talkPack('ages3', () => {
     witty: ['How old are you? Your beard\'s older than my house.'],
     proud: ['What age are you? I like to know who I\'m talking to.'],
     gloomy: ['How old are you? Does it ever end, for you?'],
-    child: ['How old are you? Are you a HUNDRED?', 'Are you older than my grandad? Older than the hills?'],
+    child: ['How old are you? Are you a HUNDRED?', 'Are you older than my granddad? Older than the hills?'],
   }, [
     { if: { stage: 'elder' }, text: ['I\'m {ageYearsWord} and I feel every one. How many have you got? Truly?'] },
     { if: { stage: 'grown', ageYears: { min: 33, max: 45 } }, text: ['I\'ve been grown {ageGrownWord} years and I feel ancient. How old are you, then?'] },
@@ -615,7 +615,7 @@ talkPack('ages3', () => {
     curious: ['And who were your first ones? Long ago?'],
     dreamy: ['A long road with a friend at every bend. That\'s not so bad.'],
     witty: ['We\'re this year\'s vintage. Fine, with notes of turnip.'],
-    proud: ['Then we\'re honoured to be in your years.'],
+    proud: ['Then we\'re honored to be in your years.'],
     gloomy: ['...Then maybe old isn\'t all bad.'],
     child: ['Am I someone new? Am I?'],
   }, [
@@ -698,7 +698,7 @@ talkPack('ages3', () => {
     witty: ['Were you ever young, or did you come out of the egg with a staff?'],
     proud: ['A wizard must have been a remarkable youngster. Were you?'],
     gloomy: ['Were you ever young? Did you know you were? I didn\'t.'],
-    child: ['Were you ever a kid? Did you have a mum? Did you get told off?', 'Were you ever small like me? With no beard?'],
+    child: ['Were you ever a kid? Did you have a mom? Did you get told off?', 'Were you ever small like me? With no beard?'],
     'k:curious': ['Were you ever my age? What did you want to be? Did you always know?'],
   });
   lines('ages.young.a.tale', [
@@ -707,7 +707,7 @@ talkPack('ages3', () => {
   ]);
   lines('ages.young.a.jest', [
     { text: ['No. I was born with this beard. My poor mother.'] },
-    { if: { stage: 'child' }, text: ['No! I was born with this beard and this hat. My mum was VERY surprised.'] },
+    { if: { stage: 'child' }, text: ['No! I was born with this beard and this hat. My mom was VERY surprised.'] },
   ]);
   lines('ages.young.a.share', [
     { text: ['I was. And lonely, and too clever by half. Then I found fireworks, and folk came to look.'] },
@@ -720,7 +720,7 @@ talkPack('ages3', () => {
     shy: ['...Did you get in trouble? Lots of trouble?'],
     curious: ['How? With what? Which books? Were they important?'],
     dreamy: ['All those words going up in sparks. Like a firework of stories.'],
-    witty: ['Mostly? What survived? The cookery books?'],
+    witty: ['Mostly? What survived? The cookbooks?'],
     proud: ['A library! That\'s shocking. ...Impressive.'],
     gloomy: ['And they still let you be a wizard? There\'s hope for me.'],
     child: ['A WHOLE library? Did you get SMACKED?', 'Hee! You were naughty!'],
@@ -731,7 +731,7 @@ talkPack('ages3', () => {
     ornery: ['Don\'t be daft. Tell the truth.'],
     shy: ['...Ha. No, really?'],
     curious: ['That\'s not biologically likely. The real answer, please.'],
-    dreamy: ['A baby with a long grey beard. Ha. That\'s a picture.'],
+    dreamy: ['A baby with a long gray beard. Ha. That\'s a picture.'],
     witty: ['And the hat? Did you come with the hat?'],
     proud: ['Ha. A wizard\'s answer. But truly?'],
     gloomy: ['Ha. ...But really?'],
@@ -750,7 +750,7 @@ talkPack('ages3', () => {
     child: ['You didn\'t have friends? I\'ll be your friend!', 'Can I make a firework? To make friends?'],
   });
   L('ages.young.poetry', {
-    _: ['Only the poetry! Ha! Some would call that a favour.', 'Ha! The poetry! Did anyone miss it?'],
+    _: ['Only the poetry! Ha! Some would call that a favor.', 'Ha! The poetry! Did anyone miss it?'],
     cheerful: ['Ahaha! Oh, that\'s wonderful!'],
     ornery: ['The poetry. Hmph. No great loss.'],
     shy: ['...I like poetry. Ha. But that\'s funny.'],
@@ -900,7 +900,7 @@ talkPack('ages3', () => {
   L('ages.happy.when', {
     _: ['This morning. The bread came out right and the sun was on the step. I noticed. I did.', 'Last Highday. Lying in the orchard. I remember thinking, this is it.'],
     cheerful: ['Every morning! But especially yesterday, at the market!'],
-    ornery: ['When my neighbour\'s hens got out and it wasn\'t my fault.'],
+    ornery: ['When my neighbor\'s hens got out and it wasn\'t my fault.'],
     shy: ['...Just now, actually. Talking to you.'],
     curious: ['When I worked out how the mill-wheel gears go. Pure joy.'],
     dreamy: ['Last evening, watching swallows. I noticed. I really did.'],
@@ -992,7 +992,7 @@ talkPack('ages3', () => {
     curious: ['How do you remember so many? Is there room?'],
     dreamy: ['Remembered by a wizard. Like being kept in a song.'],
     witty: ['Remember my good side. It\'s the left.'],
-    proud: ['That would be an honour.'],
+    proud: ['That would be an honor.'],
     gloomy: ['...You promise?'],
   });
   L('ages.remember.tales', {
@@ -1001,9 +1001,9 @@ talkPack('ages3', () => {
     ornery: ['Tell it right. No exaggerating.'],
     shy: ['...I\'m in a tale? Truly?'],
     curious: ['What would you say about me? I want to know before I\'m in it.'],
-    dreamy: ['My name, travelling further than I ever did. That\'s beautiful.'],
+    dreamy: ['My name, traveling further than I ever did. That\'s beautiful.'],
     witty: ['Am I the hero or the comic relief? Be honest.'],
-    proud: ['I\'d be honoured to be in a wizard\'s tale.'],
+    proud: ['I\'d be honored to be in a wizard\'s tale.'],
     gloomy: ['...You\'d really tell about me?'],
   });
   L('ages.remember.hedge', {
@@ -1038,7 +1038,7 @@ talkPack('ages3', () => {
     curious: ['I\'ll trust you. You\'ve remembered a lot already.'],
     dreamy: ['Then I\'ll be kept somewhere safe. Thank you.'],
     witty: ['I\'ll check. I have connections.'],
-    proud: ['Thank you. I\'m honoured.'],
+    proud: ['Thank you. I\'m honored.'],
     gloomy: ['...That\'s the kindest thing anyone\'s ever said to me.'],
   });
   L('ages.remember.fed', {
@@ -1184,7 +1184,7 @@ talkPack('ages3', () => {
     shy: ['...I\'ll say hello. To them. This week.'],
     curious: ['The smallest bit. I\'ll start with one map.'],
     dreamy: ['One dawn walk. Just one.'],
-    witty: ['I\'ll eat one thing without consequences. Probably a biscuit.'],
+    witty: ['I\'ll eat one thing without consequences. Probably a cookie.'],
     proud: ['I\'ll do it properly.'],
     gloomy: ['...All right. A small bit.'],
   }, [

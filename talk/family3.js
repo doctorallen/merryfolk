@@ -29,7 +29,7 @@ talkPack('family3', () => {
     beats: {
       start: { line: 'family.hole.start', go: [
         { ap: 'ask', say: 'And which is the best room?', to: 'room' },
-        { ap: 'ask', say: 'Why that colour for the door?', to: 'door', need: { if: { holeDoor: has } } },
+        { ap: 'ask', say: 'Why that color for the door?', to: 'door', need: { if: { holeDoor: has } } },
         { ap: 'jest', say: 'And is it tidy? Truly tidy? Under the beds?', to: 'tidy' },
       ] },
       room: { line: 'family.hole.room', go: [
@@ -46,7 +46,7 @@ talkPack('family3', () => {
       ] },
       worst: { line: 'family.hole.worst', go: [
         { ap: 'advise', say: 'A bit of moss in the gap and a stone on the latch. Old trick.', to: 'fix' },
-        { ap: 'comfort', say: 'A hole\'s like a hobbit. The odd draught gives it character.', to: 'character' },
+        { ap: 'comfort', say: 'A hole\'s like a hobbit. The odd draft gives it character.', to: 'character' },
       ] },
       before: { line: 'family.hole.before', fx: { learn: ['family.holehistory', '{Home} has a history, and {name} knows it'] }, go: [
         { ap: 'ask', say: 'Do you ever feel them about the place?', to: 'ghosts', need: { open: 1 }, soft: true },
@@ -62,23 +62,23 @@ talkPack('family3', () => {
   });
   L('family.hole.open', HM, [FB('Tell me about your hole, {name}. I\'ve only ever seen the door.'), G('Tell me about {home}, {name}. What\'s it like inside?', 'How is {home} these days, {name}?'), W({ holeDoor: has }, 'I do like your {holeDoor} door, {name}. What\'s behind it?')]);
   L('family.hole.start', HM, [
-    FB('Oh, it\'s just a hole. Round door, round windows, a kettle. Everything a hobbit needs.', 'It\'s home. Draughty in one corner. Perfect in the others.'),
+    FB('Oh, it\'s just a hole. Round door, round windows, a kettle. Everything a hobbit needs.', 'It\'s home. Drafty in one corner. Perfect in the others.'),
     G('{Home}? Best hole on the hill. Not the biggest. The best.', '{Home} has seven pegs for hats and only five hats. I\'m working on it.'),
     W({ grandHole: true }, 'It\'s a big old hole. Too many rooms. I\'ve got lost in it. Twice. In the dark.'),
-    W({ livesAlone: true }, 'Just me in {home}. Every room is my favourite room. I rotate.'),
+    W({ livesAlone: true }, 'Just me in {home}. Every room is my favorite room. I rotate.'),
     W({ fullHouse: true }, 'Full! Full to the round door! Somebody\'s always in the bath when you need it.'),
-    W({ household: { min: 3 } }, 'There\'s {householdWord} of us. It\'s cosy. That\'s the polite word.'),
-    tm(C, 'Oh, I love it! The kitchen smells of bread and the parlour smells of apples!'),
+    W({ household: { min: 3 } }, 'There\'s {householdWord} of us. It\'s cozy. That\'s the polite word.'),
+    tm(C, 'Oh, I love it! The kitchen smells of bread and the parlor smells of apples!'),
     tm(O, 'It\'s a hole. Damp in winter. Hot in summer. Somebody always leaves the door open.'),
     tm(S, '...It\'s small. But it\'s mine. I like the window by the stair.'),
     tm(Q, 'There\'s a passage at the back that goes nowhere. Just stops. Who dug it? Why?'),
     tm(D, 'In the morning the light comes through the round window and lands on the hearthrug. Like a coin.'),
     tm(Wt, 'It\'s got everything. A door, a roof, and a mouse who pays no rent.'),
-    tm(P, 'Finest panelling on the hill. My grandad carved it. You must see it.'),
+    tm(P, 'Finest paneling on the hill. My granddad carved it. You must see it.'),
     tm(Gl, 'It\'s all right. The ceiling\'s low. The damp gets in. It\'s home, I suppose.'),
   ]);
   L('family.hole.room', HM, [
-    FB('The kitchen. Always the kitchen. Where else would anyone be?', 'The parlour, by the fire, with my feet up. That\'s heaven.'),
+    FB('The kitchen. Always the kitchen. Where else would anyone be?', 'The parlor, by the fire, with my feet up. That\'s heaven.'),
     G('The little room with the round window. You can see the whole lane from the sill.'),
     W({ pastime: has }, 'The back room. That\'s where the {pastimeWord} happens. Nobody\'s allowed in. Except the cat.'),
     W({ larder: 'full' }, 'The pantry. Have you seen it? Shelves to the ceiling. I go in there just to look.'),
@@ -89,21 +89,21 @@ talkPack('family3', () => {
     tm(Q, 'The cellar. It\'s cold and full of old things. I find something new every time.'),
     tm(D, 'The bedroom, at dawn, with the curtains open. The whole hill goes gold.'),
     tm(Wt, 'The larder. It\'s the only room that never argues back.'),
-    tm(P, 'The best parlour. We only use it for important visitors. You may see it, one day.'),
+    tm(P, 'The best parlor. We only use it for important visitors. You may see it, one day.'),
     tm(Gl, 'The bedroom. Because I can shut the door on the world.'),
   ]);
   L('family.hole.door', { holeDoor: has, home: has }, [
-    FB('Because it was that colour when we came. Nobody\'s dared change it.', 'It\'s always been that colour. Ask the door.'),
-    G('{HoleDoor}? My gran painted it {holeDoor}. Said it kept the bad luck off. Hasn\'t failed yet.', 'We argued for a week about the colour. {HoleDoor} won. Nobody\'s quite sure how.'),
-    W({ holeDoor: 'green' }, 'Green is the proper colour for a door. Ask anyone. Ask the Old Took.', 'Green, like the hill. So the hole looks like it grew there.'),
+    FB('Because it was that color when we came. Nobody\'s dared change it.', 'It\'s always been that color. Ask the door.'),
+    G('{HoleDoor}? My gran painted it {holeDoor}. Said it kept the bad luck off. Hasn\'t failed yet.', 'We argued for a week about the color. {HoleDoor} won. Nobody\'s quite sure how.'),
+    W({ holeDoor: 'green' }, 'Green is the proper color for a door. Ask anyone. Ask the Old Took.', 'Green, like the hill. So the hole looks like it grew there.'),
     W({ holeDoor: 'yellow' }, 'Yellow, so it\'s sunny even when it isn\'t. Especially when it isn\'t.', 'Yellow. You can find it in the dark after the Badger. That\'s the main thing.'),
     W({ holeDoor: 'red' }, 'Red, so the wind knows we mean business.', 'Red, like a robin. Friendly but firm.'),
     W({ holeDoor: 'blue' }, 'Blue, like the sky over Bree on a good day. I was there once.', 'Blue. To match the delphiniums. Then the delphiniums died. The door stayed.'),
     W({ holeDoor: 'purple' }, 'Purple! Nobody else has purple! That\'s why!', 'It was meant to be blue. The paint had other ideas.'),
-    W({ holeDoor: 'sea-green' }, 'The colour of the sea, they said. I\'ve never seen the sea. I trust them.'),
+    W({ holeDoor: 'sea-green' }, 'The color of the sea, they said. I\'ve never seen the sea. I trust them.'),
     W({ holeDoor: 'orange' }, 'Orange, like a pumpkin. We\'re very fond of pumpkins in this family.'),
     tm(O, 'Because I like it. That\'s why. Is there something wrong with it?'),
-    tm(Q, 'I\'ve wondered too! I\'ve scraped a bit off. There are four colours underneath. Four!'),
+    tm(Q, 'I\'ve wondered too! I\'ve scraped a bit off. There are four colors underneath. Four!'),
     tm(Wt, 'It matches my mood. Most days.'),
     tm(P, 'It\'s the smartest door on the hill. Freshly painted every spring.'),
   ]);
@@ -112,23 +112,23 @@ talkPack('family3', () => {
     G('{Home} is tidy in all the places a visitor could see.'),
     W({ littleOne: has }, 'With {littleOne} about? There\'s jam on the ceiling. I don\'t know how.'),
     W({ livesAlone: true }, 'I live alone. Tidy is whatever I say it is.'),
-    tm(C, 'Ha! No! It\'s a wonderful mess! A cosy mess!'),
+    tm(C, 'Ha! No! It\'s a wonderful mess! A cozy mess!'),
     tm(O, 'Under the beds is where things go so you don\'t have to look at them.'),
     tm(S, '...Please don\'t look under the beds.'),
     tm(Q, 'I found a cheese under there last spring. I still don\'t know whose.'),
     tm(D, 'I tidy in my head. The hole hasn\'t caught up.'),
-    tm(Wt, 'It\'s organised chaos. Without the organised.'),
+    tm(Wt, 'It\'s organized chaos. Without the organized.'),
     tm(P, 'Spotless. Spotless! ...Under the beds is a separate matter.'),
     tm(Gl, 'I gave up on tidy years ago. Tidy never lasts.'),
   ]);
   L('family.hole.worst', HM, [
-    FB('The back passage. Draught like a dragon breathing. A cold dragon.', 'The step down to the cellar. Everybody misses it. Everybody.'),
+    FB('The back passage. Draft like a dragon breathing. A cold dragon.', 'The step down to the cellar. Everybody misses it. Everybody.'),
     G('The pantry door. Sticks in wet weather. I\'ve been locked out of my own pie.'),
     W({ grandHole: true }, 'The east wing. Nobody goes there. It\'s too far from the kitchen.'),
     W({ fullHouse: true }, 'The bathroom. Not the room. The queue.'),
     tm(C, 'Worst? Oh, nothing! Well. The chimney smokes. But it smells lovely! Like bacon.'),
     tm(O, 'The bedroom ceiling drips. Right on my pillow. Only on mine.'),
-    tm(S, '...The front parlour. It\'s for visitors. I don\'t like visitors.'),
+    tm(S, '...The front parlor. It\'s for visitors. I don\'t like visitors.'),
     tm(Q, 'There\'s a cupboard that whistles. I\'ve never found out why. It whistles in tune.'),
     tm(D, 'The spare room. It\'s always cold. Like it\'s waiting for someone.'),
     tm(Wt, 'The cellar. Damp, dark, full of spiders. Like my last landlord.'),
@@ -169,17 +169,17 @@ talkPack('family3', () => {
     tm(D, 'Moss and stone. The hill fixing itself. I like that.'),
     tm(Wt, 'A wizard\'s spell: moss, stone, and saying it confidently.'),
     tm(P, 'I was going to do exactly that.'),
-    tm(Gl, 'It\'ll come back. The draught always comes back.'),
+    tm(Gl, 'It\'ll come back. The draft always comes back.'),
   ]);
   L('family.hole.character', HM, [
     FB('Character. Yes. That\'s what I\'ll call it.', 'Ha! Then {home}\'s got a great deal of character.'),
     tm(C, 'Ha! That\'s exactly it! It\'s a characterful hole!'),
-    tm(O, 'Character, my foot. It\'s a draught.'),
+    tm(O, 'Character, my foot. It\'s a draft.'),
     tm(S, '...That\'s nice. I\'ll think of it like that.'),
     tm(Q, 'Like a hobbit? Do holes have tempers too? I\'ve suspected.'),
     tm(D, 'The house breathes. I\'ve always thought so.'),
     tm(Wt, 'Then my hole has a great deal of character and very little insulation.'),
-    tm(P, 'It\'s a very distinguished draught.'),
+    tm(P, 'It\'s a very distinguished draft.'),
     tm(Gl, 'Character. A nice word for cold feet.'),
   ]);
   L('family.hole.ghosts', HM, [
@@ -234,7 +234,7 @@ talkPack('family3', () => {
       ] },
       bare: { line: 'family.lar.bare', fx: { confide: { k: 'family.bare', t: '{Name}\'s larder is bare, and {they}\'s worried' } }, go: [
         { ap: 'warm', say: 'I\'ll speak to the Store. Nobody in Thistledown goes hungry.', to: 'promise' },
-        { ap: 'advise', say: 'Ask your neighbours. Pride\'s a poor supper.', to: 'neighbours' },
+        { ap: 'advise', say: 'Ask your neighbors. Pride\'s a poor supper.', to: 'neighbours' },
       ] },
       recipe: { line: 'family.lar.recipe', fx: { confide: { k: 'family.recipe', t: '{Name}\'s family recipe' } }, end: true },
       sample: { line: 'family.lar.sample', fx: { joke: { k: 'family.sample', t: 'The wizard asked for a sample. Purely to confirm.' }, fond: 0.02 }, end: true },
@@ -256,7 +256,7 @@ talkPack('family3', () => {
     W({ larder: 'bare', temper: S }, '...There\'s not much. It\'s all right. I don\'t eat much. ...I eat quite a lot, really.'),
     W({ larder: 'bare', temper: Gl }, 'Bare. It\'s always bare by now. I don\'t know why I bother looking.'),
     W({ larder: 'full', temper: P }, 'The best-stocked larder on the hill. I could feed the Steward for a month.'),
-    tm(Q, 'Interesting question. I keep a list on the door. Want to see? It\'s colour-coded.'),
+    tm(Q, 'Interesting question. I keep a list on the door. Want to see? It\'s color-coded.'),
     tm(D, 'I love a full larder. It feels like a promise. That the winter will end.'),
     tm(Wt, 'The larder\'s fine. It\'s my willpower that\'s empty.'),
   ]);
@@ -267,13 +267,13 @@ talkPack('family3', () => {
     W({ crop: 'potato' }, 'Potatoes. Boil \'em, mash \'em, stick \'em in a stew. From our own patch.'),
     W({ crop: 'tomato' }, 'Green tomato chutney. From the ones that didn\'t ripen. Waste not.'),
     W({ crop: 'carrot' }, 'Carrots in honey. Our own carrots. Our own honey, if you count the bees we borrowed.'),
-    W({ crop: 'cabbage' }, 'Sauerkraut. Our own cabbages. The smell is legendary. Ask the neighbours.'),
+    W({ crop: 'cabbage' }, 'Sauerkraut. Our own cabbages. The smell is legendary. Ask the neighbors.'),
     tm(C, 'The seed-cake! I make one every Highday! Have some! Have two!'),
     tm(O, 'My own ale. Don\'t tell the brewer. He thinks I buy his.'),
     tm(S, '...My mushroom pie. Nobody\'s tried it. Would you? Later?'),
     tm(Q, 'A jar of honey from the wild bees. I followed them for two days to find it.'),
     tm(D, 'Bramble jelly. You can taste the whole of September in it.'),
-    tm(Wt, 'The emergency biscuits. Hidden behind the flour. Don\'t tell anyone. Including me.'),
+    tm(Wt, 'The emergency cookies. Hidden behind the flour. Don\'t tell anyone. Including me.'),
     tm(P, 'My plum preserve. Won at the fair three years running.'),
     tm(Gl, 'Turnips. There\'s always turnips. Nobody wants the turnips.'),
   ]);
@@ -283,7 +283,7 @@ talkPack('family3', () => {
     tm(C, 'Of course! Come in! Bring a spoon!'),
     tm(O, 'Over my dead body. Last time a visitor inspected, half a pie went missing.'),
     tm(S, '...It\'s not very tidy in there. ...You can look.'),
-    tm(Q, 'For science! Yes! I\'ve been meaning to catalogue it.'),
+    tm(Q, 'For science! Yes! I\'ve been meaning to catalog it.'),
     tm(D, 'The larder\'s a sort of museum. Of summers.'),
     tm(Wt, 'Science. Yes. I\'ve heard of wizards doing science. Mostly on pies.'),
     tm(P, 'You may admire it. From the door.'),
@@ -314,8 +314,8 @@ talkPack('family3', () => {
     tm(S, '...Please don\'t tell anyone.'),
     tm(Q, 'I can\'t work out where it all went. I\'ve gone over it and over it.'),
     tm(D, 'I keep thinking something will turn up. It usually does. Not lately.'),
-    tm(Wt, 'I\'ve been dining on air and good humour. The humour\'s running out.'),
-    tm(P, 'I don\'t need charity. ...But if it\'s offered as a neighbour, I\'d not refuse.'),
+    tm(Wt, 'I\'ve been dining on air and good humor. The humor\'s running out.'),
+    tm(P, 'I don\'t need charity. ...But if it\'s offered as a neighbor, I\'d not refuse.'),
     tm(Gl, 'It\'s going to be a long winter. I can feel it.'),
   ]);
   L('family.lar.recipe', HM, [
@@ -336,7 +336,7 @@ talkPack('family3', () => {
     tm(S, '...Here. Tell me if it\'s nice. Truly.'),
     tm(Q, 'Yes! Tell me what you taste. All of it. Be precise.'),
     tm(D, 'Here. Close your eyes when you taste it. It\'s better that way.'),
-    tm(Wt, 'Confirmation requires a second sample, of course. For rigour.'),
+    tm(Wt, 'Confirmation requires a second sample, of course. For rigor.'),
     tm(P, 'A sample of the finest preserve in the valley. You\'re welcome.'),
     tm(Gl, 'You won\'t like it. Nobody does. ...Do you like it?'),
   ]);
@@ -365,10 +365,10 @@ talkPack('family3', () => {
   L('family.lar.neighbours', HM, [
     FB('Pride\'s a poor supper. Ha. My gran used to say that.', 'You\'re right. I\'ll ask next door. They owe me a ladder.'),
     tm(C, 'Of course! They\'d help! I\'d help them!'),
-    tm(O, 'Ask the neighbours? ...Fine. The ones on the left. Not the right.'),
+    tm(O, 'Ask the neighbors? ...Fine. The ones on the left. Not the right.'),
     tm(S, '...That\'s hard. I\'ll try.'),
     tm(Q, 'Pride as a supper. How much would it weigh? Not much. You\'re right.'),
-    tm(D, 'Neighbours are like the hill. You don\'t notice it holding you up.'),
+    tm(D, 'Neighbors are like the hill. You don\'t notice it holding you up.'),
     tm(Wt, 'Pride\'s a poor supper but an excellent pudding.'),
     tm(P, 'I\'d rather starve. ...I\'d rather not starve. I\'ll ask.'),
     tm(Gl, 'They\'ve little enough themselves.'),
@@ -411,7 +411,7 @@ talkPack('family3', () => {
     G('The {mathom}? It\'s a mathom. Nobody uses it. Nobody throws it away. That\'s the rule.', 'That\'s the {mathom}. It\'s been there longer than the mantelpiece, I think.'),
     W({ mathomPassed: { min: 2 } }, 'The {mathom}. It\'s been given on {passedWord} times. It keeps coming back. Like a cat.'),
     W({ mathomTrip: true }, 'The {mathom}! Came back from an adventure. Nobody knows what it\'s for. It\'s foreign.'),
-    tm(C, 'Isn\'t it marvellous? The {mathom}! I dust it every day! I love it! I don\'t know why!'),
+    tm(C, 'Isn\'t it marvelous? The {mathom}! I dust it every day! I love it! I don\'t know why!'),
     tm(O, 'That {mathom}. It was a present. I can\'t get rid of it. I\'ve tried.'),
     tm(S, '...It\'s silly. I like it, though. The {mathom}.'),
     tm(Q, 'The {mathom}! I\'ve been trying to work out what it\'s for. Seven years now.'),
@@ -421,8 +421,8 @@ talkPack('family3', () => {
     tm(Gl, 'It\'s ugly. I know. Everything I own is ugly.'),
   ]);
   L('family.math.origin', MT, [
-    FB('A birthday. Somebody\'s birthday. I don\'t remember whose. Maybe mine. Maybe the cat\'s.', 'It came with the hole. Like the draught.'),
-    G('Great-aunt Lobelia gave it to my gran, who gave it to my mum, who couldn\'t give it to anyone. So here it is.'),
+    FB('A birthday. Somebody\'s birthday. I don\'t remember whose. Maybe mine. Maybe the cat\'s.', 'It came with the hole. Like the draft.'),
+    G('Great-aunt Lobelia gave it to my gran, who gave it to my mom, who couldn\'t give it to anyone. So here it is.'),
     W({ mathomPassed: { min: 2 } }, 'It\'s been round the village {passedWord} times. Somebody gave it me at their birthday. I gave it on. It came back.'),
     W({ mathomTrip: true }, 'From over the hills. From an adventure. It has foreign dirt on it. I won\'t clean it.'),
     tm(C, 'A present! From someone I love! I can\'t remember who! But I love them!'),
@@ -564,7 +564,7 @@ talkPack('family3', () => {
     tm(S, '...It is. Thank you.'),
     tm(Q, 'I wonder how many have lived here before. I\'m going to find out.'),
     tm(D, 'My own lamp in my own window. Like a little star on the hill.'),
-    tm(Wt, 'A fine thing with a fine draught. It\'s a package.'),
+    tm(Wt, 'A fine thing with a fine draft. It\'s a package.'),
     tm(P, 'I worked hard for it. It\'s only right.'),
     tm(Gl, 'Fine. Big. Empty.'),
   ]);
@@ -590,7 +590,7 @@ talkPack('family3', () => {
     tm(Q, 'I\'m going to dig a new room. Underground. To see what\'s down there.'),
     tm(D, 'Paint the ceiling with stars. Then lie on the floor and look.'),
     tm(Wt, 'A sign on the door. \'No admittance except on business. And there\'s no business.\''),
-    tm(P, 'Panelling. Brass fittings. The finest hole on the hill.'),
+    tm(P, 'Paneling. Brass fittings. The finest hole on the hill.'),
     tm(Gl, 'Nothing much. Keep it dry. That\'s enough.'),
   ]);
   L('family.mov.strange', MV, [
@@ -610,8 +610,8 @@ talkPack('family3', () => {
     tm(O, 'A small party. Small. Three people. Who don\'t touch anything.'),
     tm(S, '...A very small one. Maybe two people.'),
     tm(Q, 'A housewarming! Does a hole warm up from people? I bet it does. I\'ll measure.'),
-    tm(D, 'Lanterns at the door and music in the parlour. Yes.'),
-    tm(Wt, 'A housewarming. I\'ll invite the draught. It\'s been here longest.'),
+    tm(D, 'Lanterns at the door and music in the parlor. Yes.'),
+    tm(Wt, 'A housewarming. I\'ll invite the draft. It\'s been here longest.'),
     tm(P, 'A proper housewarming. I\'ll do it properly.'),
     tm(Gl, 'Who would come?'),
   ]);
@@ -716,13 +716,13 @@ talkPack('family3', () => {
   ]);
   L('family.hl.before', HL, [
     FB('Bree. A room over a saddler\'s. It smelled of leather. I miss it.', 'Over the hills. A little hole like these. It\'s gone now. That\'s why I came.'),
-    W({ rift: true }, 'Neverdark. A stack on the ninth tier. Always lit. Always humming. I could hear my neighbours\' dreams.', 'A pod in the Relay district. Small. Mine. I had a plant. I wonder who\'s watering it.'),
+    W({ rift: true }, 'Neverdark. A stack on the ninth tier. Always lit. Always humming. I could hear my neighbors\' dreams.', 'A pod in the Relay district. Small. Mine. I had a plant. I wonder who\'s watering it.'),
     tm(C, 'Oh, a lovely place! By the river! With a red door! I\'ll tell you all about it!'),
     tm(O, 'Somewhere else. Somewhere that didn\'t want me either.'),
     tm(S, '...A little room. With a window that looked out on a tree.'),
     tm(Q, 'A farm on the Greenway. Fourteen siblings. I can\'t remember all their names.'),
     tm(D, 'A house by the sea. I think. I was very small. I remember gulls.'),
-    tm(Wt, 'A palace. Twenty rooms. Gold taps. ...A cupboard over a bakery.'),
+    tm(Wt, 'A palace. Twenty rooms. Gold faucets. ...A cupboard over a bakery.'),
     tm(P, 'A very good family, in a very fine hole. Circumstances changed.'),
     tm(Gl, 'Somewhere I can\'t go back to. Let\'s leave it there.'),
   ]);
@@ -804,7 +804,7 @@ talkPack('family3', () => {
   });
   L('family.hf.open', HF, [FB('I hope I\'m not too much trouble about the place, {name}.', 'How are you finding having a wizard in the spare room, {name}?'), W({ hearthDays: { min: 5 } }, 'I\'ve been under your roof a good while now, {name}. Am I still welcome?')]);
   L('family.hf.start', HF, [
-    FB('Trouble? You\'re no trouble. You\'re just very tall. In a low hole.', 'Oh, we\'ve got used to you. The neighbours haven\'t.'),
+    FB('Trouble? You\'re no trouble. You\'re just very tall. In a low hole.', 'Oh, we\'ve got used to you. The neighbors haven\'t.'),
     G('You hit your head on the beam every morning. Every morning. We\'ve started counting.', 'You snore like a dragon with a cold. We\'ve grown quite fond of it.'),
     W({ hearthDays: { min: 6 } }, 'You\'ve been here so long the cat sits on your chair. That\'s acceptance, that is.'),
     W({ littleOne: has }, '{LittleOne} tells everyone at the story circle there\'s a wizard at home. {KThey}\'s unbearable.'),
@@ -815,7 +815,7 @@ talkPack('family3', () => {
     tm(Q, 'Fascinating! You hum in your sleep! In a language I don\'t know! What is it?'),
     tm(D, 'It\'s like having a story living in the spare room.'),
     tm(Wt, 'You\'re the only lodger who\'s ever paid rent in smoke rings.'),
-    tm(P, 'Naturally you chose our hole. It\'s the finest. We\'re honoured.'),
+    tm(P, 'Naturally you chose our hole. It\'s the finest. We\'re honored.'),
     tm(Gl, 'It\'s good. I keep waiting for you to leave. Everyone does, in the end.'),
   ]);
   L('family.hf.lodger', HF, [
@@ -865,7 +865,7 @@ talkPack('family3', () => {
     tm(Gl, 'You\'ll forget.'),
   ]);
   L('family.hf.fireworks', HF, [
-    FB('Fireworks! For rent! ...Actually, that\'s a deal.', 'Ha! The neighbours would complain. Let them.'),
+    FB('Fireworks! For rent! ...Actually, that\'s a deal.', 'Ha! The neighbors would complain. Let them.'),
     tm(C, 'YES! Fireworks every Highday! Deal!'),
     tm(O, 'Not in the house. Never again in the house.'),
     tm(S, '...Small ones? I like the small ones.'),
@@ -1002,7 +1002,7 @@ talkPack('family3', () => {
     tm(S, '...I slept rough once. Long ago. I remember.'),
     tm(Q, 'Was it? I just wanted to know who {lodger} was.'),
     tm(D, 'It felt like the hole had a spare room for a reason.'),
-    tm(Wt, 'Kind, and also we needed someone to blame for the biscuits.'),
+    tm(Wt, 'Kind, and also we needed someone to blame for the cookies.'),
     tm(P, 'It was the proper thing to do. We do the proper thing.'),
     tm(Gl, 'It was nothing. I hope it\'s enough.'),
   ]);
@@ -1013,7 +1013,7 @@ talkPack('family3', () => {
     tm(S, '...{Lodger}. I didn\'t mind.'),
     tm(Q, 'It\'s ongoing. I\'m keeping score.'),
     tm(D, 'We met in the middle. Like a bridge.'),
-    tm(Wt, 'It was a draw. Honour satisfied. Tea made.'),
+    tm(Wt, 'It was a draw. Honor satisfied. Tea made.'),
     tm(P, 'Our way, of course. With some small concessions.'),
     tm(Gl, 'Nobody wins those.'),
   ]);

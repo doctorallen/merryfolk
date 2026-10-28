@@ -17,7 +17,7 @@ talkPack('family', () => {
     const sp = v.spouse != null ? personById(v.spouse) : null;
     const sw = !sp && v.sweetheart != null ? personById(v.sweetheart) : null;
     F.sweetheart = alive(sw) ? sw.first : null;
-    F.role = v.isGrown() ? sexWord(v, 'mum', 'dad') : null;
+    F.role = v.isGrown() ? sexWord(v, 'mom', 'dad') : null;
     // a crush: the one they're sweetest on, unspoken
     let crush = null, best = 0.15;
     if (!sp && !sw && v.stage === 'adult') for (const id in v.love || {}) { const o = personById(+id); if (alive(o) && v.love[id] > best && canCourt(v, o)) { best = v.love[id]; crush = o; } }
@@ -56,9 +56,9 @@ talkPack('family', () => {
     F.flownHome = flown && flown.homeId >= 0 ? flown.home().name : null;
     F.kidsHome = kidsAll.filter((k) => k.homeId === v.homeId).length;
     F.nest = grown.length > 0 && F.kidsHome === 0;
-    // their own mum and dad
+    // their own mom and dad
     const parents = (v.parents || []).map(personById).filter(alive);
-    F.parentWord = parents[0] ? sexWord(parents[0], 'mum', 'dad') : null;
+    F.parentWord = parents[0] ? sexWord(parents[0], 'mom', 'dad') : null;
     F.parentOld = !!(parents[0] && parents[0].stage === 'elder');
     F.parentAway = !!(parents[0] && parents[0].homeId !== v.homeId);
     const mum = parents.find((p) => p.genes.sex === 'f'), dad = parents.find((p) => p.genes.sex !== 'f');
@@ -257,17 +257,17 @@ talkPack('family', () => {
     tm(Wt, '{Spouse} told a joke at the Badger. Worst joke I\'d ever heard. I had to marry {sThem} to stop {sThem}.', 'I lost a bet. Best bet I ever lost.'),
     tm(P, '{Spouse} pursued me for a whole season. I was quite the catch, you know.', 'I asked {spouse} to dance and {sThey} said yes. Of course {sThey} did.'),
     tm(Gl, 'At a funeral tea, of all places. Not a cheerful start. It worked out.', '{Spouse} was the only one who didn\'t laugh when I fell off the cart.'),
-    W({ stage: 'elder' }, 'Oh, wizard, before your first grey hair. At the old mill, before it was rebuilt.'),
+    W({ stage: 'elder' }, 'Oh, wizard, before your first gray hair. At the old mill, before it was rebuilt.'),
   ]);
   L('family.spouse.teased', SP, [
     FB('Cheek! ...Mostly, yes.', 'Ha! Only just.'),
-    G('{Spouse} puts up with a great deal, I\'ll grant you.', 'Putting up with me is {spouse}\'s favourite pastime. {Spouse} says so.'),
+    G('{Spouse} puts up with a great deal, I\'ll grant you.', 'Putting up with me is {spouse}\'s favorite pastime. {Spouse} says so.'),
     tm(C, 'Ha! Every day! And I put up with {spouse}\'s feet. Cold as frogs.', 'Ha! You\'re terrible. {Spouse} would laugh at that.'),
     tm(O, 'Putting up with ME? You should hear {spouse} chew.', 'I\'ll thank you not to take {spouse}\'s side. You don\'t even live with {sThem}.'),
     tm(S, 'Oh! Well... I hope so. I think so. Yes.', '...{Spouse} says I\'m no trouble at all. I think {sThey}\'s being kind.'),
     tm(Q, 'Do you think so? What have you heard? Who said?', 'Ha! I wonder, sometimes. What do you think {spouse} sees in me?'),
     tm(D, 'Putting up with... no. I think {spouse} quite likes me. Strange as that is.'),
-    tm(Wt, 'Putting up with me? I\'m the prize. {Spouse} won me at the fair.', 'It\'s mutual endurance, wizard. Like a siege, with biscuits.'),
+    tm(Wt, 'Putting up with me? I\'m the prize. {Spouse} won me at the fair.', 'It\'s mutual endurance, wizard. Like a siege, with cookies.'),
     tm(P, '{Spouse} is very lucky to have me and knows it.', 'I am a great deal of hobbit to put up with. {Spouse} is equal to it.'),
     tm(Gl, 'For now. Ask me again in the winter.', 'Some days I wonder why. Then {spouse} brings tea and I stop wondering.'),
   ]);
@@ -291,28 +291,28 @@ talkPack('family', () => {
     W({ spouseTemper: 'curious' }, '{Spouse} asks what I\'m thinking. All day. I\'m usually thinking about cheese.'),
     W({ spouseTemper: 'dreamy' }, '{Spouse} wanders off mid-sentence. I\'ve finished whole stories to an empty chair.'),
     W({ spouseTemper: 'witty' }, '{Spouse} has a pun for everything. Everything, wizard. Even the gravy.'),
-    W({ spouseTemper: 'proud' }, '{Spouse} tells everyone about our marrows. They\'re my marrows.'),
-    W({ spouseJob: has }, '{Spouse} brings the {spouseJob}\'s work home. On the boots. Through the parlour.'),
+    W({ spouseTemper: 'proud' }, '{Spouse} tells everyone about our pumpkins. They\'re my pumpkins.'),
+    W({ spouseJob: has }, '{Spouse} brings the {spouseJob}\'s work home. On the boots. Through the parlor.'),
     tm(C, 'Ha! {Spouse} sings in the bath! Badly! I love it, really. Don\'t tell {sThem}.'),
     tm(O, 'Snores. Like a pig with a cold. And denies it! Denies it to my face!', 'Moves my things. Tidies them. I can\'t find a thing in my own hole.'),
-    tm(S, '...{Spouse} talks to the neighbours. For ages. About me. I can hear through the door.'),
+    tm(S, '...{Spouse} talks to the neighbors. For ages. About me. I can hear through the door.'),
     tm(Q, '{Spouse} never finishes a book. Reads to the middle and starts another. Why? WHY?'),
     tm(D, '{Spouse} counts the stairs out loud. I\'ve stopped hearing it. It\'s like rain now.'),
     tm(Wt, '{Spouse} eats the crusts and leaves me the middles. ...No, that\'s the good bit. Never mind.'),
     tm(P, '{Spouse} corrects my pronunciation. In company. Of words I said perfectly well.'),
-    tm(Gl, 'Leaves the door open. Every time. The draught\'ll be the death of us.'),
+    tm(Gl, 'Leaves the door open. Every time. The draft\'ll be the death of us.'),
     W({ stage: 'elder' }, 'Fifty years {spouse}\'s put the spoons in handle-up. Fifty years.'),
   ]);
   L('family.spouse.knew', SP, [
     FB('Oh, I don\'t know. Somewhere between the soup and the pudding.', 'I just did. Like knowing it\'s going to rain.'),
     G('When {spouse} mended my coat without being asked. And sewed the button on wrong. That was it.', 'When I was ill and {spouse} sat up all night reading to me. Badly. I knew.'),
-    tm(C, 'The very first day! I went home and told my mum. She said, about time.'),
+    tm(C, 'The very first day! I went home and told my mom. She said, about time.'),
     tm(O, 'When {spouse} argued me to a standstill. Nobody\'d ever done that. I had to marry {sThem}.'),
     tm(S, '...When {spouse} noticed I hadn\'t said anything, and asked. Nobody ever asked.'),
     tm(Q, 'I made a list. Pros and cons. The cons column had one thing in it. Snoring.'),
-    tm(D, 'One evening, by the river. {Spouse} said the stars were like spilt salt. I knew then.'),
-    tm(Wt, 'When I realised I\'d rather lose an argument to {spouse} than win one against anyone else.'),
-    tm(P, 'I knew at once. I have excellent judgement in these matters.'),
+    tm(D, 'One evening, by the river. {Spouse} said the stars were like spilled salt. I knew then.'),
+    tm(Wt, 'When I realized I\'d rather lose an argument to {spouse} than win one against anyone else.'),
+    tm(P, 'I knew at once. I have excellent judgment in these matters.'),
     tm(Gl, 'When I thought {spouse} might leave the valley. I couldn\'t breathe for a day.'),
   ]);
   L('family.spouse.listen', SP, [
@@ -331,7 +331,7 @@ talkPack('family', () => {
     FB('Two kettles. Never share a kettle.', 'Never go to bed hungry. Everything else follows from that.'),
     G('Laugh at the same things. And let {spouse} have the last word on Highdays.', 'Separate blankets, one bed, and never mention the turnip incident.'),
     W({ wed: 'long' }, 'Forgive the small things at once and the big ones by teatime. That\'s forty years of it.'),
-    tm(C, 'Laugh! At everything! Especially when the soup\'s burnt.'),
+    tm(C, 'Laugh! At everything! Especially when the soup\'s burned.'),
     tm(O, 'Keep out of each other\'s way till after second breakfast.', 'Don\'t touch the other one\'s pipe. That\'s it. That\'s the whole secret.'),
     tm(S, '...Say sorry first. Even when it isn\'t your fault. Especially then.'),
     tm(Q, 'Keep asking questions. I still ask {spouse} a new one every week.'),
@@ -385,7 +385,7 @@ talkPack('family', () => {
     tm(Q, 'You did? Who? Where? What happened? Sorry. Sorry. Only if you want to.'),
     tm(D, 'I thought so. You get a look, sometimes, by the fire. Like you\'re listening for someone.'),
     tm(Wt, 'A wizard in love! Did you turn her into a toad by accident? It happens.'),
-    tm(P, 'Well. I\'m honoured you\'d tell me. Not everyone gets told that, I expect.'),
+    tm(P, 'Well. I\'m honored you\'d tell me. Not everyone gets told that, I expect.'),
     tm(Gl, 'And it ended. They always end. I\'m sorry, wizard.'),
   ]);
   L('family.spouse.kettle', SP, [
@@ -532,7 +532,7 @@ talkPack('family', () => {
     tm(O, 'Hmph. We\'ve a kettle. It\'s the cups we fight over.'),
     tm(S, '...Thank you. I\'ll tell {spouse}. A good kettle.'),
     tm(Q, 'Why a kettle? Because of tea? Because of the noise? I want the whole theory.'),
-    tm(D, 'A kettle singing on the hob. Yes. That\'s what home sounds like.'),
+    tm(D, 'A kettle singing on the stove. Yes. That\'s what home sounds like.'),
     tm(Wt, 'Wisdom of the ages: buy a kettle. I\'ll have it carved over the door.'),
     tm(P, 'We have the finest kettle in the village. Copper. Polished.'),
     tm(Gl, 'Kettles break. Then what?'),
@@ -546,7 +546,7 @@ talkPack('family', () => {
     tm(Q, 'Is that what happens? Does everyone do that? How many nights is normal?'),
     tm(D, 'We fell asleep by the fire, both of us, in the coats. It was lovely.'),
     tm(Wt, 'Only the cat. It started it.'),
-    tm(P, 'We are far too civilised for that.'),
+    tm(P, 'We are far too civilized for that.'),
     tm(Gl, 'Not yet. I\'ve picked out a good coat, just in case.'),
   ]);
   L('family.newly.surprise', NW, [
@@ -592,7 +592,7 @@ talkPack('family', () => {
     tm(O, 'A wizard dancing. That\'d be worth the price of the ale.'),
     tm(S, '...I can\'t dance either. We could not-dance together.'),
     tm(Q, 'What dance was it? Was there a fiddle? Did you fall over?'),
-    tm(D, 'I like to think of you dancing. A tall grey shape spinning under lanterns.'),
+    tm(D, 'I like to think of you dancing. A tall gray shape spinning under lanterns.'),
     tm(Wt, 'And the bride writes to say what? Please never dance again?'),
     tm(P, 'I\'m an excellent dancer myself. I could give you lessons.'),
     tm(Gl, 'At least you danced. Most folk just stand at the edge.'),
@@ -666,9 +666,9 @@ talkPack('family', () => {
     W({ littleOne: has }, '{LittleOne}. Bedtimes. Puddings. Who\'s too soft. It\'s {spouse}. {Spouse}\'s too soft.'),
     W({ larder: 'bare' }, 'The larder. It\'s bare and we both think the other one ate it.'),
     tm(C, 'Silly things! Who loves who more. I win. I always win.'),
-    tm(O, 'The way {spouse} breathes. Loudly. Through the nose. At me.', 'The fire. I like it banked. {Spouse} likes it roaring. We\'ll be burnt in our beds.'),
+    tm(O, 'The way {spouse} breathes. Loudly. Through the nose. At me.', 'The fire. I like it banked. {Spouse} likes it roaring. We\'ll be burned in our beds.'),
     tm(S, '...Visitors. {Spouse} likes them. I hide in the pantry.'),
-    tm(Q, 'Facts! Whether frogs sleep. Whether the moon is cheese-coloured or cheese. That sort of thing.'),
+    tm(Q, 'Facts! Whether frogs sleep. Whether the moon is cheese-colored or cheese. That sort of thing.'),
     tm(D, 'Where to go one day. {Spouse} wants the sea. I want the mountains. We\'ll go nowhere, probably.'),
     tm(Wt, 'Grammar. {Spouse} says \'fewer\'. I say \'less\'. We\'ve had less peace ever since.'),
     tm(P, 'Whether my family or {spouse}\'s family is the older. Mine is. By a long chalk.'),
@@ -736,7 +736,7 @@ talkPack('family', () => {
   ]);
   L('family.bicker.makeup', SP, [
     FB('...Tea. Somebody makes tea. That\'s the sorry. The tea is the sorry.', 'We sit on the step. Not talking. Then someone nudges. That\'s it.'),
-    G('{Spouse} leaves a biscuit on my pillow. Just one. That means sorry. Two means very sorry.', 'I hum the song from our wedding. Badly. {Spouse} can\'t stay cross through it.'),
+    G('{Spouse} leaves a cookie on my pillow. Just one. That means sorry. Two means very sorry.', 'I hum the song from our wedding. Badly. {Spouse} can\'t stay cross through it.'),
     W({ wed: 'long' }, 'After all these years? One of us says, "Well." And the other says, "Well." And that\'s done.'),
     tm(C, 'A kiss on the nose! Works every time. Try it on a troll, see what happens.'),
     tm(O, '...I fix something. The gate. The chair. {Spouse} knows what it means.'),
@@ -744,7 +744,7 @@ talkPack('family', () => {
     tm(Q, 'We each have to ask the other a question we don\'t know the answer to. It works. I don\'t know why.'),
     tm(D, 'We go walking. By the time we\'re at the river, we\'ve forgotten. The river takes it.'),
     tm(Wt, 'A formal treaty, signed in jam. Then we eat the treaty.'),
-    tm(P, '{Spouse} apologises and I graciously accept. ...Sometimes it\'s the other way. Rarely.'),
+    tm(P, '{Spouse} apologizes and I graciously accept. ...Sometimes it\'s the other way. Rarely.'),
     tm(Gl, '...{Spouse} holds my hand in the dark. Doesn\'t say anything. Just holds it.'),
   ]);
   L('family.bicker.sorry', SP, [
@@ -810,9 +810,9 @@ talkPack('family', () => {
   L('family.sweet.start', SW, [
     FB('Who told you? ...Everyone told you, didn\'t they.', 'Oh! Well. Yes. I suppose I am.'),
     G('{Sweetheart}? ...Yes. We go walking by the river. That\'s all. It\'s not anything. It\'s everything.', 'Is it that obvious? {Sweetheart} said nobody had noticed.'),
-    tm(C, 'Yes! Isn\'t it marvellous? {Sweetheart} is the best hobbit in the valley!'),
+    tm(C, 'Yes! Isn\'t it marvelous? {Sweetheart} is the best hobbit in the valley!'),
     tm(O, 'And what if I am? Is it on a poster somewhere?', 'Who\'s been talking? It\'s the miller. It\'s always the miller.'),
-    tm(S, '*goes the colour of a radish* ...Yes.', '...Oh. People know? Oh dear. Oh no. ...Is it all right?'),
+    tm(S, '*goes the color of a radish* ...Yes.', '...Oh. People know? Oh dear. Oh no. ...Is it all right?'),
     tm(Q, 'Who told you? How do people find these things out? I want to know the route.'),
     tm(D, 'Walking out. Yes. That\'s what it feels like. Walking out into something bigger.'),
     tm(Wt, 'Walking out, walking in, walking round the duck pond. It\'s mostly walking, yes.'),
@@ -846,7 +846,7 @@ talkPack('family', () => {
   L('family.sweet.glad', SW, [
     FB('Thank you. That means a lot, coming from you.', 'You are? Oh, that\'s nice.'),
     G('{Sweetheart} thinks you\'re a bit frightening. I\'ll tell {sweetheart} you\'re glad. That\'ll help.'),
-    tm(C, 'Everybody\'s glad! I\'m glad! Even my mum\'s glad, and she\'s never glad!'),
+    tm(C, 'Everybody\'s glad! I\'m glad! Even my mom\'s glad, and she\'s never glad!'),
     tm(O, 'Hmph. Well. Thank you. Don\'t make a fuss.'),
     tm(S, '...Thank you. I was worried people would laugh.'),
     tm(Q, 'Are you? Why? Do you think we suit? What do you see?'),
@@ -923,7 +923,7 @@ talkPack('family', () => {
     tm(C, 'Would you? Oh, thank you! Tell {sweetheart} I\'m wonderful! Tell {sThem} I can juggle!'),
     tm(O, 'Hmph. I suppose it can\'t hurt. Don\'t overdo it.'),
     tm(S, '...Would you? Just... tell {sweetheart} I mean it. That\'s all.'),
-    tm(Q, 'What would you say? Can I hear it first? Practise on me.'),
+    tm(Q, 'What would you say? Can I hear it first? Practice on me.'),
     tm(D, 'A word from a wizard. Like a spell. I\'ll think of it like that.'),
     tm(Wt, 'A good word? Make it two. And make one of them \'dashing\'.'),
     tm(P, 'Tell {sweetheart} what you\'ve seen of me. That should be enough.'),
@@ -989,7 +989,7 @@ talkPack('family', () => {
   ]);
   L('family.crush.pink', CR, [
     FB('I am NOT pink. It\'s the sun.', 'It\'s warm in here! It\'s warm out here!'),
-    G('It\'s... it\'s the tea. Hot tea. Very hot.', 'Pink? No. That\'s my natural colour. In the presence of wizards.'),
+    G('It\'s... it\'s the tea. Hot tea. Very hot.', 'Pink? No. That\'s my natural color. In the presence of wizards.'),
     tm(C, 'Ha! Am I? Oh dear! I can never hide anything!'),
     tm(O, 'I\'m pink because you\'re annoying.'),
     tm(S, '*goes pinker*'),
@@ -1021,7 +1021,7 @@ talkPack('family', () => {
     tm(D, '{Crush} hums when walking. The same tune as my grandmother. I can\'t explain it.'),
     tm(Wt, '{Crush} once beat me at riddles. Nobody beats me at riddles.'),
     tm(P, '{Crush} is the only one in the village who\'s my equal. Nearly.'),
-    tm(Gl, '{Crush} makes things seem less grey. That\'s all. That\'s a lot.'),
+    tm(Gl, '{Crush} makes things seem less gray. That\'s all. That\'s a lot.'),
   ]);
   L('family.crush.clock', null, [
     FB('...That\'s a nice way to put it.', 'Its own clock. Yes. Mine\'s a bit slow.'),
@@ -1140,7 +1140,7 @@ talkPack('family', () => {
   ]);
   L('family.single.once', null, [
     FB('...There was. A long time ago. I was too slow.', 'Once. We were young. One of us went away. Guess which.'),
-    W({ stage: 'elder' }, 'Once. Before your beard was grey. Before mine was. She went to Bree and married a cooper.', 'There was. We were going to. Then we weren\'t. I can\'t even remember why.'),
+    W({ stage: 'elder' }, 'Once. Before your beard was gray. Before mine was. She went to Bree and married a cooper.', 'There was. We were going to. Then we weren\'t. I can\'t even remember why.'),
     tm(C, 'Oh, there was a summer! Lovely summer. Then it was autumn. Ha. That\'s all.'),
     tm(O, '...None of your business. ...Yes. Once. Didn\'t work. Don\'t ask why.'),
     tm(S, '...There was. I never told them. I just... never did.'),
@@ -1164,7 +1164,7 @@ talkPack('family', () => {
   ]);
   L('family.single.alone', null, [
     FB('They are, aren\'t they? A whole pie and nobody\'s feet.', 'That\'s what I say. Nobody believes me.'),
-    W({ livesAlone: true, home: has }, '{Home} is all mine. The quiet, the fire, the last biscuit. All mine.'),
+    W({ livesAlone: true, home: has }, '{Home} is all mine. The quiet, the fire, the last cookie. All mine.'),
     tm(C, 'Exactly! I sing as loud as I like! At three in the morning!'),
     tm(O, 'Thank you. Finally, someone with sense.'),
     tm(S, '...I like it quiet. I\'m glad someone understands.'),
@@ -1222,7 +1222,7 @@ talkPack('family', () => {
   L('family.single.seat', null, [
     FB('...All right. Save me one by the fire.', 'You will? Well. I might come, then.'),
     tm(C, 'Yes! I\'ll come! I\'ll sing the loud bit!'),
-    tm(O, 'Hmph. By the fire, mind. Not by the door. Draughty.'),
+    tm(O, 'Hmph. By the fire, mind. Not by the door. Drafty.'),
     tm(S, '...By the wall. If it\'s quiet. Thank you.'),
     tm(Q, 'Will there be anyone new? I\'ll come and see.'),
     tm(D, 'I\'ll come. It\'s been a long time since I sang with anyone.'),
@@ -1279,7 +1279,7 @@ talkPack('family', () => {
     tm(Gl, 'I want to ask {sweetheart}. But what if {sThey} says no? How do you even begin?'),
   ]);
   L('family.propose.tree', SW, [
-    FB('The party tree. With flowers. ...Yes. That feels right.', 'Old ways. Yes. My grandad asked my gran there.'),
+    FB('The party tree. With flowers. ...Yes. That feels right.', 'Old ways. Yes. My granddad asked my gran there.'),
     G('Under the party tree, with flowers. {Sweetheart} loves cornflowers. I\'ll find cornflowers.'),
     tm(C, 'The party tree! Of course! With lanterns! And maybe a cake!'),
     tm(O, 'The party tree. Fine. Not too many flowers. I\'ll look a fool.'),

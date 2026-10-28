@@ -5,7 +5,7 @@
 // Nine drives (0 = content, 1 = desperate) rise over time at rates set by the
 // genome. The brain scores every action by how much relief it promises right
 // now, times the villager's learned habit weight and inborn instinct. After
-// each action the weight drifts towards what actually happened (reward
+// each action the weight drifts toward what actually happened (reward
 // learning). Villagers also copy what they see contented folk doing nearby
 // (imitation, strongest in children), and your pats and tut-tuts reinforce or
 // discourage whatever they are doing, Creatures-style.
@@ -440,13 +440,13 @@ class Villager {
     if (grown) d.craving += rate * 0.04 * g.pipeLove * mul;
     if (grown && this.job && h > 6.5 && h < 19) d.industry += rate * 0.12 * (1.25 - g.laziness) * (this.stage === 'elder' ? 0.6 : 1);
     else if (grown && !this.job && h > 7 && h < 18) d.industry += rate * (typeof TUNE !== 'undefined' ? (this.stage === 'elder' ? TUNE.purpose.elderRate : TUNE.purpose.joblessRate) : 0.02) * (1.1 - g.laziness);
-    // warmth: drifts towards how chilly it is where they are
+    // warmth: drifts toward how chilly it is where they are
     let chill;
     if (this.inside) chill = this.inside.kind === 'home' && this.inside.chilly ? 0.35 : 0;
     else {
       chill = SEASON_CHILL[World.season] + (Game.raining ? 0.3 : 0) + (Game.darkness > 0.4 ? 0.15 : 0) - (this.task && this.task.a.id === 'party' && World.season === 'winter' ? 0.4 : 0);
       chill *= 1.2 - g.hardiness * 0.5;
-      // a warm woollen jumper helps
+      // a warm woolen sweater helps
       if (Village.woollens && this.isGrown()) chill *= 0.7;
       // or something a knitter in the family made
       else if ((homeCrafts(this.home()).knitting || 0) >= 2) chill *= 0.8;

@@ -94,7 +94,7 @@ async function runWorldGen() {
   $('wg-enter').hidden = false;
 }
 
-// A map of the valley as it stands: the ground a block per tile, coloured by
+// A map of the valley as it stands: the ground a block per tile, colored by
 // what it is and how high it lies, with the real trees, hedges, buildings and
 // stones drawn small on top, the newest growing in.
 function drawGenMap(ctx, nStatics, grow) {

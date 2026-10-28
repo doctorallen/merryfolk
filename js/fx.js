@@ -369,7 +369,7 @@ const Light = {
       const sx = Math.round(l.x), sy = Math.round(l.y);
       if (!seen(l, sx - cam.x, sy - cam.y)) continue;
       const [cr, cg, cb] = hexToRgb(l.col || '#ffaa50');
-      // a tinted light (rift light) washes its pool in its own colour as well
+      // a tinted light (rift light) washes its pool in its own color as well
       if (l.tint) { const st2 = this.stamp(Math.round(l.r), 4, 4, `rgba(${cr},${cg},${cb},0.25)`, 'source-over'); ctx.globalAlpha = Math.min(1, l.tint * darkness * (l.a || 1)); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(st2.c, sx - st2.rx, sy - st2.ry); ctx.globalCompositeOperation = 'lighter'; }
       // drawn at a quarter strength and scaled down to the glow wanted; `glow`
       // warms a bright light's pool more strongly

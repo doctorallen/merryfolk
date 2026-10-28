@@ -136,7 +136,7 @@ function simulate(dt) {
     const awake = h.inside.some((id) => { const v = byId.get(id); return v && !(v.task && v.task.a.id === 'sleep'); });
     h.lit = (awake || (h.inside.length && Game.hour > 17 && Game.hour < 22.5)) && Game.darkness > 0.08;
     const cooking = h.inside.length > 0 || isMealTime(Game.hour) || (World.season === 'winter' && !h.chilly && residentsOf(h).length);
-    // a lived-in hole nearly always has something on the hob
+    // a lived-in hole nearly always has something on the stove
     h.smoking = cooking || (residentsOf(h).length > 0 && (World.season !== 'summer' || Game.hour < 9 || Game.hour > 18));
   }
   for (const k in World.buildings) {
@@ -796,7 +796,7 @@ function render(dtReal, dtWall = dtReal) {
     ctx.fillStyle = '#ffe14a'; ctx.fillRect(ax - 2, ay, 5, 1); ctx.fillRect(ax - 1, ay + 1, 3, 1); ctx.fillRect(ax, ay + 2, 1, 1);
   }
   ctx.setTransform(RS, 0, 0, RS, 0, 0);
-  // the vignette is made once per view size, since a gradient is rasterised afresh every fill
+  // the vignette is made once per view size, since a gradient is rasterized afresh every fill
   if (!render.vg || render.vgW !== cam.w || render.vgH !== cam.h) {
     const [c, x] = makeCanvas(cam.w, cam.h, true);
     const vg = x.createRadialGradient(cam.w / 2, cam.h / 2, Math.min(cam.w, cam.h) * 0.45, cam.w / 2, cam.h / 2, Math.max(cam.w, cam.h) * 0.75);
@@ -917,7 +917,7 @@ function renderOverlay() {
     octx.fillStyle = 'rgba(42,28,18,0.35)'; octx.fillRect(bx + 3, by + 3, bw, bh);
     octx.fillStyle = '#2a1c12'; octx.fillRect(bx - 2, by - 2, bw + 4, bh + 4);
     octx.fillStyle = v.isGrown() ? '#fffaf0' : '#f0f8ff'; octx.fillRect(bx, by, bw, bh);
-    // the tail leans towards whoever they're talking to
+    // the tail leans toward whoever they're talking to
     const lean = to && !to.inside ? clamp((to.x - v.x) * z * 0.05, -6, 6) : 0;
     octx.fillStyle = '#2a1c12'; octx.beginPath(); octx.moveTo(sx - 6, by + bh + 2); octx.lineTo(sx + 2, by + bh + 2); octx.lineTo(sx - 4 + lean, by + bh + 9); octx.fill();
     octx.fillStyle = v.isGrown() ? '#fffaf0' : '#f0f8ff'; octx.beginPath(); octx.moveTo(sx - 4, by + bh - 1); octx.lineTo(sx, by + bh - 1); octx.lineTo(sx - 3.5 + lean * 0.7, by + bh + 4); octx.fill();

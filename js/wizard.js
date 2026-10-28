@@ -1,11 +1,11 @@
 'use strict';
 // ---------------------------------------------------------------------------
 // The wizard. Every couple of weeks or so, unannounced, a horse and wagon
-// comes rattling up the West Road with an old man on the seat: a tall grey
-// pointed hat, a long grey robe and a silver scarf, a grey beard down past
+// comes rattling up the West Road with an old man on the seat: a tall gray
+// pointed hat, a long gray robe and a silver scarf, a gray beard down past
 // his belt and a gnarled staff across his knees. It's Gandalf, and the back
 // of the wagon is stacked with crates of fireworks marked with his rune. The
-// children run to meet him and he lets off a puff of coloured stars for them.
+// children run to meet him and he lets off a puff of colored stars for them.
 // He draws up by the party field and stays two nights. Each afternoon he
 // stands beneath the great party tree and tells a tale (trolls, dragons,
 // eagles, the Fell Winter, Bullroarer Took and the invention of golf), and
@@ -43,9 +43,9 @@ const WIZARD_TALES = {
   trolls: { x: 'of the three trolls', lines: [
     'Now then. Have any of you ever met a troll? No? Good. Keep it that way.',
     'There were three of them once, in the Trollshaws, sitting round a fire with a mutton bone apiece.',
-    'They caught some travellers, and fell to arguing over how to cook them. Roast? Boil? Sit on them and make jelly?',
+    'They caught some travelers, and fell to arguing over how to cook them. Roast? Boil? Sit on them and make jelly?',
     'And while they argued, somebody kept throwing his voice from the trees, so each troll thought it was the other.',
-    'They argued and they quarrelled, and they argued and they quarrelled... until the sky went grey in the east.',
+    'They argued and they quarreled, and they argued and they quarreled... until the sky went gray in the east.',
     '"Dawn take you all, and be stone to you!" said the voice. And the sun came up.',
     'Trolls must be under ground before the sun rises, you see. They\'re standing there to this day, three lumps of rock, with a bird\'s nest in one\'s ear.',
   ] },
@@ -70,7 +70,7 @@ const WIZARD_TALES = {
   fellwinter: { x: 'of the Fell Winter', lines: [
     'You have had hard winters here. But you have never had a winter like the Fell Winter. Pray you never do.',
     'The Brandywine froze from bank to bank, so thick a cart could cross it.',
-    'And over the ice, in the grey of the evening, came the white wolves out of the north.',
+    'And over the ice, in the gray of the evening, came the white wolves out of the north.',
     'The hobbits of the Shire are not a warlike folk. But that winter they found out what they were made of.',
     'They blew the horns of Buckland, and every hole and farm lit a light, and they stood together at the gates.',
     'Shoulder to shoulder, farmer and miller and baker, with pitchforks and torches. And the wolves went back.',
@@ -87,16 +87,16 @@ const WIZARD_TALES = {
   ] },
   sea: { x: 'of the ships that sail into the West', lines: [
     'Have any of you seen the Sea? Ah. It is very large, and very wet, and it goes on further than you can think.',
-    'At the end of the land there are grey havens, with white ships tied up at the quays.',
+    'At the end of the land there are gray havens, with white ships tied up at the quays.',
     'The elves go there when they are weary of the world, and sail away into the West.',
     'They say the ships go on and on, past the edge of all the maps, until the straight road rises.',
-    'And there, beyond the rain and the grey curtain of the world, is a far green country under a swift sunrise.',
+    'And there, beyond the rain and the gray curtain of the world, is a far green country under a swift sunrise.',
     'I have not seen it. Not yet. But I like to think about it, of an evening.',
     'There. That is enough sadness for one afternoon. Who would like to see a smoke ring shaped like a ship?',
   ] },
 };
 const TALE_REACTS = {
-  cheerful: ['Ha! Marvellous!', 'Oh, what a story!', 'More! Tell more!'], ornery: ['Hmph. Likely tale.', 'And I suppose that\'s true as well, is it?'], shy: ['...Ooh.', '*listens, wide-eyed*'], curious: ['But how did he know?', 'Where is that, exactly? Is it far?'],
+  cheerful: ['Ha! Marvelous!', 'Oh, what a story!', 'More! Tell more!'], ornery: ['Hmph. Likely tale.', 'And I suppose that\'s true as well, is it?'], shy: ['...Ooh.', '*listens, wide-eyed*'], curious: ['But how did he know?', 'Where is that, exactly? Is it far?'],
   dreamy: ['I can almost see it.', 'I\'d love to go there one day.'], witty: ['I\'d have had the cup and the jelly.', 'Golf! I knew it was a goblin\'s game.'], proud: ['My grandfather was a Took, you know.', 'I\'d not have been frightened.'], gloomy: ['That\'s a sad one.', 'Mm.'],
   child: ['Ooooh!', 'Again! Tell it again!', 'Was it a REALLY big dragon?', 'I\'d have hit him with a club too!', 'Shh! He\'s getting to the good bit!'],
 };
@@ -158,7 +158,7 @@ function wizardArrive() {
   Game.wizard = { phase: 'coming', day: Game.day, leave: Game.day + WIZARD.stay, x: start.x, y: start.y, face: start.x < camp.x ? 1 : -1, path, pi: 0, camp, doing: 'drive', fx: camp.x, fy: camp.y, facing: 'down', fpath: null, fpi: 0, dist: 0, told: [], taleDay: 0, showDay: 0, cheered: [] };
   if (!path) { Game.wizard.x = camp.x; Game.wizard.y = camp.y; } else shortDrive(Game.wizard, 'in');
   Game.wizardLast = Game.day;
-  chronicle('A horse and wagon is rattling up the road into Thistledown, and on the seat sits an old man in a tall pointed grey hat and a long grey robe, a silver scarf at his throat and a grey beard down past his belt. It\'s Gandalf the Grey! And the wagon is stacked with crates of fireworks.', 'party');
+  chronicle('A horse and wagon is rattling up the road into Thistledown, and on the seat sits an old man in a tall pointed gray hat and a long gray robe, a silver scarf at his throat and a gray beard down past his belt. It\'s Gandalf the Grey! And the wagon is stacked with crates of fireworks.', 'party');
   toast('Gandalf the wizard is coming up the road!', 'info');
 }
 function wizardParked() {
@@ -226,11 +226,11 @@ function wizDrive(w, dt) {
   w.dist = (w.dist || 0) + moved;
   // the wagon turns round only when it's clearly heading the other way
   if (Math.abs(dx) > Math.abs(dy) * 0.6 && Math.abs(dx) > 0.05) w.face = dx > 0 ? 1 : -1;
-  // children run to see, and get a puff of coloured stars for their trouble
+  // children run to see, and get a puff of colored stars for their trouble
   if (w.phase === 'coming') for (const v of Game.villagers) {
     if (!v.isChild() || v.inside || v.stage === 'baby' || (w.cheered || []).includes(v.id) || dist(v.x, v.y, w.x, w.y) > 90) continue;
     (w.cheered = w.cheered || []).push(v.id);
-    v.say(R.pick(['Gandalf! Gandalf!', 'Fireworks! Have you brought fireworks?', 'It\'s the wizard! Mum! It\'s the wizard!', 'Do a magic! Please?']), 3);
+    v.say(R.pick(['Gandalf! Gandalf!', 'Fireworks! Have you brought fireworks?', 'It\'s the wizard! Mom! It\'s the wizard!', 'Do a magic! Please?']), 3);
     v.drives.bored = Math.max(0, v.drives.bored - 0.3);
     feel(v, 'wizard_came');
     if (!Wiz.bubbleBusy()) wizSay(R.pick(['Ha! Here you are, then.', 'Fireworks? Whatever gave you that idea?', 'Stand back, now.']));
@@ -530,7 +530,7 @@ function wizFront(pose, back = false) {
     rect(cx - 6, 16, cx - 2, 16, 'd'); rect(cx + 2, 16, cx + 6, 16, 'd'); put(cx - 7, 17, 'd'); put(cx + 7, 17, 'd'); put(cx - 6, 17, 'd'); put(cx + 6, 17, 'd');
     rect(cx - 4, 18, cx - 3, 18, 'e'); rect(cx + 2, 18, cx + 3, 18, 'e');
     rect(cx - 1, 17, cx, 20, 'N'); put(cx - 1, 17, 'S');
-    // moustache and beard, tapering to a point below the belt
+    // mustache and beard, tapering to a point below the belt
     rect(cx - 5, 21, cx + 5, 21, 'h'); put(cx - 6, 22, 'h'); put(cx + 6, 22, 'H');
     for (let y = 22; y <= 39; y++) { const hw = 5.6 - (y - 22) * 0.27; for (let x = Math.round(cx - hw); x <= Math.round(cx + hw); x++) put(x, y, x > cx + 1 ? 'H' : (x + y) % 5 === 0 ? 'j' : 'h'); }
     // the silver scarf either side of the beard, an end hanging down
@@ -739,7 +739,7 @@ function wizardShow(x, y) {
   return true;
 }
 // His fireworks have particles of their own, bigger and brighter than the
-// common sort: a glowing core in a soft square of its own colour.
+// common sort: a glowing core in a soft square of its own color.
 const WP = {
   parts: [],
   add(p) { if (this.parts.length < 4500) this.parts.push({ vx: 0, vy: 0, t: 0, g: 0, drag: 1, size: 1, ...p }); },
@@ -819,7 +819,7 @@ function dragonTick(d, dt) {
   if (Math.sin(d.t * 2) > 0.55) for (let i = 0; i < 5; i++) WP.add({ x: d.x + 18 * ca, y: d.y + 18 * sa, vx: ca * R.f(110, 160) + R.f(-15, 15), vy: sa * R.f(110, 160) + R.f(-15, 15), life: R.f(0.5, 0.8), col: R.pick(['#ffd060', '#ff8a2a', '#fff4c0']), g: -10, drag: 0.94, size: R.f(1.4, 2.2), light: i === 0 });
   return true;
 }
-// The dragon's shape where it is now: a list of [x, y, colour, size] in world
+// The dragon's shape where it is now: a list of [x, y, color, size] in world
 // pixels (a snaking body, a horned head, two ribbed wings beating).
 function dragonPoints(d) {
   const K = 2.6, ang = d.ang || 0, ca = Math.cos(ang), sa = Math.sin(ang), flip = ca < 0 ? -1 : 1, flap = Math.sin(d.t * 6), fl = Math.floor(d.t * 20);
@@ -975,7 +975,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (h === 12 && w && w.phase === 'here' && w.day !== Game.day && w.leave > Game.day && w.leave < 1e9 && !Game.party.on) wizardPartyTonight();
     // and the night he arrives there's always one, rain or no rain: he sees to the rain
     if (h === 18 && w && w.day === Game.day && !Game.party.on) {
-      if (Game.raining) { Game.weather = 'clear'; Game.raining = false; Game.rainUntil = Game.time; chronicle('The wizard rapped his staff on the ground, and the rain stopped as if a tap had been turned off. "There," he said. "Now we can have a party."', 'party'); }
+      if (Game.raining) { Game.weather = 'clear'; Game.raining = false; Game.rainUntil = Game.time; chronicle('The wizard rapped his staff on the ground, and the rain stopped as if a faucet had been turned off. "There," he said. "Now we can have a party."', 'party'); }
       startParty(Game.party.planned || 'wizard');
     }
     // and his fireworks go up on his first night whatever the sky is doing

@@ -44,7 +44,7 @@ const Village = {
   foodTotal() { let s = 0; for (const k of PANTRY_KINDS) s += this.stores[k] || 0; return s; },
   innkeeperOn() { return Game.villagers.some((v) => v.task && v.task.a.id === 'work_inn' && v.task.phase === 'do'); },
 
-  // The postie drops a letter through a door.
+  // The mail carrier drops a letter through a door.
   deliverLetter(postie, home) {
     const residents = Game.villagers.filter((o) => o.homeId === home.id);
     if (!residents.length) return;
@@ -55,7 +55,7 @@ const Village = {
       const a = R.pick(away);
       from = a.data.first;
       const line = R.pick(['I\'ve seen mountains taller than ten party trees!', 'The sea is ever so big, and ever so wet.', 'Met an elf. Very tall. Very polite.', 'Missing second breakfast terribly.', 'Found a cave full of glittering things!', 'Do water my tomatoes.']);
-      chronicle(`${postie.first} the postie brought ${r.first} a letter from ${from}, away adventuring: "${line}"`, 'letter');
+      chronicle(`${postie.first} the mail carrier brought ${r.first} a letter from ${from}, away adventuring: "${line}"`, 'letter');
       r.remember(`Got a letter from ${from}, far away.`, 2);
     } else {
       const friends = Object.entries(r.rel).filter(([id, f]) => f > 0.35 && +id !== r.id).map(([id]) => Game.villagers.find((o) => o.id === +id && o.homeId !== r.homeId)).filter(Boolean);
@@ -335,7 +335,7 @@ function welcomeTraveller(data, quiet = false, sex = null) {
   v.say('Hello! Is this Thistledown?', 5);
   for (const o of Game.villagers) if (o !== v) { o.rel[v.id] = 0.1; v.rel[o.id] = 0.1; }
   assignJobs(!quiet);
-  if (!quiet) { chronicle(`A traveller, ${v.name()}, has come walking up the West Road, looking for somewhere to stay.`, 'birth'); Game.lastTraveller = Game.day; }
+  if (!quiet) { chronicle(`A traveler, ${v.name()}, has come walking up the West Road, looking for somewhere to stay.`, 'birth'); Game.lastTraveller = Game.day; }
   return { ok: true, v };
 }
 
@@ -352,7 +352,7 @@ function dailySociety() {
   const vs = Game.villagers;
   Village.yesterday = Village.today; Village.today = { made: {}, used: {} };
 
-  // ageing and coming of age
+  // aging and coming of age
   for (const v of vs) {
     if (v.leaving) continue;
     v.age += ageStep(v);
@@ -370,7 +370,7 @@ function dailySociety() {
         Game.schedulePartyTonight('coming-of-age');
         if (v.edu < 0.15) chronicle(`(${v.first} never did learn to read. Story time might have helped.)`, 'info');
       }
-      if (st === 'elder') { chronicle(`${v.name()} is getting on a bit, and has gone a little grey.`, 'info'); v.remember('Found my first grey hairs.', 0); }
+      if (st === 'elder') { chronicle(`${v.name()} is getting on a bit, and has gone a little gray.`, 'info'); v.remember('Found my first gray hairs.', 0); }
     }
   }
 
@@ -480,20 +480,20 @@ function dailySociety() {
 
   // the cold months bring sniffles
   const chillChance = { spring: 0.02, summer: 0.005, autumn: 0.04, winter: 0.07 }[World.season];
-  for (const v of vs) if (!v.leaving && R.chance(chillChance * (1.3 - v.genes.hardiness))) v.catchCold(R.pick(['the damp', 'a draughty window', 'wet feet', 'the chill']));
+  for (const v of vs) if (!v.leaving && R.chance(chillChance * (1.3 - v.genes.hardiness))) v.catchCold(R.pick(['the damp', 'a drafty window', 'wet feet', 'the chill']));
   // new blood: a very small village always draws a settler or two; beyond that,
   // folk only come if word of a contented village gets about (steward.js)
   const live = Game.villagers.filter((v) => !v.leaving).length;
   if (live < 20 && R.chance(0.5)) {
     const r = welcomeTraveller(null, true);
-    if (r.ok) chronicle(`${r.v.name()}, a traveller from over the hills, has come up the West Road looking for a quiet place to settle, and found one in ${r.v.home().name}.`, 'birth');
+    if (r.ok) chronicle(`${r.v.name()}, a traveler from over the hills, has come up the West Road looking for a quiet place to settle, and found one in ${r.v.home().name}.`, 'birth');
   }
   // friendships drift gently without tending; rivalries cool
   for (const v of vs) for (const id in v.rel) { const f = v.rel[id]; v.rel[id] = f > 0.1 ? f - 0.008 : f < 0 ? f + 0.02 : f; }
 
   for (const h of World.homes) if (h.built && !residentsOf(h).length) for (const k of PANTRY_KINDS) if (h.pantry[k]) { Village.stores[k] = (Village.stores[k] || 0) + h.pantry[k]; h.pantry[k] = 0; }
   // spoilage (the cold keeps things in winter) and store caps
-  // woollens for the cold months
+  // woolens for the cold months
   const cold = World.season === 'autumn' || World.season === 'winter';
   const need = Math.ceil(Game.villagers.length / 15);
   Village.woollens = cold && (Village.stores.wool || 0) >= need;

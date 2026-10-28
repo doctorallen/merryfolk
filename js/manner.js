@@ -1,7 +1,7 @@
 'use strict';
 // ---------------------------------------------------------------------------
 // Manner: nature in the mouth. A strong trait gives someone a way of talking
-// that colours what they say, whatever the topic: the quick-tempered are
+// that colors what they say, whatever the topic: the quick-tempered are
 // sharp, the merry crack jokes, the quick-witted have an aside for everything,
 // the curious turn statements into questions, and those who keep to
 // themselves say the least they can. Applied to conversation lines and to

@@ -1,7 +1,7 @@
 'use strict';
 // ---------------------------------------------------------------------------
 // Petitions to the Steward (Stronghold's popularity, Frostpunk's laws, Crusader
-// Kings' councils, all cosy). Every couple of days one of the village's
+// Kings' councils, all cozy). Every couple of days one of the village's
 // interests brings a petition: the farmers, the craftsfolk, the elders, the
 // young folk, the rift-folk, the little ones. Each is a real choice with a
 // cost and a benefit, and each pleases some and disappoints others. A
@@ -31,9 +31,9 @@ function fieldSiteNear() {
 const PETITIONS = [
   {
     id: 'field', from: 'farmers', when: () => fieldSiteNear(), title: 'The farmers ask for a new field',
-    text: 'The farmers say the village is outgrowing its barley. They\'d like the Steward\'s leave to clear and plough a new field near the village.',
+    text: 'The farmers say the village is outgrowing its barley. They\'d like the Steward\'s leave to clear and plow a new field near the village.',
     opts: [
-      { label: 'Plough it', desc: 'A new barley field (cleared scrub gives timber). Farmers +, elders a little put out at losing a pretty meadow.', fn: () => { const s = fieldSiteNear(); if (s) placeSite('field', s[0], s[1]); }, fx: { farmers: 15, elders: -5 } },
+      { label: 'Plow it', desc: 'A new barley field (cleared scrub gives timber). Farmers +, elders a little put out at losing a pretty meadow.', fn: () => { const s = fieldSiteNear(); if (s) placeSite('field', s[0], s[1]); }, fx: { farmers: 15, elders: -5 } },
       { label: 'Not now', desc: 'Keep the meadow as it is.', fx: { farmers: -10, elders: 4 } },
     ],
   },

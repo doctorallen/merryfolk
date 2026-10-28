@@ -13,7 +13,7 @@
 //    those within reach of water: the river, a pond, or a well. Ponds and
 //    wells near the fields are the answer.
 //  * Autumn blight: a field of barley sickens and stops growing. The herbalist
-//    can treat it with herbs, or you can buy dwarf sulphur from the chest
+//    can treat it with herbs, or you can buy dwarf sulfur from the chest
 //    (15 pennies) to clear it at once.
 //  * Winter hard frost: bitter nights. Every hearth burns twice the timber,
 //    and folk caught out of doors feel it. Stock the woodpile before it comes.
@@ -22,7 +22,7 @@
 const HAZARDS = {
   flood: { season: 'spring', word: 'Flood', warn: 'The river is high and brown and still rising. The low meadows may well flood tomorrow: anything growing on them is at risk. Raised banks along the river would hold it back.', start: 'The river has burst its banks onto the low meadows!', end: 'The flood has gone down, leaving the meadows muddy but rich.', days: 1 },
   drought: { season: 'summer', word: 'Drought', warn: 'Not a cloud in the sky, and the wells are low. A dry spell is coming: crops away from water will struggle. Ponds and wells near the fields would help.', start: 'The dry spell has come: the ground is cracking and the crops are thirsty.', end: 'Rain at last! The dry spell is broken.', days: 2 },
-  blight: { season: 'autumn', word: 'Blight', warn: 'The farmers don\'t like the look of the barley: there\'s a blight going about. The herbalist should keep herbs ready.', start: 'Blight has got into {field}! The barley there has stopped growing. The herbalist can treat it with herbs, or you can buy dwarf sulphur (15 pennies) on the Steward\'s Desk.', end: 'The blight is gone from the fields.', days: 3 },
+  blight: { season: 'autumn', word: 'Blight', warn: 'The farmers don\'t like the look of the barley: there\'s a blight going about. The herbalist should keep herbs ready.', start: 'Blight has got into {field}! The barley there has stopped growing. The herbalist can treat it with herbs, or you can buy dwarf sulfur (15 pennies) on the Steward\'s Desk.', end: 'The blight is gone from the fields.', days: 3 },
   frost: { season: 'winter', word: 'Hard frost', warn: 'The sky is clear and the air bites: a hard frost is coming. Every hearth will burn twice the timber. Is the woodpile stocked?', start: 'A hard frost has gripped Thistledown. Hearths roar and the woodpile shrinks.', end: 'The hard frost has eased.', days: 2 },
 };
 MOODLETS.damp = ['The flood got into the hole', -0.08, 1440, ['Everything smells of river.']];
@@ -129,7 +129,7 @@ function computeWatered() {
   lightHearths = function () { lh(); const z = hazardActive(); if (z && z.k === 'frost') lh(); };
 }
 
-// The herbalist treats blight; or you buy dwarf sulphur.
+// The herbalist treats blight; or you buy dwarf sulfur.
 ACTIONS.treat_blight = {
   id: 'treat_blight', label: 'Treating the blighted barley', icon: 'herb', sat: { industry: -0.5 }, dur: 60, pose: 'work', outdoor: true, job: 'herbalist', jobs: ['herbalist', 'farmer'], skill: 'herbalism',
   avail: () => { const z = hazardActive(); return !!(z && z.k === 'blight' && (Village.stores.herbs || 0) >= 2); },
@@ -146,9 +146,9 @@ ACTION_NAMES.treat_blight = 'Treating blight';
 function buySulphur() {
   const z = hazardActive();
   if (!z || z.k !== 'blight') return;
-  if ((Game.coin || 0) < 15) { toast('Dwarf sulphur costs 15 pennies.', 'info'); return; }
+  if ((Game.coin || 0) < 15) { toast('Dwarf sulfur costs 15 pennies.', 'info'); return; }
   Game.coin -= 15;
-  chronicle('A sack of dwarf sulphur was bought and dusted over the blighted barley. That\'ll see it off.', 'learn');
+  chronicle('A sack of dwarf sulfur was bought and dusted over the blighted barley. That\'ll see it off.', 'learn');
   endHazard();
 }
 
@@ -207,11 +207,11 @@ window.addEventListener('DOMContentLoaded', () => {
     else if (z.k === 'blight' && World.fields[z.field]) { const f = World.fields[z.field]; centerOn((f.x0 + f.x1) * 8, (f.y0 + f.y1) * 8); }
     toast(z.state === 'warned' ? HAZARDS[z.k].warn : HAZARDS[z.k].start, 'info');
   });
-  // dwarf sulphur on the Steward's Desk while blight is about
+  // dwarf sulfur on the Steward's Desk while blight is about
   const sh = stewardHTML;
   stewardHTML = function () {
     const z = hazardActive();
-    return (z && z.k === 'blight' ? `<div class="note">Blight is in the barley. The herbalist can treat it with herbs, or <button id="st-sulphur">buy dwarf sulphur (15p)</button>.</div>` : '') + sh();
+    return (z && z.k === 'blight' ? `<div class="note">Blight is in the barley. The herbalist can treat it with herbs, or <button id="st-sulphur">buy dwarf sulfur (15p)</button>.</div>` : '') + sh();
   };
   const hook = hookStewardUI;
   hookStewardUI = function (body) { const b = body.querySelector('#st-sulphur'); if (b) b.addEventListener('click', () => { buySulphur(); renderVillage(); }); return hook(body); };

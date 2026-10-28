@@ -3,7 +3,7 @@
 // and a few hundred talks played at random behave. The lint checks that every
 // thread's beats exist and can be reached, every line key has a fallback,
 // placeholders name real facts, lines fit a phone, nothing's said twice in a
-// key, and the spelling is British. The fuzz walks talks across three villages
+// key, and the spelling is American. The fuzz walks talks across three villages
 // and fails on page errors, unfilled {placeholders}, a line repeated within a
 // talk, a talk that never ends, or talks that average under three beats.
 const { launch, openGame, finish } = require('./lib');
@@ -21,7 +21,7 @@ const { launch, openGame, finish } = require('./lib');
     // every fact name factsOf can produce, for placeholders
     const v0 = Game.villagers.find((v) => v.isGrown());
     const keys = new Set(Object.keys(factsOf(v0, { said: new Set() })).concat(['newsText', 'feelingX']));
-    const AMERICAN = /\b(color|colors|favorite|favorites|neighbor|neighbors|gray|center|theater|traveled|traveling|realize|realized|organize|apologize|honor|humor|flavor|cozy|mom)\b/i;
+    const BRITISH = /\b(colour|colours|favourite|favourites|neighbour|neighbours|grey|centre|theatre|travelled|travelling|realise|realised|organise|apologise|honour|humour|flavour|cosy|mum)\b/i;
     let n = 0;
     for (const key in TALK_LINES) {
       const rules = TALK_LINES[key];
@@ -32,7 +32,9 @@ const { launch, openGame, finish } = require('./lib');
         if (typeof t !== 'string' || !t.trim()) { bad.push(`line "${key}" has an empty text`); continue; }
         if (seen.has(t)) bad.push(`line "${key}" says "${t.slice(0, 40)}" twice`); seen.add(t);
         if (t.length > 170) bad.push(`line "${key}" is too long for a phone (${t.length}): "${t.slice(0, 50)}…"`);
-        if (AMERICAN.test(t)) bad.push(`line "${key}" isn't British: "${t.match(AMERICAN)[0]}" in "${t.slice(0, 50)}"`);
+        // (the Grey in Gandalf's name, and in the Havens', is a name)
+        const plain = t.replace(/Gandalf the Grey|Grey Havens|Grey Nuisance|Grey Rider/g, '');
+        if (BRITISH.test(plain)) bad.push(`line "${key}" isn't American: "${plain.match(BRITISH)[0]}" in "${t.slice(0, 50)}"`);
         for (const m of t.matchAll(/\{([a-zA-Z0-9.:]+)\}/g)) {
           const k = m[1];
           if (k.startsWith('frag:')) { if (!FRAGS[k.slice(5)]) bad.push(`line "${key}" uses an unknown fragment {${k}}`); continue; }

@@ -1,6 +1,6 @@
 'use strict';
 // ---------------------------------------------------------------------------
-// The action catalogue. Each action promises to relieve some drives (`sat`);
+// The action catalog. Each action promises to relieve some drives (`sat`);
 // the brain scores them all and picks one. Jobs are actions too, driven by
 // an "itch to work" (industry) drive, and they move goods through the
 // village stores: barley -> flour -> bread, barley -> ale, timber -> new
@@ -41,8 +41,8 @@ const JOBS = {
   woodwright: { label: 'Woodwright', skill: 'woodcraft', icon: 'axe', desc: 'Fells timber for hearths, and digs and builds new homes.' },
   herbalist: { label: 'Herbalist', skill: 'herbalism', icon: 'herb', desc: 'Gathers herbs, brews remedies and nurses the poorly.' },
   orchardist: { label: 'Orchard-keeper', skill: 'farming', icon: 'apple', desc: 'Picks apples and gathers honey from the hives.' },
-  herder: { label: 'Herder', skill: 'farming', icon: 'sheep', desc: 'Tends the sheep, cows and pigs: milk for cheese, wool for winter woollens.' },
-  postie: { label: 'Postie', skill: 'lore', icon: 'letter', desc: 'Carries letters from hole to hole (and from far-off adventurers).' },
+  herder: { label: 'Herder', skill: 'farming', icon: 'sheep', desc: 'Tends the sheep, cows and pigs: milk for cheese, wool for winter woolens.' },
+  postie: { label: 'Mail carrier', skill: 'lore', icon: 'letter', desc: 'Carries letters from hole to hole (and from far-off adventurers).' },
   storyteller: { label: 'Storyteller', skill: 'lore', icon: 'book', desc: 'Gathers the little ones beneath the old oak and teaches them letters, sums and tales.' },
   tinker: { label: 'Tinker', skill: 'tinkering', icon: 'chip', desc: 'Rift know-how: salvages scrap from rifts, wires hobbit-holes with neon and sun-glass, keeps the Relay humming, and lends a hand building.' },
 };
@@ -58,7 +58,7 @@ const HERD_SAY = {
   pig: ['Here, piggies! Scraps!', 'Who\'s a muddy one?', 'Don\'t eat the bucket!'],
 };
 const STORY_PLAIN = ['Once upon a time, there was a hobbit who lived in a hole...', 'And then the dragon said, "Who goes there?"', 'Now, who can tell me what three and four make?', 'Long ago, beyond the hills, there lived a troll...', 'Say your letters with me: A, B, C...'];
-const STORY_FINE = ['Long ago, before the Shire had a name, our folk wandered over the misty mountains...', 'Now, who can name the four farthings? Very good!', 'And so the travellers learned that courage is found in the smallest of places.', 'Let us read this verse together, slowly, and think about what it means.', 'Who can tell me why the moon changes shape? Splendid!'];
+const STORY_FINE = ['Long ago, before the Shire had a name, our folk wandered over the misty mountains...', 'Now, who can name the four farthings? Very good!', 'And so the travelers learned that courage is found in the smallest of places.', 'Let us read this verse together, slowly, and think about what it means.', 'Who can tell me why the moon changes shape? Splendid!'];
 const PHRASES = {
   eat_home: ['Mmm, lovely!', 'Pass the butter!', 'Is that bacon I smell?', 'Just a small plate. Or two.', 'Seconds, I think.'],
   eat_inn: ['Bring the pie!', 'Best stew this side of the river', 'More gravy, please!', 'Another helping!'],
@@ -76,7 +76,7 @@ const PHRASES = {
   party: ['Wheee!', 'Play another!', 'Hey diddle diddle!', 'What a party!', 'Faster, fiddler!'],
   stroll: ['Hmm-hm-hmm...', 'What a lovely day.', '*whistles*', 'Just stretching my legs.'],
   market: ['Fill the larder!', 'A few things for the pantry.', 'Fresh from the Store!'],
-  watch: ['Ooooh!', 'Aaaah!', 'Lovely colours!', 'Do another!'],
+  watch: ['Ooooh!', 'Aaaah!', 'Lovely colors!', 'Do another!'],
   eat_item: ['Cake! For me?', 'Don\'t mind if I do!', 'Free cake!'],
   ale_item: ['A whole keg!', 'Who left this here?', 'Cheers to whoever!'],
   leaf_item: ['Ooh, a pouch of leaf!', 'Finders keepers!'],
@@ -87,7 +87,7 @@ const PHRASES = {
   build: ['Dig, dig, dig!', 'A fine smial this\'ll be.', 'Round door, round door...'],
   work_herb: ['Feverfew... and a bit of mint.', 'Smells like healing.'],
   work_orchard: ['Rosy ones!', 'Easy, bees, easy.'],
-  work_post: ['Post!', 'A letter for you!', 'Mind the dog.'],
+  work_post: ['Mail!', 'A letter for you!', 'Mind the dog.'],
   work_inn: ['What\'ll it be?', 'Mind the step!', 'Fresh stew on!'],
   sick: ['Achoo!', '*sniffle*', 'Ooh, my head...', '*cough cough*'],
   tipsy: ['Hic!', 'Lalala...', 'I love you all!', 'Who moved the road?'],
@@ -241,7 +241,7 @@ function afterMeal(v, kind) {
 }
 
 // ---------------------------------------------------------------------------
-// Action catalogue
+// Action catalog
 // ---------------------------------------------------------------------------
 // Everyone keeps their own hours. A body clock from their nature (the merry
 // and the lazy stay up and lie in; others are early birds), shifted by their
@@ -674,7 +674,7 @@ const ACTIONS = {
     target: (v) => strollTarget(v),
   },
   potter: {
-    label: 'Pottering about at home', icon: 'house', sat: { bored: -0.12, tired: -0.1, cold: -0.4 }, dur: 45, pose: 'inside',
+    label: 'Puttering about at home', icon: 'house', sat: { bored: -0.12, tired: -0.1, cold: -0.4 }, dur: 45, pose: 'inside',
     extra: (v, h) => (Game.raining ? 0.22 : 0.012) + (h >= 20 ? 0.05 : 0) + (World.season === 'winter' ? 0.06 : 0),
     target: (v) => ({ building: v.home() }),
   },
@@ -916,7 +916,7 @@ const ACTIONS = {
     done: (v, task) => { const p = task.target.project; if (p && Village.projects.includes(p)) workProject(v, p); },
   },
   plough: {
-    label: 'Ploughing a new field', icon: 'hoe', sat: { industry: -0.5, bored: -0.25 }, dur: 70, pose: 'work', prop: 'hoe', outdoor: true, job: 'farmer', skill: 'farming',
+    label: 'Plowing a new field', icon: 'hoe', sat: { industry: -0.5, bored: -0.25 }, dur: 70, pose: 'work', prop: 'hoe', outdoor: true, job: 'farmer', skill: 'farming',
     avail: () => Village.projects.some((p) => p.kind === 'field') && World.season !== 'winter',
     time: (h) => workHours(h, 7, 18),
     extra: () => 0.12,
@@ -1040,12 +1040,12 @@ const ACTIONS = {
         if (q.stage === 4) { veg += 2; q.stage = 1; q.prog = 0; } else if (q.stage === 0) { q.stage = 1; q.prog = 0; }
       }
       veg = Math.round(veg * v.skillMul('farming'));
-      if (veg) { queueDelivery(v, 'veg', veg); if (R.chance(0.3)) v.say(R.pick(['Look at the size of this marrow!', 'Lovely taters.', 'A fine crop of cabbages.'])); }
+      if (veg) { queueDelivery(v, 'veg', veg); if (R.chance(0.3)) v.say(R.pick(['Look at the size of this pumpkin!', 'Lovely taters.', 'A fine crop of cabbages.'])); }
     },
     release: (v, task) => { if (task.target.plot) task.target.plot.claimed = null; },
   },
   work_post: {
-    label: 'Delivering the post', icon: 'letter', sat: { industry: -0.45, lonely: -0.3, bored: -0.2 }, dur: 6, pose: 'stand', prop: 'letter', outdoor: true, job: 'postie', skill: 'lore',
+    label: 'Delivering the mail', icon: 'letter', sat: { industry: -0.45, lonely: -0.3, bored: -0.2 }, dur: 6, pose: 'stand', prop: 'letter', outdoor: true, job: 'postie', skill: 'lore',
     time: (h) => workHours(h, 8, 17),
     extra: () => 0.06,
     target: (v) => {
@@ -1096,10 +1096,10 @@ const ACTION_NAMES = {
   sleep: 'Sleeping in', tea: 'Tea', eat_home: 'Meals at home', eat_inn: 'Dining at the inn', ale: 'Ale', well: 'The well', smoke: 'Pipe-smoking',
   read: 'Reading', nap: 'Napping', garden: 'Gardening', forage: 'Mushrooming', fish: 'Fishing', market: 'Trips to the Store', chat: 'Gossip',
   gift: 'Courting', tend_baby: 'Baby-minding', party: 'Parties', fiddle: 'Fiddling', watch: 'Fireworks', play: 'Playing', chase: 'Chasing rabbits',
-  school: 'Story time', apprentice: 'Watching grown-ups work', read_item: 'Storybooks', stroll: 'Strolling', potter: 'Pottering', crawl: 'Crawling',
+  school: 'Story time', apprentice: 'Watching grown-ups work', read_item: 'Storybooks', stroll: 'Strolling', potter: 'Puttering', crawl: 'Crawling',
   cradle: 'The cradle', eat_item: 'Cake', ale_item: 'Kegs', leaf_item: 'Free leaf', remedy_item: 'Remedies', deliver: 'Carrying', work_farm: 'Farm work',
   work_mill: 'Milling', work_bake: 'Baking', work_brew: 'Brewing', work_inn: 'Inn-keeping', work_leaf: 'Leaf-growing', work_fish: 'Fishing for the Store',
-  work_wood: 'Timber-felling', build: 'Building', plough: 'Ploughing', work_herb: 'Herb-gathering', nurse: 'Nursing', work_orchard: 'Orchard work', work_herd: 'Herding', work_allot: 'Allotments', work_post: 'Post rounds',
+  work_wood: 'Timber-felling', build: 'Building', plough: 'Plowing', work_herb: 'Herb-gathering', nurse: 'Nursing', work_orchard: 'Orchard work', work_herd: 'Herding', work_allot: 'Allotments', work_post: 'Mail rounds',
   work_story: 'Storytelling', work_odd: 'Odd jobs', bake_home: 'Home baking',
 };
 // habits worth showing in the Mind tab

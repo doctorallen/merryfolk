@@ -1,7 +1,7 @@
 'use strict';
 // ---------------------------------------------------------------------------
 // Pastimes, part four: the small pleasures. A book under a tree, a stroll, a
-// nap in the shade, a proper pot of tea, favourite dishes and the six meals of
+// nap in the shade, a proper pot of tea, favorite dishes and the six meals of
 // a hobbit's day (FOODS in js/actions.js), baking at home, and games on the
 // green (js/gatherings.js): skittles and skimming stones, where the wizard is
 // challenged and does not always win. Some come from them: a warm parcel to
@@ -133,7 +133,7 @@ talkPack('pastimes4', () => {
     child: ['THERE IS! It eats a pony! ...It gives it back.'],
   });
   L('pastime.reading.where', ['Under the oak by the green. The roots are shaped like a chair.', 'By the window, with my feet on the fender.'], {
-    cheerful: ['Anywhere! The bench, the bath, the queue at the Store!'],
+    cheerful: ['Anywhere! The bench, the bath, the line at the Store!'],
     ornery: ['Somewhere nobody can find me.'],
     shy: ['...Up in the hayloft. Nobody looks up.'],
     curious: ['By the river. If it gets dull, there\'s always the river.'],
@@ -217,7 +217,7 @@ talkPack('pastimes4', () => {
     open: { ask: 'pastime.stroll.open' },
     beats: {
       start: { line: 'pastime.stroll.start', go: [
-        { ap: 'ask', say: 'Where\'s your favourite walk?', to: 'walk' },
+        { ap: 'ask', say: 'Where\'s your favorite walk?', to: 'walk' },
         { ap: 'share', say: 'I\'ve walked most of the West, I think. Your lanes are the kindest.', to: 'west' },
         { ap: 'jest', say: 'Walking for its own sake? Very un-hobbit-like.', to: 'unhobbit' },
       ] },
@@ -311,7 +311,7 @@ talkPack('pastimes4', () => {
         { ap: 'ask', say: 'Do you dream, when you doze?', to: 'dream' },
         { ap: 'jest', say: 'Wizards never sleep. We just rest our eyes for a century.', to: 'century' },
       ] },
-      where: { line: 'pastime.nap.where', fx: { learn: ['pastime.nap', '{Name} has a favourite tree for a nap'] }, go: [
+      where: { line: 'pastime.nap.where', fx: { learn: ['pastime.nap', '{Name} has a favorite tree for a nap'] }, go: [
         { ap: 'warm', say: 'I may borrow it some afternoon.', to: 'borrow' },
         { ap: 'advise', say: 'Go now. You\'ve that look about you.', to: 'go', need: { if: { tired: true } } },
       ] },
@@ -361,7 +361,7 @@ talkPack('pastimes4', () => {
     witty: ['I dream I\'m awake and napping. Very restful.'],
     proud: ['I dream of great things.'],
     gloomy: ['I dream about losing things. Keys. People.'],
-    child: ['I dreamt I was a DRAGON!'],
+    child: ['I dreamed I was a DRAGON!'],
   });
   L('pastime.nap.century', ['A century! I\'d settle for an afternoon.', 'Ha! Then you\'re due one, I\'d say. You look it.'], {
     witty: ['A century. That\'s what I call a nap. I\'m only an amateur.'],
@@ -440,22 +440,22 @@ talkPack('pastimes4', () => {
     witty: ['In a cup, ideally. I\'ve had it in a bowl. It was a dark time.'],
     proud: ['Warmed pot, loose leaf, milk after. Properly.'],
     gloomy: ['Stewed. I always forget it.'],
-    child: ['With milk and sugar and a biscuit IN it.'],
+    child: ['With milk and sugar and a cookie IN it.'],
   });
-  L('pastime.tea.biscuits', ['A biscuit. Two. Seed-cake if there\'s seed-cake.', 'Toast, if it\'s morning. Cake if it\'s four.'], {
+  L('pastime.tea.biscuits', ['A cookie. Two. Seed-cake if there\'s seed-cake.', 'Toast, if it\'s morning. Cake if it\'s four.'], {
     cheerful: ['Everything! Scones, jam, cream, cake, more cake!'],
-    ornery: ['A plain biscuit. Fancy ones crumble.'],
-    shy: ['...A biscuit. Just one.'],
+    ornery: ['A plain cookie. Fancy ones crumble.'],
+    shy: ['...A cookie. Just one.'],
     curious: ['Shortbread. It\'s the butter ratio. I\'ve tried five recipes.'],
     dreamy: ['Something warm from the oven, with the window open.'],
     witty: ['Whatever\'s in the tin. And then whatever\'s in the other tin.'],
     proud: ['Home-baked. Never bought.'],
     gloomy: ['Whatever\'s left. Usually nothing.'],
-    child: ['BISCUITS. All of them.'],
+    child: ['COOKIES. All of them.'],
   }, [
     { if: { favFood: 'cake' }, pri: 1, text: ['Seed-cake. Always seed-cake. Tea without seed-cake is just hot water.'] },
   ]);
-  L('pastime.tea.leaves', ['*They peer into an empty cup.* ...Tall. Very tall. And late.', 'Your leaves say a long road and a short temper. And biscuits.'], {
+  L('pastime.tea.leaves', ['*They peer into an empty cup.* ...Tall. Very tall. And late.', 'Your leaves say a long road and a short temper. And cookies.'], {
     cheerful: ['Oh! I see a big hat! And a party! And... cake!'],
     ornery: ['They say you ask silly questions.'],
     shy: ['...I can\'t really read them. I just pretend.'],
@@ -476,7 +476,7 @@ talkPack('pastimes4', () => {
     child: ['What\'s wrong with milk first?'],
   });
   L('pastime.tea.next', ['Come by, then. I\'ll have the pot warm.', 'Next time. I\'ll make it properly. You\'ll see.'], {});
-  L('pastime.tea.dunk', ['Of course. A biscuit that\'s not dunked hasn\'t lived.', 'Never! Soggy biscuit? In the cup? Never.'], {
+  L('pastime.tea.dunk', ['Of course. A cookie that\'s not dunked hasn\'t lived.', 'Never! Soggy cookie? In the cup? Never.'], {
     cheerful: ['Always! And I lose half of it! And fish it out!'],
     ornery: ['Certainly not.'],
     witty: ['Dunking is a skill. Three seconds. Four is a tragedy.'],
@@ -491,16 +491,16 @@ talkPack('pastimes4', () => {
   });
 
   // ==================================================================================
-  // --- Food: favourite dishes, and the six meals of the day ----------------------------
+  // --- Food: favorite dishes, and the six meals of the day ----------------------------
   // ==================================================================================
   addThread({
     id: 'pastime.food', about: 'food', reveals: 'pastime.food', weight: 1, cool: 4,
-    label: 'What\'s your favourite dish?',
+    label: 'What\'s your favorite dish?',
     when: (F) => !!F.favFood,
     rel: (F) => (F.hungry ? 1.6 : 1),
     open: { ask: 'pastime.food.open' },
     beats: {
-      start: { line: 'pastime.food.start', fx: { learn: ['pastime.food', '{Name}\'s favourite food is {favFoodWord}'] }, go: [
+      start: { line: 'pastime.food.start', fx: { learn: ['pastime.food', '{Name}\'s favorite food is {favFoodWord}'] }, go: [
         { ap: 'ask', say: 'And how do you like it done?', to: 'how' },
         { ap: 'ask', say: 'And what can\'t you abide?', to: 'hate', need: { if: { hateFood: has } } },
         { ap: 'jest', say: 'How many meals is it today? I make it four so far.', to: 'meals' },
@@ -535,7 +535,7 @@ talkPack('pastimes4', () => {
     },
     end: { fond: 0.02 },
   });
-  L('pastime.food.open', ['Tell me, {name}: if you could eat one thing for the rest of your days?', 'What\'s your favourite dish, {name}? I collect them.', 'What would you have at a feast in your honour, {name}?'], {}, [
+  L('pastime.food.open', ['Tell me, {name}: if you could eat one thing for the rest of your days?', 'What\'s your favorite dish, {name}? I collect them.', 'What would you have at a feast in your honor, {name}?'], {}, [
     { if: { hungry: true }, text: ['I can hear your stomach from here, {name}. What\'s it asking for?'] },
   ]);
   L('pastime.food.start', ['Oh, everything. Ask me what I don\'t like. It\'s quicker.', '{FavFoodWord}. No question. Every time.', 'Oh, {favFoodWord}. I dream about {favFoodWord}.'], {
@@ -563,7 +563,7 @@ talkPack('pastimes4', () => {
   L('pastime.food.how', ['Plain. Done right, plain\'s best.', 'Hot, and plenty of it.'], {
     cheerful: ['With everything! And then a bit more of everything!'],
     ornery: ['The old way. Not this new way with herbs on.'],
-    shy: ['...How my mum did it.'],
+    shy: ['...How my mom did it.'],
     curious: ['That depends on the season. And the weather. And the moon, my gran said. I\'ve been checking.'],
     dreamy: ['Slowly. On a winter evening, with the fire going.'],
     witty: ['On a plate, ideally. In a hurry, if necessary.'],
@@ -584,7 +584,7 @@ talkPack('pastimes4', () => {
     witty: ['{HateFoodWord}. We had a falling-out years ago. We don\'t speak.'],
     proud: ['{HateFoodWord}. It\'s beneath me.'],
     gloomy: ['{HateFoodWord}. And we always seem to have it.'],
-    child: ['{HateFoodWord}! YUCK! Mum makes me!'],
+    child: ['{HateFoodWord}! YUCK! Mom makes me!'],
   });
   L('pastime.food.meals', ['Four? Five. Second breakfast was small. It doesn\'t count. It counts.', 'Breakfast, second breakfast, elevenses, luncheon, tea, dinner, supper. Room for a snack.'], {
     cheerful: ['Ha! Five! And I\'m eyeing up six!'],
@@ -692,7 +692,7 @@ talkPack('pastimes4', () => {
     proud: ['The finest bread on the lane comes out of my oven.'],
     gloomy: ['It keeps the house warm. That\'s something.'],
   }, [
-    { if: { job: 'baker' }, pri: 1, text: ['A baker\'s holiday is more baking. Don\'t ask me why. I just love it.'] },
+    { if: { job: 'baker' }, pri: 1, text: ['A baker\'s vacation is more baking. Don\'t ask me why. I just love it.'] },
     { if: { season: 'winter' }, text: ['In winter I\'d live in the oven if I could fit.'] },
     { if: { kid: has }, text: ['{Kid} helps. {Kid} helps by eating the dough.'] },
   ]);
@@ -700,7 +700,7 @@ talkPack('pastimes4', () => {
     cheerful: ['Apple pie! With a lattice! And a pastry mouse on top!'],
     ornery: ['Bread. Not fancy. Proper.'],
     shy: ['...Scones. Folk say they\'re nice.'],
-    curious: ['A plaited loaf. I\'ve worked out a six-strand plait. It took a week.'],
+    curious: ['A braided loaf. I\'ve worked out a six-strand braid. It took a week.'],
     dreamy: ['Honey cake. It tastes like a summer afternoon.'],
     witty: ['Anything, the first time. Never the same thing twice. I can\'t remember what I did.'],
     proud: ['My pies. Ask the Harvest Fair.'],
@@ -714,7 +714,7 @@ talkPack('pastimes4', () => {
     ornery: ['The oven was too hot. It wasn\'t me.'],
     shy: ['...Oh no. Everyone knows?'],
     curious: ['I\'ve worked out what happened. The oven has a hot corner. I\'ve marked it.'],
-    witty: ['It wasn\'t burnt. It was very thoroughly baked. There\'s a difference.'],
+    witty: ['It wasn\'t burned. It was very thoroughly baked. There\'s a difference.'],
     proud: ['A single error in a long career.'],
     gloomy: ['That\'s what I\'m known for now. The burnt loaf.'],
   });
@@ -738,7 +738,7 @@ talkPack('pastimes4', () => {
     witty: ['The pig. He gave it four stars.'],
   });
   L('pastime.baking.show', ['Come by on Trewsday. Bring an apron. Bring humility.', 'I will. And you\'ll do it right this time.'], {});
-  L('pastime.baking.taught', ['My mum. Flour to the elbows, singing.', 'My gran. She never measured anything. Neither do I.'], {
+  L('pastime.baking.taught', ['My mom. Flour to the elbows, singing.', 'My gran. She never measured anything. Neither do I.'], {
     proud: ['I taught myself. Then I taught the miller\'s wife.'],
   });
   L('pastime.baking.loaf', ['Then you\'ll have one. Warm. Don\'t eat it all on the road.', 'A loaf for the wizard. I\'ll make it a big one.'], {
@@ -753,7 +753,7 @@ talkPack('pastimes4', () => {
     beats: {
       start: { line: 'pastime.taste.start', go: [
         { ap: 'warm', say: '*You taste it.* Oh. Oh, that\'s wonderful.', label: 'Taste it, and say it\'s wonderful', to: 'wonderful' },
-        { ap: 'ask', say: '*You taste it.* What\'s that flavour? I can\'t place it.', label: 'Taste it, and ask what\'s in it', to: 'whatsin' },
+        { ap: 'ask', say: '*You taste it.* What\'s that flavor? I can\'t place it.', label: 'Taste it, and ask what\'s in it', to: 'whatsin' },
         { ap: 'jest', say: '*You taste it, then a second piece, then a third.* I\'m checking.', label: 'Taste it. Then more of it', to: 'checking' },
       ] },
       wonderful: { line: 'pastime.taste.wonderful', fx: { fond: 0.03 }, end: true },
@@ -777,7 +777,7 @@ talkPack('pastimes4', () => {
     shy: ['*They go pink and look very pleased.*'],
     gloomy: ['...Really? ...Oh, that\'s nice.'],
   });
-  L('pastime.taste.whatsin', ['Cardamom. A traveller left some at the Badger. I\'ve been rationing it.', 'A bit of orange peel. Dried. Don\'t tell.'], {
+  L('pastime.taste.whatsin', ['Cardamom. A traveler left some at the Badger. I\'ve been rationing it.', 'A bit of orange peel. Dried. Don\'t tell.'], {
     curious: ['You CAN taste it! It\'s lemon thyme! I knew it would come through!'],
     proud: ['That would be telling.'],
   });
@@ -843,7 +843,7 @@ talkPack('pastimes4', () => {
     cheerful: ['YES! A game! Oh, I love a game!'],
     ornery: ['I\'m the best on the green. Ask anyone. They\'ll grumble, but ask.'],
     shy: ['...I\'m not very good. But all right.'],
-    curious: ['I\'ve been working out the angles. If you hit the front pin just left of centre...'],
+    curious: ['I\'ve been working out the angles. If you hit the front pin just left of center...'],
     dreamy: ['I like the sound. The clatter. Like a roof in the rain.'],
     witty: ['A game against a wizard? I\'ll want it in writing that magic\'s not allowed.'],
     proud: ['You\'ve chosen your opponent poorly, wizard.'],
@@ -906,7 +906,7 @@ talkPack('pastimes4', () => {
     gloomy: ['*Three pins.* ...Told you.'],
     child: ['*A stone goes skip, skip, skip, skip, plop.* FOUR! I did FOUR!'],
   });
-  L('pastime.games.rule', ['Whether you can stand on the line. Folk have stopped speaking over it.', 'Whether a hen counts. It\'s been argued since my grandad\'s day.'], {
+  L('pastime.games.rule', ['Whether you can stand on the line. Folk have stopped speaking over it.', 'Whether a hen counts. It\'s been argued since my granddad\'s day.'], {
     witty: ['Whether the pins can be moved by the wind. I say yes. Everyone else says I\'m cheating.'],
   });
   L('pastime.games.beatall', ['Ha! Come on Highday. Bring your own ball.', 'You\'re on. Highday afternoon. The green. Don\'t be late.'], {
@@ -996,7 +996,7 @@ talkPack('pastimes4', () => {
     witty: ['Nothing\'s harder than it looks. You have to really commit.'],
     proud: ['I don\'t have time for nothing. I make time for something.'],
     gloomy: ['I do a lot of nothing. It\'s not as fun as it sounds.'],
-    child: ['I did nothing too! I did it all day! Mum said stop doing nothing!'],
+    child: ['I did nothing too! I did it all day! Mom said stop doing nothing!'],
   });
   L('pastime.idle.freeday', ['Sleep late, eat early, and sit in the sun with my feet up.', 'Fish, nap, eat, nap, fish. In that order.'], {
     cheerful: ['Everything! A picnic! A swim! A dance! Two picnics!'],
@@ -1041,7 +1041,7 @@ talkPack('pastimes4', () => {
   M('pastime.nap.start', [
     { if: { register: 'fine' }, text: ['A brief repose after luncheon. The physicians recommend it. Well. I recommend it.'] },
     { if: { register: 'plain' }, text: ['Forty winks. Fifty. Who\'s countin\'.'] },
-    { if: { mood: 'merry' }, text: ['Best nap of my life! I dreamt of pies and woke up to bees!'] },
+    { if: { mood: 'merry' }, text: ['Best nap of my life! I dreamed of pies and woke up to bees!'] },
     { if: { season: 'summer' }, text: ['In this heat? A nap is the only sensible thing a hobbit can do.'] },
   ]);
   M('pastime.tea.start', [
@@ -1064,7 +1064,7 @@ talkPack('pastimes4', () => {
     { if: { rift: true }, text: ['SEVEN meals? Back home we had one, standing up. I\'ve gained a stone. I\'m so happy.'] },
   ]);
   M('pastime.baking.start', [
-    { if: { register: 'fine' }, text: ['A little light baking. Shortbread, a plaited loaf. One finds it restful.'] },
+    { if: { register: 'fine' }, text: ['A little light baking. Shortbread, a braided loaf. One finds it restful.'] },
     { if: { register: 'plain' }, text: ['Bread. Always bread. And a pie Highdays.'] },
     { if: { mood: 'merry' }, text: ['I\'ve made buns! Twelve! There are nine left! There were twelve!'] },
     { if: { weather: 'rain' }, text: ['A rainy day is a baking day. The kitchen windows steam up and the world goes away.'] },

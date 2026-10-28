@@ -13,7 +13,7 @@
 // flowers.
 // ---------------------------------------------------------------------------
 
-const KEEPSAKES = ['pocket-watch', 'walking stick', 'brass-bound pipe', 'recipe book', 'silver thimble', 'compass', 'favourite teapot', 'embroidered waistcoat', 'map of the Shire', 'carved chess set', 'button tin', 'old fiddle', 'gardening trowel', 'spectacles case'];
+const KEEPSAKES = ['pocket-watch', 'walking stick', 'brass-bound pipe', 'recipe book', 'silver thimble', 'compass', 'favorite teapot', 'embroidered waistcoat', 'map of the Shire', 'carved chess set', 'button tin', 'old fiddle', 'gardening trowel', 'spectacles case'];
 MOODLETS.remembered = ['Sat a while by {x}\'s stone', 0.06, 480, ['{x} would have liked today.', 'I told {x} all the news.']];
 MOODLETS.keepsake = ['Given {x}\'s keepsake', 0.1, 1440, ['I\'ll keep it safe, I promise.']];
 

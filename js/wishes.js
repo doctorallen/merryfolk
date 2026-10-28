@@ -2,10 +2,10 @@
 // ---------------------------------------------------------------------------
 // Wishes and dreams (as in The Sims' wants and lifetime aspirations).
 //
-// Wishes are small, near things: a plate of their favourite, a dance at the
+// Wishes are small, near things: a plate of their favorite, a dance at the
 // next party, a good natter with an old friend, making it up after a squabble,
 // a slice of seed-cake, fireworks. Folk carry one or two at a time, chosen by
-// their nature and how things stand; a wish leans them a little towards what
+// their nature and how things stand; a wish leans them a little toward what
 // would grant it, and if it comes true they're delighted for a day. Some are
 // in your gift: drop a cake or a storybook nearby, set off fireworks, give
 // them a pat or a lesson. Wishes that don't come true in a day or two fade.
@@ -24,7 +24,7 @@ const grownOrKid = (v) => v.isGrown() || v.isChild();
 
 // on: what grants it, 'feel:<moodlet>' (its {x} must match the wish's x if
 // the wish has one), 'act:<action>' when they finish that action, or 'poll'
-// (checked every hour). nudge: actions they lean towards while they wish it.
+// (checked every hour). nudge: actions they lean toward while they wish it.
 const WISHES = {
   fav_food: {
     w: (v) => (grownOrKid(v) ? 1 : 0), make: (v) => ({ x: FOODS[v.favouriteFood()].label }),
@@ -286,7 +286,7 @@ function wishesHourly(h) {
     };
     addHook('beforeHour', (h) => { wishesHourly(h); });
   });
-  // a wish leans them towards what would grant it
+  // a wish leans them toward what would grant it
   patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
     if (s > 0 && this.wishes && this.wishes.length) {

@@ -36,7 +36,7 @@ const COLLECT_KINDS = {
 };
 const BIRDS = ['robin', 'wren', 'blackbird', 'song thrush', 'goldfinch', 'chaffinch', 'blue tit', 'great tit', 'long-tailed tit', 'goldcrest', 'nuthatch',
   'treecreeper', 'jay', 'magpie', 'rook', 'jackdaw', 'barn owl', 'tawny owl', 'kestrel', 'buzzard', 'sparrowhawk', 'heron', 'kingfisher', 'moorhen', 'mallard',
-  'swallow', 'house martin', 'swift', 'cuckoo', 'skylark', 'yellowhammer', 'bullfinch', 'greenfinch', 'linnet', 'dunnock', 'pied wagtail', 'grey wagtail',
+  'swallow', 'house martin', 'swift', 'cuckoo', 'skylark', 'yellowhammer', 'bullfinch', 'greenfinch', 'linnet', 'dunnock', 'pied wagtail', 'gray wagtail',
   'dipper', 'woodpecker', 'green woodpecker', 'wood pigeon', 'collared dove', 'pheasant', 'partridge', 'lapwing', 'curlew', 'snipe', 'redwing', 'fieldfare',
   'waxwing', 'starling', 'house sparrow', 'tree sparrow', 'reed bunting', 'sedge warbler', 'chiffchaff', 'willow warbler', 'blackcap', 'nightingale', 'hoopoe'];
 
@@ -173,13 +173,13 @@ Object.assign(ACTIONS, {
     target: homeOrBench('knit'), homeless: benchWeather,
     label2: (v) => (World.season === 'autumn' || World.season === 'winter' ? 'Knitting something warm' : 'Knitting'),
     done: (v, task, q) => {
-      // wool from the Store if there is any; otherwise, an old jumper unpicked
+      // wool from the Store if there is any; otherwise, an old sweater unpicked
       task.data.p = (v.knitPart || 0) + (Village.stores.wool >= 1 ? 0.7 : 0.4) * q;
       v.knitPart = task.data.p;
       if (v.knitPart >= 1) {
         v.knitPart = 0;
         if (Village.stores.wool >= 1) Village.use('wool', 1);
-        madePiece(v, 'knitting', R.pick(['scarf', 'pair of mittens', 'tea cosy', 'woolly hat', 'pair of socks', 'blanket']));
+        madePiece(v, 'knitting', R.pick(['scarf', 'pair of mittens', 'tea cozy', 'woolly hat', 'pair of socks', 'blanket']));
       }
     },
   }),

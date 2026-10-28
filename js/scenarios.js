@@ -2,7 +2,7 @@
 // ---------------------------------------------------------------------------
 // Scenarios (SimCity's scenarios, Banished's starting conditions): chosen on
 // the Shape your valley screen, each with its own conditions and a goal.
-// Meet the goal and the village is honoured; miss it and you simply play on.
+// Meet the goal and the village is honored; miss it and you simply play on.
 // ---------------------------------------------------------------------------
 
 const SCENARIOS = {

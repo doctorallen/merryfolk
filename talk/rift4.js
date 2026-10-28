@@ -68,7 +68,7 @@ talkPack('rift4', () => {
     { if: { temper: 'dreamy' }, text: ['The most beautiful thing I\'ve ever seen. I\'d be afraid if it wasn\'t so beautiful.'] },
     { if: { temper: 'curious' }, text: ['I\'ve been keeping a log! When they open, where, how long, who comes out. There\'s a pattern. I\'m close.'] },
     { if: { temper: 'gloomy' }, text: ['Bad weather that brings people. I don\'t know whether to curse it or thank it.'] },
-    { if: { temper: 'witty' }, text: ['The sky\'s got a leak and it\'s leaking neighbours. I\'ve put a bucket out.'] },
+    { if: { temper: 'witty' }, text: ['The sky\'s got a leak and it\'s leaking neighbors. I\'ve put a bucket out.'] },
     { if: { temper: 'shy' }, text: ['I close my curtains when they open. Then I peep.'] },
     { if: { riftStage: { min: 8 } }, pri: 1, text: ['They gutter now. Every night. Like candles near the end. It\'s worse than when they tore. It\'s sadder.'] },
   ]);
@@ -84,7 +84,7 @@ talkPack('rift4', () => {
     { if: { riftFrags: 'gold' }, pri: 1, text: ['When every lamp\'s lit, the edges go gold. Something over there steadies when we\'re bright. I think it\'s drinking our light.'] },
   ]);
   lines('rift.sky.darn', [
-    { text: ['Darning! Ha! My nan could\'ve done it. She darned everything. She darned a cat once.', 'I\'ll fetch my needles. You hold the ladder.'] },
+    { text: ['Darning! Ha! My grandma could\'ve done it. She darned everything. She darned a cat once.', 'I\'ll fetch my needles. You hold the ladder.'] },
     { if: { temper: 'ornery' }, text: ['Not funny. ...Bit funny.'] },
     { if: { stage: 'child' }, text: ['With a GIANT needle! And giant wool! Can I help?'] },
   ]);
@@ -105,7 +105,7 @@ talkPack('rift4', () => {
   lines('rift.sky.doors', [
     { text: ['Knocking. Hm. Then I suppose someone ought to answer.', 'Doors. Yes. And you don\'t leave folk knocking. Not here.'] },
     { if: { rift: true }, text: ['Knocking. Yes. And you lot answered. Thank you for that.'] },
-    { if: { temper: 'ornery' }, text: ['Doors can be shut, too. ...But not in someone\'s face. My mum taught me that.'] },
+    { if: { temper: 'ornery' }, text: ['Doors can be shut, too. ...But not in someone\'s face. My mom taught me that.'] },
   ]);
   lines('rift.sky.comforted', [{ text: ['No harm. That\'s true. A lot of noise and a good many noodles. No harm.', 'You\'re right. I\'ll stop drawing the curtains. Some nights.'] }]);
 
@@ -157,7 +157,7 @@ talkPack('rift4', () => {
   lines('rift.seek.ifind', [
     { text: ['Then everyone has to choose. That\'s the part nobody says out loud at the scar.', 'Then I look through. A long time. And then I don\'t know.'] },
     { if: { spouse: (s) => !!s }, pri: 1, text: ['Then I bring {spouse} to look. And we decide together. That\'s the only way I can bear it.'] },
-    { if: { riftHillFriend: (x) => !!x }, text: ['Then I\'d have to tell {riftHillFriend}. I\'ve practised it. I can\'t get past the first word.'] },
+    { if: { riftHillFriend: (x) => !!x }, text: ['Then I\'d have to tell {riftHillFriend}. I\'ve practiced it. I can\'t get past the first word.'] },
     { if: { lost: (x) => !!x }, text: ['Then maybe I find {lost}. Or maybe the door\'s empty on the other side, too.'] },
   ]);
   lines('rift.seek.sleep', [
@@ -206,20 +206,20 @@ talkPack('rift4', () => {
   lines('rift.mungo.start', [
     { text: ['Mungo Fernsby! Walked into green lightning with a kettle. And now his kettle\'s on all their sleeves.', 'A tinker from our own valley. I can\'t get over it. Our own valley.'] },
     { if: { rift: true }, text: ['Saint Mungo of the First Lamp was a hill-hobbit tinker with a bar tab. I\'ve never loved a saint more.', 'He\'s on our coins. He\'s on your debt ledger. I laughed till I cried. Then I just cried.'] },
-    { if: { stage: 'elder' }, pri: 1, text: ['Fernsby. My grandad\'s grandad knew the family. Kettle-menders, all of them. Never could leave a thing alone.'] },
+    { if: { stage: 'elder' }, pri: 1, text: ['Fernsby. My granddad\'s granddad knew the family. Kettle-menders, all of them. Never could leave a thing alone.'] },
     { if: { temper: 'ornery' }, text: ['A Fernsby. Typical. Never could stay put, that lot. Now look what he\'s started.'] },
     { if: { temper: 'dreamy' }, text: ['He went out into the dark with a kettle and made a city. If that\'s not a song, I don\'t know what is.'] },
     { if: { temper: 'curious' }, text: ['A kettle-dynamo! He built a dynamo out of a KETTLE. On the other side. With no help. I want to know how.'] },
-    { if: { temper: 'witty' }, text: ['Walked into a storm, founded a civilisation, never paid his tab. Very hobbit, in the end.'] },
+    { if: { temper: 'witty' }, text: ['Walked into a storm, founded a civilization, never paid his tab. Very hobbit, in the end.'] },
     { if: { temper: 'gloomy' }, text: ['Poor fellow. All that way from home. And nobody here remembered him but a ledger.'] },
   ]);
   lines('rift.mungo.say', [
     { text: ['That he was clever. Too clever. Mended kettles that weren\'t broken.', 'That he talked to the weather. And one day it talked back.'] },
     { if: { rift: true }, text: ['That he lit the first lamp. That he walked out of the storm with fire in a kettle. That he was kind.'] },
-    { if: { stage: 'elder' }, text: ['My nan said the Fernsbys left a light in the window for him for forty years. Then they moved to Bree.'] },
+    { if: { stage: 'elder' }, text: ['My grandma said the Fernsbys left a light in the window for him for forty years. Then they moved to Bree.'] },
   ]);
   lines('rift.mungo.debt', [
-    { text: ['Threepence! Ha! Somebody ought to pay it. For the honour of the valley.', 'The Crooked Kettle closed sixty years ago. The debt\'s outlived the inn.'] },
+    { text: ['Threepence! Ha! Somebody ought to pay it. For the honor of the valley.', 'The Crooked Kettle closed sixty years ago. The debt\'s outlived the inn.'] },
     { if: { rift: true }, text: ['I\'m paying it. I\'ve got threepence. I\'ll pay it on behalf of the whole city. Where do I go?'] },
     { if: { temper: 'witty' }, text: ['With interest, it\'s a city. I think we\'re square.'] },
   ]);
@@ -295,7 +295,7 @@ talkPack('rift4', () => {
     { if: { riftWary: 'much' }, pri: 1, text: ['The not knowing. Lend them our river, then our wind. What do we lend them next year?'] },
     { if: { values: 'tradition' }, text: ['The old ways. We were a quiet valley. I\'d like us to be one again.'] },
     { if: { values: 'learning' }, text: ['The chance to learn. A door between worlds! When will anyone ever have that again?'] },
-    { if: { values: 'kin' }, text: ['Family. Theirs and ours. Somebody\'s mum is on the other side of that sky.'] },
+    { if: { values: 'kin' }, text: ['Family. Theirs and ours. Somebody\'s mom is on the other side of that sky.'] },
     { if: { values: 'thrift' }, text: ['The cost. Timber for the hearths, water for the mill. Lending\'s fine if you get it back.'] },
     { if: { values: 'merriment' }, text: ['The parties, if I\'m honest! Visitors from the city! Imagine the Midsummer we\'d have!'] },
     { if: { values: 'nature' }, text: ['The sky. It\'s torn. Things that are torn should be let heal, not held open.'] },
@@ -446,7 +446,7 @@ talkPack('rift4', () => {
   ]);
   lines('rift.after.jested', [
     { text: ['Ha! The scones are never safe. Not in this village.', 'Ha. Yes. That\'s the important thing, isn\'t it.'] },
-    { if: { riftFinale: 'hearthlink' }, text: ['One bakery! The Neverdark folk queue round the green for it. The baker\'s never been so smug.'] },
+    { if: { riftFinale: 'hearthlink' }, text: ['One bakery! The Neverdark folk line up round the green for it. The baker\'s never been so smug.'] },
     { if: { riftFinale: 'softclose' }, text: ['The beans have never been so safe. Or so dull.'] },
   ]);
   lines('rift.after.right', [
@@ -470,7 +470,7 @@ talkPack('rift4', () => {
     proud: ["I've watched every one from my step. I'm not one for running about gawping.", "I'm not afraid of them. Someone has to keep a level head."],
   });
   byTemper('rift.sky.theory', {
-    cheerful: ["A door to somewhere marvellous! That's my theory! Probably full of cake!", "Presents! The sky's giving us new neighbours! That's how I see it!"],
+    cheerful: ["A door to somewhere marvelous! That's my theory! Probably full of cake!", "Presents! The sky's giving us new neighbors! That's how I see it!"],
     shy: ["...I think someone's lonely. On the other side.", "...Doors, maybe. I don't like to say."],
     proud: ["I've thought about it longer than most. They're doors. Built doors. Somebody made them.", "Weather, the fools say. They're not weather. Anyone with eyes can see."],
   });
@@ -518,7 +518,7 @@ talkPack('rift4', () => {
     curious: ["Doors. Then who's knocking? And why here?", "Doors make sense. They open, things come through."],
     dreamy: ["Doors in the sky, and someone on the other side, hoping.", "Knocking softly. Yes."],
     witty: ["Doors. And we never lock ours. Typical hobbits.", "Knocking. I'll put the kettle on."],
-    proud: ["Then we'll answer properly. As hosts should.", "Doors. And we're good neighbours."],
+    proud: ["Then we'll answer properly. As hosts should.", "Doors. And we're good neighbors."],
     gloomy: ["Knocking. And what if they stop knocking?", "Doors. I hope they're not closing."],
   });
   byTemper('rift.sky.comforted', {
@@ -597,7 +597,7 @@ talkPack('rift4', () => {
     gloomy: ["...Thank you. That helps.", "A light on. Okay."],
   });
   byTemper('rift.mungo.start', {
-    cheerful: ["Mungo Fernsby! Our very own! I'm so proud and I didn't even know him!", "A hobbit founded a city! On the other side of the sky! Isn't that marvellous?"],
+    cheerful: ["Mungo Fernsby! Our very own! I'm so proud and I didn't even know him!", "A hobbit founded a city! On the other side of the sky! Isn't that marvelous?"],
     shy: ["...I read the ledger. Mungo. He sounds nice.", "...A tinker from here. It's strange to think."],
     proud: ["A Thistledown tinker. Founded a city. Of course he did. We're that sort of valley.", "Mungo. One of ours. I always said we were made for great things."],
   });
@@ -617,7 +617,7 @@ talkPack('rift4', () => {
     shy: ["*giggles* Threepence.", "...That's funny."],
     curious: ["Threepence at the Crooked Kettle. Adjusted for inflation, that's... a lot of noodles.", "Interesting. A financial record of a world-founder."],
     dreamy: ["Threepence. The price of a city.", "He'll come back for it one day."],
-    proud: ["I'll pay it. For the honour of the valley.", "His debt is our debt. I'll see to it."],
+    proud: ["I'll pay it. For the honor of the valley.", "His debt is our debt. I'll see to it."],
     gloomy: ["He never came back to pay it. Poor man.", "Threepence. And a city. And a lot of lost people."],
   });
   byTemper('rift.mungo.meant', {
@@ -635,7 +635,7 @@ talkPack('rift4', () => {
     shy: ["...You knew him. Oh. Did he have friends?", "...That's sad. And lovely."],
     curious: ["You knew him personally! What did he ask exactly? What did he build?", "Lightning in a jar! He was decades ahead!"],
     dreamy: ["You laughed, and he went anyway. And lit a city. Oh.", "He caught his lightning. In the end."],
-    witty: ["You laughed at the founder of a civilisation. Bold career move.", "Lightning in a jar. You owe him an apology. Several centuries late."],
+    witty: ["You laughed at the founder of a civilization. Bold career move.", "Lightning in a jar. You owe him an apology. Several centuries late."],
     proud: ["You knew him. Then you know what our valley can produce.", "He proved you wrong. That's very Thistledown."],
     gloomy: ["You laughed. And he went alone. Oh, wizard.", "I wish someone had listened to him."],
   });
@@ -662,8 +662,8 @@ talkPack('rift4', () => {
     shy: ["...Not upsetting anyone.", "...My friends. What they'd want."],
     curious: ["The unknown. What happens next, either way? Nobody knows.", "The long-term effects. Nobody's thought about them."],
     dreamy: ["Whether we can be kind to two worlds at once.", "The children, on both sides of the sky."],
-    witty: ["Whether the Badger stays open late either way.", "Whether I can live with myself. And the neighbours."],
-    proud: ["Doing what's right. Not what's easy.", "The village's honour. We'll be remembered for this."],
+    witty: ["Whether the Badger stays open late either way.", "Whether I can live with myself. And the neighbors."],
+    proud: ["Doing what's right. Not what's easy.", "The village's honor. We'll be remembered for this."],
     gloomy: ["Someone loses either way. That weighs.", "The ones we can't help."],
   });
   byTemper('rift.dim.tale', {
@@ -694,7 +694,7 @@ talkPack('rift4', () => {
     shy: ["...I'd rather decide on my own.", "...Please don't push."],
     curious: ["You're making an argument. I'd like to hear the other side too.", "Not convinced yet. I need more."],
     dreamy: ["I need to think on my own. Under the stars.", "I'll decide in my own time."],
-    witty: ["A wizard lecture. My favourite. Not.", "Persuasion noted. Ignored."],
+    witty: ["A wizard lecture. My favorite. Not.", "Persuasion noted. Ignored."],
     gloomy: ["I'll think about it. I'm not sure.", "Nothing's that simple."],
   });
   byTemper('rift.dim.moved2', {
@@ -720,7 +720,7 @@ talkPack('rift4', () => {
     cheerful: ["I'd do anything {riftFriend} asked! That's what friends are for!", "I'd listen! {RiftFriend}'s my best friend!"],
     ornery: ["{RiftFriend} wouldn't ask. And if {riftFriend} did, I'd... think about it.", "Hm. That's unfair."],
     shy: ["...I'd do what {riftFriend} wanted.", "...{RiftFriend} matters more than a vote."],
-    curious: ["Interesting. Would I prioritise friendship over judgement? ...Yes.", "That's a real question. I'd listen."],
+    curious: ["Interesting. Would I prioritize friendship over judgment? ...Yes.", "That's a real question. I'd listen."],
     dreamy: ["I'd listen to {riftFriend}. Always.", "For {riftFriend}, anything."],
     witty: ["{RiftFriend} would bribe me with pie. It'd work.", "Then I'd be in trouble."],
     gloomy: ["I'd vote how {riftFriend} wanted. Even if it hurt.", "Then I'd have no choice."],
@@ -737,11 +737,11 @@ talkPack('rift4', () => {
   byTemper('rift.dimr.start', {
     shy: ["...I try not to look. I look anyway.", "...It's hard. I don't talk about it."],
     curious: ["I've been counting lights through the rifts. Fewer every night. I can graph it.", "The decline's accelerating. I've measured it."],
-    dreamy: ["Through the rift I see the clouds going grey. They used to be gold.", "The city's going to sleep. Forever, maybe."],
+    dreamy: ["Through the rift I see the clouds going gray. They used to be gold.", "The city's going to sleep. Forever, maybe."],
     witty: ["Badly. Watching your home dim through a hole in the sky isn't a hobby I'd recommend.", "The city's on its last bar."],
   });
   byTemper('rift.dimr.link', {
-    cheerful: ["Everything! Visits! Letters! I'd see my mum!", "Both worlds! Golden doors! It'd be wonderful!"],
+    cheerful: ["Everything! Visits! Letters! I'd see my mom!", "Both worlds! Golden doors! It'd be wonderful!"],
     ornery: ["It'd mean not having to choose. That's all I want.", "It'd mean the city doesn't die. Isn't that enough?"],
     shy: ["...It'd mean I could say goodbye properly. Or hello.", "...Everything."],
     curious: ["A stable connection between worlds! Imagine what we'd learn!", "It'd mean the Lamplighter could be studied. Maybe saved."],

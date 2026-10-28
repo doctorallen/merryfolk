@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 // Genetics. Every villager carries a genome:
 //  - looks: skin, hair, clothes, hair style, plus two-allele genes for eye
-//    colour, freckles and curls (dominant / recessive, so traits can skip
+//    color, freckles and curls (dominant / recessive, so traits can skip
 //    a generation and reappear)
 //  - personality: thirteen continuous traits blended from both parents
 //  - talents: aptitudes for each skill, which set how fast they learn it
@@ -48,7 +48,7 @@ function randomGenes() {
     freckles: [R.chance(0.25) ? 1 : 0, R.chance(0.25) ? 1 : 0],
     curls: [R.chance(0.3) ? 1 : 0, R.chance(0.3) ? 1 : 0],
     // rift-blood: how much of their ancestry stepped through a rift (0 for hill-folk);
-    // a chrome-eye gene (dominant) and a favourite neon, which shows once they take up rift ways
+    // a chrome-eye gene (dominant) and a favorite neon, which shows once they take up rift ways
     rift: 0, chrome: [0, 0], neon: R.i(0, NEON_COLS.length - 1),
     taste: {}, food: {}, apt: {}, mutations: [],
   };
@@ -98,7 +98,7 @@ function inheritGenes(a, b) {
   for (const f in FOODS) g.food[f] = clamp(fromEither(a.food[f] || 1, b.food[f] || 1) + R.f(-0.1, 0.1), 0.5, 1.5);
 
   // Mutations: rare, and noted so the player can spot them.
-  if (R.chance(0.06)) { g.hair = R.pick(HAIR_COLS); g.mutations.push('an unexpected hair colour'); }
+  if (R.chance(0.06)) { g.hair = R.pick(HAIR_COLS); g.mutations.push('an unexpected hair color'); }
   if (R.chance(0.04)) { const i = R.i(0, 1); g.eyes[i] = R.pick(EYE_ALLELES); }
   if (R.chance(0.03)) { g.freckles[R.i(0, 1)] = 1; }
   if (R.chance(0.12)) {
@@ -150,7 +150,7 @@ function topTalents(g, n = 2) {
 }
 
 // ---------------------------------------------------------------------------
-// Posting villagers between villages (the "warp" of Docking Station):
+// Sending villagers between villages (the "warp" of Docking Station):
 // a villager's genome and upbringing packed into a short code.
 // ---------------------------------------------------------------------------
 function exportVillager(v) {
@@ -168,6 +168,6 @@ function importVillagerCode(code) {
   if (!code.startsWith('TD2:')) throw new Error('That doesn\'t look like a Merryfolk letter. Codes start with TD2:');
   let data;
   try { data = JSON.parse(decodeURIComponent(escape(atob(code.slice(4))))); } catch (e) { throw new Error('The letter is smudged. The code seems incomplete.'); }
-  if (!data || !data.g || !data.f) throw new Error('The letter is missing its traveller.');
+  if (!data || !data.g || !data.f) throw new Error('The letter is missing its traveler.');
   return data;
 }

@@ -31,7 +31,7 @@ MOODLETS.new_hobby = ['Taken up {x}', 0.12, 1440, ['Who\'d have thought I\'d tak
 // --- what the listener says back -------------------------------------------
 Object.assign(LINES, {
   tip_thanks: {
-    plain: ['Huh. I\'ll try that.', 'Well, there\'s a thing. Ta.', 'Never knew that.'],
+    plain: ['Huh. I\'ll try that.', 'Well, there\'s a thing. Thanks.', 'Never knew that.'],
     common: ['That\'s a clever trick! Thank you.', 'I\'ll remember that, I will.', 'Well I never. I\'ll give that a go.'],
     fine: ['How very useful. I\'m obliged to you.', 'A capital tip. Thank you.'],
     child: ['Ooh! Can I try?', 'Wow, really?', 'I didn\'t know that!'],
@@ -52,7 +52,7 @@ Object.assign(LINES, {
     bright: ['Really? Then I\'m going!'],
   },
   unkeen: {
-    plain: ['Not for me, ta.', 'Hm. Each to their own.'],
+    plain: ['Not for me, thanks.', 'Hm. Each to their own.'],
     common: ['Not really my sort of thing, but thanks.', 'Hm, I\'m not sure that\'s for me.'],
     fine: ['Each to their own, I suppose.', 'I fear it wouldn\'t suit me.'],
     child: ['Eww.', 'Nah.', 'Boring!'],
@@ -64,7 +64,7 @@ Object.assign(LINES, {
     child: ['Okay!', 'Yuck!'],
   },
   cheered: {
-    plain: ['Ta. That helps.', 'You\'re a good sort.'],
+    plain: ['Thanks. That helps.', 'You\'re a good sort.'],
     common: ['You always know what to say.', 'Thank you. I needed that.', 'I do feel a bit better.'],
     fine: ['You\'re very kind. I do feel better.', 'Thank you. That means a great deal.'],
     child: ['Okay... *sniff* thanks.', 'Will you play with me?'],
@@ -90,12 +90,12 @@ Object.assign(LINES, {
   accept: {
     plain: ['Right you are. I\'ll be there.', 'I\'d like that.'],
     common: ['I\'d like that very much!', 'Really? When do we start?'],
-    fine: ['I\'d be honoured.', 'Nothing would please me more.'],
+    fine: ['I\'d be honored.', 'Nothing would please me more.'],
     child: ['Yes! Yes please!'],
     bright: ['Truly? I\'d love to!'],
   },
   decline: {
-    plain: ['Not just now, ta.', 'Maybe another time.'],
+    plain: ['Not just now, thanks.', 'Maybe another time.'],
     common: ['That\'s kind, but I\'ve my hands full just now.', 'Maybe one day.'],
     fine: ['Most kind, but I must decline for now.'],
     child: ['Um... maybe later?'],
@@ -108,7 +108,7 @@ function trustIn(l, s) { return clamp(0.45 + (l.rel[s.id] ?? 0.1) * 0.9, 0.15, 1
 function openness(l) { return 0.55 + l.genes.curiosity * 0.35 + l.genes.sociability * 0.15 + (l.isChild() ? 0.15 : 0); }
 const innName = () => (World.inn && World.inn.name) || 'the inn';
 
-// --- notions: a pull towards (or away from) something, from what was heard ---
+// --- notions: a pull toward (or away from) something, from what was heard ---
 function heardOf(v) { return (v.heard = (v.heard || []).filter((n) => n.until > Game.time)); }
 function addNotion(l, s, a, w, why, opts = {}) {
   const list = heardOf(l);
@@ -145,7 +145,7 @@ function raveLine(s, r) {
     garden: ['There\'s nothing like an hour in the garden to set you right, {name}.', 'My beans are coming up a treat. You should get your hands in the soil.'],
     forage: ['The mushrooms are up in the woods! Baskets of them.', 'I found a whole ring of mushrooms by the old stump. Go and look!'],
     stroll: ['I had the loveliest walk by the river. You should go before the weather turns.', 'Get out for a stroll, {name}. The valley\'s looking its best.'],
-    read: ['I\'ve just finished the most marvellous book. You must read it, {name}.', 'I couldn\'t put my book down last night. Dragons and riddles!'],
+    read: ['I\'ve just finished the most marvelous book. You must read it, {name}.', 'I couldn\'t put my book down last night. Dragons and riddles!'],
     tea: ['A pot of tea at four, {name}. Best part of the day.', 'Nothing like a cup of tea to set the world right.'],
     market: ['The market\'s full of good things today, {name}.', 'They\'ve the best cheeses on the market stalls today.'],
     ale: [`The ale's good and cold at ${innName()} tonight, {name}.`, `Come down to ${innName()} later. Good ale, good company.`],
@@ -189,7 +189,7 @@ const TIPS = {
   tinkering: ['Ground the copper before you touch the coil. Learned that the hard way.', 'Sun-glass works better at an angle. Tilt it to the south, {name}.'],
   carving: ['Cut away from your thumb, {name}, always away.', 'Find the animal in the wood first. Then let it out.'],
   basketry: ['Soak the reeds overnight and they won\'t split on you.', 'Start the base tight, {name}. A loose base never comes right.'],
-  pottery: ['Wet your hands, not the clay. The clay goes sloppy otherwise.', 'Centre it slow, {name}. Rush the centring and the pot wobbles.'],
+  pottery: ['Wet your hands, not the clay. The clay goes sloppy otherwise.', 'Center it slow, {name}. Rush the centering and the pot wobbles.'],
   knitting: ['Count your stitches at the end of every row. Saves tears later.', 'Knit loose for scarves and tight for socks, {name}.'],
   painting: ['Paint the sky first and work down, {name}.', 'Squint at the hills. You see the shapes better.'],
   collecting: ['The best stones turn up after a flood, down by the bend.', 'Check under the conker tree after a windy night, {name}.'],
@@ -206,7 +206,7 @@ function raiseCraft(v, c, amt) {
   const cur = v.hobbySkill[k] || 0;
   v.hobbySkill[k] = Math.min(100, cur + amt * 0.04 * (0.5 + HOBBIES[k].w(v, v.genes) * 0.5) * (1 - cur / 110));
 }
-// a leisure action that exercises a trade skill, to be tempted towards
+// a leisure action that exercises a trade skill, to be tempted toward
 const SKILL_PASTIME = { fishing: 'fish', farming: 'garden', herbalism: 'forage', lore: 'read', cooking: 'bake_home' };
 // The crafts a speaker knows well enough to pass on.
 function craftsOf(v) {
@@ -660,7 +660,7 @@ function apprenticeHtml(v) {
     const c = v.master.craft, [t] = craftParts(c), lvl = craftLevel(v, c);
     h += `<h3>Apprenticeship</h3><div class="sub">Apprentice to <b>${escapeHtml(m.name())}</b>${t === 'skill' ? ` (${craftTitle(m, c)})` : ''} in ${craftLabel(c)}, since day ${v.master.since}: ${v.master.lessons} lesson${v.master.lessons === 1 ? '' : 's'} so far.</div>`;
     const goal = Math.max(v.master.start + 1, Math.min(GRADUATE_AT[t], craftLevel(m, c) - 5));
-    h += `<div class="drive"><span class="dl">Towards finishing</span>${bar(clamp((lvl - v.master.start) / (goal - v.master.start), 0, 1), 'good')}</div>`;
+    h += `<div class="drive"><span class="dl">Toward finishing</span>${bar(clamp((lvl - v.master.start) / (goal - v.master.start), 0, 1), 'good')}</div>`;
   }
   const aps = apprenticesOf(v);
   if (aps.length) h += `<h3>Teaching</h3><ul class="edu-fx">${aps.map((a) => `<li>${escapeHtml(a.name())}: ${craftLabel(a.master.craft)}, ${a.master.lessons} lesson${a.master.lessons === 1 ? '' : 's'}</li>`).join('')}</ul>`;

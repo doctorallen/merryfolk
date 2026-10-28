@@ -17,7 +17,7 @@ const isRoadTile = (t) => t === T.PATH || t === T.COBBLE || t === T.BRIDGE;
 // rest) comes from the layout in use: see layout.js. These are set by
 // applyLayout when the valley is built.
 let HOME_DEFS, ROADS, RIVER_Y, POND, PARTY, PLAZA, INN_RECT, WEED_FIELD, FIELDS, STORY, WEST_EXIT;
-const HOME_SUFFIX = ['End', 'Burrow', 'Hole', 'Hollow', 'Nook', 'Delving', 'Bank', 'Under-hill', 'Smial', 'Cosy', 'Rise', 'Dell'];
+const HOME_SUFFIX = ['End', 'Burrow', 'Hole', 'Hollow', 'Nook', 'Delving', 'Bank', 'Under-hill', 'Smial', 'Cozy', 'Rise', 'Dell'];
 
 /** @type {WorldState} */
 const World = {
@@ -158,7 +158,7 @@ function* buildWorldSteps(cfg) {
   // Pipe-weed field, barley fields
   for (let y = WEED_FIELD.y0; y <= WEED_FIELD.y1; y++) for (let x = WEED_FIELD.x0; x <= WEED_FIELD.x1; x++) tiles[tIdx(x, y)] = T.WEED;
   for (const f of FIELDS) for (let y = f.y0; y <= f.y1; y++) for (let x = f.x0; x <= f.x1; x++) if (tiles[tIdx(x, y)] !== T.PATH) tiles[tIdx(x, y)] = T.FIELD;
-  yield 'Fields are ploughed and the square is cobbled';
+  yield 'Fields are plowed and the square is cobbled';
   // the lie of the land: slope, sun, drainage, wetness and soil, for siting what grows where
   computeLand(seed);
   yield 'Rain runs off the hills; soil settles in the hollows';
@@ -608,7 +608,7 @@ function routeRoads(seed) {
 // Raises a knoll on the map and makes the home record for it.
 // A hobbit-hole is dug into its own little hillside, not a dome: each one's
 // hill is a lopsided, lumpy rise (wider one way than the other, so the door
-// sits off-centre) whose south side is cut back into a face of dry-stone wall
+// sits off-center) whose south side is cut back into a face of dry-stone wall
 // with the door and windows set in it. The same shape gives the hill tiles
 // and the painted hill.
 function homeShape(d, id, doorTy) {
@@ -747,7 +747,7 @@ function completeHome(h) {
 
 // ---------------------------------------------------------------------------
 // Ground painting. The jittered tile type of every pixel is worked out once;
-// painting a season is then a quick colour pass, done a slice at a time so a
+// painting a season is then a quick color pass, done a slice at a time so a
 // season change never stalls the game.
 // ---------------------------------------------------------------------------
 // Deep, saturated greens; earthy lanes with a dark rim; water that runs from
@@ -771,7 +771,7 @@ function computePixelTypes(seed, rect) {
   for (const t of [T.GRASS, T.LAWN, T.PATH, T.WATER]) smooth[t] = 1;
   const SIG = 0.62, gauss = new Float32Array(257);
   for (let i = 0; i <= 256; i++) { const d = i / 64 - 2; gauss[i] = Math.exp(-(d * d) / (2 * SIG * SIG)); }
-  // how each tile counts towards its neighbours: bridges carry the path on
+  // how each tile counts toward its neighbors: bridges carry the path on
   const soft = (tx, ty) => {
     const raw = World.tiles[clamp(ty, 0, MAP_H - 1) * MAP_W + clamp(tx, 0, MAP_W - 1)];
     if (raw === T.BRIDGE) return T.PATH;
@@ -782,7 +782,7 @@ function computePixelTypes(seed, rect) {
   const fill = (px0, py0, px1, py1) => {
     const { type, type2, jx, jy, JW } = World.px;
     const JH = (H >> 1) - 1;
-    // each tile's kind for blending, and which tiles' neighbourhoods are all
+    // each tile's kind for blending, and which tiles' neighborhoods are all
     // one kind (those need no blending)
     const SW = MAP_W + 2, sg = new Uint8Array(SW * (MAP_H + 2));
     for (let ty = -1; ty <= MAP_H; ty++) for (let tx = -1; tx <= MAP_W; tx++) sg[(ty + 1) * SW + tx + 1] = soft(tx, ty);
@@ -837,9 +837,9 @@ function computePixelTypes(seed, rect) {
   fill(0, 0, W, H);
 }
 
-// The lie of the land: the north bank climbs towards the Hill, the south bank
+// The lie of the land: the north bank climbs toward the Hill, the south bank
 // rises gently, and both fall away to the river. Heights are kept on the same
-// 2px grid as the jitter; `level` quantises them into terraces whose edges are
+// 2px grid as the jitter; `level` quantizes them into terraces whose edges are
 // drawn as grassy banks.
 const TERRACES = 4;
 function landHeight(nh, x, y) {
@@ -853,7 +853,7 @@ function landHeight(nh, x, y) {
   const k = gen('hills'), rf = gen('relief');
   let h = base;
   if (rf) {
-    // broken ground: the big swells are pushed towards their tops and bottoms
+    // broken ground: the big swells are pushed toward their tops and bottoms
     // (flat shelves, steep sides between), ridgelines run where a second
     // noise crosses its middle, and small knolls and hollows are scattered about
     n = Math.sign(n) * Math.pow(Math.abs(n) * 2, 0.72) / 2;
@@ -890,7 +890,7 @@ function computeHeights(seed) {
   for (let ty = 0; ty < MAP_H; ty++) for (let tx = 0; tx < MAP_W; tx++) World.tileLevel[ty * MAP_W + tx] = level1[Math.min(Hh - 1, ty * 16 + 11) * W + tx * 16 + 8];
 }
 
-// The ground is painted at GS canvas pixels per world pixel. Colour (hill
+// The ground is painted at GS canvas pixels per world pixel. Color (hill
 // shading, terrace banks, wet edges) is worked out once per world pixel; the
 // finer detail (grass blades, pebbles, furrows, cobbles, sparkles) and the
 // edges between kinds of ground are done per half-pixel.
@@ -923,7 +923,7 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
   const DEPTH_R = [2, 4, 7, 11, 16];
   const depthAt = (px, py) => { let k = 0; for (const r of DEPTH_R) { if (notNear(px, py, T.WATER, r)) break; k++; } return k / DEPTH_R.length; };
 
-  // the colour of one world pixel of a kind of ground
+  // the color of one world pixel of a kind of ground
   const colorAt = (t, px, py) => {
     const n = noise[(py >> 1) * JW + (px >> 1)];
     const h = hash2(px, py);
@@ -1048,7 +1048,7 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
     if (t === T.WATER) return col;
     if (t === T.COBBLE) {
       // cobbles: rounded stones of all sizes and tints, each the nearest of a
-      // jittered scatter of stone centres, lit on the top-left and dark on the
+      // jittered scatter of stone centers, lit on the top-left and dark on the
       // bottom-right, with dark mortar and moss in the gaps between them
       if (notNear(px, py, T.COBBLE, 1)) return winter ? [170, 176, 184] : [122, 108, 84];
       const CX = 7, CY = 6, gx = Math.floor(px / CX), gy = Math.floor(py / CY);
@@ -1077,7 +1077,7 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
     return col;
   };
 
-  // every world pixel is one colour, painted as a block of GS × GS
+  // every world pixel is one color, painted as a block of GS × GS
   const SLICE = 32, RW = R0.x1 - R0.x0, QW = RW * GS;
   for (let y0 = R0.y0; y0 < R0.y1; y0 += SLICE) {
     const rows = Math.min(SLICE, R0.y1 - y0);
@@ -1113,7 +1113,7 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
     if (!winter) for (let cy = Math.floor((y0 - 5) / 5) * 5; cy < y0 + rows + 5; cy += 5) for (let cx = Math.floor((R0.x0 - 5) / 5) * 5; cx < R0.x1 + 5; cx += 5) {
       const hh = hash2(cx * 7 + 11, cy * 13 + 5), x = cx + Math.floor(hash2(cx, cy * 3) * 4), y = cy + 1 + Math.floor(hash2(cx * 5, cy) * 3);
       if (x + 2 < R0.x0 || x >= R0.x1 || y + 1 < y0 || y - 1 >= y0 + rows || !plainAt(x, y)) continue;
-      // (the tuft's colour comes from the ground's own, not from a tuft already drawn over it, so every patch agrees)
+      // (the tuft's color comes from the ground's own, not from a tuft already drawn over it, so every patch agrees)
       const base = detail(type[y * W + x], colorAt(type[y * W + x], x, y), x, y);
       if (hh < 0.26) { const dk = lerpC(base, [16, 40, 14], 0.42); put(x, y + 1, dk); put(x + 1, y, dk); put(x + 2, y + 1, dk); }
       else if (hh < 0.44) { const lt = lerpC(base, season === 'autumn' ? [230, 210, 120] : [200, 240, 140], 0.45); put(x, y, lt); put(x + 1, y - 1, lt); }
@@ -1157,7 +1157,7 @@ function* paintGroundGen(season, target, rect, org = { x: 0, y: 0 }) {
   }
   yield;
   // Last, the whole patch is made into pixel art: each world pixel becomes
-  // one colour (so the hills, bridges and flowers are as chunky as the rest),
+  // one color (so the hills, bridges and flowers are as chunky as the rest),
   // and smooth blends are dithered down to a few tones with a 4x4 Bayer pattern.
   for (let y0 = R0.y0; y0 < R0.y1; y0 += 64) {
     const rows = Math.min(64, R0.y1 - y0), RW = R0.x1 - R0.x0, QW = RW * GS;
@@ -1407,7 +1407,7 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
     const edgeFade = clamp((1.12 - u) / 0.24, 0, 1);
     if (edgeFade < 1 && hash2(qx, qy) > edgeFade) continue;
     // a rounded slope: brightest up on the north-west shoulder, darker down the
-    // south and east sides and towards the foot, with a soft ridge along the top
+    // south and east sides and toward the foot, with a soft ridge along the top
     let l = -nx * 0.42 - ny * 0.62 + (1 - u * u) * 0.5 - 0.2;
     if (u > 0.78) l -= (u - 0.78) * 0.9;
     const ridge = Math.abs(ny + 0.55 - nx * 0.15);
@@ -1419,7 +1419,7 @@ function paintMound(ctx, h, season = 'summer', org = { x: 0, y: 0 }) {
     const t = clamp(l * edgeFade + (1 - edgeFade) * 0, -1, 1);
     const col = t < 0 ? [lerp(base[0], dark[0], -t), lerp(base[1], dark[1], -t), lerp(base[2], dark[2], -t)]
       : [lerp(base[0], light[0], t), lerp(base[1], light[1], t), lerp(base[2], light[2], t)];
-    // at the faded edge, blend towards the ground already painted there
+    // at the faded edge, blend toward the ground already painted there
     const m = edgeFade;
     p[k] = lerp(p[k], col[0], m); p[k + 1] = lerp(p[k + 1], col[1], m); p[k + 2] = lerp(p[k + 2], col[2], m);
     if (!winter && hsh > 0.997 && u < 0.95) { p[k] = 240; p[k + 1] = 220; p[k + 2] = 90; }
@@ -1635,7 +1635,7 @@ function updateWorld(dtMin, raining, season, hour) {
     const nx = d.x + Math.cos(d.a) * dtMin * 1.2, ny = d.y + Math.sin(d.a) * dtMin * 0.6;
     const tx = Math.floor(nx / 16), ty = Math.floor((ny + 4) / 16);
     if (tileAt(tx, ty) === T.WATER && tileAt(Math.floor((nx + 6) / 16), ty) === T.WATER && tileAt(Math.floor((nx - 6) / 16), ty) === T.WATER) { d.x = nx; d.y = ny; }
-    // bumped the bank: turn back towards the middle of the pond, rather than nosing at it until the next whim
+    // bumped the bank: turn back toward the middle of the pond, rather than nosing at it until the next whim
     else { d.a = Math.atan2(POND.cy * 16 - d.y, POND.cx * 16 - d.x) + (Math.random() - 0.5) * 1.2; d.t = 6 + Math.random() * 10; }
   }
   updateRabbits(dtMin, season, hour);

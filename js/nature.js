@@ -104,7 +104,7 @@ function tallSprite(v, season, lean) {
   const [c, x] = makeCanvas(TALL_W, TALL_H);
   const rng = mulberry32((v - TALL_V) * 389 + 11);
   const winter = season === 'winter';
-  // five shades from the shadowed foot of the stand to the sunlit tips, and a seed-head colour
+  // five shades from the shadowed foot of the stand to the sunlit tips, and a seed-head color
   const cols = { spring: ['#1e4a1c', '#2e6a26', '#468e30', '#68ae44', '#90cc5e', '#a8d070'], summer: ['#1c461a', '#2a6224', '#3e7e2c', '#5c9c3a', '#80b84c', '#cabe82'], autumn: ['#4a4a1e', '#6a6428', '#8c8236', '#b0a24c', '#cebc66', '#e0cc88'], winter: ['#5a4a30', '#6e5c3a', '#8e7a52', '#ae9a6c', '#c8b88e', '#d8ccaa'] }[season];
   for (let i = 0, n = winter ? 5 : 10 + Math.floor(rng() * 3); i < n; i++) {
     const bx = 1 + Math.round(rng() * (TALL_W - 3));
@@ -363,7 +363,7 @@ function plantNature(rng, addStatic, blk) {
     && tallN(x * 0.13, y * 0.13) + (steady ? 0 : (hash2(x * 7, y * 13) - 0.5) * 0.05) > (hb.soil === SOIL.ALLUVIUM ? 0.6 : 0.66);
   const tallPatch = (x, y, hb) => {
     // planted close in staggered rows, so the stems in front hide whoever walks through;
-    // thinner towards the edge of the stand, so it frays out into the meadow
+    // thinner toward the edge of the stand, so it frays out into the meadow
     let edge = 0;
     for (const [i, j] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (!inMap(x + i, y + j) || !tallAt(x + i, y + j, habitat(x + i, y + j, treeNear), true)) edge++;
     for (let py = 2; py < 16; py += 4) for (let px = (py & 4) ? 3 : 0; px < 16; px += 6) {
@@ -511,7 +511,7 @@ function plantWildflowers(rng) {
 
 // A hobbit-hole's hill grows wild on top: clumps of long grass, drifts of
 // wildflowers (a spring kind, a summer kind and one that lasts into autumn,
-// so the hill is never bare of colour) and a fern, heather or leafy plant or
+// so the hill is never bare of color) and a fern, heather or leafy plant or
 // two. All of it keeps off the stone face, the door and windows, and clear of
 // the chimneys and the roof window. Each hill's planting comes from its home,
 // so it's the same every time the village is loaded.
@@ -565,7 +565,7 @@ function plantHill(h) {
 // ---------------------------------------------------------------------------
 // Woods by suitability. Woodland grows where nobody has cleared it: on the
 // steep, thin-soiled banks and wet clay that nobody farms, thick along the
-// edges of the valley and in the eastern forest, and thinning out towards
+// edges of the valley and in the eastern forest, and thinning out toward
 // the lanes, fields and homes. Trees are spaced by their size (a big oak
 // keeps the ground round it to itself) and each kind grows where it suits:
 // oaks on deep loam and clay, birches and pines on thin dry soil and the
@@ -750,7 +750,7 @@ function plantHedges(rng, { addStatic, blk }) {
     ring(WEED_FIELD);
     fieldEdge = false;
   }
-  // along the country lanes, well away from the village centre
+  // along the country lanes, well away from the village center
   for (const [w, ...pts] of ROADS) {
     if (w < 0.85) continue;
     for (let s = 0; s < pts.length - 1; s++) {

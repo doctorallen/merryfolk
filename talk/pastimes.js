@@ -5,7 +5,7 @@
 // on the bench, the one that went wrong, the best they ever made, and what
 // they'd make if they could make anything. Also the facts every pastimes pack
 // leans on: second hobby, latest piece, tallies, top leisure habits,
-// favourite food, the garden, the masterpiece. The other parts are
+// favorite food, the garden, the masterpiece. The other parts are
 // pastimes2 (collecting, birds, masterpieces, gifts, teaching, showing the
 // wizard), pastimes3 (the inn, the pipe, fishing, the garden, mushrooming)
 // and pastimes4 (reading, strolling, napping, tea, food, baking, games).
@@ -44,11 +44,11 @@ talkPack('pastimes', () => {
     carving: ['badger', 'owl', 'rabbit', 'hedgehog', 'pig', 'fox', 'dragon', 'pony', 'frog'],
     basketry: ['egg basket', 'log basket', 'linen basket', 'bread basket', 'picnic hamper', 'fine willow basket'],
     pottery: ['jug', 'honey pot', 'bowl', 'jar'],
-    knitting: ['scarf', 'pair of mittens', 'tea cosy', 'woolly hat', 'pair of socks', 'blanket'],
+    knitting: ['scarf', 'pair of mittens', 'tea cozy', 'woolly hat', 'pair of socks', 'blanket'],
     painting: ['the river', 'the Hill', 'the mill', 'the orchard'],
   };
   const RARE = ['kingfisher', 'nightingale', 'hoopoe', 'waxwing', 'barn owl', 'dipper', 'goldcrest', 'cuckoo', 'snipe', 'treecreeper'];
-  const LEISURE = { ale: 'ale', eat_inn: 'inn', smoke: 'pipe', fish: 'fishing', garden: 'garden', forage: 'mushrooms', read: 'reading', nap: 'napping', stroll: 'strolling', tea: 'tea', bake_home: 'baking', potter: 'pottering', party: 'dancing' };
+  const LEISURE = { ale: 'ale', eat_inn: 'inn', smoke: 'pipe', fish: 'fishing', garden: 'garden', forage: 'mushrooms', read: 'reading', nap: 'napping', stroll: 'strolling', tea: 'tea', bake_home: 'baking', potter: 'puttering', party: 'dancing' };
   addFacts((v, F) => {
     const hs = typeof hobbiesOf === 'function' ? hobbiesOf(v) : [];
     const st = v.stats || {}, sk = v.hobbySkill || {};
@@ -87,7 +87,7 @@ talkPack('pastimes', () => {
     // a piece to show: the latest thing made in their first craft that has any
     F.showKind = show;
     F.showPiece = show ? { carving: `carved ${F.carveLast}`, basketry: F.basketLast, pottery: F.potLast, knitting: F.knitLast, painting: `painting of ${F.paintLast}` }[show] : null;
-    // a masterpiece, theirs or a neighbour's
+    // a masterpiece, theirs or a neighbor's
     const mps = Game.masterpieces || [];
     const mp = mps.find((m) => m.by === v.id);
     F.masterpiece = v.masterpiece || null;
@@ -101,7 +101,7 @@ talkPack('pastimes', () => {
     F.giftTo = null; F.giftWhat = null;
     const re = new RegExp(`^${v.first} gave me an? (.+?) they made\\.$`);
     // (first names can repeat, so the piece must be one of theirs)
-    const MADE = { carving: /carved/, basketry: /basket/, pottery: /jug|pot|bowl|jar/, knitting: /scarf|mittens|cosy|hat|socks|blanket/, painting: /painting/ };
+    const MADE = { carving: /carved/, basketry: /basket/, pottery: /jug|pot|bowl|jar/, knitting: /scarf|mittens|cosy|cozy|hat|socks|blanket/, painting: /painting/ };
     const mine = (w) => hs.some((k) => MADE[k] && MADE[k].test(w));
     for (const o of Game.villagers) { if (o === v) continue; const m = (o.memories || []).map((x) => re.exec(x.t)).find((x) => x && mine(x[1])); if (m) { F.giftTo = o.first; F.giftWhat = m[1]; break; } }
     const gm = (v.memories || []).map((x) => /^(\S+) gave me an? (.+?) they made\.$/.exec(x.t)).find(Boolean);
@@ -230,7 +230,7 @@ talkPack('pastimes', () => {
     witty: ['A {carveLast}. Or a potato with ambitions. We\'ll see which.', 'A {carveLast}. It started as a horse, but we don\'t talk about that.'],
     proud: ['A {carveLast}. You\'ll not find a better one in the Shire.', 'A {carveLast}, with every whisker cut. Every one.'],
     gloomy: ['A {carveLast}. It looks how I feel.', 'A {carveLast}. Half done. Like most things.'],
-    child: ['A {carveLast}! It\'s for my mum. Don\'t tell her.', 'A {carveLast}! Do you want to know its name? It\'s Bumble.'],
+    child: ['A {carveLast}! It\'s for my mom. Don\'t tell her.', 'A {carveLast}! Do you want to know its name? It\'s Bumble.'],
   }, [
     { if: { carveLast: 'dragon' }, text: ['A dragon! A little one. It\'s supposed to look fierce. It looks hungry.', 'A dragon. The wings keep snapping. Real ones must be sturdier.'] },
     { if: { carveLast: 'owl' }, text: ['An owl. I\'ve done the eyes three times. Owls are all eyes.'] },
@@ -241,7 +241,7 @@ talkPack('pastimes', () => {
     { if: { kid: has }, text: ['A {carveLast} for {kid}. Something to put on the shelf by the bed.'] },
   ]);
   L('pastime.carving.heron', ['Ha! You heard about the heron. Everyone\'s heard about the heron.', 'That heron. I\'ll never live it down. It did look like a badger.', 'Once! It happened once. ...Twice.'], {
-    cheerful: ['Ha! Oh, that heron. I gave it a stripe and called it a badger. Nobody knew.', 'Ha! I still have it. It\'s my favourite, really.'],
+    cheerful: ['Ha! Oh, that heron. I gave it a stripe and called it a badger. Nobody knew.', 'Ha! I still have it. It\'s my favorite, really.'],
     ornery: ['Who told you about that? It was the wood\'s fault.', 'That heron would have been perfect if the knot hadn\'t been there.'],
     shy: ['...Oh no. Who told you? It was meant to be a heron.', '...It still sits on my shelf. I can\'t look at it.'],
     curious: ['The neck. Herons are mostly neck, and necks snap. I\'ve been trying to work out why.', 'I think I cut across the grain. Wood is like hair, you know. It has a way it wants to go.'],
@@ -272,13 +272,13 @@ talkPack('pastimes', () => {
   L('pastime.carving.knife', ['It was my grandfather\'s. Nobody else sharpens it. Nobody.', 'An old blade, worn thin as a leaf. It knows the way better than I do.'], {
     cheerful: ['Oh, it\'s the best knife in the world. It was my gran\'s. She\'d have liked that I use it.'],
     ornery: ['Nobody touches that knife. I mean it. Nobody.'],
-    shy: ['...It was my grandad\'s. I\'ve never told anyone that.'],
+    shy: ['...It was my granddad\'s. I\'ve never told anyone that.'],
     curious: ['It\'s older than the mill, I think. The steel\'s different. Darker. I don\'t know where it came from.'],
     dreamy: ['When I hold it I can almost feel my grandfather\'s hand on mine. Silly, isn\'t it.'],
     witty: ['It\'s older than me and sharper than me. We get along.'],
     proud: ['It was my grandfather\'s, and he was the finest carver in three villages. I keep it as he did.'],
     gloomy: ['It\'s all I have of my grandfather. I\'d be lost without it.'],
-    child: ['It used to be Grandad\'s! I\'m only allowed it if somebody\'s watching.'],
+    child: ['It used to be Granddad\'s! I\'m only allowed it if somebody\'s watching.'],
   }, [
     { if: { parent: has }, text: ['My {parent} gave it me. Said I\'d earned it. I hadn\'t, yet.'] },
   ]);
@@ -325,7 +325,7 @@ talkPack('pastimes', () => {
     witty: ['When there\'s no more wood to take away. Or when supper\'s ready.'],
     proud: ['I know. A craftsman knows.'],
     gloomy: ['They\'re never finished. I just give up on them.'],
-    child: ['When Mum says it\'s bedtime!'],
+    child: ['When Mom says it\'s bedtime!'],
   }, [
     { if: { stage: 'elder' }, text: ['My father said a carving\'s done when it would be a shame to cut more. He was right.'] },
   ]);
@@ -335,7 +335,7 @@ talkPack('pastimes', () => {
     shy: ['...It might look a bit like me. Don\'t tell anyone.'],
     curious: ['Do you know, I think it does! Do we all carve ourselves, without meaning to?'],
     dreamy: ['It looks like someone I knew once. A long time ago.'],
-    witty: ['It\'s the spit of the postie. Don\'t tell the postie.'],
+    witty: ['It\'s the spit of the mail carrier. Don\'t tell the mail carrier.'],
     proud: ['A good carving has character. This one has lots.'],
     gloomy: ['It looks like I feel. Tired.'],
     child: ['It looks like YOU! Look! It\'s got a beard!'],
@@ -404,7 +404,7 @@ talkPack('pastimes', () => {
     gloomy: ['I knew it. It\'s ruined.'],
     child: ['NO it\'s got big ears because it LISTENS.'],
   });
-  L('pastime.carving.teach', ['I might. If they\'d sit still and not cry over a nick or two.', 'Maybe. It\'s good to pass things on. My grandad would say so.'], {
+  L('pastime.carving.teach', ['I might. If they\'d sit still and not cry over a nick or two.', 'Maybe. It\'s good to pass things on. My granddad would say so.'], {
     cheerful: ['Oh, I\'d love that! Send me anyone. Even you.'],
     ornery: ['Teach? I haven\'t the patience. ...Well. One, maybe.'],
     shy: ['...Me? Teach? I wouldn\'t know where to start.'],
@@ -413,7 +413,7 @@ talkPack('pastimes', () => {
     witty: ['First lesson: point it away from you. Second lesson: no, further away.'],
     proud: ['I\'d teach the right pupil. They\'d have to be serious.'],
     gloomy: ['Who\'d want to learn from me?'],
-    child: ['I\'d teach my friends! Then we could all have knives! ...Mum says no.'],
+    child: ['I\'d teach my friends! Then we could all have knives! ...Mom says no.'],
   }, [
     { if: { kid: has }, text: ['I\'ve been meaning to teach {kid}. When {kid}\'s old enough for the knife.'] },
   ]);
@@ -451,7 +451,7 @@ talkPack('pastimes', () => {
         { ap: 'warm', say: 'It sounds like a kind of music, the way you tell it.', to: 'music' },
       ] },
       river: { line: 'pastime.basketry.river', fx: { trust: 0.02 }, go: [
-        { ap: 'warm', say: 'It sounds like your favourite place.', to: 'end' },
+        { ap: 'warm', say: 'It sounds like your favorite place.', to: 'end' },
         { ap: 'ask', say: 'Do you see much, down there?', to: 'see' },
       ] },
       frogs: { line: 'pastime.basketry.frogs', go: [
@@ -506,7 +506,7 @@ talkPack('pastimes', () => {
     shy: ['...By the river. Early, when nobody\'s about.'],
     curious: ['The best reeds are on the inside of the bend. The water\'s slow there and they grow straight. I measured.'],
     dreamy: ['By the river, at dawn. The mist comes up off the water. It\'s like cutting clouds.'],
-    witty: ['By the river. I\'d grow them in the parlour, but the parlour drew the line.', 'By the river. I tried the pond, but the ducks objected in writing.'],
+    witty: ['By the river. I\'d grow them in the parlor, but the parlor drew the line.', 'By the river. I tried the pond, but the ducks objected in writing.'],
     proud: ['From my own patch by the bend. I\'ve tended it for years.'],
     gloomy: ['By the river. Wet feet every time. Every single time.'],
     child: ['From the river! I fell in. Only a bit.'],
@@ -526,7 +526,7 @@ talkPack('pastimes', () => {
     child: ['I need a hundred. One for each conker.'],
   });
   L('pastime.basketry.basketbasket', ['...I have one. It\'s the biggest basket. It\'s full.', 'Don\'t think I haven\'t. It\'s in the hall. You walked past it.'], {
-    cheerful: ['Ha! I have! It\'s my favourite! It has a basket in it with a smaller basket in that.'],
+    cheerful: ['Ha! I have! It\'s my favorite! It has a basket in it with a smaller basket in that.'],
     ornery: ['Very droll. Yes. I have one.'],
     witty: ['And a basket for that basket, and so on, all the way down. It\'s baskets all the way down.'],
     proud: ['Naturally. Nested, by size. It\'s very elegant.'],
@@ -534,7 +534,7 @@ talkPack('pastimes', () => {
     child: ['That\'s silly! ...Can I make one?'],
   });
   L('pastime.basketry.which', ['The one by the bakery door? That\'s mine. The good handle.', 'Oh, that\'ll be one of mine. They get about.'], {
-    cheerful: ['Oh, that\'s my favourite! The one with the red band? Isn\'t it a good one!'],
+    cheerful: ['Oh, that\'s my favorite! The one with the red band? Isn\'t it a good one!'],
     ornery: ['Which one? There\'s forty of them. Was the handle on straight?'],
     shy: ['...Was it all right? The handle wasn\'t loose?'],
     curious: ['Was it the round one or the square one? The square ones are harder. Corners are tricky.'],
@@ -572,16 +572,16 @@ talkPack('pastimes', () => {
     witty: ['The frogs have opinions about everything. They\'re like the Moot, but greener.'],
     child: ['Did you kiss one? Did it turn into a prince?'],
   });
-  L('pastime.basketry.gives', ['Everyone! Anyone who needs to carry something. Which is everyone.', 'Neighbours, mostly. And the Common Store. There\'s never enough baskets at harvest.'], {
+  L('pastime.basketry.gives', ['Everyone! Anyone who needs to carry something. Which is everyone.', 'Neighbors, mostly. And the Common Store. There\'s never enough baskets at harvest.'], {
     cheerful: ['Everyone gets a basket! Births, weddings, birthdays. A basket!'],
     ornery: ['Whoever asks nicely. Which is fewer folk than you\'d think.'],
     shy: ['...I leave them on doorsteps. Nobody knows. Well, they know. They don\'t say.'],
     proud: ['They\'re given as wedding presents, my baskets. That\'s how good they are.'],
     gloomy: ['People take them. They don\'t bring them back.'],
-    child: ['My mum! And my friend! And the duck. The duck didn\'t want it.'],
+    child: ['My mom! And my friend! And the duck. The duck didn\'t want it.'],
   }, [
     { if: { giftTo: has }, pri: 1, text: ['I gave {giftTo} a {giftWhat} not long ago. {GiftTo} cried. In a good way.'] },
-    { if: { spouse: has }, text: ['{Spouse} says no more for our house. So the neighbours get them.'] },
+    { if: { spouse: has }, text: ['{Spouse} says no more for our house. So the neighbors get them.'] },
   ]);
   L('pastime.basketry.hard', ['A cradle-basket. With a hood. If you get it wrong, there\'s a baby in it.', 'A market hamper, with a lid that sits right. The lid is everything.'], {
     cheerful: ['Oh, a cradle-basket! I dream about it. A little hood, and a rocker!'],
@@ -604,7 +604,7 @@ talkPack('pastimes', () => {
   }, [
     { if: { kid: has }, text: ['I made one for {kid}. I keep it. {Kid} doesn\'t know. Maybe for {kid}\'s own, one day.'] },
   ]);
-  L('pastime.basketry.wrong', ['Oh, yes. A whole basket, unravelled in the river. Floated off like a duck.', 'One came out the shape of a hat. I wear it now. Don\'t tell anyone.'], {
+  L('pastime.basketry.wrong', ['Oh, yes. A whole basket, unraveled in the river. Floated off like a duck.', 'One came out the shape of a hat. I wear it now. Don\'t tell anyone.'], {
     cheerful: ['Ha! I wove one so tight it rang like a bell when you tapped it! Couldn\'t get anything in it.'],
     ornery: ['The reeds were too dry. I said so at the time.'],
     shy: ['...Most of them, at first. I hid them.'],
@@ -676,13 +676,13 @@ talkPack('pastimes', () => {
         { ap: 'ask', say: 'What\'s the trick of it, then?', to: 'wheel' },
       ] },
       why: { line: 'pastime.pottery.why', go: [
-        { ap: 'warm', say: 'Every potter has one, I\'m sure.', to: 'end' },
+        { ap: 'warm', say: 'Every putter has one, I\'m sure.', to: 'end' },
         { ap: 'ask', say: 'And did you try again?', to: 'again' },
       ] },
       party: { line: 'pastime.pottery.party', end: true },
       bread: { line: 'pastime.pottery.bread', end: true },
       glaze: { line: 'pastime.pottery.glaze', go: [
-        { ap: 'ask', say: 'Is there a colour you\'ve never managed?', to: 'colour', need: { open: 1 }, soft: true },
+        { ap: 'ask', say: 'Is there a color you\'ve never managed?', to: 'colour', need: { open: 1 }, soft: true },
         { ap: 'warm', say: 'That sounds lovely. Like the valley in a cup.', to: 'end' },
       ] },
       tea: { line: 'pastime.pottery.tea', fx: { fond: 0.02 }, go: [
@@ -708,9 +708,9 @@ talkPack('pastimes', () => {
     cheerful: ['Oh, I love it! There\'s nothing like clay going round under your hands.', 'Wonderful! {PotTally} and only a few of them wonky.'],
     ornery: ['Fine, as long as nobody touches the wheel.', 'It\'d be going better if folk stopped borrowing my pots and not bringing them back.'],
     shy: ['...Just pots. Little ones. For the house.', '...It\'s nice. Quiet. Just me and the wheel.'],
-    curious: ['I\'ve been working out why some crack in the oven. I think it\'s air bubbles.', 'Did you know clay from the bend fires red and clay from the mill fires grey? I don\'t know why.'],
+    curious: ['I\'ve been working out why some crack in the oven. I think it\'s air bubbles.', 'Did you know clay from the bend fires red and clay from the mill fires gray? I don\'t know why.'],
     dreamy: ['It\'s like the clay already knows what it wants to be.', 'The wheel goes round and round, and so do my thoughts. Gently.'],
-    witty: ['I\'m a potter. I make pots. Some of them even hold things.', 'Coming on. I\'ve gone from \'what is it?\' to \'oh, a pot.\''],
+    witty: ['I\'m a putter. I make pots. Some of them even hold things.', 'Coming on. I\'ve gone from \'what is it?\' to \'oh, a pot.\''],
     proud: ['{PotTally}, and every one of them true.', 'I\'m {potSkill}, they say. I\'d say a bit better than that.'],
     gloomy: ['They crack. Half of them crack.', 'Mud in, mud out. Some days I wonder.'],
     child: ['I made a bowl! It\'s for my tadpoles.'],
@@ -719,7 +719,7 @@ talkPack('pastimes', () => {
     { if: { potLevel: { min: 45 } }, text: ['I can throw a jug with my eyes shut now. I have done, once, for a bet.'] },
     { if: { job: 'baker' }, text: ['I fire them in the bread oven after the last loaves. Don\'t tell anyone.'] },
   ]);
-  L('pastime.pottery.clay', ['From the riverbank. I dig it out by the bend, where it\'s blue-grey and sticky.', 'The bank below the mill. You can tell good clay. It squeaks.'], {
+  L('pastime.pottery.clay', ['From the riverbank. I dig it out by the bend, where it\'s blue-gray and sticky.', 'The bank below the mill. You can tell good clay. It squeaks.'], {
     cheerful: ['The riverbank! Up to my elbows. It\'s the best fun I have all week.'],
     ornery: ['From the bank. My bit of bank. Hands off.'],
     shy: ['...The riverbank. Early, before anyone sees me covered in it.'],
@@ -754,19 +754,19 @@ talkPack('pastimes', () => {
     witty: ['A {potLast}. Or possibly a hat. Depends which way up.'],
     proud: ['A {potLast}, thrown in one go. Not a mark on it.'],
     gloomy: ['A {potLast}. It\'ll crack. They always crack.'],
-    child: ['A {potLast}! It\'s for my mum! It\'s a bit squashed.'],
+    child: ['A {potLast}! It\'s for my mom! It\'s a bit squashed.'],
   }, [
     { if: { potLast: 'honey pot' }, text: ['A honey pot, with a bee on the lid. The bee looks a bit like a sheep.'] },
     { if: { potLast: 'jug' }, text: ['A jug. The spout pours sideways. I\'m calling it a feature.'] },
   ]);
-  L('pastime.pottery.wheel', ['You centre it first. That\'s the whole secret. If it\'s not centred, nothing\'s right.', 'Kick the wheel, wet your hands, and press. Gently. Like settling a baby.'], {
+  L('pastime.pottery.wheel', ['You center it first. That\'s the whole secret. If it\'s not centered, nothing\'s right.', 'Kick the wheel, wet your hands, and press. Gently. Like settling a baby.'], {
     cheerful: ['Oh, the wheel\'s the best bit! Round and round and up it comes, like magic!'],
-    ornery: ['You centre it. And you don\'t talk to me while I\'m doing it.'],
+    ornery: ['You center it. And you don\'t talk to me while I\'m doing it.'],
     shy: ['...You have to be very still inside. That\'s why I like it.'],
-    curious: ['The centring is everything. A hair off and it wobbles itself to pieces. Like a top.'],
+    curious: ['The centering is everything. A hair off and it wobbles itself to pieces. Like a top.'],
     dreamy: ['You find the middle of it. The still bit. And then everything else follows.'],
     witty: ['You spin it and pray. Mostly pray.'],
-    proud: ['Centring. Most can\'t. I can do it in a breath.'],
+    proud: ['Centering. Most can\'t. I can do it in a breath.'],
     gloomy: ['It\'s harder than it looks. Everything is.'],
     child: ['It goes round SO fast! I got clay in my ear!'],
   });
@@ -796,7 +796,7 @@ talkPack('pastimes', () => {
     cheerful: ['Oh, everything! Ash, mud, a bit of copper from an old pot. It\'s like baking!'],
     ornery: ['That\'s my business. Took me years to get right.'],
     shy: ['...Wood ash. Simple. Nothing clever.'],
-    curious: ['Wood ash. Different trees give different colours. Apple\'s pale, oak\'s dark. I keep notes.'],
+    curious: ['Wood ash. Different trees give different colors. Apple\'s pale, oak\'s dark. I keep notes.'],
     dreamy: ['Ash from the fire. So every pot has a bit of a winter\'s evening in it.'],
     witty: ['A secret recipe. Mostly ash. Partly hope.'],
     proud: ['My own glaze. Nobody else can get that green.'],
@@ -835,16 +835,16 @@ talkPack('pastimes', () => {
   });
   L('pastime.pottery.colour', ['...Blue. The blue of a kingfisher\'s back. I\'ve tried for years.', '...Kingfisher blue. I can see it. I can\'t make it.'], {
     cheerful: ['Blue! The proper blue, like a kingfisher! I\'ll get it one day!'],
-    ornery: ['Blue. Not grey-blue. Not green-blue. Blue. It can\'t be done with ash.'],
+    ornery: ['Blue. Not gray-blue. Not green-blue. Blue. It can\'t be done with ash.'],
     shy: ['...There\'s a blue I want. I\'ve never told anyone.'],
     curious: ['Kingfisher blue. You\'d need copper, I think, and a hotter fire than an oven. I\'m working on it.'],
     dreamy: ['The blue of the sky right after sunset. Before it goes dark. I dream about it.'],
     proud: ['Blue. And I\'ll be the first in the Shire to manage it.'],
     gloomy: ['Blue. I never will.'],
   });
-  L('pastime.pottery.dragon', ['...A dragon? You\'ve seen a dragon? Up close? ...No, don\'t tell me. Tell me the colour.', 'A dragon\'s scale. That\'s the blue. I knew it existed.'], {
+  L('pastime.pottery.dragon', ['...A dragon? You\'ve seen a dragon? Up close? ...No, don\'t tell me. Tell me the color.', 'A dragon\'s scale. That\'s the blue. I knew it existed.'], {
     curious: ['Was it the scale itself, or the light on it? It matters! Tell me everything.'],
-    child: ['A DRAGON! What colour was the rest of it?'],
+    child: ['A DRAGON! What color was the rest of it?'],
   });
 
   // ==================================================================================
@@ -872,7 +872,7 @@ talkPack('pastimes', () => {
         { ap: 'ask', say: 'Why didn\'t you stop?', to: 'stop' },
       ] },
       wool: { line: 'pastime.knitting.wool', go: [
-        { ap: 'ask', say: 'Unpicking old jumpers? Whose?', to: 'unpick' },
+        { ap: 'ask', say: 'Unpicking old sweaters? Whose?', to: 'unpick' },
         { ap: 'listen', say: '*You let them talk wool.*', label: 'Let them talk wool', to: 'forwho' },
       ] },
       forwho: { line: 'pastime.knitting.forwho', go: [
@@ -881,7 +881,7 @@ talkPack('pastimes', () => {
       ] },
       wizard: { line: 'pastime.knitting.wizard', go: [
         { ap: 'warm', say: 'I\'d wear it on every road.', to: 'promise', need: { fond: 0.2 }, soft: true },
-        { ap: 'jest', say: 'Grey, please. To match the beard.', to: 'grey' },
+        { ap: 'jest', say: 'Gray, please. To match the beard.', to: 'grey' },
       ] },
       warm: { line: 'pastime.knitting.warm', end: true },
       stop: { line: 'pastime.knitting.stop', go: [
@@ -889,7 +889,7 @@ talkPack('pastimes', () => {
         { ap: 'ask', say: 'What do you think about, while you knit?', to: 'think' },
       ] },
       unpick: { line: 'pastime.knitting.unpick', go: [
-        { ap: 'ask', say: 'Does it feel strange, unpicking someone\'s old jumper?', to: 'strange', need: { open: 1 }, soft: true },
+        { ap: 'ask', say: 'Does it feel strange, unpicking someone\'s old sweater?', to: 'strange', need: { open: 1 }, soft: true },
         { ap: 'jest', say: 'So somewhere there\'s a hobbit walking about cold.', to: 'end' },
       ] },
       strange: { line: 'pastime.knitting.strange', fx: { trust: 0.02 }, go: [
@@ -915,7 +915,7 @@ talkPack('pastimes', () => {
     { if: { season: 'summer' }, text: ['Knitting in this heat, {name}? You\'re a hero.'] },
   ]);
   L('pastime.knitting.start', ['Oh, always something. {KnitTally} this year, I think.', 'Click, click, click. Every evening, without fail.', 'There\'s always something on the needles. Always.'], {
-    cheerful: ['Oh, I love it! {KnitTally}! Everyone\'s getting something.', 'Knit one, purl one! It\'s my favourite part of the day.'],
+    cheerful: ['Oh, I love it! {KnitTally}! Everyone\'s getting something.', 'Knit one, purl one! It\'s my favorite part of the day.'],
     ornery: ['I knit. Somebody has to. Folk would freeze otherwise.', 'Busy. The whole lane wants mittens and nobody brings wool.'],
     shy: ['...A little. It\'s nice to have something in my hands.', '...Just socks and things. Nothing special.'],
     curious: ['I\'m trying cables. You twist the stitches over each other. Like a rope. It\'s hard.', 'I\'ve been working out a pattern for a hat with ear-flaps. For the herder.'],
@@ -936,13 +936,13 @@ talkPack('pastimes', () => {
     ornery: ['A {knitLast}. If anyone stops interrupting me.'],
     shy: ['...A {knitLast}. It\'s a present. I mean. It might be.'],
     curious: ['A {knitLast}. With a new stitch. Moss stitch, it\'s called. It\'s bumpy, like moss.'],
-    dreamy: ['A {knitLast}, the colour of the sky before it rains.'],
+    dreamy: ['A {knitLast}, the color of the sky before it rains.'],
     witty: ['A {knitLast}. Or a very small blanket. It\'s been a long evening.'],
     proud: ['A {knitLast}, with a pattern I worked out myself.'],
     gloomy: ['A {knitLast}. It\'s gone wrong in the middle. I\'ll unpick it.'],
     child: ['A {knitLast}! It\'s got a hole. On purpose.'],
   }, [
-    { if: { knitLast: 'tea cosy' }, text: ['A tea cosy. Shaped like a hen. The teapot looks very surprised in it.'] },
+    { if: { knitLast: 'tea cozy' }, text: ['A tea cozy. Shaped like a hen. The teapot looks very surprised in it.'] },
     { if: { knitLast: 'pair of socks' }, text: ['Socks. The second sock is the hardest thing in the world. Nobody tells you that.'] },
     { if: { knitLast: 'blanket' }, text: ['A blanket. Squares, all different. Every square a different evening.'] },
     { if: { knitLast: 'woolly hat' }, text: ['A woolly hat, with a bobble. The bobble is the best bit.'] },
@@ -958,10 +958,10 @@ talkPack('pastimes', () => {
     gloomy: ['I couldn\'t think how to end it. I\'m like that with most things.'],
     child: ['I want a scarf that reaches the river! I\'ll start now!'],
   });
-  L('pastime.knitting.wool', ['The Common Store, when the herder\'s been shearing. Otherwise old jumpers, unpicked.', 'From the sheep! Well, via the Store. I don\'t ask the sheep.'], {
+  L('pastime.knitting.wool', ['The Common Store, when the herder\'s been shearing. Otherwise old sweaters, unpicked.', 'From the sheep! Well, via the Store. I don\'t ask the sheep.'], {
     cheerful: ['From the sheep! Bless them. I give them a pat when I go past to say thank you.'],
     ornery: ['From the Store, when there is any. Which there never is.'],
-    shy: ['...Old jumpers. I unpick them. Nobody minds.'],
+    shy: ['...Old sweaters. I unpick them. Nobody minds.'],
     curious: ['Store wool, mostly. I\'ve tried dyeing it with onion skins. Comes out gold!'],
     dreamy: ['Every ball of wool was a sheep on a hill once. I think about that.'],
     witty: ['Sheep. Very generous animals. They\'ve never asked for it back.'],
@@ -992,7 +992,7 @@ talkPack('pastimes', () => {
     shy: ['...I could. If you\'d want one.'],
     curious: ['How long is a wizard? Let me look. ...Very long.'],
     dreamy: ['A scarf that\'s been all over the world. On you. I\'d like that.'],
-    witty: ['I\'d have to knit it in instalments. Send the next bit by post.'],
+    witty: ['I\'d have to knit it in installments. Send the next bit by mail.'],
     proud: ['It\'d be the finest scarf beyond the Shire.'],
     gloomy: ['You\'d go off and we\'d never see it again. Like you.'],
     child: ['YES! A wizard scarf! Can it be magic?'],
@@ -1009,14 +1009,14 @@ talkPack('pastimes', () => {
     dreamy: ['It felt like the scarf wanted to see the river.'],
     witty: ['I\'d have stopped if I\'d found a good place. There isn\'t one. It\'s a scarf.'],
   });
-  L('pastime.knitting.unpick', ['Old ones from the Store. And Grandad\'s. He doesn\'t need them now.', 'Whoever leaves one in the Store. I make them into something new.'], {
+  L('pastime.knitting.unpick', ['Old ones from the Store. And Granddad\'s. He doesn\'t need them now.', 'Whoever leaves one in the Store. I make them into something new.'], {
     shy: ['...My mother\'s, mostly. It\'s nice. She\'s still keeping folk warm.'],
     dreamy: ['They carry a bit of the one who wore them. I like that.'],
     witty: ['I\'ve unpicked most of the lane at some point. They don\'t know.'],
     gloomy: ['Someone who doesn\'t need them any more.'],
   });
   L('pastime.knitting.strange', ['A bit. You find a darn they did, and you think of them doing it.', 'Strange, and nice. Every stitch was someone\'s evening once.'], {
-    cheerful: ['Not strange! It\'s like they\'re helping! I say thank you to the jumper.'],
+    cheerful: ['Not strange! It\'s like they\'re helping! I say thank you to the sweater.'],
     ornery: ['Wool\'s wool. ...Though I did keep one of Dad\'s. Didn\'t have the heart.'],
     shy: ['...I keep one strand from each. In a tin. I\'ve never told anyone.'],
     curious: ['You learn how they knitted. Everyone\'s different. Tight, loose, a twist in the purl.'],
@@ -1035,14 +1035,14 @@ talkPack('pastimes', () => {
     proud: ['I\'ve no need. ...Well. My elbows are out.'],
     gloomy: ['No. Nobody\'s ever knitted me anything either.'],
   });
-  L('pastime.knitting.promise', ['Then you\'ll have one. Grey. Long. Before you go.', 'I\'ll start tonight. Don\'t leave before it\'s done.'], {
+  L('pastime.knitting.promise', ['Then you\'ll have one. Gray. Long. Before you go.', 'I\'ll start tonight. Don\'t leave before it\'s done.'], {
     cheerful: ['Oh, you\'re on! I\'ll start tonight! Stars or stripes?'],
     ornery: ['Fine. But if you lose it, don\'t come back for another.'],
     shy: ['...I\'ll do it. Properly. You\'ll see.'],
     proud: ['You\'ll have the finest scarf on any road.'],
   });
-  L('pastime.knitting.grey', ['Grey to match the beard. Ha! I\'ve just the wool.', 'Grey it is. Dull, but distinguished.'], {
-    witty: ['Grey. To match the beard, the hat and the mood. Very wizardly.'],
+  L('pastime.knitting.grey', ['Gray to match the beard. Ha! I\'ve just the wool.', 'Gray it is. Dull, but distinguished.'], {
+    witty: ['Gray. To match the beard, the hat and the mood. Very wizardly.'],
     child: ['No! It should be PINK!'],
   });
   L('pastime.knitting.think', ['Nothing. That\'s the joy of it. Knit one, purl one, and nothing.', 'Everything, and then nothing. It sorts itself out by the end of the row.'], {
@@ -1072,7 +1072,7 @@ talkPack('pastimes', () => {
     beats: {
       start: { line: 'pastime.painting.start', go: [
         { ap: 'ask', say: 'What did you paint last?', to: 'last' },
-        { ap: 'ask', say: 'Where do your colours come from?', to: 'colours' },
+        { ap: 'ask', say: 'Where do your colors come from?', to: 'colours' },
         { ap: 'jest', say: 'Have you painted me yet? I\'ll want my good side.', to: 'me' },
       ] },
       last: { line: 'pastime.painting.last', fx: { learn: ['pastime.painting', '{Name} paints the valley: last of all, {paintLast}'] }, go: [
@@ -1081,7 +1081,7 @@ talkPack('pastimes', () => {
         { ap: 'share', say: 'I\'ve seen that view from the road. It stays with you.', to: 'road' },
       ] },
       colours: { line: 'pastime.painting.colours', go: [
-        { ap: 'ask', say: 'Is there a colour you can\'t make?', to: 'cant' },
+        { ap: 'ask', say: 'Is there a color you can\'t make?', to: 'cant' },
         { ap: 'jest', say: 'So if I eat your paints, I\'ll be fine?', to: 'eat' },
       ] },
       me: { line: 'pastime.painting.me', fx: { joke: { k: 'pastime.portrait', t: 'The wizard\'s good side is his hat.' } }, go: [
@@ -1099,7 +1099,7 @@ talkPack('pastimes', () => {
       ] },
       road: { line: 'pastime.painting.road', fx: { trust: 0.02 }, end: true },
       cant: { line: 'pastime.painting.cant', go: [
-        { ap: 'share', say: 'I\'ve seen the sea. It\'s every colour at once, and none of them.', to: 'sea' },
+        { ap: 'share', say: 'I\'ve seen the sea. It\'s every color at once, and none of them.', to: 'sea' },
         { ap: 'warm', say: 'You\'ll find it.', to: 'end' },
       ] },
       eat: { line: 'pastime.painting.eat', end: true },
@@ -1135,8 +1135,8 @@ talkPack('pastimes', () => {
     child: ['I drew a horse! It looks like a dog. A horse-dog.'],
   }, [
     { if: { stage: 'elder' }, text: ['I\'ve painted this valley sixty years. It\'s never once been the same.'] },
-    { if: { season: 'autumn' }, text: ['Autumn. All the colours at once. I can\'t paint fast enough.'] },
-    { if: { season: 'winter' }, text: ['Winter\'s hard. White and grey and white. But the shadows! Blue as anything.'] },
+    { if: { season: 'autumn' }, text: ['Autumn. All the colors at once. I can\'t paint fast enough.'] },
+    { if: { season: 'winter' }, text: ['Winter\'s hard. White and gray and white. But the shadows! Blue as anything.'] },
     { if: { rift: true }, text: ['Back home everything was neon. Here I\'m learning greens. There are so many greens.'] },
   ]);
   L('pastime.painting.last', ['A bit of the valley, from the bank, in the evening light.', '{PaintLast}. In the evening light. It took four goes.', '{PaintLast}, from the bank. I\'m nearly happy with it.'], {
@@ -1194,24 +1194,24 @@ talkPack('pastimes', () => {
     proud: ['*They set it on the easel as if it were a crown.*'],
     child: ['*A smudgy drawing, held very close to your nose.* LOOK.'],
   });
-  L('pastime.painting.notice', ['There\'s a smudge of blue on their ear.', 'Every fingernail is a different colour.'], {}, [
+  L('pastime.painting.notice', ['There\'s a smudge of blue on their ear.', 'Every fingernail is a different color.'], {}, [
     { if: { stage: 'child' }, text: ['There\'s paint on their nose, their knees and somehow the back of their neck.'] },
   ]);
   L('pastime.painting.road', ['...Then you know. It stays with you. That\'s why I paint it.', 'You\'ve seen it from away. I\'ve only seen it from here. Tell me how it looks from the road.'], {
     dreamy: ['From the road... I\'d like to see it from the road, once. Going away and coming back.'],
   });
-  L('pastime.painting.cant', ['The sea. I\'ve never seen it. How can you paint what you\'ve never seen?', 'The blue of a kingfisher. It\'s not a colour, it\'s a light.'], {
+  L('pastime.painting.cant', ['The sea. I\'ve never seen it. How can you paint what you\'ve never seen?', 'The blue of a kingfisher. It\'s not a color, it\'s a light.'], {
     cheerful: ['Sunshine! You can\'t paint sunshine! You can only paint where it lands!'],
     ornery: ['Proper black. Everything\'s brown if you look close.'],
     shy: ['...Someone\'s smile. I can never get it.'],
     curious: ['Gold. Real gold. Yellow just isn\'t it. There\'s a shine you can\'t mix.'],
-    dreamy: ['The colour of a memory. You know. That faded gold.'],
+    dreamy: ['The color of a memory. You know. That faded gold.'],
     witty: ['Invisible. I\'ve been told my invisible is very good.'],
     proud: ['None. I\'ve mixed them all. ...Except the sea.'],
     gloomy: ['Happy. I can never paint happy.'],
-    child: ['Ghosts! What colour are ghosts?'],
+    child: ['Ghosts! What color are ghosts?'],
   }, [
-    { if: { rift: true }, text: ['Neon. You can\'t make it from berries. The colours here don\'t glow. I miss the glow.'] },
+    { if: { rift: true }, text: ['Neon. You can\'t make it from berries. The colors here don\'t glow. I miss the glow.'] },
   ]);
   L('pastime.painting.eat', ['I wouldn\'t. The green\'s got copper in it.', 'Mostly fine. Don\'t eat the yellow.'], {
     witty: ['The red\'s beetroot, so that\'s fine. The blue\'s a mystery even to me.'],
@@ -1248,7 +1248,7 @@ talkPack('pastimes', () => {
     gloomy: ['...Really? ...Thank you.'],
     child: ['YES! I\'m going to be a painter when I\'m big!'],
   });
-  L('pastime.painting.advised', ['Heavy? ...It is a bit heavy. Blast it.', 'You might be right. I\'ll take some grey out.'], {
+  L('pastime.painting.advised', ['Heavy? ...It is a bit heavy. Blast it.', 'You might be right. I\'ll take some gray out.'], {
     ornery: ['It\'s meant to be heavy. It was going to rain.'],
     proud: ['It\'s a stormy sky. It\'s meant to be heavy.'],
     curious: ['Do you think? Lighter where? There, by the hill?'],
@@ -1259,8 +1259,8 @@ talkPack('pastimes', () => {
     witty: ['That\'s a hare. Or a smudge. I\'m keeping it mysterious.'],
     child: ['That\'s YOU!'],
   });
-  L('pastime.painting.sea', ['...Every colour and none of them. Oh, I\'d give anything to see that.', '...Say that again. Slowly. I want to remember it.'], {
-    dreamy: ['*They close their eyes.* ...Every colour, and none. I\'ll paint that, one day.'],
+  L('pastime.painting.sea', ['...Every color and none of them. Oh, I\'d give anything to see that.', '...Say that again. Slowly. I want to remember it.'], {
+    dreamy: ['*They close their eyes.* ...Every color, and none. I\'ll paint that, one day.'],
   });
   L('pastime.painting.havent', ['...Because I\'d get it wrong, and then that would be how I remember them.', '...Because they\'d see how I see them. And that\'s too much.'], {
     shy: ['...I couldn\'t. They\'d know. They\'d know everything.'],
@@ -1270,7 +1270,7 @@ talkPack('pastimes', () => {
   const M = (key, rules) => lines(key, guard(rules));
   M('pastime.carving.start', [
     { if: { register: 'fine' }, text: ['I carve, in a modest way. One must have an occupation for the evenings.', 'A little wood-carving. It settles the mind, I find, after a day of accounts.'] },
-    { if: { register: 'plain' }, text: ['Whittlin\'. Bit o\' wood, bit o\' knife, bit o\' peace.', 'Carvin\'. Keeps me hands out o\' mischief, me mum always said.'] },
+    { if: { register: 'plain' }, text: ['Whittlin\'. Bit o\' wood, bit o\' knife, bit o\' peace.', 'Carvin\'. Keeps me hands out o\' mischief, me mom always said.'] },
     { if: { mood: 'merry' }, text: ['Grand! I finished the ears last night and they\'re the best ears I\'ve ever done.'] },
     { if: { mood: ['low', 'miserable'] }, text: ['I haven\'t had the heart for it lately. The knife\'s gone dull. Or I have.'] },
     { if: { weather: 'rain' }, text: ['Rainy days are carving days. I\'ve a pile of shavings up to my knees.'] },
@@ -1332,8 +1332,8 @@ talkPack('pastimes', () => {
     { if: { potN: { min: 10 } }, text: ['A {potLast}. Number {potN}. There\'s pots in every cupboard now. The cupboards are pots.'] },
   ]);
   M('pastime.pottery.wheel', [
-    { if: { register: 'fine' }, text: ['Centring is the whole discipline. Everything else is merely consequence.'] },
-    { if: { register: 'plain' }, text: ['Get it in the middle. If it ain\'t in the middle, it\'s rubbish.'] },
+    { if: { register: 'fine' }, text: ['Centering is the whole discipline. Everything else is merely consequence.'] },
+    { if: { register: 'plain' }, text: ['Get it in the middle. If it ain\'t in the middle, it\'s no good.'] },
   ]);
 
   M('pastime.knitting.start', [
@@ -1341,7 +1341,7 @@ talkPack('pastimes', () => {
     { if: { register: 'plain' }, text: ['Knittin\'. Every night. Somebody\'s always cold.'] },
     { if: { mood: 'merry' }, text: ['I\'ve finished a whole sleeve today and it\'s the right length! Both sleeves the same! Never happens!'] },
     { if: { mood: ['low', 'miserable'] }, text: ['I keep dropping stitches. I can\'t keep my mind on it.'] },
-    { if: { weather: 'rain' }, text: ['Rain on the window, wool in my lap. That\'s my favourite kind of day.'] },
+    { if: { weather: 'rain' }, text: ['Rain on the window, wool in my lap. That\'s my favorite kind of day.'] },
     { if: { weather: 'snow' }, text: ['Snow! I knew it. Everyone\'s mittens are already done. I\'m ahead for once.'] },
     { if: { rift: true }, text: ['Nobody in the city knitted. Clothes came out of machines. This is so much slower and so much better.'] },
   ]);
@@ -1359,7 +1359,7 @@ talkPack('pastimes', () => {
     { if: { register: 'fine' }, text: ['I paint. Landscapes, mostly, in the old manner. The valley is a patient sitter.'] },
     { if: { register: 'plain' }, text: ['Paintin\'. Bits o\' the valley. Not proper art. Just what I see.'] },
     { if: { mood: 'merry' }, text: ['I got the light right yesterday! For once! I nearly danced!'] },
-    { if: { mood: ['low', 'miserable'] }, text: ['Everything comes out grey lately. Even the green bits.'] },
+    { if: { mood: ['low', 'miserable'] }, text: ['Everything comes out gray lately. Even the green bits.'] },
     { if: { weather: 'rain' }, text: ['Rain. I paint the window. The drops on the glass. It\'s harder than it looks.'] },
     { if: { hour: 'evening' }, text: ['The evening light is the best. Everything goes gold for an hour. I paint like mad.'] },
   ]);

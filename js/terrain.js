@@ -25,7 +25,7 @@ function computeLand(seed) {
   // 1. height, the same land the terraces are painted from
   const h = new Float32Array(N);
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) h[y * W + x] = groundHeight(nh, x + 0.5, y + 0.5);
-  // 2. slope, and which way it faces (south, towards the bottom of the map, gets the sun)
+  // 2. slope, and which way it faces (south, toward the bottom of the map, gets the sun)
   const slope = new Float32Array(N), south = new Float32Array(N), sun = new Float32Array(N);
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
     const i = y * W + x;
@@ -49,7 +49,7 @@ function computeLand(seed) {
     }
   }
   // 4. drainage: fill the hollows so every tile can drain (Priority-Flood),
-  // then each tile sends its water to its lowest neighbour and the flow adds up
+  // then each tile sends its water to its lowest neighbor and the flow adds up
   const filled = Float32Array.from(h), done = new Uint8Array(N);
   const heap = [];
   const push = (i, v) => { heap.push([v, i]); let c = heap.length - 1; while (c > 0) { const p = (c - 1) >> 1; if (heap[p][0] <= heap[c][0]) break; [heap[p], heap[c]] = [heap[c], heap[p]]; c = p; } };
@@ -103,7 +103,7 @@ function computeLand(seed) {
 function landAt(key, tx, ty) { const L = World.land; return L ? L[key][clamp(ty, 0, MAP_H - 1) * MAP_W + clamp(tx, 0, MAP_W - 1)] : 0; }
 function slopeN(tx, ty) { return clamp(landAt('slope', tx, ty) / 0.03, 0, 2); }
 
-// Colours for the dev overlay, one per field.
+// Colors for the dev overlay, one per field.
 const LAND_VIEWS = ['off', 'height', 'slope', 'sun', 'wet', 'flow', 'soil'];
 function landColour(view, i) {
   const L = World.land;
@@ -119,7 +119,7 @@ function landColour(view, i) {
 }
 
 // ---------------------------------------------------------------------------
-// Built ground is levelled. Fields, buildings, the square, pens, orchards,
+// Built ground is leveled. Fields, buildings, the square, pens, orchards,
 // allotments, gardens and the plots surveyed for building each sit on a flat
 // pad at one terrace's height (with a yard's margin for hedges, fences and
 // doorsteps), blending back into the hillside over a couple of tiles, so no
@@ -163,7 +163,7 @@ function gatherPads() {
   });
   World.pads = P; World.padNear = near;
 }
-// The height of the ground at a point (in tiles): the lie of the land, levelled where it's built on.
+// The height of the ground at a point (in tiles): the lie of the land, leveled where it's built on.
 function groundHeight(nh, x, y) {
   let h = landHeight(nh, x, y);
   if (World.cliffMask) h = Math.min(0.999, h + cliffRise(x, y));

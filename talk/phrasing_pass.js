@@ -22,7 +22,7 @@ talkPack('phrasing_pass', () => {
 
   // --- What the games are played with -------------------------------------------------
   const RID = [
-    { q: 'What has a mouth but never eats, a bed but never sleeps, and runs but never walks?', a: 'a river', clue: 'You crossed it this morning, if you came by the bridge.', g: 'the postie' },
+    { q: 'What has a mouth but never eats, a bed but never sleeps, and runs but never walks?', a: 'a river', clue: 'You crossed it this morning, if you came by the bridge.', g: 'the mail carrier' },
     { q: 'The more you take, the more you leave behind. What are they?', a: 'footsteps', clue: 'Look behind you on a muddy lane.', g: 'biscuits' },
     { q: 'What has a neck but no head, and wears a cork for a hat?', a: 'a bottle', clue: 'There\'s a row of them behind the bar at the Badger.', g: 'a very thin hobbit in a very small hat' },
     { q: 'I\'m full of holes, but I still hold water. What am I?', a: 'a sponge', clue: 'You\'ll find one by the washing-up.', g: 'the roof of my larder' },
@@ -42,14 +42,14 @@ talkPack('phrasing_pass', () => {
     { q: 'Round as an apple, deep as a cup, and all the horses in the Shire can\'t pull it up. What is it?', a: 'the well', w: 'a pudding' },
     { q: 'What\'s got an eye, but can\'t see a thing?', a: 'a needle', w: 'a potato' },
     { q: 'Little Nancy Etticoat, in a white petticoat. The longer she stands, the shorter she grows. Who is she?', a: 'a candle', w: 'your great-aunt' },
-    { q: 'What\'s always coming, and never comes?', a: 'tomorrow', w: 'the postie' },
+    { q: 'What\'s always coming, and never comes?', a: 'tomorrow', w: 'the mail carrier' },
     { q: 'What\'s got four legs, and never goes for a walk?', a: 'a table', w: 'a very lazy dog' },
-    { q: 'What\'s black when you get it, red when you use it, and grey when you throw it out?', a: 'charcoal', w: 'a dragon\'s breakfast' },
+    { q: 'What\'s black when you get it, red when you use it, and gray when you throw it out?', a: 'charcoal', w: 'a dragon\'s breakfast' },
     { q: 'What do you fill with empty hands?', a: 'a pair of gloves', w: 'a larder' },
     { q: 'What follows you all day, and leaves you at nightfall?', a: 'your shadow', w: 'a goose' },
     { q: 'What\'s bought by the yard and worn by the foot?', a: 'a carpet', w: 'a very long sock' },
     { q: 'What has a bark, but no bite?', a: 'a tree', w: 'my uncle Bodo' },
-    { q: 'What goes round and round the house, and peeps in at every window?', a: 'the sun', w: 'the neighbours' },
+    { q: 'What goes round and round the house, and peeps in at every window?', a: 'the sun', w: 'the neighbors' },
   ];
   const BETS = [
     { q: 'I\'ll wager you that snail reaches the gatepost before the bell goes.', watch: 'You both watch the snail. It takes its time. It considers the gatepost.' },
@@ -66,8 +66,8 @@ talkPack('phrasing_pass', () => {
     { i: 'a conker, polished to a shine', w: 'a horse-chestnut by the Brandywine, a hundred years ago' },
     { i: 'a length of string, knotted in eleven places', w: 'a knot I tied to remember something. I\'ve forgotten what' },
     { i: 'a toffee, slightly furry', w: 'a sweet-shop in Bree. It\'s been in there a while' },
-    { i: 'a smooth grey pebble with a hole right through it', w: 'the beach at the edge of the Sea, where the gulls cry' },
-    { i: 'a very large brown feather', w: 'an eagle who owed me a favour' },
+    { i: 'a smooth gray pebble with a hole right through it', w: 'the beach at the edge of the Sea, where the gulls cry' },
+    { i: 'a very large brown feather', w: 'an eagle who owed me a favor' },
     { i: 'a pressed primrose between two leaves of paper', w: 'a spring I don\'t talk about' },
     { i: 'a crumpled paper ticket that glows faintly blue', w: 'a train in Neverdark. It\'s still warm, somehow' },
     { i: 'a brass button that isn\'t yours', w: 'a dwarf\'s waistcoat. He\'s still looking for it' },
@@ -180,7 +180,7 @@ talkPack('phrasing_pass', () => {
     tm('cheerful', 'Ooh, yes! I love a riddle! Give me a hard one!', 'A riddle! Go on, go on!'),
     tm('ornery', 'Riddles. Waste of a good afternoon. ...Go on, then.', 'If it\'s a daft one, I\'m not answering.'),
     tm('shy', 'Oh... I\'m not very good at them. But all right.', '*nods, a bit nervously*'),
-    tm('curious', 'Yes! Yes. Wait, let me get comfortable. Right. Go.', 'Riddles are my favourite. Well, one of my favourites. Go!'),
+    tm('curious', 'Yes! Yes. Wait, let me get comfortable. Right. Go.', 'Riddles are my favorite. Well, one of my favorites. Go!'),
     tm('dreamy', 'I like riddles. They\'re like little locked boxes.', 'Oh, a riddle. Like in the old stories. Go on.'),
     tm('witty', 'Frightened? Of a wizard\'s riddle? Do your worst.', 'Fire away. I\'ve been sharpening my wits all morning. On a whetstone.'),
     tm('proud', 'I\'ve never met a riddle I couldn\'t crack. Go on.', 'Kings, you say. I\'m better than a king at riddles.'),
@@ -288,7 +288,7 @@ talkPack('phrasing_pass', () => {
   lines('pass.riddle.rematch', [
     { text: ['Any time, wizard. Any time.', 'Next time. And I\'ll be ready.'] },
     tm('witty', 'A rematch! Bring your best. And a snack.'),
-    kid('Tomorrow! Promise! I\'ll practise!'),
+    kid('Tomorrow! Promise! I\'ll practice!'),
   ]);
   lines('pass.riddle.theirs', [
     { text: ['All right. Here\'s one my gran used to ask. {PhrRidThemQ}', 'My turn! {PhrRidThemQ}', 'Right. Try this. {PhrRidThemQ}'] },
@@ -393,7 +393,7 @@ talkPack('phrasing_pass', () => {
     tm('cheerful', 'Never! They SING of your fireworks in the Mountains! Sing!'),
     tm('proud', 'Quite so. And your wisdom, wizard, is very nearly a match for my pastry.'),
     tm('shy', '*very pink now* ...You\'re the nicest person I\'ve ever met. There. I said it.'),
-    tm('ornery', 'Flannel. ...But your staff\'s very straight. I\'ll give you that.'),
+    tm('ornery', 'Soft soap. ...But your staff\'s very straight. I\'ll give you that.'),
     tm('witty', 'Then your hat, wizard, is spoken of by the hats of Bree. In envy.'),
     tm('gloomy', 'Folk say anything. ...You\'re the best thing that\'s happened here in years.'),
     tm('dreamy', 'And the stars come out early just to see you walk up the lane.'),
@@ -506,7 +506,7 @@ talkPack('phrasing_pass', () => {
     tm('witty', 'Taking money off a wizard? It\'d be rude not to.'),
     tm('proud', 'I never lose a wager. Ask anyone. You\'re on.'),
     tm('gloomy', 'I\'ll lose. I always lose. ...Go on, then.'),
-    kid('YES! A bet! What do I win? Do I win sweets?', 'You\'re on! I\'m really lucky. I found a penny once.'),
+    kid('YES! A bet! What do I win? Do I win candy?', 'You\'re on! I\'m really lucky. I found a penny once.'),
     rift('Placing my bet. No algorithm, no odds. Just vibes. Love it.'),
     elder('I\'ve been betting against wizards since before you came. Mostly losing. Go on.'),
   ]);
@@ -520,7 +520,7 @@ talkPack('phrasing_pass', () => {
     { if: { job: 'herder' }, text: ['A round of cheese. A small round. A wedge.'] },
     tm('proud', 'I\'ll stake my good name. And a tart. Mostly the tart.'),
     tm('ornery', 'Nothing. I don\'t need to stake anything. I\'m not going to lose.'),
-    tm('shy', '...A biscuit? Is a biscuit enough?'),
+    tm('shy', '...A cookie? Is a cookie enough?'),
     tm('witty', 'My dignity. Oh, wait, I spent that years ago. A tart, then.'),
     kid('My best marble! No. My SECOND best marble.', 'A worm! I\'ve got a really good worm.'),
     rift('A charge-cell. Fully charged. It\'s like money back home. Worth nothing here, though.'),
@@ -556,7 +556,7 @@ talkPack('phrasing_pass', () => {
     tm('witty', 'And the wizard falls! Mark the day. I\'m having it embroidered.'),
     tm('proud', 'Naturally. I never lose. You\'ll find I\'m rarely wrong.'),
     tm('gloomy', 'I won? Something\'s wrong. Nothing goes right. ...I won!'),
-    kid('I WON! I beat the WIZARD! Pay me! In SWEETS!', 'YESSSS! I\'m the champion of betting!'),
+    kid('I WON! I beat the WIZARD! Pay me! In CANDY!', 'YESSSS! I\'m the champion of betting!'),
     rift('Winner! I want that in writing. Or on the Relay.'),
   ]);
   lines('pass.wager.secret', [{ text: ['I should tell you. The snail and I go back a long way.', 'I may have had a word with it beforehand.'] }]);
@@ -619,7 +619,7 @@ talkPack('phrasing_pass', () => {
     tm('witty', 'A wizard\'s pocket. Could be anything. Could be a small dragon. Could be lint.'),
     tm('proud', 'Hmph. I could guess, if I cared to. Which I might.'),
     tm('gloomy', 'Not a ring, I hope. Rings are always trouble in stories.'),
-    kid('SWEETS! Is it sweets? Say it\'s sweets!', 'Is it a FROG? I\'d have a frog in my pocket.'),
+    kid('CANDY! Is it candy? Say it\'s candy!', 'Is it a FROG? I\'d have a frog in my pocket.'),
     rift('Scanning... no. No scanner. Okay, I\'ll guess like a hill-hobbit.'),
   ]);
   lines('pass.pocket.guesses', [
@@ -714,7 +714,7 @@ talkPack('phrasing_pass', () => {
     tm('proud', 'I know it. I know all the verses. Most folk only know the first.'),
     tm('gloomy', 'That\'s a sad one. Or I make it sad. One of the two.'),
     kid('I know a song! It\'s about a frog! Do you want to hear it? It\'s long.'),
-    rift('Analogue music. No synth, no beat. Huh. It\'s kind of nice.'),
+    rift('Analog music. No synth, no beat. Huh. It\'s kind of nice.'),
     elder('Bless me, I\'ve not heard that since I was knee-high to a hen.'),
   ]);
   lines('pass.song.verse', [{ text: ['*You sing:* "{phrSongA}"', '*In a creaky old voice, you sing:* "{phrSongA}"'] }]);
@@ -734,7 +734,7 @@ talkPack('phrasing_pass', () => {
     { if: { job: 'herder' }, text: ['*sings:* "Come by, come by, my woolly ones, come by before the rain."'] },
     tm('shy', '*hums, very softly, without words*'),
     tm('ornery', 'I only know rude ones. *sings a rude one anyway, under their breath*'),
-    tm('dreamy', '*sings:* "Over the hills where the grey ships go, sailing away on the evening glow."'),
+    tm('dreamy', '*sings:* "Over the hills where the gray ships go, sailing away on the evening glow."'),
     tm('witty', '*sings:* "Oh, the wizard came up with a hat on his head, and he talked and he talked till we all went to bed."'),
     kid('*sings:* "Frog in a puddle, frog in a pool, frog in my pocket, frog at school!"'),
     rift('*hums a tune that sounds like a machine dreaming*'),
@@ -804,7 +804,7 @@ talkPack('phrasing_pass', () => {
     tm('witty', 'Round here we say: never argue with a wizard. They\'ve had longer to think of a comeback.'),
     tm('gloomy', 'We say: it never rains but it pours. And it always rains.'),
     tm('dreamy', 'Oh, that\'s lovely. We say: the moon knows where you\'ve been.'),
-    kid('My mum says: if you can\'t say anything nice, don\'t say anything at all. I always have something nice. And something not nice.'),
+    kid('My mom says: if you can\'t say anything nice, don\'t say anything at all. I always have something nice. And something not nice.'),
     rift('Back home we said: if it\'s free, you\'re the product. Doesn\'t really work for mushrooms.'),
     elder('My old dad used to say: an early bed and an early breakfast, and a second one later.'),
   ]);
@@ -815,7 +815,7 @@ talkPack('phrasing_pass', () => {
     tm('ornery', 'It means what it means. Don\'t make me explain a proverb.'),
     tm('witty', 'It means my gran had a lot of time on her hands.'),
     tm('dreamy', 'It means... something you only understand when you\'re old. I\'m not old enough.'),
-    kid('It means... I don\'t know. My mum says it when I\'m naughty.'),
+    kid('It means... I don\'t know. My mom says it when I\'m naughty.'),
   ]);
   lines('pass.proverb.granny', [{ text: ['She did not! ...She might have. She made up a lot of things.', 'How dare you. ...Yes, she did.'] }, tm('ornery', 'Don\'t you speak ill of my gran. She\'d have had your hat.')]);
   lines('pass.proverb.mangle', [{ text: ['Ah, but you know what they say: a bird in the hand gets the worm.', 'As they say: too many cooks gather no moss.', 'Don\'t count your chickens before they cross the bridge.'] }]);
@@ -859,7 +859,7 @@ talkPack('phrasing_pass', () => {
   lines('pass.gossip.open', [{ text: ['*You lean on the fence.* Well? What\'s the talk of the lane?', 'Go on, {name}. What\'s the gossip?', '*You settle in.* What have I missed, {name}?'] }]);
   lines('pass.gossip.tidbit', [
     { text: ['Somebody\'s been at the honey in the Common Store. Sticky fingerprints on the jar. Small ones.', 'Someone\'s been leaving flowers on a doorstep every morning. Nobody knows who. I know who.'] },
-    { if: { rival: (r) => !!r }, text: ['{Rival}\'s got a new hat. Thinks nobody\'s noticed. Everybody\'s noticed.', '{Rival} says their marrows are bigger than mine. They\'re not.'] },
+    { if: { rival: (r) => !!r }, text: ['{Rival}\'s got a new hat. Thinks nobody\'s noticed. Everybody\'s noticed.', '{Rival} says their pumpkins are bigger than mine. They\'re not.'] },
     { if: { friend: (f) => !!f }, text: ['{Friend}\'s been seen walking out after supper. Twice. With a basket.'] },
     tm('ornery', 'The miller\'s wheel squeaks and nobody does anything about it. That\'s the talk.'),
     tm('shy', '...I don\'t really hear things. Well. I heard someone sing in the bath. Very loudly.'),
@@ -879,7 +879,7 @@ talkPack('phrasing_pass', () => {
   ]);
   lines('pass.gossip.more', [
     { text: ['And then, the very next morning, it happened again! Bold as brass!', 'And nobody\'s owned up. Nobody! In this lane!'] },
-    tm('cheerful', 'And then the goose bit the postie! And the postie bit the goose! Well, nearly!'),
+    tm('cheerful', 'And then the goose bit the mail carrier! And the mail carrier bit the goose! Well, nearly!'),
     tm('dreamy', 'And they say there was a ribbon tied to the gate. A blue one.'),
     tm('witty', 'And then the plot thickened, like a gravy. A gossip gravy.'),
     kid('And THEN they said it was a FOX. A fox with jam on its face. A FOX.'),
@@ -891,7 +891,7 @@ talkPack('phrasing_pass', () => {
     tm('proud', 'I was merely remarking. I\'m always kind. Mostly.'),
     kid('I\'m being kind! I\'m telling the TRUTH. That\'s kind.'),
   ]);
-  lines('pass.gossip.swear', [{ text: ['*finger to lips* You didn\'t hear it from me.', 'Not a word! If anyone asks, we were talking about the weather.'] }, tm('cheerful', 'I KNOW. Isn\'t it marvellous?')]);
+  lines('pass.gossip.swear', [{ text: ['*finger to lips* You didn\'t hear it from me.', 'Not a word! If anyone asks, we were talking about the weather.'] }, tm('cheerful', 'I KNOW. Isn\'t it marvelous?')]);
 
   // =====================================================================================
   // Birdsong
@@ -938,7 +938,7 @@ talkPack('phrasing_pass', () => {
   lines('pass.birds.saying', [
     { text: ['It\'s saying "here I am, here I am, where are you?"', 'Something about worms, I expect. It\'s always about worms.'] },
     tm('dreamy', 'It\'s saying summer\'s nearly here, and nobody\'s to waste a minute of it.'),
-    tm('ornery', 'It\'s saying "get off my hedge". I sympathise.'),
+    tm('ornery', 'It\'s saying "get off my hedge". I sympathize.'),
     tm('witty', 'It\'s saying "who\'s the tall fellow in the silly hat?"'),
     tm('gloomy', 'It\'s saying it\'s lonely. They all are, really.'),
     tm('curious', 'I wonder! Do you think they have words? Do wizards know?'),
@@ -1022,7 +1022,7 @@ talkPack('phrasing_pass', () => {
     { text: ['Come round Highday. I\'ll make you my mother\'s seed-cake.', 'My apple turnovers. Folk come from three lanes over.'] },
     { if: { job: 'baker' }, text: ['A cottage loaf, with a cross on top. Come by early and I\'ll give you the first one.'] },
     { if: { likes: 'mushrooms' }, text: ['Mushroom pasties. Don\'t laugh. Come round and stop laughing.'] },
-    tm('shy', '...I make a ginger biscuit. Only a small one. I could make you one.'),
+    tm('shy', '...I make a ginger cookie. Only a small one. I could make you one.'),
     tm('proud', 'My lemon curd tart has won three ribbons. You may have a slice.'),
     tm('ornery', 'I don\'t bake for wizards. ...Well, maybe one. A small one.'),
     tm('gloomy', 'I burn everything. But the scones are all right. Usually.'),
@@ -1048,8 +1048,8 @@ talkPack('phrasing_pass', () => {
   lines('pass.baking.fav', [
     tm('cheerful', 'Jam tarts! Hundreds! Come round and I\'ll make hundreds!'),
     tm('curious', 'I\'m trying a new one. Carrot cake. Carrot! In a cake! Come and be brave with me.'),
-    tm('dreamy', 'Rose-petal biscuits. My gran\'s. They taste like June.'),
-    tm('witty', 'My speciality is burnt toast. People come from miles to avoid it.'),
+    tm('dreamy', 'Rose-petal cookies. My gran\'s. They taste like June.'),
+    tm('witty', 'My specialty is burnt toast. People come from miles to avoid it.'),
     elder('Bread pudding. Nobody makes it now. I\'ll make you some. You\'ll see.'),
   ]);
   lines('pass.baking.follow', [
@@ -1082,7 +1082,7 @@ talkPack('phrasing_pass', () => {
     tm('witty', 'Kind. Fine. I\'ll gossip about the weather instead. It\'s been very rude.'),
     tm('gloomy', 'You\'re right. I\'d hate folk talking about me. They probably do.'),
     tm('curious', 'Kind? Hm. You\'re right. I just like knowing things.'),
-    rift('Fair. No doxxing the neighbours. Got it.'),
+    rift('Fair. No doxxing the neighbors. Got it.'),
   ]);
   lines('pass.gossip.swear', [
     tm('ornery', 'If it gets out, I\'ll know it was you. Only you and the hens know.'),

@@ -1,7 +1,7 @@
 'use strict';
 // ---------------------------------------------------------------------------
 // Playing as the wizard. In a village started this way (Game.mode 'wizard')
-// you aren't the Steward or a giant hand: you are the grey wizard, walking
+// you aren't the Steward or a giant hand: you are the gray wizard, walking
 // the valley on your own two feet. Tap the ground and he walks there; tap a
 // hobbit and he goes over for a word, and a sheet comes up with what they
 // say and what you might say back. Folk remember how you treat them (his
@@ -584,7 +584,7 @@ function introForMode() {
   const lede = card.querySelector('.lede'), sub = card.querySelector('p.sub'), how = card.querySelector('.how');
   if (!card._steward) card._steward = { lede: lede.textContent, how: how ? how.innerHTML : '' };
   const wiz = playMode();
-  lede.textContent = wiz ? 'You are the grey wizard, come again to Thistledown: a snug village of hobbit-holes, gardens and good ale between green hills and a slow river, where lately the sky has been tearing open. Walk its lanes, stop folk for a word, teach the children, tell tales beneath the great tree, and light the fireworks when there\'s a party.' : card._steward.lede;
+  lede.textContent = wiz ? 'You are the gray wizard, come again to Thistledown: a snug village of hobbit-holes, gardens and good ale between green hills and a slow river, where lately the sky has been tearing open. Walk its lanes, stop folk for a word, teach the children, tell tales beneath the great tree, and light the fireworks when there\'s a party.' : card._steward.lede;
   if (sub) sub.hidden = wiz;
   if (how) how.innerHTML = wiz ? '<div><b>Walk</b><span>Tap the ground to walk there. Drag to look around; pinch to zoom.</span></div><div><b>Talk</b><span>Tap a hobbit to stop for a word. They remember how you treat them.</span></div><div><b>Do</b><span>The bar at the bottom: tell a tale, light the fireworks, sleep till morning, and more as the story grows.</span></div>' : card._steward.how;
 }
@@ -670,7 +670,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // the note sits under the buttons, as the scenario's does
     const col = document.createElement('div'); col.appendChild(seg); row.appendChild(col);
     const note = document.createElement('div'); note.className = 'sub';
-    note.textContent = mode === 'wizard' ? 'Walk the valley as the grey wizard: talk with the folk, tell tales, teach the children. The village runs itself.' : 'Run the village from above: build, set rations and trades, trade with the caravans, and lend a giant hand.';
+    note.textContent = mode === 'wizard' ? 'Walk the valley as the gray wizard: talk with the folk, tell tales, teach the children. The village runs itself.' : 'Run the village from above: build, set rations and trades, trade with the caravans, and lend a giant hand.';
     col.appendChild(note); box.prepend(row);
     return r;
   }, 'play');

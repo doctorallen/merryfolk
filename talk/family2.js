@@ -3,7 +3,7 @@
 // Family, home and love, the second part: children and parents. A baby on
 // the way and what to call it, a new baby and no sleep, raising little ones
 // (mischief and pride), a parent asking the wizard's advice about a child,
-// the empty nest, their own mum and dad, brothers and sisters, grandchildren,
+// the empty nest, their own mom and dad, brothers and sisters, grandchildren,
 // and the children's own view of home, with a question or two for the
 // wizard. The facts come from talk/family.js.
 // ---------------------------------------------------------------------------
@@ -75,7 +75,7 @@ talkPack('family2', () => {
     W({ carrying: true }, 'I\'m eating for two. Well, for four. The baby likes pickles. And cake. Together.', 'I can\'t see my own feet. I\'ve been told they\'re still there.'),
     W({ carrying: false }, 'I\'ve painted the cradle twice. Now I\'m painting it a third time. I can\'t sit still.', 'I keep bringing cushions. Nobody\'s asked for cushions. I can\'t stop.'),
     W({ littleOne: has }, 'Another one! {LittleOne} wants a brother. And a sister. And a goat. We\'ll see.'),
-    tm(C, 'Wonderful! Marvellous! I\'ve cried four times this morning and it\'s not even second breakfast!'),
+    tm(C, 'Wonderful! Marvelous! I\'ve cried four times this morning and it\'s not even second breakfast!'),
     tm(O, 'Yes. Well. Somebody\'s got to keep the family going. I\'ve not slept.', 'More mouths. More noise. ...I\'m very happy. Don\'t tell anyone.'),
     tm(S, '...Yes. Oh, wizard. Yes. *goes pink*', '...We\'re having a baby. I keep saying it to make sure it\'s true.'),
     tm(Q, 'Isn\'t it extraordinary? Where do they get their noses from? I want to watch it all happen.'),
@@ -86,7 +86,7 @@ talkPack('family2', () => {
     W({ stage: 'elder' }, 'At our age! The village is talking. Let it talk.'),
   ]);
   L('family.exp.guess', EX, [
-    FB('Everyone has a guess. The postie says a girl. The miller says twins.', 'I don\'t mind. As long as it has all its toes.'),
+    FB('Everyone has a guess. The mail carrier says a girl. The miller says twins.', 'I don\'t mind. As long as it has all its toes.'),
     G('A girl, I think. Or a boy. I\'ve changed my mind eleven times.'),
     W({ carrying: true }, 'A boy. It kicks like a pony at the fair.', 'A girl. I just know. Don\'t ask how.'),
     tm(C, 'Both! Twins! No, one! I don\'t care! I\'m so happy!'),
@@ -106,7 +106,7 @@ talkPack('family2', () => {
     tm(S, '...No. Not at all. Is that bad?'),
     tm(Q, 'I\'ve read everything. Nobody agrees. One book says singing, one says silence.'),
     tm(D, 'I don\'t think you can be ready for someone new. You just open the door.'),
-    tm(Wt, 'Ready? I\'ve practised changing a cushion. The cushion\'s very pleased.'),
+    tm(Wt, 'Ready? I\'ve practiced changing a cushion. The cushion\'s very pleased.'),
     tm(P, 'Entirely ready. I\'ve made lists. The lists have lists.'),
     tm(Gl, 'Ready? I lie awake every night counting what could go wrong.'),
   ]);
@@ -118,7 +118,7 @@ talkPack('family2', () => {
     tm(S, '...Thank you. I needed someone to say that.'),
     tm(Q, 'Can you tell? How? What does a good {role} look like?'),
     tm(D, 'I hope so. I hope I\'m the kind they remember fondly.'),
-    tm(Wt, 'A fine {role}? I\'ll settle for an adequate one with good biscuits.'),
+    tm(Wt, 'A fine {role}? I\'ll settle for an adequate one with good cookies.'),
     tm(P, 'Of course. I shall be exemplary.'),
     tm(Gl, 'You think so? ...I wish I did.'),
   ]);
@@ -130,7 +130,7 @@ talkPack('family2', () => {
     tm(S, '...One. A secret one. I haven\'t told anyone. Not even {spouse}.'),
     tm(Q, 'I\'ve been reading old names in the almanac. Did you know someone was once called Fortinbras?'),
     tm(D, 'Something that sounds like the river in spring. I\'ll know it when I hear it.'),
-    tm(Wt, 'We\'re torn between a family name and something the neighbours can\'t spell.'),
+    tm(Wt, 'We\'re torn between a family name and something the neighbors can\'t spell.'),
     tm(P, 'A name worthy of the family. Something that looks well on a door.'),
     tm(Gl, 'I daren\'t pick one yet. It feels like tempting fate.'),
   ]);
@@ -198,7 +198,7 @@ talkPack('family2', () => {
   ]);
   L('family.exp.kin', EX, [
     FB('My grandmother\'s, if it\'s a girl. She\'d have liked that.', 'There\'s an old name in the family Bible. Nobody\'s used it in a hundred years.'),
-    G('{Spouse}\'s grandad\'s. He was the kindest hobbit in three valleys. It\'s a lot to live up to.'),
+    G('{Spouse}\'s granddad\'s. He was the kindest hobbit in three valleys. It\'s a lot to live up to.'),
     W({ goneKin: has }, '{GoneKin}. If it\'s right. After my {goneRel}. I haven\'t told {spouse} yet.'),
     W({ parent: has }, '{Parent}, maybe. My {parentWord} would cry for a week.'),
     tm(C, 'Everyone\'s! We\'ll give it all the names! It\'ll take a whole morning to call it in!'),
@@ -284,7 +284,7 @@ talkPack('family2', () => {
     tm(Q, 'What makes a good name, do you think? Sound? Meaning? Who you\'re named after?'),
     tm(D, 'Do you think a name changes who you become? I think about it all night.'),
     tm(Wt, 'We need a name. Something that sounds good shouted from a door at teatime.'),
-    tm(P, 'We need a name that befits the family. You\'re well travelled. Advise us.'),
+    tm(P, 'We need a name that befits the family. You\'re well traveled. Advise us.'),
     tm(Gl, 'Everyone says a name\'s for life. What if we pick wrong?'),
   ]);
   L('family.names.list', EX, [
@@ -325,7 +325,7 @@ talkPack('family2', () => {
     FB('Someone you\'d want to know. ...Yes. That\'s the one.', 'You\'re right. I keep saying it out loud. It fits.'),
     G('I\'ll tell {spouse} the wizard chose it. That\'ll end the argument.'),
     tm(C, 'That\'s it! That\'s the one! Oh, thank you!'),
-    tm(O, 'Hmph. That was my favourite anyway.'),
+    tm(O, 'Hmph. That was my favorite anyway.'),
     tm(S, '...That was my secret one. How did you know?'),
     tm(Q, 'Why that one? What did you hear in it? I want to hear it too.'),
     tm(D, 'Someone you\'d want to know. That\'s the nicest thing to say about a name.'),
@@ -420,7 +420,7 @@ talkPack('family2', () => {
     tm(Gl, 'I feel worse than I look. And I look like a wet sack.'),
   ]);
   L('family.baby.likeness', BB, [
-    FB('Everyone says something different. The ears are mine. Nobody wants the ears.', 'The neighbours say the milkman. We haven\'t got a milkman.'),
+    FB('Everyone says something different. The ears are mine. Nobody wants the ears.', 'The neighbors say the milkman. We haven\'t got a milkman.'),
     G('{Spouse}, I think. The frown. {Baby} frowns at everything. Like a little judge.', 'Me, when {baby} laughs. {Spouse}, when {baby} howls.'),
     tm(C, 'Me! Definitely me! Look at that smile! Well, wait till {baby} smiles!'),
     tm(O, 'My father. Same scowl. Same appetite. Poor thing.'),
@@ -457,7 +457,7 @@ talkPack('family2', () => {
   L('family.baby.passes', BB, [
     FB('By THIRTY? Ha! ...You\'re joking. You\'re joking?', 'Usually by thirty. I\'ll hold you to that.'),
     tm(C, 'Ha! Thirty! I\'ll have a lie-in on {baby}\'s birthday!'),
-    tm(O, 'Thirty. Marvellous. Something to look forward to.'),
+    tm(O, 'Thirty. Marvelous. Something to look forward to.'),
     tm(S, '...Oh. Ha. You\'re teasing.'),
     tm(Q, 'Is that true? When did you sleep through? Do wizards sleep?'),
     tm(D, 'It passes. Everything passes. Even the nice bits. That\'s the sad part.'),
@@ -657,9 +657,9 @@ talkPack('family2', () => {
     tm(Gl, 'And if the word\'s too firm? I always worry.'),
   ]);
   L('family.kids.punish', LO, [
-    FB('Sent {kThem} to bed with no pudding. Then took {kThem} pudding at bedtime.', 'Made {kThem} apologise to the hens. In person.'),
+    FB('Sent {kThem} to bed with no pudding. Then took {kThem} pudding at bedtime.', 'Made {kThem} apologize to the hens. In person.'),
     tm(C, 'Laughed, then made {kThem} help clean it all up! Fun for everyone!'),
-    tm(O, 'Gave {kThem} a talking-to {kThey}\'ll not forget. Then a biscuit. Don\'t tell.'),
+    tm(O, 'Gave {kThem} a talking-to {kThey}\'ll not forget. Then a cookie. Don\'t tell.'),
     tm(S, '...I asked {kThem} not to. Very nicely. {KThey} said sorry.'),
     tm(Q, 'I asked {kThem} why. {KThey} had a very good reason. I\'m still thinking about it.'),
     tm(D, 'Nothing. I was too busy being glad {kThey} was safe.'),
@@ -791,7 +791,7 @@ talkPack('family2', () => {
     FB('A phase. Yes. Everyone says that. I hope everyone\'s right.', 'Is it? I hope so. It\'s a long phase.'),
     G('A phase. {LittleOne}\'ll be grown before I know it and I\'ll miss this. Won\'t I.'),
     tm(C, 'Of course! A phase! Next week it\'ll be something new! Ha!'),
-    tm(O, 'A phase. Hmph. So was my grandad, and he lasted ninety years.'),
+    tm(O, 'A phase. Hmph. So was my granddad, and he lasted ninety years.'),
     tm(S, '...Thank you. I needed to hear that.'),
     tm(Q, 'How long do phases last? Is there a usual length? I\'d like to plan.'),
     tm(D, 'Like the moon. A phase. It\'ll come round full again.'),
@@ -802,7 +802,7 @@ talkPack('family2', () => {
   L('family.worry.same', LO, [
     FB('...Worse. Much worse. I\'d forgotten.', 'Ha. I ran away to the mill once. For a whole afternoon.'),
     G('My {parentWord} would say worse. My {parentWord} would say a great deal.'),
-    tm(C, 'Ha! Yes! Exactly the same! I\'d forgotten! Poor Mum!'),
+    tm(C, 'Ha! Yes! Exactly the same! I\'d forgotten! Poor Mom!'),
     tm(O, 'I was perfectly reasonable. My parents were the trouble.'),
     tm(S, '...I was quiet too. I just wanted to be left alone. Oh.'),
     tm(Q, 'Was I? I suppose I was. I asked my dad why so often he hid in the shed.'),
@@ -983,19 +983,19 @@ talkPack('family2', () => {
     tm(Gl, 'And if {gThey}\'s not in? ...I\'ll go anyway.'),
   ]);
   L('family.nest.wizroom', NS, [
-    FB('Hardly snore? I\'ve heard you in the wagon from three lanes off.', 'Ha! A wizard in the spare room. The neighbours would talk.'),
+    FB('Hardly snore? I\'ve heard you in the wagon from three lanes off.', 'Ha! A wizard in the spare room. The neighbors would talk.'),
     tm(C, 'Ha! Would you? Oh, that would be fun!'),
     tm(O, 'You\'d set the curtains alight. I know your sort.'),
     tm(S, '...You could. If you wanted.'),
     tm(Q, 'Do wizards sleep in beds? Or standing up, like horses?'),
     tm(D, 'A wizard in the room where {flown} grew up. That\'d be a fine thing.'),
     tm(Wt, 'Hardly snore. Hardly a wizard. Hardly believable.'),
-    tm(P, 'It\'s a very good room. You\'d be honoured.'),
+    tm(P, 'It\'s a very good room. You\'d be honored.'),
     tm(Gl, 'You\'d leave too. Everybody leaves.'),
   ]);
 
   // =====================================================================================
-  // Their own mum and dad
+  // Their own mom and dad
   // =====================================================================================
   const PA = { parent: has };
   addThread({
@@ -1038,7 +1038,7 @@ talkPack('family2', () => {
   L('family.pa.start', PA, [
     FB('Oh, well enough. The same as ever.', 'Getting along. As we all are.'),
     G('{Parent}? Same as ever. Still thinks I\'m nine.', 'My {parentWord}\'s grand. Bossy. Grand.'),
-    W({ parentWord: 'mum' }, 'Mum? Still sends round a pie every Highday. In case I\'m not eating. I\'m eating.'),
+    W({ parentWord: 'mom' }, 'Mom? Still sends round a pie every Highday. In case I\'m not eating. I\'m eating.'),
     W({ parentWord: 'dad' }, 'Dad? Still fixing things that aren\'t broken. Mostly my gate.'),
     W({ parentOld: true }, '{Parent}\'s slowing down. Doesn\'t like to admit it. Took the hill in two goes yesterday.'),
     W({ parentAway: false }, 'We still share a roof, {parent} and me. We\'re like two cats on one cushion.'),
@@ -1054,7 +1054,7 @@ talkPack('family2', () => {
   L('family.pa.learned', PA, [
     FB('How to make bread. How to say sorry. In that order.', 'Never trust a cloud on a Highday. Always carry a handkerchief.'),
     G('{Parent} taught me to whistle. Took a whole summer. {Parent} never gave up.', 'To leave a bit of everything for the next one. A bit of pie. A bit of patience.'),
-    W({ job: has, parentWord: ['mum', 'dad'] }, 'The trade, a bit. Before I was a {jobWord} I watched {parent} at work for years.'),
+    W({ job: has, parentWord: ['mom', 'dad'] }, 'The trade, a bit. Before I was a {jobWord} I watched {parent} at work for years.'),
     tm(C, 'To laugh at everything! Even the bad things! Especially those!'),
     tm(O, 'How to stand my ground. And how to slam a door properly.'),
     tm(S, '...That it\'s all right to be quiet. {Parent} never minded.'),
@@ -1072,7 +1072,7 @@ talkPack('family2', () => {
     tm(S, '...Yes. I don\'t mind. It\'s nice.'),
     tm(Q, 'Yes! Why do parents always worry about necks? Is there a reason?'),
     tm(D, 'And I always do. Because one day nobody will tell me.'),
-    tm(Wt, '{Parent} once sent a scarf by post. To my own hole. Next door.'),
+    tm(Wt, '{Parent} once sent a scarf by mail. To my own hole. Next door.'),
     tm(P, 'I\'m quite capable of dressing myself. But I do look well in a scarf.'),
     tm(Gl, 'Yes. And one day {parent} won\'t. I think about that.'),
   ]);
@@ -1158,7 +1158,7 @@ talkPack('family2', () => {
     beats: {
       start: { line: 'family.sib.start', go: [
         { ap: 'ask', say: 'family.sib.askgrowing', to: 'growing' },
-        { ap: 'jest', say: 'And who was the favourite? Be honest.', to: 'fav' },
+        { ap: 'jest', say: 'And who was the favorite? Be honest.', to: 'fav' },
         { ap: 'warm', say: 'You speak of {sibling} fondly.', to: 'fond' },
       ] },
       growing: { line: 'family.sib.growing', go: [
@@ -1216,12 +1216,12 @@ talkPack('family2', () => {
     tm(Gl, 'Once. Then we grew up and somehow stopped talking.'),
   ]);
   L('family.sib.fav', SB, [
-    FB('Me! ...Mum says it\'s whoever brings the most cake.', 'Neither. The dog. The dog was the favourite.'),
+    FB('Me! ...Mom says it\'s whoever brings the most cake.', 'Neither. The dog. The dog was the favorite.'),
     G('{Sibling}. Obviously. {Sibling} could charm a hen off its eggs.'),
     tm(C, 'Me! No, {sibling}! No, both! We were both perfect!'),
     tm(O, '{Sibling}. Always {sibling}. I\'m not bitter. I\'m quite bitter.'),
     tm(S, '...{Sibling}. I never minded. Much.'),
-    tm(Q, 'I\'ve asked. Mum won\'t say. I\'ve been gathering evidence for years.'),
+    tm(Q, 'I\'ve asked. Mom won\'t say. I\'ve been gathering evidence for years.'),
     tm(D, 'Whoever was nearest the fire. That changed with the seasons.'),
     tm(Wt, 'Me. I\'ve never asked, so it\'s never been disproved.'),
     tm(P, 'Me. Naturally.'),
@@ -1240,10 +1240,10 @@ talkPack('family2', () => {
   ]);
   L('family.sib.worst', SB, [
     FB('I put a frog in {sibling}\'s boot. {Sibling} put a frog in my soup. We stopped at frogs.', 'Ate {sibling}\'s birthday cake. All of it. I was six. I still regret nothing.'),
-    G('{Sibling} cut off my plait while I slept. I put {sibling}\'s best waistcoat on the scarecrow.'),
+    G('{Sibling} cut off my braid while I slept. I put {sibling}\'s best waistcoat on the scarecrow.'),
     W({ stage: 'child' }, 'I told everyone {sibling} still wets the bed. {Sibling} doesn\'t. Much.'),
     tm(C, 'We dyed the cat green! Both of us! Together! Best day ever!'),
-    tm(O, '{Sibling} told Mum it was me who broke the teapot. It was {sibling}. I\'m still owed.'),
+    tm(O, '{Sibling} told Mom it was me who broke the teapot. It was {sibling}. I\'m still owed.'),
     tm(S, '...I hid {sibling}\'s shoes before the dance. I was jealous. I\'ve never said sorry.'),
     tm(Q, 'I read {sibling}\'s diary. Every page. It was mostly about cheese.'),
     tm(D, 'I told {sibling} there were dragons under the bridge. {Sibling} didn\'t cross it for a year.'),
@@ -1285,7 +1285,7 @@ talkPack('family2', () => {
     open: { warm: 'family.gk.open' },
     beats: {
       start: { line: 'family.gk.start', go: [
-        { ap: 'ask', say: 'And who\'s the favourite? I won\'t tell.', to: 'fav' },
+        { ap: 'ask', say: 'And who\'s the favorite? I won\'t tell.', to: 'fav' },
         { ap: 'jest', say: 'Spoiling them rotten, I suppose.', to: 'spoil' },
         { ap: 'warm', say: 'They\'re lucky to have you.', to: 'lucky' },
       ] },
@@ -1313,8 +1313,8 @@ talkPack('family2', () => {
   L('family.gk.open', GK, [FB('And the grandchildren, {name}?'), G('And how\'s young {grandkid}, {name}?', 'I hear you\'re a grandparent, {name}. How does it suit you?')]);
   L('family.gk.start', GK, [
     FB('Oh, wizard. It\'s all the fun and none of the nights.', 'Wonderful. They come, they eat, they go home. Perfect.'),
-    G('{Grandkid}\'s the light of my life. Don\'t tell the others.', '{Grandkid} came round and ate all the biscuits. All of them. I was so proud.'),
-    W({ grandCount: { min: 3 } }, 'All {grandCountWord} of them! I need a bigger biscuit tin.'),
+    G('{Grandkid}\'s the light of my life. Don\'t tell the others.', '{Grandkid} came round and ate all the cookies. All of them. I was so proud.'),
+    W({ grandCount: { min: 3 } }, 'All {grandCountWord} of them! I need a bigger cookie tin.'),
     tm(C, 'Oh, they\'re wonderful! Every one of them! I\'ve a drawing from each on the wall!'),
     tm(O, 'Noisy. Sticky. Into my pipe-rack. ...I\'d fight a troll for any of them.'),
     tm(S, '...{Grandkid} holds my hand on the way to the well. Every time.'),
@@ -1325,18 +1325,18 @@ talkPack('family2', () => {
     tm(Gl, 'I hope I\'m around to see them grow. That\'s all.'),
   ]);
   L('family.gk.fav', GK, [
-    FB('I haven\'t got a favourite. ...It\'s {grandkid}.', 'Whoever\'s nearest the biscuit tin.'),
+    FB('I haven\'t got a favorite. ...It\'s {grandkid}.', 'Whoever\'s nearest the cookie tin.'),
     tm(C, 'All of them! Every single one! ...{Grandkid}. Shh.'),
     tm(O, 'Don\'t ask such questions. ...{Grandkid}. Don\'t you dare repeat it.'),
     tm(S, '...I couldn\'t say. ...{Grandkid}.'),
     tm(Q, 'That\'s a fascinating question. I\'ve no answer. I\'ll think about it.'),
-    tm(D, 'Each one\'s my favourite for a different reason.'),
+    tm(D, 'Each one\'s my favorite for a different reason.'),
     tm(Wt, 'The quiet one. Which none of them are.'),
     tm(P, 'I\'m scrupulously fair. ...Mostly {grandkid}.'),
     tm(Gl, 'Whichever one remembers me, after.'),
   ]);
   L('family.gk.spoil', GK, [
-    FB('Rotten! Sweets in every pocket. I rattle.', 'That\'s the job! Spoil them and send them home.'),
+    FB('Rotten! Candy in every pocket. I rattle.', 'That\'s the job! Spoil them and send them home.'),
     tm(C, 'Absolutely! It\'s the best part! Seed-cake for breakfast!'),
     tm(O, 'Spoil them? I\'m strict. ...There may be toffees.'),
     tm(S, '...A little. I keep a jar. Just for them.'),
@@ -1369,13 +1369,13 @@ talkPack('family2', () => {
     tm(Gl, 'Sad ones, mostly. They like sad ones. I don\'t know why.'),
   ]);
   L('family.gk.own', GK, [
-    FB('My gran smelled of lavender and pipe-weed. She let me win at everything.', 'My grandad carried me on his shoulders to the fair. I could see the whole world.'),
+    FB('My gran smelled of lavender and pipe-weed. She let me win at everything.', 'My granddad carried me on his shoulders to the fair. I could see the whole world.'),
     tm(C, 'Oh, yes! Gran had a laugh like a hen! I can hear it now!'),
-    tm(O, 'Grandad was a terror. Shouted at everything. I adored him.'),
+    tm(O, 'Granddad was a terror. Shouted at everything. I adored him.'),
     tm(S, '...My gran let me sit under the table while the grown-ups talked. I loved that.'),
-    tm(Q, 'My grandad knew every bird by its song. I still try to remember them all.'),
+    tm(Q, 'My granddad knew every bird by its song. I still try to remember them all.'),
     tm(D, 'My gran used to say the moon was a lamp someone forgot to blow out.'),
-    tm(Wt, 'My grandad taught me to cheat at cards. I\'ve passed it on. It\'s an heirloom.'),
+    tm(Wt, 'My granddad taught me to cheat at cards. I\'ve passed it on. It\'s an heirloom.'),
     tm(P, 'My grandparents were very respected. I try to live up to them.'),
     tm(Gl, 'I hardly knew them. That\'s why I try so hard with mine.'),
   ]);
@@ -1431,20 +1431,20 @@ talkPack('family2', () => {
   L('family.kh.open', KH, [FB('What\'s it like at home, {name}?', 'And who\'s at home with you, {name}?')]);
   L('family.kh.start', KH, [
     FB('Noisy! And there\'s always soup.', 'It\'s all right. There\'s a cat. The cat\'s not ours. It just comes.'),
-    W({ mum: has }, 'Mum makes the best pancakes in the world. In the WORLD.', 'Mum sings when she cooks. Really loud. I sing too. Then the dog howls.'),
+    W({ mum: has }, 'Mom makes the best pancakes in the world. In the WORLD.', 'Mom sings when she cooks. Really loud. I sing too. Then the dog howls.'),
     W({ dad: has }, 'Dad snores like a bear. Like a REAL bear. I\'ve never heard a real bear but I know.', 'Dad lets me help in the garden. I\'m in charge of worms.'),
     W({ sibling: has }, '{Sibling} hogs the blanket. And the pudding. And the window seat.', '{Sibling} said I was adopted. From the goblins. I\'m NOT.'),
     W({ babySib: has }, 'There\'s a new baby. {BabySib}. {BabySib} just cries and eats. Like a little pig. I love {babySib}.'),
     W({ band: 'toddler' }, 'Mama! Mama is home! And DOG!', 'Home has a round door! I can open it! Nearly!'),
     W({ band: 'youth' }, 'Home\'s fine. They don\'t understand anything. But it\'s fine.', 'Everyone\'s always in my room. It\'s not a room, it\'s a passage with a bed.'),
     W({ homeless: true }, 'We haven\'t got a home yet. We sleep under the big tree. It\'s like camping. Forever.'),
-    W({ fullHouse: true }, 'Everyone\'s squashed in. I sleep in a drawer. A big drawer. It\'s cosy.'),
-    W({ rift: true }, 'Home\'s weird. Mum says it\'s too quiet. I like quiet. I like the frogs.'),
+    W({ fullHouse: true }, 'Everyone\'s squashed in. I sleep in a drawer. A big drawer. It\'s cozy.'),
+    W({ rift: true }, 'Home\'s weird. Mom says it\'s too quiet. I like quiet. I like the frogs.'),
     W({ mood: ['low', 'miserable'] }, 'Everyone\'s cross at home today. I got told off. For nothing. Nearly nothing.'),
   ]);
   L('family.kh.bossy', KH, [
-    FB('Mum. No, Dad. No, the cat.', 'Everyone except me! I\'m never in charge!'),
-    W({ mum: has }, 'Mum! Mum says \'wash behind your ears\'. Why? Nobody looks there!'),
+    FB('Mom. No, Dad. No, the cat.', 'Everyone except me! I\'m never in charge!'),
+    W({ mum: has }, 'Mom! Mom says \'wash behind your ears\'. Why? Nobody looks there!'),
     W({ dad: has }, 'Dad says \'because I said so\'. That\'s not a REASON.'),
     W({ sibling: has, siblingOlder: true }, '{Sibling}! {Sibling} thinks being older means being the boss! It doesn\'t!'),
     W({ sibling: has, siblingOlder: false }, '{Sibling}\'s little but SO bossy. Bossier than a hen.'),
@@ -1458,17 +1458,17 @@ talkPack('family2', () => {
     W({ band: 'school' }, 'I go down to the river on my own. Past the mill. I\'m not allowed. I\'m very careful.'),
     W({ band: 'youth' }, 'I went to the Badger once. Just to look. I had a cider. Half. It was horrible.'),
     W({ band: 'toddler' }, 'NO! ...Yes. I put the egg in the boot.'),
-    W({ rift: true }, 'I took apart Mum\'s scanner. To see the little lights. I put it back. Mostly.'),
+    W({ rift: true }, 'I took apart Mom\'s scanner. To see the little lights. I put it back. Mostly.'),
   ]);
   L('family.kh.love', KH, [
     FB('I know. They tell me. Every day. It\'s a bit much.', '...I know. I love them too. Don\'t tell anyone.'),
     W({ band: 'youth' }, 'Ugh. I know. Don\'t say it so loud.'),
     W({ band: ['toddler', 'young'] }, 'I love them THIS much! *arms out wide*'),
     W({ mood: ['low', 'miserable'] }, '...Do they? Even when I\'m bad?'),
-    W({ homeless: true }, 'We\'ll have a home soon. Mum says. Then we\'ll have a door.'),
+    W({ homeless: true }, 'We\'ll have a home soon. Mom says. Then we\'ll have a door.'),
   ]);
   L('family.kh.cuddles', KH, [
-    FB('Mum. Mum is warm like a teapot.', 'Dad. Dad does the bear hug. It squashes all the air out.'),
+    FB('Mom. Mom is warm like a teapot.', 'Dad. Dad does the bear hug. It squashes all the air out.'),
     W({ sibling: has }, '{Sibling}. But only when nobody\'s looking.'),
     W({ band: 'youth' }, 'I don\'t DO cuddles any more. ...Gran. Gran does.'),
     W({ band: 'toddler' }, 'Me! I give the best cuddles! Want one? *squeezes your knee*'),
@@ -1486,17 +1486,17 @@ talkPack('family2', () => {
     W({ band: 'toddler' }, 'Shhhhh! Secret! *puts finger on your nose*'),
   ]);
   L('family.kh.own', KH, [
-    FB('...Do I have to? ...Okay. If you come with me.', 'Own up? ...I\'ll tell Mum. After supper. After pudding.'),
+    FB('...Do I have to? ...Okay. If you come with me.', 'Own up? ...I\'ll tell Mom. After supper. After pudding.'),
     W({ band: 'youth' }, 'Ugh. You sound like Gran. ...Fine. I will.'),
     W({ band: 'toddler' }, 'Sorry egg. Sorry boot.'),
   ]);
   L('family.kh.grown', KH, [
     FB('A wizard! Like you! With a hat AND a staff!', 'A baker. Then I can eat all the buns.'),
-    W({ band: 'youth' }, 'I don\'t know. Something. Somewhere. Not here. ...Maybe here.', 'An adventurer. Don\'t tell Mum.'),
+    W({ band: 'youth' }, 'I don\'t know. Something. Somewhere. Not here. ...Maybe here.', 'An adventurer. Don\'t tell Mom.'),
     W({ band: 'toddler' }, 'A DOG.', 'Big!'),
     W({ riftWays: true }, 'A rift-runner! Through the sky doors! And back for tea.'),
-    W({ rift: true }, 'A grid-tech like my mum. Or a farmer. Can you be both?'),
-    W({ mum: has }, 'Like Mum. Mum can do everything.'),
+    W({ rift: true }, 'A grid-tech like my mom. Or a farmer. Can you be both?'),
+    W({ mum: has }, 'Like Mom. Mom can do everything.'),
     W({ dad: has }, 'Like Dad. Dad can lift a whole pig.'),
   ]);
 
@@ -1504,7 +1504,7 @@ talkPack('family2', () => {
   // Their turn: a child asks the wizard about his own family
   // =====================================================================================
   addThread({
-    id: 'family.kidask', theirs: true, label: 'Did you have a mum?', cool: 5, ask: '{Name} tugs at your robe.',
+    id: 'family.kidask', theirs: true, label: 'Did you have a mom?', cool: 5, ask: '{Name} tugs at your robe.',
     when: (F) => F.stage === 'child' && F.met && F.band !== 'toddler',
     beats: {
       start: { line: 'family.kidask.q', go: [
@@ -1513,7 +1513,7 @@ talkPack('family2', () => {
         { ap: 'share', say: 'Everyone has someone. Mine was a very long time ago.', to: 'long' },
       ] },
       stars: { line: 'family.kidask.stars', fx: { lean: 'hill' }, go: [
-        { ap: 'warm', say: 'Your mum and dad sing too, I\'ll bet. In their way.', to: 'end' },
+        { ap: 'warm', say: 'Your mom and dad sing too, I\'ll bet. In their way.', to: 'end' },
         { ap: 'tale', say: 'And that\'s why the stars come out at dusk. They\'re listening.', to: 'end', fx: { fond: 0.02 } },
       ] },
       toadstool: { line: 'family.kidask.toadstool', fx: { joke: { k: 'family.toadstool', t: 'The wizard was found under a toadstool, fully bearded.' } }, go: [
@@ -1524,17 +1524,17 @@ talkPack('family2', () => {
     end: { fond: 0.03 },
   });
   L('family.kidask.q', KH, [
-    FB('Wizard? Did you have a mum? Wizards have mums?', 'Have you got a family? Where are they? Are they wizards too?'),
-    W({ band: 'young' }, 'Did your mum make you wear a scarf? Is that why you have a beard?'),
+    FB('Wizard? Did you have a mom? Wizards have moms?', 'Have you got a family? Where are they? Are they wizards too?'),
+    W({ band: 'young' }, 'Did your mom make you wear a scarf? Is that why you have a beard?'),
     W({ band: 'school' }, 'Do wizards have brothers and sisters? Do they do magic at each other?'),
     W({ band: 'youth' }, 'Where\'s your family, then? You never talk about them. Everyone wonders.'),
     W({ homeless: true }, 'Did you have a home? With a door? We don\'t have one yet.'),
-    W({ rift: true }, 'Back where I come from, everyone\'s on the grid. Are wizards on a grid? Do they ping their mums?'),
+    W({ rift: true }, 'Back where I come from, everyone\'s on the grid. Are wizards on a grid? Do they ping their moms?'),
   ]);
   L('family.kidask.stars', KH, [
     FB('Really? To the STARS? Did they come?', 'Wow. Can you do it? Can you sing them out?'),
     W({ band: 'youth' }, '...That\'s actually quite nice. Don\'t tell anyone I said that.'),
-    W({ band: 'young' }, 'My mum sings to the KETTLE. It comes out too. The steam.'),
+    W({ band: 'young' }, 'My mom sings to the KETTLE. It comes out too. The steam.'),
     W({ rift: true }, 'Where I come from there\'s too much light to see stars. I like it here for that.'),
   ]);
   L('family.kidask.toadstool', KH, [
@@ -1543,9 +1543,9 @@ talkPack('family2', () => {
     W({ band: 'young' }, 'I\'m going to look under ALL the toadstools now. For baby wizards.'),
   ]);
   L('family.kidask.long', KH, [
-    FB('...Oh. Do you want a hug? I give good hugs.', 'You can share my mum, if you like. She won\'t mind.'),
+    FB('...Oh. Do you want a hug? I give good hugs.', 'You can share my mom, if you like. She won\'t mind.'),
     W({ band: 'youth' }, '...Sorry. I didn\'t mean to make you sad. Our family can be your family. Sort of.'),
-    W({ band: 'young' }, 'You can have tea at ours! Mum makes too much! Always!'),
+    W({ band: 'young' }, 'You can have tea at ours! Mom makes too much! Always!'),
     W({ homeless: true }, 'We haven\'t got a house. But you can come round to our tree.'),
   ]);
 });

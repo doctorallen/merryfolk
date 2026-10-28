@@ -102,7 +102,7 @@ function nextPublicWork() {
   queueDelivery = function (v, res, n, ...rest) { return qd(v, res, res === 'grain' && Game._harvestMul ? Math.round(n * Game._harvestMul) : n, ...rest); };
 }
 
-// --- Day labourers bring in the harvest; a drought withers ripe crops away from water ---
+// --- Day laborers bring in the harvest; a drought withers ripe crops away from water ---
 {
   const lab = ORDERS.find((o) => o.id === 'labour');
   if (lab) {
@@ -112,7 +112,7 @@ function nextPublicWork() {
       for (const f of World.fields) for (const p of f.plots) { if (p.stage === 4) { grain += Math.round(4 * soilYield(p.tx, p.ty)); p.stage = 1; p.prog = 0; } else if (p.stage >= 1) p.prog = Math.min(0.99, p.prog + 0.5); }
       for (const a of World.allotments) for (const p of a.plots) if (p.stage === 4) { veg += 2; p.stage = 1; p.prog = 0; }
       if (grain) Village.produce('grain', grain); if (veg) Village.produce('veg', veg);
-      chronicle(`Day labourers from over the hills brought in ${grain} barley${veg ? ` and ${veg} vegetables` : ''}, and hoed the rest along.`, 'work');
+      chronicle(`Day laborers from over the hills brought in ${grain} barley${veg ? ` and ${veg} vegetables` : ''}, and hoed the rest along.`, 'work');
     };
   }
 }
@@ -159,7 +159,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const n = nextPublicWork();
     if (n && !n.due) out.push({ say: `Next public work: ${n.def.name.replace(/^the /, 'the ')}, once the village has ${n.def.pop} folk` });
     const ripe = World.fields.reduce((s, f) => s + f.plots.filter((p) => p.stage === 4).length, 0);
-    if (ripe > 30 && (Village.stores.grain || 0) < 60) out.push({ say: `${ripe} plots of barley stand ripe and unharvested: more farmers, or hire day labourers` });
+    if (ripe > 30 && (Village.stores.grain || 0) < 60) out.push({ say: `${ripe} plots of barley stand ripe and unharvested: more farmers, or hire day laborers` });
     return out;
   };
   // small text fixes

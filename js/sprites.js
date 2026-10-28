@@ -12,7 +12,7 @@ const SHIRT_COLS = ['#efe6cf', '#e8dcc0', '#f4efe2', '#dfe8d2', '#e9d8c8'];
 const LEG_COLS = ['#6b4a2b', '#4d5a3a', '#5a4636', '#7a6a4a', '#3e4a5a', '#8a5a3a'];
 const DOOR_COLS = ['#2f6b34', '#c9a227', '#a23b2a', '#2f5e9a', '#6b3f8a', '#2f7f7a', '#c86a2a', '#3a7a3a'];
 const OUTLINE = '#2a1c12';
-// Riftfolk colours: neon accents, dyed hair and dark synth-weave jackets
+// Riftfolk colors: neon accents, dyed hair and dark synth-weave jackets
 const NEON_COLS = ['#3af0ff', '#ff3aa8', '#b45aff', '#7aff5a', '#ffd23a', '#ff6a3a'];
 const RIFT_HAIR = ['#ff3aa8', '#3af0ff', '#b45aff', '#7aff5a', '#ff8a2a', '#e8e8f8', '#26262e', '#3a2a5a'];
 const RIFT_JACKETS = ['#2a2a3a', '#1e2a3a', '#3a1e3a', '#22343a', '#3a2a24', '#2a2a2a'];
@@ -51,7 +51,7 @@ function blit(ctx, img, x, y, flip = false) {
 // Villagers, drawn at double resolution on a 20-wide grid of half-pixels:
 // a round head about half their height with pointed ears, a waistcoat over a
 // shirt, breeches (or a skirt) and big bare hairy feet. Every look comes from
-// the genome (hair colour and style, eyes, freckles, skin, clothes, sex) and
+// the genome (hair color and style, eyes, freckles, skin, clothes, sex) and
 // from rift ways (neon trim, synth-weave, a visor), plus age.
 //
 // Palette letters: h/H/j hair (and shade, highlight), d brows, s/S skin, N nose,
@@ -449,7 +449,7 @@ function gridCanvas(grid, pal, pad, res) {
     d[q * 4] = col[0]; d[q * 4 + 1] = col[1]; d[q * 4 + 2] = col[2]; d[q * 4 + 3] = 255; kind[q] = 1;
   }
   // the outline, a ring at a time: each ring takes a darkened shade of the
-  // art it borders, or the colour of the ring inside it
+  // art it borders, or the color of the ring inside it
   for (let k = 0; k < pad; k++) {
     const marks = [];
     for (let q = 0; q < CW * CH; q++) {
@@ -470,11 +470,11 @@ function gridCanvas(grid, pal, pad, res) {
   c.hd = true; c.res = res;
   return gpuCopy(c);
 }
-// Keys that are areas of colour, which the finer grid rounds at their edges;
+// Keys that are areas of color, which the finer grid rounds at their edges;
 // the rest (eyes, buttons, chain, specs) are detail and stay put.
 const FOLK_SMOOTH = new Set(['.', 's', 'S', 'h', 'H', 'j', 'v', 'V', 'u', 'c', 'C', 't', 'T', 'f', 'F', 'z']);
 // The grid drawn twice as fine: each cell becomes four, and at every corner
-// where two like neighbours meet across a different cell the corner is cut
+// where two like neighbors meet across a different cell the corner is cut
 // or filled, so curves come out round instead of stepped.
 function fineGrid(grid) {
   const H = grid.length, W = grid[0].length;
@@ -1487,7 +1487,7 @@ function makeDuck(frame) {
 // ---------------------------------------------------------------------------
 // Workshops: a thatched (or slate) cottage with a trade sign.
 // opts: { w, wall, roof: 'thatch'|'slate'|'barn', sign, lit, windows: [x], door: x, chimneys: [x], extra }
-// The returned canvas has the door centred at opts.door, bottom of the walls at h-4.
+// The returned canvas has the door centered at opts.door, bottom of the walls at h-4.
 // ---------------------------------------------------------------------------
 function makeCottage(opts) {
   const W = opts.w, H = opts.h || 92;

@@ -83,7 +83,7 @@ talkPack('phrasing_bye', () => {
     at(6.3, { tipsy: true, temper: 'gloomy' }, ['Goodbye, wizard. Goodbye, everything. *sniff*']),
     at(6.3, { tipsy: true, temper: 'proud' }, ['I shall now walk home in a dignified line. Watch.']),
     at(5.6, { sick: true }, ['*sniff* Bye. Don\'t catch it.', 'I\'m going back to bed. With honey. Bye.']),
-    at(5.8, { sick: true, stage: 'child' }, ['Bye. Tell Mum I was brave.']),
+    at(5.8, { sick: true, stage: 'child' }, ['Bye. Tell Mom I was brave.']),
     at(5, { phrParty: has }, ['Save the fireworks for me!', 'Back to the dancing! Bye!', 'There\'s pie with my name on it. Bye!']),
     at(5.3, { phrParty: has, stage: 'child' }, ['Bye! When are the fireworks? Bye! When are they?']),
     at(5.2, { phrMisjudged: true }, ['Good day, then.', 'Hmph. Good day to you.', 'Right. Well. Good day.']),
@@ -120,7 +120,7 @@ talkPack('phrasing_bye', () => {
     at(3.8, { phrDepth: { min: 8 } }, ['We\'ve talked the sun round the sky!', 'My tongue\'s tired. Lovely, though. Bye!']),
     at(3.6, { phrDepth: { max: 1 } }, ['Oh! Is that it? Bye, then.', 'Short and sweet. Like me. Bye!']),
     at(3.2, { band: 'youth' }, ['Bye. Don\'t wave. Everyone\'s looking.', 'See you. I mean, good day. Whatever.']),
-    at(3, { stage: 'child' }, ['Bye, wizard! Bring sweets next time!', 'Bye! I\'m going to tell EVERYONE I talked to you.', 'Bye! Race you to the gate! ...I won.']),
+    at(3, { stage: 'child' }, ['Bye, wizard! Bring candy next time!', 'Bye! I\'m going to tell EVERYONE I talked to you.', 'Bye! Race you to the gate! ...I won.']),
     at(3.2, { register: 'bright' }, ['Goodbye! I\'m going to write this in my diary. With a drawing.']),
     at(3, { rift: true }, ['Later, wizard. Stay on the grid.', 'Signing off. Good talk.', 'Ping me later. Oh, right. No pinging. Just... come by.']),
     at(3, { stage: 'elder' }, ['Good day to you, young fellow. Ha! Young. You know what I mean.', 'Mind how you go. I shan\'t race you to the gate.']),
@@ -197,7 +197,7 @@ talkPack('phrasing_bye', () => {
     at(3.4, { hungry: true }, ['Sorry, wizard. If I don\'t eat now I\'ll eat you. Good day!', 'Food. I need food. It\'s been lovely. Bye!']),
     at(3.4, { tired: true }, ['I\'m off to my bed. Or a hedge. Whichever\'s closer. Good day!']),
     at(3.2, { job: 'baker' }, ['That\'s my bread calling. Bye!']),
-    at(3.2, { job: 'farmer' }, ['Right, the field won\'t plough itself. Good day!']),
+    at(3.2, { job: 'farmer' }, ['Right, the field won\'t plow itself. Good day!']),
     at(3.2, { job: 'miller' }, ['The wheel calls! Good day, wizard!']),
     at(3.2, { job: 'brewer' }, ['Back to the vats. Come by and taste the new batch!']),
     at(3.2, { job: 'innkeeper' }, ['The Badger won\'t run itself. Pop in for a pint later!']),
@@ -243,7 +243,7 @@ talkPack('phrasing_bye', () => {
     { if: { stage: 'child' }, text: ['Yay!', 'Hee hee!'] },
     { if: { rift: true }, text: ['Nice. Good signal.', 'Oh, that landed.'] },
     { if: { stage: 'elder' }, text: ['Bless you, wizard.'] },
-    { if: { tipsy: true }, text: ['Ha! You\'re my favourite! Hic.'] },
+    { if: { tipsy: true }, text: ['Ha! You\'re my favorite! Hic.'] },
   ]);
   lines('mix.bad', [
     { text: ['Hm.', 'Oh.', 'That\'s as may be.'] },
@@ -298,7 +298,7 @@ talkPack('phrasing_bye', () => {
   ]);
   lines('mix.jest.bad', [
     { text: ['I don\'t see the joke.', 'Was that meant to be funny?'] },
-    { if: { temper: 'ornery' }, text: ['Oh, very droll.', 'Was that a joke? I\'ll let you know when I laugh.', 'I\'ve hens with a better sense of humour.', 'Save it for the children.', 'Do they laugh at that where you come from?'] },
+    { if: { temper: 'ornery' }, text: ['Oh, very droll.', 'Was that a joke? I\'ll let you know when I laugh.', 'I\'ve hens with a better sense of humor.', 'Save it for the children.', 'Do they laugh at that where you come from?'] },
     { if: { temper: 'ornery', stage: 'elder' }, text: ['I was laughing at better jokes before you were a twinkle. Well. Maybe not.'] },
     { if: { temper: 'ornery', register: 'plain' }, text: ['Funny, is it? Hmph.'] },
     { if: { temper: 'ornery', register: 'fine' }, text: ['How terribly amusing. I don\'t think.'] },
@@ -316,7 +316,7 @@ talkPack('phrasing_bye', () => {
     { if: { temper: 'curious', rift: true }, text: ['Query accepted. Ooh. Love a good query.'] },
     { if: { temper: 'curious', stage: 'elder' }, text: ['Ah! At last, somebody who asks the right things.'] },
     { if: { temper: 'proud' }, text: ['Ah, now. I\'m glad you asked. Few do.', 'Well! You\'ve come to the right hobbit.', 'Since you ask. And you were right to.', 'Ah. A sensible question. I\'ll give it a sensible answer.'] },
-    { if: { temper: 'proud', register: 'fine' }, text: ['An excellent question. I shall endeavour to do it justice.'] },
+    { if: { temper: 'proud', register: 'fine' }, text: ['An excellent question. I shall endeavor to do it justice.'] },
     { if: { temper: 'proud', register: 'plain' }, text: ['Ah! Now you\'re asking the right fellow.'] },
     { if: { temper: 'proud', stage: 'elder' }, text: ['Ask away. I\'ve forgotten more than most folk know.'] },
     { if: { stage: 'child' }, text: ['Ooh! I know this one!'] },
@@ -362,7 +362,7 @@ talkPack('phrasing_bye', () => {
     { if: { temper: 'proud' }, text: ['I\'m quite capable of running my own life, thank you.', 'I\'ll consider it. I\'ve considered it. No.', 'With respect, wizard, I know my own business.', 'I hardly need telling.'] },
     { if: { temper: 'proud', register: 'fine' }, text: ['How very kind of you to instruct me. Unnecessary, but kind.'] },
     { if: { temper: 'proud', stage: 'elder' }, text: ['I\'ve been giving advice in this valley longer than you\'ve been visiting it.'] },
-    { if: { stage: 'child' }, text: ['You sound like my mum.'] },
+    { if: { stage: 'child' }, text: ['You sound like my mom.'] },
   ]);
 
   lines('mix.share.good', [
@@ -440,13 +440,13 @@ talkPack('phrasing_bye', () => {
     at(2.8, { temper: 'gloomy', hour: 'night' }, ['Good night. Not that I\'ll sleep.']),
     at(2.8, { temper: 'gloomy', weather: 'rain' }, ['Bye. Mind the rain. It\'ll follow you. It does me.']),
     at(3.1, { stage: 'child', hour: 'night' }, ['Night night, wizard! I\'m going to bed. Not really. Yes really.']),
-    at(3.1, { stage: 'child', fond: { min: 0.5 } }, ['Bye! You\'re my favourite! Come back TOMORROW!', '*hugs your knees, very hard* Bye!']),
+    at(3.1, { stage: 'child', fond: { min: 0.5 } }, ['Bye! You\'re my favorite! Come back TOMORROW!', '*hugs your knees, very hard* Bye!']),
     at(3.1, { stage: 'child', weather: 'rain' }, ['Bye! I\'m going to find the BIGGEST puddle!']),
     at(3.1, { stage: 'child', weather: 'snow' }, ['Bye! *throws a snowball at your back as you go*']),
     at(3.3, { register: 'fine' }, ['Farewell, wizard. Do call again.', 'Good day to you, sir. Most enjoyable.']),
-    at(3.3, { register: 'plain' }, ['Ta-ra, then.', 'Right you are. Mind how you go.']),
+    at(3.3, { register: 'plain' }, ['So long, then.', 'Right you are. Mind how you go.']),
     at(3.4, { register: 'fine', temper: 'proud' }, ['Good day. Do give my regards to anyone important you meet.']),
-    at(3.4, { register: 'plain', temper: 'cheerful' }, ['Ta-ra! Lovely to see you, lovely!']),
+    at(3.4, { register: 'plain', temper: 'cheerful' }, ['So long! Lovely to see you, lovely!']),
     at(3.2, { rift: true, hour: 'night' }, ['Night. Going to stare at the stars till I fall asleep. Still not over them.']),
     at(3.2, { rift: true, fond: { min: 0.5 } }, ['Later, wizard. You\'re the best signal in this valley.']),
     at(3.2, { rift: true, temper: 'shy' }, ['...Bye. Thanks for, um. Talking. Offline.']),
@@ -477,7 +477,7 @@ talkPack('phrasing_bye', () => {
     at(3.6, { phrDoing: 'court' }, ['I\'ll leave you to your flowers, {name}. Whoever they\'re for.']),
     at(3.6, { phrDoing: 'grave' }, ['I\'ll leave you with them, {name}. Take your time.']),
     at(3.3, { register: 'fine' }, ['Good day to you, {name}. Your servant.', 'I take my leave, {name}. Most pleasant.']),
-    at(3.3, { register: 'plain' }, ['Right then, {name}. Ta-ra.', 'Off I go, {name}. Mind yourself.']),
+    at(3.3, { register: 'plain' }, ['Right then, {name}. So long.', 'Off I go, {name}. Mind yourself.']),
     at(3.1, { stage: 'child', fond: { min: 0.5 } }, ['Off you go, {name}. And I\'ll have a trick ready next time.']),
     at(3.1, { stage: 'child', hour: 'night' }, ['Bedtime, {name}. Off you go, before somebody comes looking.']),
     at(3.2, { rift: true, hour: 'night' }, ['Good night, {name}. Enjoy the dark. It\'s a good dark.']),
@@ -544,9 +544,9 @@ talkPack('phrasing_bye', () => {
     at(2.7, { temper: 'proud', fond: { min: 0.4 } }, ['I must be off. It\'s been a pleasure. A real one.']),
     at(2.7, { temper: 'gloomy', fond: { min: 0.4 } }, ['I\'d best go. Before it gets worse. Not this. This was nice.']),
     at(2.8, { stage: 'child', fond: { min: 0.4 } }, ['I have to go but I don\'t WANT to. Bye! Come back! Bye!']),
-    at(2.8, { stage: 'child', hour: 'night' }, ['Mum\'s going to be SO cross. Bye!']),
+    at(2.8, { stage: 'child', hour: 'night' }, ['Mom\'s going to be SO cross. Bye!']),
     at(2.8, { register: 'fine' }, ['I must take my leave. Good day to you, sir.']),
-    at(2.8, { register: 'plain' }, ['Right. That\'s me. Ta-ra.']),
+    at(2.8, { register: 'plain' }, ['Right. That\'s me. So long.']),
     at(2.8, { register: 'bright' }, ['I\'ve got to go and write all this down! Bye!']),
   ]);
 
@@ -565,7 +565,7 @@ talkPack('phrasing_bye', () => {
     { if: { temper: 'cheerful', fond: { max: 0 } }, text: ['Ha! Oh, I didn\'t think you were funny. You\'re funny!'] },
   ]);
   lines('mix.jest.bad', [
-    { if: { temper: 'ornery', rift: true }, text: ['Humour module not found. Try again later.'] },
+    { if: { temper: 'ornery', rift: true }, text: ['Humor module not found. Try again later.'] },
     { if: { temper: 'ornery', tipsy: true }, text: ['Don\'t make fun of me. I\'m not drunk. I\'m concentrating.'] },
     { if: { temper: 'ornery', register: 'bright' }, text: ['That\'s not even a proper joke. It doesn\'t have a punchline.'] },
     { if: { temper: 'ornery', sick: true }, text: ['I\'m poorly, and you\'re making jokes. Lovely.'] },
@@ -608,7 +608,7 @@ talkPack('phrasing_bye', () => {
   ]);
   lines('mix.comfort.good', [
     { if: { temper: 'gloomy', fond: { min: 0.4 } }, text: ['You always come just when I need you.'] },
-    { if: { stage: 'child', fond: { min: 0.4 } }, text: ['*sniff* You\'re my favourite.'] },
+    { if: { stage: 'child', fond: { min: 0.4 } }, text: ['*sniff* You\'re my favorite.'] },
     { if: { stage: 'child', band: 'youth' }, text: ['...Thanks. Don\'t tell anyone I was upset.'] },
     { if: { temper: 'gloomy', tipsy: true }, text: ['You\'re a good friend. A good, good friend. *sniff*'] },
     { if: { stage: 'child', rift: true }, text: ['*sniff* ...Okay. Okay. Thanks, wizard.'] },
@@ -716,7 +716,7 @@ talkPack('phrasing_bye', () => {
     at(2.9, { stage: 'elder', temper: 'gloomy' }, ['My chair\'s missing me. It\'s the only one that does.']),
     at(2.9, { stage: 'elder', temper: 'cheerful' }, ['Oh, I could natter all day, but these old legs want a sit.']),
     at(2.9, { stage: 'elder', temper: 'witty' }, ['At my age, wizard, every goodbye might be a long one. So I start early.']),
-    at(2.9, { band: 'young' }, ['I need a wee. Not yet. Soon. Quite soon.']),
+    at(2.9, { band: 'young' }, ['I need to pee. Not yet. Soon. Quite soon.']),
     at(2.9, { band: 'school' }, ['I\'ve got sums to do. I don\'t want to do them. But I\'ve got them.']),
   ]);
   lines('close.patience', [

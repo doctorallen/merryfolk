@@ -202,7 +202,7 @@ talkPack('work2', () => {
   });
   W('work.baker.dawn', {
     _: ['Quiet. Warm. The oven ticking. It\'s the best hour of the day, and nobody knows it.', 'Dark and warm and smelling of yeast. Like being inside a loaf.'],
-    cheerful: ['Oh, it\'s lovely! The window goes grey, then gold, and the first loaves come out.'],
+    cheerful: ['Oh, it\'s lovely! The window goes gray, then gold, and the first loaves come out.'],
     ornery: ['It\'s the only time nobody\'s asking me for anything. Lovely, that.'],
     shy: ['...It\'s the only time I feel quite sure of myself.'],
     curious: ['You can hear the dough rising, if you listen. Little ticks. I wonder what it is.'],
@@ -212,7 +212,7 @@ talkPack('work2', () => {
     gloomy: ['Lonely, but a good lonely. Do you know what I mean?'],
   });
   W('work.baker.taught', {
-    _: ['I learned at the old baker\'s elbow. Burnt my fingers a hundred times.', 'Nobody, really. A lot of bad bread taught me.'],
+    _: ['I learned at the old baker\'s elbow. Burned my fingers a hundred times.', 'Nobody, really. A lot of bad bread taught me.'],
     'workFamilyTrade ^1': ['{WorkParentName}. Flour on everything, even the cat. The best baker this valley had.', '{WorkParentName} taught me, and still tells me I knead too hard.'],
     'workMaster ^2': ['{WorkMaster} is teaching me now. Patient. Mostly. Except about crusts.'],
     cheerful: ['Everybody! I asked every grandmother in the valley. They all had a trick.'],
@@ -426,7 +426,7 @@ talkPack('work2', () => {
     gloomy: ['It\'s saying something\'s going to go wrong. Something always does, before harvest.'],
     'season=spring': ['Spring\'s the hopeful time. Sow it, and everything\'s still possible.', 'Seed going in, row by row. My fingers know the count better than my head.'],
     'season=summer': ['Summer\'s hoeing and watering, hoeing and watering. The barley drinks like a brewer.', 'It\'s green and growing, and so are the docks. We\'re racing.'],
-    'season=autumn': ['It\'s saying "now", loud and clear. Every hand to the sheaves.', 'It\'s gone gold and heavy. Harvest. My favourite and my hardest.'],
+    'season=autumn': ['It\'s saying "now", loud and clear. Every hand to the sheaves.', 'It\'s gone gold and heavy. Harvest. My favorite and my hardest.'],
     'season=winter': ['The fields are asleep. I mend fences and see to the hens and look at the sky.', 'Nothing much, in winter. It\'s resting. I\'m meant to be resting. I\'m not.'],
     'workHazard=drought ^2': ['It\'s saying it\'s parched. The ground\'s cracking. I carry water till my arms give out.'],
     'workHazard=blight ^2': ['It\'s saying it\'s sick. There\'s blight in one of the fields. It just stops growing.'],
@@ -444,7 +444,7 @@ talkPack('work2', () => {
     shy: ['...I just know. It smells different. Sweeter.'],
     curious: ['Soil warmth, mostly. I push a stick in and feel the end. I\'m trying to be more exact.'],
     dreamy: ['When the larks come back. They tell you, if you\'re listening.'],
-    witty: ['When the neighbours have sown and you can see if it worked.'],
+    witty: ['When the neighbors have sown and you can see if it worked.'],
     proud: ['When my grandfather would have. I\'ve not been wrong in years.'],
     gloomy: ['You guess, and you\'re wrong half the time, and then it frosts anyway.'],
     'workLevel=new': ['I ask the old farmers and do what they say. It mostly works.'],
@@ -508,7 +508,7 @@ talkPack('work2', () => {
     gloomy: ['That\'s crows for you. Never lose.'],
   });
   W('work.farmer.edge', {
-    _: ['This is my favourite bit. A sit on the field edge. Nobody minds a farmer sitting here.', '*sits down on the bank* Listen. You can hear it grow, almost.'],
+    _: ['This is my favorite bit. A sit on the field edge. Nobody minds a farmer sitting here.', '*sits down on the bank* Listen. You can hear it grow, almost.'],
     cheerful: ['Isn\'t it lovely? Sun on your face and barley all round.'],
     ornery: ['Don\'t tread on that row. ...Yes, this is the good bit.'],
     shy: ['...I don\'t usually have company out here. It\'s nice.'],
@@ -521,7 +521,7 @@ talkPack('work2', () => {
     'season=autumn': ['Stubble and sheaves. It smells of bread already.'],
   });
   W('work.farmer.think', {
-    _: ['Rain, mostly. And supper. And whether the hens are laying.', 'Oh, the Harvest Fair. Whether this year\'s the year my marrow wins.'],
+    _: ['Rain, mostly. And supper. And whether the hens are laying.', 'Oh, the Harvest Fair. Whether this year\'s the year my pumpkin wins.'],
     cheerful: ['Everything! The barley, the bread it\'ll be, the faces at harvest supper.'],
     ornery: ['Who\'s been walking across my field. I can see the footprints.'],
     shy: ['...Nothing much. That\'s what I like about it.'],
@@ -721,7 +721,7 @@ talkPack('work2', () => {
     'season=spring': ['Spring water\'s strong. The wheel fair races. Hold on to your hat.'],
     'workGlut ^1': ['Flour everywhere! Sacks to the rafters. The Bakehouse can\'t keep up.'],
     'workShort ^1': ['Flour\'s short. The bakers come knocking and I\'ve nothing to give them.'],
-    rift: ['Kinetic energy, all analogue. No chips, no code. It\'s the most honest machine I ever met.'],
+    rift: ['Kinetic energy, all analog. No chips, no code. It\'s the most honest machine I ever met.'],
   });
   W('work.miller.river', {
     _: ['Mostly. In spring it\'s too strong, in summer too weak, and in winter it freezes. Autumn\'s nice.', 'The river\'s a fickle partner. I do the courting.'],
@@ -773,7 +773,7 @@ talkPack('work2', () => {
     _: ['Two stones, one turning on the other. Furrows cut in them, so the flour runs out. I dress them every month.', 'The furrows wear down. You cut them again by hand, with a pick. Hours of it.'],
     cheerful: ['They\'re lovely! Big round fellows. I give them a pat.'],
     ornery: ['They wear down, and I recut them, and they wear down. Forever.'],
-    shy: ['...Dressing the stones is my favourite job. Just me and a pick, and quiet.'],
+    shy: ['...Dressing the stones is my favorite job. Just me and a pick, and quiet.'],
     curious: ['The pattern of furrows matters. I\'ve tried three. The old one\'s best. I don\'t know why yet.'],
     dreamy: ['The furrows go out like the rays of the sun. Whoever cut the first one knew that.'],
     witty: ['They\'re the hardest-working couple in the valley. One on top, one underneath, forever.'],
@@ -869,7 +869,7 @@ talkPack('work2', () => {
     dreamy: ['He\'ll knock a little louder for you, I think.'],
   });
   W('work.miller.tea', {
-    _: ['Ha! Two sugars. And a biscuit, if he\'s been good.', 'Ha! He takes it how he likes. Loudly.'],
+    _: ['Ha! Two sugars. And a cookie, if he\'s been good.', 'Ha! He takes it how he likes. Loudly.'],
     witty: ['Two sugars and no milk. He\'s very particular.'],
     cheerful: ['Ha! I\'ll make him one. He\'d like that.'],
     ornery: ['Hmph. ...Two. Don\'t tell.'],
@@ -887,7 +887,7 @@ talkPack('work2', () => {
         { ap: 'listen', say: '*You lean on the pen gate beside them.*', label: 'Lean on the gate beside them', to: 'gate' },
       ] },
       names: { line: 'work.herder.names', go: [
-        { ap: 'ask', say: 'And have you a favourite?', to: 'fav' },
+        { ap: 'ask', say: 'And have you a favorite?', to: 'fav' },
         { ap: 'jest', say: 'Do they know their names, or just yours?', to: 'know' },
       ] },
       count: { line: 'work.herder.count', go: [
@@ -895,14 +895,14 @@ talkPack('work2', () => {
         { ap: 'jest', say: 'I\'d give up and call them all Woolly.', to: 'woolly' },
       ] },
       gate: { line: 'work.herder.gate', go: [
-        { ap: 'ask', say: 'Have you a favourite?', to: 'fav' },
+        { ap: 'ask', say: 'Have you a favorite?', to: 'fav' },
         { ap: 'ask', say: 'What\'s the best of the work?', to: 'best' },
         { ap: 'warm', say: 'They\'re lucky in their keeper.', to: 'lucky' },
       ] },
       fav: { line: 'work.herder.fav', go: [
         { ap: 'listen', say: '*You wait. There\'s more to this one, you think.*', label: 'Wait for the rest', to: 'secret', need: { open: 2 }, soft: true },
-        { ap: 'warm', say: 'Every herd needs a favourite.', to: 'lucky' },
-        { ap: 'jest', say: 'Does she know she\'s the favourite?', to: 'know' },
+        { ap: 'warm', say: 'Every herd needs a favorite.', to: 'lucky' },
+        { ap: 'jest', say: 'Does she know she\'s the favorite?', to: 'know' },
       ] },
       hard: { line: 'work.herder.hard', go: [
         { ap: 'advise', say: 'Lay fresh bedding before the rain, not after.', to: [{ to: 'bristle', need: bristly }, 'bedding'] },
@@ -910,7 +910,7 @@ talkPack('work2', () => {
         { ap: 'ask', say: 'And the best part?', to: 'best' },
       ] },
       best: { line: 'work.herder.best', go: [
-        { ap: 'ask', say: 'Have you a favourite among them?', to: 'fav' },
+        { ap: 'ask', say: 'Have you a favorite among them?', to: 'fav' },
         { ap: 'warm', say: 'The whole valley\'s warmer for your wool.', to: 'lucky' },
       ] },
       secret: { line: 'work.herder.secret', fx: { confide: { k: 'work.herder.ewe', t: '{Name} brings an old ewe into the hole on cold winter nights, by the fire', secret: true }, trust: 0.02 }, go: [
@@ -938,7 +938,7 @@ talkPack('work2', () => {
     cheerful: ['Oh, they\'re lovely! The calf\'s found her legs at last. She bounces.', 'Happy as anything! The pigs found a puddle. Joy unbounded.'],
     ornery: ['The ram\'s in a mood and the pigs got out again. Twice.', 'Same as ever. Hungry, muddy and ungrateful.'],
     shy: ['...They\'re well. I like them better than most folk. Sorry.'],
-    curious: ['The cows give more milk when I sing. I\'ve tested it for a fortnight. It\'s true.', 'The sheep always go round the pen the same way. Sunwise. I\'ve no idea why.'],
+    curious: ['The cows give more milk when I sing. I\'ve tested it for two weeks. It\'s true.', 'The sheep always go round the pen the same way. Sunwise. I\'ve no idea why.'],
     dreamy: ['They\'re peaceful. You stand among them and the day goes slow and warm.'],
     witty: ['The sheep are well, the cows are well, and the pigs have opinions.'],
     proud: ['Best-kept beasts in the Shire. Look at that fleece. Look at it.'],
@@ -950,11 +950,11 @@ talkPack('work2', () => {
     'weather=rain': ['Wet sheep smell like wet sheep. That\'s all I\'ll say.'],
     'workLevel=new': ['I\'m still learning which end bites. Both, mostly.'],
     'stage=elder': ['I\'ve known their great-great-grandmothers. Good stock, all of it.'],
-    rift: ['They\'re analogue in every possible way. I love them. They don\'t need charging.'],
+    rift: ['They\'re analog in every possible way. I love them. They don\'t need charging.'],
   });
   W('work.herder.names', {
-    _: ['Every one. Buttercup, Daisy, Old Grizzle, Clover, and the ram is Mr Pudding.', 'Of course! You can\'t milk a cow you haven\'t been introduced to.'],
-    cheerful: ['Yes! Buttercup and Bluebell and Biscuit and Mr Pudding the ram! He\'s a love. He\'s not.'],
+    _: ['Every one. Buttercup, Daisy, Old Grizzle, Clover, and the ram is Mr. Pudding.', 'Of course! You can\'t milk a cow you haven\'t been introduced to.'],
+    cheerful: ['Yes! Buttercup and Bluebell and Biscuit and Mr. Pudding the ram! He\'s a love. He\'s not.'],
     ornery: ['They\'ve names. They don\'t answer to them. Like some folk I know.'],
     shy: ['...I named them all. I say their names when I count them. Quietly.'],
     curious: ['Yes, and I keep a book of who\'s whose mother. Six generations, nearly.'],
@@ -1002,7 +1002,7 @@ talkPack('work2', () => {
   });
   W('work.herder.fav', {
     _: ['Old Grizzle. She\'s the oldest ewe. Half deaf, all wisdom. She leads them all.', 'Buttercup. Best cow in the valley. Gives cream like a fairy tale.'],
-    cheerful: ['All of them! ...Clover. Clover\'s my favourite. Don\'t tell the others.'],
+    cheerful: ['All of them! ...Clover. Clover\'s my favorite. Don\'t tell the others.'],
     ornery: ['The ram. Because he\'s as stubborn as me and we understand each other.'],
     shy: ['...Old Grizzle. She was the first lamb I ever helped deliver.'],
     curious: ['The cleverest pig. She opened the gate with her nose. Twice.'],
@@ -1025,7 +1025,7 @@ talkPack('work2', () => {
     'season=winter': ['The trough freezes and I break it with my heel every morning.'],
   });
   W('work.herder.best', {
-    _: ['A full pail of milk on a cold morning. It steams. And then it\'s cheese.', 'Shearing day. The wool goes off for woollens and every scarf in the valley started on my sheep.'],
+    _: ['A full pail of milk on a cold morning. It steams. And then it\'s cheese.', 'Shearing day. The wool goes off for woolens and every scarf in the valley started on my sheep.'],
     cheerful: ['The lambs! Bouncing! Every spring, like the world\'s just been made.'],
     ornery: ['When they do as they\'re told. Once a week. I treasure it.'],
     shy: ['...They don\'t care what I say. They just like me.'],
@@ -1171,7 +1171,7 @@ talkPack('work2', () => {
     'workGlut': ['There\'s barrels to the rafters. The Store\'s swimming.'],
     'workShort': ['There\'s barely a barrel spare. The inn\'s drinking faster than I can brew.'],
     'workAle=flowing': ['The Steward says let it flow, so it flows. I\'ve never brewed so much in my life.'],
-    rift: ['It\'s chemistry, but slower and friendlier. Back home they synthesised it. Tasted like a battery.'],
+    rift: ['It\'s chemistry, but slower and friendlier. Back home they synthesized it. Tasted like a battery.'],
   });
   W('work.brewer.malt', {
     _: ['You wet the barley till it sprouts, then dry it in the kiln before it gets ideas. That\'s malt.', 'Soak, sprout, kiln. The sprouting turns it sweet. The kiln stops it there.'],
@@ -1181,7 +1181,7 @@ talkPack('work2', () => {
     curious: ['The sprouting turns starch to sugar. I don\'t know how. I\'d dearly love to know how.'],
     dreamy: ['The barley wakes up, thinking it\'s spring. And then I put it to sleep in the warm.'],
     witty: ['You let it sprout, then toast it before it can complain.'],
-    proud: ['My malting floor\'s the best kept in the Shire. Not a mouldy grain.'],
+    proud: ['My malting floor\'s the best kept in the Shire. Not a moldy grain.'],
     gloomy: ['You turn it every few hours for days. Night and day. You don\'t sleep much in malting week.'],
     'season=autumn': ['This week, in fact! New barley. The smell of the kiln\'s like the inside of a loaf.'],
   });
@@ -1310,7 +1310,7 @@ talkPack('work2', () => {
     _: ['Ha! Well, ale\'s a sort of potion. It makes everyone sing.', 'A singing potion! I\'ve been making one for years. It\'s called ale.'],
     curious: ['What was in it? Could I brew it?'],
     witty: ['Mine makes everyone sing. Badly.'],
-    ornery: ['Typical wizard. Brewing without a licence.'],
+    ornery: ['Typical wizard. Brewing without a license.'],
     cheerful: ['Ha! What did you sing?'],
   });
   W('work.brewer.secret', {
@@ -1424,11 +1424,11 @@ talkPack('work2', () => {
     rift: ['Back in Neverdark the bars had screens. Here they have each other. It\'s louder. It\'s better.'],
   });
   W('work.innkeeper.regulars', {
-    _: ['There\'s the one who sings the same song every night, the one who argues about marrows, and the one who just nods.', 'The corner stool\'s been the same backside for twenty years. I\'d not dare give it away.'],
+    _: ['There\'s the one who sings the same song every night, the one who argues about pumpkins, and the one who just nods.', 'The corner stool\'s been the same backside for twenty years. I\'d not dare give it away.'],
     cheerful: ['The singer! Every night, the same song, and we all join the chorus. It\'s lovely. It\'s also very long.'],
     ornery: ['The one who tells me my stew\'s too salty and then has seconds. Every night.'],
     shy: ['...The quiet one by the window. Never says a word. Leaves a penny on the table. I like him.'],
-    curious: ['The marrow debaters. Same argument for three years. I\'ve heard both sides so often I\'m on a third.'],
+    curious: ['The pumpkin debaters. Same argument for three years. I\'ve heard both sides so often I\'m on a third.'],
     dreamy: ['The old fellow who comes in, has one half, and looks at the fire. I think he\'s remembering someone.'],
     witty: ['The ones who say they\'re only stopping for one. My best customers.'],
     proud: ['Every regular here\'s a regular because I remember their usual and their troubles.'],
@@ -1438,7 +1438,7 @@ talkPack('work2', () => {
   W('work.innkeeper.worst', {
     _: ['The one who sings after midnight. With his boots on the table.', 'The fellow who orders stew, eats half, and asks for it to be warmer. Every night.'],
     cheerful: ['Oh, nobody\'s the worst! ...The singer. The singer is the worst. I love him.'],
-    ornery: ['All of them. In turn. On a rota.'],
+    ornery: ['All of them. In turn. On a schedule.'],
     shy: ['...The loud ones. I don\'t know how to make them stop.'],
     curious: ['The one who takes the salt cellars apart to see how they work. He\'s never put one back together.'],
     witty: ['The one who leaves the biggest tip and the biggest mess. I can\'t decide how I feel.'],
@@ -1480,7 +1480,7 @@ talkPack('work2', () => {
     _: ['*sets a mug in front of you without asking* The usual for a wizard. Whatever that is.', 'That\'s the stool the storyteller likes. Mind the wobble.'],
     cheerful: ['Ah, a new regular! What\'ll it be? First one\'s on the house. The second\'s on the house too.'],
     ornery: ['That stool\'s taken. ...Not tonight it isn\'t. Sit.'],
-    shy: ['...You can sit there. Nobody does. It\'s by the draught.'],
+    shy: ['...You can sit there. Nobody does. It\'s by the draft.'],
     curious: ['End of the bar! Interesting. That\'s a watcher\'s stool.'],
     dreamy: ['That\'s the best stool. You can see the whole room and the fire too.'],
     witty: ['Ah, the wizard\'s stool. It\'s the one with the burn mark. Was that you?'],
@@ -1642,7 +1642,7 @@ talkPack('work2', () => {
     rift: ['We had vapes back home. Neon ones. This is better. Slower. It makes you sit down.'],
   });
   W('work.grower.cure', {
-    _: ['You hang the leaves on lines in the shed, stem up, not too close. Then you let the air do it.', 'Hang it to dry, slow, in the dark. It goes from green to gold to brown, the colour of an old penny.'],
+    _: ['You hang the leaves on lines in the shed, stem up, not too close. Then you let the air do it.', 'Hang it to dry, slow, in the dark. It goes from green to gold to brown, the color of an old penny.'],
     cheerful: ['You hang them up like washing! Hundreds of them! And then you wait, and it goes golden!'],
     ornery: ['Hang it, turn it, check it, and keep folk\'s fingers off it.'],
     shy: ['...It\'s the hanging I like. Rows and rows of it, in the dusk of the shed.'],
@@ -1685,7 +1685,7 @@ talkPack('work2', () => {
     'workHazard=flood ^1': ['Not this one. The low rows are under water.'],
   });
   W('work.grower.long', {
-    _: ['A month for the colour. Then a season for the sweetness. The best leaf is a year old.', 'Weeks to dry. Months to mellow. Folk want it next Trewsday.'],
+    _: ['A month for the color. Then a season for the sweetness. The best leaf is a year old.', 'Weeks to dry. Months to mellow. Folk want it next Trewsday.'],
     cheerful: ['Ages! But it\'s worth every day. You\'ll see!'],
     ornery: ['As long as it takes. Not as long as folk want.'],
     shy: ['...I check it every morning. I don\'t hurry it.'],
@@ -1834,7 +1834,7 @@ talkPack('work2', () => {
     shy: ['...I do. I find it easier than telling folk.'],
     curious: ['I do. I\'m not sure they understand. But the hives I tell do better. I\'ve kept a note.'],
     dreamy: ['Of course. They\'re part of the valley. They ought to know what goes on in it.'],
-    witty: ['I do. They\'re the best-informed creatures in the valley. Better than the postie.'],
+    witty: ['I do. They\'re the best-informed creatures in the valley. Better than the mail carrier.'],
     proud: ['It\'s the old way. A proper orchard-keeper keeps the bees informed.'],
     gloomy: ['I told them about the last funeral. They went quiet for a week.'],
   });

@@ -175,9 +175,9 @@ function ellipseFill(ctx, cx, cy, rx, ry, col) {
 }
 
 // Adds a 1px outline around every opaque pixel of a canvas, in a darkened
-// shade of whatever it borders rather than one ink colour, so a sheep is ringed
-// in grey and a pine in deep green. (`col` is kept for callers; the outline
-// takes the art's own colours.)
+// shade of whatever it borders rather than one ink color, so a sheep is ringed
+// in gray and a pine in deep green. (`col` is kept for callers; the outline
+// takes the art's own colors.)
 // If anything is drawn right up to the canvas edge, the canvas grows by a
 // pixel all round first so the outline isn't cut off there (callers use the
 // canvas returned).

@@ -1,10 +1,10 @@
 'use strict';
 // ---------------------------------------------------------------------------
-// The village, part four: feuds, the fair and favours. Two neighbours at
+// The village, part four: feuds, the fair and favors. Two neighbors at
 // daggers drawn and the wizard asked to say who's right; what they'd enter
 // at the fair and their secret for a prize pie; what they'd change about
 // Thistledown (said to the wizard, and so to everyone); a secret about a
-// neighbour, told in confidence; and what the village says about the wizard
+// neighbor, told in confidence; and what the village says about the wizard
 // himself, which he can deny, laugh off or make a good deal worse.
 // ---------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ talkPack('village4', () => {
   };
   const WIZNEWS = {
     age: 'The wizard says he\'s older than three hundred, and the first hundred were the hardest.', toad: 'The wizard says it was a newt, not a toad, and the Sackville was much improved.',
-    hat: 'The wizard says his hat has a bottom, but nobody has ever found it.', dragon: 'The wizard says it was a dessert spoon, and the dragon apologised.',
+    hat: 'The wizard says his hat has a bottom, but nobody has ever found it.', dragon: 'The wizard says it was a dessert spoon, and the dragon apologized.',
     sleep: 'The wizard says he sleeps one night in seven, and dreams for all the rest.', mouse: 'The wizard says there is no mouse in his beard. There is a wren.',
     stars: 'The wizard says his fireworks are only borrowed stars, and he always puts them back.',
   };
@@ -90,10 +90,10 @@ talkPack('village4', () => {
   });
 
   // =================================================================================
-  // Their turn: two neighbours at daggers drawn
+  // Their turn: two neighbors at daggers drawn
   // =================================================================================
   addThread({
-    id: 'village.ask.feud', theirs: true, label: 'They tell you of a feud', cool: 5, ask: '{Name} wants a word about the neighbours.',
+    id: 'village.ask.feud', theirs: true, label: 'They tell you of a feud', cool: 5, ask: '{Name} wants a word about the neighbors.',
     when: (F) => F.met && F.talks >= 1 && F.stage !== 'child' && has(F.vFeudA),
     beats: {
       start: { line: 'village.ask.feud.q', go: [
@@ -294,7 +294,7 @@ talkPack('village4', () => {
     gloomy: ['There isn\'t one. That\'s my secret. That\'s why I lose.'],
     rift: ['Precise measurement. I brought a scale through the rift. Sorry, everyone.'],
   }, [
-    { if: { vContestThing: 'marrow' }, pri: 1, text: ['Muck. Good, old muck, and a song at sunset. I sing to them. Don\'t tell a soul.'] },
+    { if: { vContestThing: 'pumpkin' }, pri: 1, text: ['Muck. Good, old muck, and a song at sunset. I sing to them. Don\'t tell a soul.'] },
     { if: { vContestThing: 'pie' }, pri: 1, text: ['Cold hands for the pastry. I keep a stone in the river. Shh.'] },
     { if: { vContestThing: 'ale' }, pri: 1, text: ['A handful of heather in the mash. My father\'s trick. Not a word.'] },
     { if: { vContestThing: 'fish' }, pri: 1, text: ['The pool under the willow, at dusk, with a cheese worm. You never heard it from me.'] },
@@ -412,7 +412,7 @@ talkPack('village4', () => {
   });
 
   // =================================================================================
-  // Their turn: a secret about a neighbour
+  // Their turn: a secret about a neighbor
   // =================================================================================
   addThread({
     id: 'village.ask.secret', theirs: true, label: 'They tell you a secret', cool: 6, ask: '{Name} leans in close.',
@@ -483,7 +483,7 @@ talkPack('village4', () => {
   });
   say('village.ask.secret.hour', {
     _: ['An hour! You\'re worse than the innkeeper.', 'Ha! At least you\'re honest. That\'s more than most.'],
-    witty: ['An hour is generous. The postie manages ten minutes.'],
+    witty: ['An hour is generous. The mail carrier manages ten minutes.'],
     ornery: ['Then I\'ll not bother.'],
   });
   say('village.ask.secret.safe', {
@@ -536,7 +536,7 @@ talkPack('village4', () => {
   say('village.ask.wizrumour.q', {
     _: ['Is it true {vWizRumour}? They\'re saying so at the Badger.', 'I heard {vWizRumour}. Is it true? You can tell me.', 'Somebody said {vWizRumour}. I said nonsense. Was I right?'],
     cheerful: ['Is it TRUE {vWizRumour}? Oh, say it is!'],
-    ornery: ['They\'re saying {vWizRumour}. I told them it\'s rubbish. Is it rubbish?'],
+    ornery: ['They\'re saying {vWizRumour}. I told them it\'s nonsense. Is it nonsense?'],
     shy: ['...Is it true {vWizRumour}? Sorry. I just wondered.'],
     curious: ['I need to know. Is it true {vWizRumour}? I\'ve a bet on.'],
     dreamy: ['They say {vWizRumour}. I\'d like it to be true.'],
@@ -544,14 +544,14 @@ talkPack('village4', () => {
     proud: ['I don\'t listen to gossip, but is it true {vWizRumour}?'],
     gloomy: ['They say {vWizRumour}. Probably not. Nothing\'s ever true.'],
     child: ['Is it true {vWizRumour}? Is it? IS it?', 'My friend says {vWizRumour}! Is that real?'],
-    rift: ['Rumour check: {vWizRumour}. True or false?'],
+    rift: ['Rumor check: {vWizRumour}. True or false?'],
   });
   lines('village.ask.wizrumour.tale.say', [
     { text: ['True. And that\'s the dull version.'] },
     { ...WR('age'), text: ['Three hundred? I stopped counting at three hundred. Out of politeness.'] },
     { ...WR('toad'), text: ['A newt, not a toad. And the Sackville was much improved by it.'] },
     { ...WR('hat'), text: ['It has a bottom. Nobody has ever found it, mind.'] },
-    { ...WR('dragon'), text: ['A dessert spoon. Much heavier. And the dragon apologised.'] },
+    { ...WR('dragon'), text: ['A dessert spoon. Much heavier. And the dragon apologized.'] },
     { ...WR('sleep'), text: ['I sleep one night in seven. The rest I spend dreaming awake.'] },
     { ...WR('mouse'), text: ['There\'s no mouse in my beard. There\'s a wren. She pays rent in song.'] },
     { ...WR('stars'), text: ['Only borrowed stars. I always put them back before dawn.'] },
@@ -573,7 +573,7 @@ talkPack('village4', () => {
     shy: ['Oh! Oh my. I don\'t know what to say.'],
     curious: ['But how? And where? And what happened next? Start from the beginning.'],
     dreamy: ['I knew there was more to you. I could feel it.'],
-    witty: ['That\'s much better than the rumour. You should be in charge of rumours.'],
+    witty: ['That\'s much better than the rumor. You should be in charge of rumors.'],
     proud: ['Well. I always said you were a wizard of some distinction.'],
     gloomy: ['Of course. Everyone has a better life than me. Even you. Especially you.'],
     child: ['WHOA. That\'s the BEST. I\'m going to tell EVERYONE.'],

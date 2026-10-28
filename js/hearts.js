@@ -13,7 +13,7 @@
 //    A rain-lover enjoys a downpour; a crowd-hater is glad to leave a party.
 //  * Rivals: many grown-ups have one friendly rival, usually in the same
 //    trade or hobby. On market day and at the autumn fair they compete (best
-//    marrow, best pie, best ale, finest carving) and the Chronicle reports the
+//    pumpkin, best pie, best ale, finest carving) and the Chronicle reports the
 //    winner. Rivals who become real friends shake hands, and it's a story.
 //  * Inspirations and sulks: someone very happy for a while may be struck by
 //    inspiration (a baking spree for the whole village, a burst of creative
@@ -66,7 +66,7 @@ function addSentiment(v, o, tag, why, days = 6) {
 }
 // A sentiment comes out when they meet.
 const SENT_LINES = {
-  grateful: ['Thank you again for {why}, {name}.', 'I still owe you for {why}!'], fond: ['There\'s my favourite {name}!', 'I was hoping I\'d see you, {name}.'], welcomed: ['That supper was the nicest evening I\'ve had in an age.'],
+  grateful: ['Thank you again for {why}, {name}.', 'I still owe you for {why}!'], fond: ['There\'s my favorite {name}!', 'I was hoping I\'d see you, {name}.'], welcomed: ['That supper was the nicest evening I\'ve had in an age.'],
   kindred: ['Kindred spirits, you and me, {name}.'], touched: ['Your letter made my week, {name}.'], cherished: ['I keep it by my bed, you know.'], admiring: ['How do you do it, {name}?'],
   hurt: ['I haven\'t forgotten {why}, {name}.', 'Oh. It\'s you.'], prickly: ['Enjoy it while it lasts, {name}.', 'Hmph. Next year, {name}.'], jealous: ['Some folk have all the luck.'],
 };
@@ -126,7 +126,7 @@ MOODLETS.disliked = ['Had to put up with {x}', -0.05, 180, ['I can\'t abide {x}.
 
 // --- Rivals and contests ------------------------------------------------------------------
 const CONTESTS = {
-  farming: ['the biggest marrow', 'marrow'], cooking: ['the best pie', 'pie'], brewing: ['the finest ale', 'ale'], woodcraft: ['the finest carving', 'carving'],
+  farming: ['the biggest pumpkin', 'pumpkin'], cooking: ['the best pie', 'pie'], brewing: ['the finest ale', 'ale'], woodcraft: ['the finest carving', 'carving'],
   herbalism: ['the best remedy', 'remedy'], music: ['the best fiddling', 'tune'], fishing: ['the biggest fish', 'fish'], lore: ['the best tall tale', 'tale'], tinkering: ['the cleverest gadget', 'gadget'],
 };
 function rivalOf(v) { return v.rival != null ? Game.villagers.find((o) => o.id === v.rival) || null : null; }

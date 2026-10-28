@@ -47,7 +47,7 @@ talkPack('work4', () => {
     orchardist: ['pruning hook', 'the orchard'], postie: ['satchel', 'the round'], storyteller: ['old storybook', 'the old oak'], nanny: ['rocking chair', 'the nursery'], tinker: ['soldering iron', 'the Relay'], lamplighter: ['pole', 'the lanes'],
   };
   const SKILL_JOB = { farming: 'farmer', cooking: 'baker', brewing: 'brewer', fishing: 'fisher', woodcraft: 'woodwright', herbalism: 'herbalist', lore: 'storyteller', music: 'innkeeper', tinkering: 'tinker' };
-  const IDLE = { garden: 'pottering in the garden', fish: 'a bit of fishing', stroll: 'walking the lanes', read: 'reading by the window', forage: 'mushrooming', work_odd: 'odd jobs about the place', smoke: 'a pipe on the step', nap: 'napping, if I\'m honest', chat: 'nattering', fiddle: 'fiddling', bake_home: 'baking at home' };
+  const IDLE = { garden: 'puttering in the garden', fish: 'a bit of fishing', stroll: 'walking the lanes', read: 'reading by the window', forage: 'mushrooming', work_odd: 'odd jobs about the place', smoke: 'a pipe on the step', nap: 'napping, if I\'m honest', chat: 'nattering', fiddle: 'fiddling', bake_home: 'baking at home' };
   const HAZ = { flood: 'the flood', drought: 'the dry spell', blight: 'the blight', frost: 'the hard frost' };
   addFacts((v, F) => {
     const st = Village.stores || {}, used = (Village.yesterday && Village.yesterday.used) || {};
@@ -256,7 +256,7 @@ talkPack('work4', () => {
     'workMasterTrade=brewer': ['I left the bung out. The cellar smelled of ale for a week. Folk came to visit.'],
     'workMasterTrade=farmer': ['I weeded the carrots. All of them. I thought they were weeds.'],
     'workMasterTrade=woodwright': ['I sawed the plank I was sitting on. You can guess the rest.'],
-    'workMasterTrade=herbalist': ['I mixed up the sleeping draught and the tonic. Old Mrs Brockhouse had a very lively nap.'],
+    'workMasterTrade=herbalist': ['I mixed up the sleeping draft and the tonic. Old Mrs. Brockhouse had a very lively nap.'],
   });
   W('work.apprentice.finish', {
     _: ['When {workMaster} says so. Not before. I asked. I was told.', 'A season or two, they reckon. If I stop dropping things.'],
@@ -421,7 +421,7 @@ talkPack('work4', () => {
   });
   W('work.master.broken', {
     _: ['Only a {workTool} and my patience. The {workTool} mended.', 'One or two things. All small. One medium.'],
-    cheerful: ['Ha! Everything! And apologised so sweetly each time.'],
+    cheerful: ['Ha! Everything! And apologized so sweetly each time.'],
     ornery: ['What hasn\'t {workApprentice} broken? Go on. Name one thing.'],
     shy: ['...Only a little. I didn\'t mind. Much.'],
     witty: ['Several things, and one record. Fastest breakage in the valley.'],
@@ -653,7 +653,7 @@ talkPack('work4', () => {
   W('work.rival.vent', {
     _: ['And they WAVE at me! At the fair! A little wave, like we\'re friends!', 'Every year. Every single year. And everyone says how close it was.'],
     ornery: ['And folk say we\'re "alike". ALIKE. I\'ll give them alike.'],
-    shy: ['...I practise for months. They just seem to do it. It isn\'t fair.'],
+    shy: ['...I practice for months. They just seem to do it. It isn\'t fair.'],
     proud: ['And the judges! Don\'t get me started on the judges.'],
     gloomy: ['It doesn\'t matter how good I get. {WorkRival} is always just a little better.'],
     cheerful: ['And they\'re ever so nice about it! Which makes it worse!'],
@@ -679,8 +679,8 @@ talkPack('work4', () => {
     dreamy: ['A ribbon on the mantelpiece. And a story to tell grandchildren.'],
     gloomy: ['It\'d mean I wasn\'t wrong to keep trying.'],
     ornery: ['It\'d mean {workRival} would shut up for a whole year.'],
-    witty: ['It\'d mean I could be gracious. I\'ve been practising gracious.'],
-    cheerful: ['It\'d mean a party! A party in MY honour!'],
+    witty: ['It\'d mean I could be gracious. I\'ve been practicing gracious.'],
+    cheerful: ['It\'d mean a party! A party in MY honor!'],
     curious: ['It\'d mean I\'d cracked it. Whatever it is.'],
   });
   W('work.rival.lose', {
@@ -866,7 +866,7 @@ talkPack('work4', () => {
     cheerful: ['Ooh, the village handyhobbit! I\'ll need a hat.'],
     ornery: ['Hm. Better than sitting. I\'ll go and fix that gate.'],
   });
-  W('work.idle.enjoy', { _: ['I shall! Every last idle minute.', 'Thank you. You\'re the first who hasn\'t told me to get a trade.'], cheerful: ['Every minute! I\'ll start with a nap in your honour.'], dreamy: ['I will. There\'s a heron I\'ve been meaning to watch all afternoon.'], witty: ['I\'ll enjoy it professionally. It\'s the closest I\'ll get to a trade.'] });
+  W('work.idle.enjoy', { _: ['I shall! Every last idle minute.', 'Thank you. You\'re the first who hasn\'t told me to get a trade.'], cheerful: ['Every minute! I\'ll start with a nap in your honor.'], dreamy: ['I will. There\'s a heron I\'ve been meaning to watch all afternoon.'], witty: ['I\'ll enjoy it professionally. It\'s the closest I\'ll get to a trade.'] });
   W('work.idle.trick', { _: ['The trick is to look as if you\'re about to start something.', 'Ha! Sit down. Stay down. That\'s the trick.'], witty: ['Carry a bucket. Nobody questions a hobbit with a bucket.'], cheerful: ['Hum a tune. Folk think you\'re busy if you hum.'], ornery: ['The trick is nobody asking. I\'ve not mastered it.'], dreamy: ['Look at clouds. If anyone asks, you\'re reading the weather.'] });
   W('work.idle.kind', { _: ['...Of a kind. Yes. I suppose it is.', 'You\'re kind. That\'s a sort of trade too.'], gloomy: ['Of a kind. A small kind.'], cheerful: ['It is, isn\'t it! I\'ll tell folk I\'m in the helping trade.'], proud: ['It is work. Nobody else seems to see that.'], shy: ['...Thank you. Nobody\'s said that before.'] });
   W('work.idle.meddle', { _: ['Ha! Meddling! Is there an apprenticeship?', 'Meddling. That explains the hat.'], witty: ['I\'d be good at meddling. I\'ll put it to the Steward.'], ornery: ['Hmph. Meddling. I\'ve noticed.'], cheerful: ['Ha! Teach me! I\'ll meddle with the best of them.'] });
@@ -969,7 +969,7 @@ talkPack('work4', () => {
     _: ['Lie-ins! I wish. I\'m up before the cock, every day. Nothing to do. Just up.', 'Ha! I lie there awake, feeling guilty.'],
     cheerful: ['Oh, gloriously! I lie there and listen to everyone else go to work.'],
     ornery: ['The body doesn\'t know it\'s retired. Nobody told the body.'],
-    witty: ['I\'ve been practising lying in. I\'m getting quite good. Twenty minutes.'],
+    witty: ['I\'ve been practicing lying in. I\'m getting quite good. Twenty minutes.'],
     gloomy: ['I can\'t sleep past dawn. Years of it. It\'s in the bones.'],
     dreamy: ['I lie and watch the light come in. I never saw it, working.'],
     proud: ['I don\'t lie in. A hobbit of my standing gets up.'],
@@ -1097,7 +1097,7 @@ talkPack('work4', () => {
     'band=youth': ['Honestly? I don\'t know. Everyone keeps asking. It\'s a lot.', 'I\'ve a fancy for the {workLifeFit}\'s trade. Don\'t tell anyone yet.'],
     'band=youth workWants ^1': ['I\'ve been watching the {workWants}. I think I could. I think I want to.'],
     'register=bright': ['The storyteller. Or the herbalist. Something with books and long words.'],
-    'rift': ['Tinker! Wires and sparks! Mum says no. Mum\'s wrong.', 'I want to run the Relay. All the signal in the valley through MY hands.'],
+    'rift': ['Tinker! Wires and sparks! Mom says no. Mom\'s wrong.', 'I want to run the Relay. All the signal in the valley through MY hands.'],
   });
   W('work.kid.why', {
     _: ['Because it looks fun! And you get to eat bits.', 'Because then everyone needs you. That\'s nice.'],
@@ -1144,7 +1144,7 @@ talkPack('work4', () => {
     _: ['The {workLifeFit}? Me? ...Huh. I hadn\'t thought of that. I\'m thinking of it now.', 'A {workLifeFit}! Do you think I could? I bet I could.'],
     'band=young': ['A {workLifeFit}! Is there a hat?'],
     'band=youth': ['The {workLifeFit}\'s trade... You know, I think you might be right.'],
-    'workLifeFitJob=tinker': ['Tinker! Sparks! I KNEW it. I\'m telling Mum.'],
+    'workLifeFitJob=tinker': ['Tinker! Sparks! I KNEW it. I\'m telling Mom.'],
     'workLifeFitJob=storyteller': ['Me? Telling stories under the oak? With everyone listening?'],
   });
   W('work.kid.secret', {
@@ -1172,7 +1172,7 @@ talkPack('work4', () => {
       start: { line: 'work.week.start', go: [
         { ap: 'ask', say: 'And the rations?', to: 'rations' },
         { ap: 'ask', say: 'What would you tell the Steward, if you could?', to: 'tell' },
-        { ap: 'jest', say: 'Highday\'s my favourite day too.', to: 'highday' },
+        { ap: 'jest', say: 'Highday\'s my favorite day too.', to: 'highday' },
       ] },
       rations: { line: 'work.week.rations', go: [
         { ap: 'ask', say: 'And the ale?', to: 'ale' },
@@ -1253,7 +1253,7 @@ talkPack('work4', () => {
     'workRations=feast gloomy ^2': ['Feasts. It can\'t last. The Store will run dry and then where will we be?'],
   });
   W('work.week.ale', {
-    _: ['A pint or two of an evening. That\'s civilised.', 'The ale\'s as it should be. One, maybe two, and home.'],
+    _: ['A pint or two of an evening. That\'s civilized.', 'The ale\'s as it should be. One, maybe two, and home.'],
     cheerful: ['A pint after work! Best part of the day!'],
     ornery: ['Watered, if you ask me. Nobody asked me.'],
     witty: ['A pint or two. The or two does a lot of work in that sentence.'],
@@ -1270,7 +1270,7 @@ talkPack('work4', () => {
     'job=brewer workAle=dry ^3': ['Dry! Barrels stacked to the rafters and nobody to drink them.'],
   });
   W('work.week.highday', {
-    _: ['Highday! The best of days. Nobody wants anything of you.', 'Ha! Highday\'s everyone\'s favourite. Even the work\'s, I think.'],
+    _: ['Highday! The best of days. Nobody wants anything of you.', 'Ha! Highday\'s everyone\'s favorite. Even the work\'s, I think.'],
     'workWeek=busy ^1': ['Highday! I remember Highday. Fondly. From before the busy week.'],
     cheerful: ['Highday! I count down to it from Sterday.'],
     ornery: ['Not that I get to enjoy it. Somebody always needs something.'],
@@ -1454,7 +1454,7 @@ talkPack('work4', () => {
   W('work.store.feast', { _: ['Ha! I\'ll put it to the Steward. They\'ll say no.', 'A feast! Now you\'re talking sense, wizard.'], gloomy: ['And then we\'ll be short next month.'], cheerful: ['A feast! Long tables! I\'ll bring a pie. Two pies.'], witty: ['A feast to use up the surplus. Very responsible. I approve.'] });
   W('work.store.lasts', { _: ['...That\'s true. That\'s very true.', 'I\'ll remember that. A village that shares.'], ornery: ['Lasts, aye. If everyone shares the same amount.'], dreamy: ['A village that lasts. I like the sound of that.'] });
   W('work.store.example', { _: ['Lead by example. Hm. I already do. I\'ll do it louder.', 'Yes. Better than complaining. I\'ll try that.'], proud: ['I\'ve been leading by example for years. Nobody\'s following.'] });
-  W('work.store.unseen', { _: ['...Maybe. I hadn\'t thought of that.', 'Things I can\'t see. Yes. That\'s fair.'], ornery: ['Hmph. Maybe. Some.'], shy: ['...That\'s true. I carry things nobody sees.'], proud: ['Perhaps. I\'ll reserve judgement.'] });
+  W('work.store.unseen', { _: ['...Maybe. I hadn\'t thought of that.', 'Things I can\'t see. Yes. That\'s fair.'], ornery: ['Hmph. Maybe. Some.'], shy: ['...That\'s true. I carry things nobody sees.'], proud: ['Perhaps. I\'ll reserve judgment.'] });
   W('work.store.quiet', { _: ['Quietly. Yes. I don\'t want trouble.', 'Thank you. Don\'t say it came from me.'], ornery: ['Not too quietly.'], shy: ['...Thank you. I feel better for saying.'] });
   W('work.store.talk', { _: ['Before I talk about them. ...You\'re right, curse you.', 'Talk to them. Yes. That\'s harder. That\'s why it\'s right.'], ornery: ['Talk to them. Hmph. I\'d rather talk about them.'], shy: ['...To their face? Oh dear. ...All right.'] });
 
@@ -1533,7 +1533,7 @@ talkPack('work4', () => {
     proud: ['As good a harvest as I\'ve seen. And I\'ve seen a few.'],
     gloomy: ['It\'ll not be enough. It never is.'],
     'workHazard=blight ^2': ['Blight in the barley. Brown and limp, a whole field of it. I could weep.', 'The blight\'s in. It spreads like gossip. Faster.'],
-    'workHazard=drought ^2': ['Dry. Dry as an old biscuit. The ground\'s cracking like a pie crust.', 'No rain for days. The barley\'s gasping. So am I.'],
+    'workHazard=drought ^2': ['Dry. Dry as an old cookie. The ground\'s cracking like a pie crust.', 'No rain for days. The barley\'s gasping. So am I.'],
     'workHazard=flood ^2': ['The river\'s in the meadows. Everything low is under water.', 'Flood! The low fields are a lake. The ducks are delighted.'],
     'workHazard=frost ^2': ['Hard frost. The ground rings like iron. Hearths roaring, woodpile shrinking.', 'Bitter. Every hearth in the valley\'s eating timber like it\'s cake.'],
     'workHazardSoon=blight ^2': ['There\'s a blight about. The farmers don\'t like the look of the barley. Nor do I.'],
@@ -1625,7 +1625,7 @@ talkPack('work4', () => {
       ] },
       tea: { line: 'work.ask.apprentice.tea', go: [
         { ap: 'ask', say: 'No, but truly. What\'s holding you back?', to: 'holding' },
-        { ap: 'jest', say: 'And the biscuits. Don\'t forget the biscuits.', to: 'biscuits' },
+        { ap: 'jest', say: 'And the cookies. Don\'t forget the cookies.', to: 'biscuits' },
       ] },
       feels: { line: 'work.ask.apprentice.feels', go: [
         { ap: 'advise', say: 'Then do it scared. That\'s the only way.', to: 'scared' },
@@ -1671,7 +1671,7 @@ talkPack('work4', () => {
     _: ['Every day! I\'ll be there so much they\'ll HAVE to take me on!', 'Watch, and ask. Right. Starting now.'],
     'band=youth': ['Every day. Until they notice. Then every day after.'],
   });
-  W('work.ask.apprentice.biscuits', { _: ['Ha! The good biscuits. It\'s in the contract.', 'Ha! You drive a hard bargain, wizard.'], 'stage=child': ['I can do biscuits! I can eat them, anyway.'], ornery: ['Biscuits. Ha. Mine, not theirs.'] });
+  W('work.ask.apprentice.biscuits', { _: ['Ha! The good cookies. It\'s in the contract.', 'Ha! You drive a hard bargain, wizard.'], 'stage=child': ['I can do cookies! I can eat them, anyway.'], ornery: ['Cookies. Ha. Mine, not theirs.'] });
   W('work.ask.apprentice.scared', { _: ['Do it scared. ...All right. I can do scared.', 'Scared it is, then. I\'m good at scared.'], 'stage=child': ['Scared! Okay! I\'ll be brave and scared!'] });
   W('work.ask.apprentice.ready', { _: ['...You think so? Then maybe I am.', 'Readier than I know. I\'ll remember that.'], 'stage=child': ['READY! I\'m READY!'] });
 
@@ -1750,7 +1750,7 @@ talkPack('work4', () => {
 
   // --- Their turn: how do I beat my rival? -------------------------------------------------
   addThread({
-    id: 'work.ask.rival', theirs: true, label: 'A favour about their rival', cool: 5, ask: '{Name} has a favour to ask, about {workRival}.',
+    id: 'work.ask.rival', theirs: true, label: 'A favor about their rival', cool: 5, ask: '{Name} has a favor to ask, about {workRival}.',
     when: (F) => !!F.workRival && F.stage !== 'child' && F.met && (F.season === 'autumn' || F.season === 'summer'),
     beats: {
       start: { line: 'work.ask.rival.start', go: [
@@ -1787,9 +1787,9 @@ talkPack('work4', () => {
     'workRivalLead=ahead ^1': ['I\'m ahead of {workRival}, and I mean to stay ahead. Any thoughts?'],
   });
   W('work.ask.rival.tip', {
-    _: ['Do the plain things perfectly. Contests are won on the basics.', 'Practise early, rest the day before, and don\'t look at their table.'],
+    _: ['Do the plain things perfectly. Contests are won on the basics.', 'Practice early, rest the day before, and don\'t look at their table.'],
     'workRivalThing=pie': ['Cold butter, a hot oven, and don\'t fuss the pastry.'],
-    'workRivalThing=marrow': ['Water at dusk, and talk to it. Marrows are vain.'],
+    'workRivalThing=pumpkin': ['Water at dusk, and talk to it. Pumpkins are vain.'],
     'workRivalThing=ale': ['Clean everything twice, and let it rest a day longer than you dare.'],
     'workRivalThing=fish': ['Go before dawn, where the willow hangs over. The big ones lie in the shade.'],
     'workRivalThing=carving': ['Follow the grain. Don\'t make the wood do what it doesn\'t want.'],
@@ -1805,7 +1805,7 @@ talkPack('work4', () => {
     proud: ['I\'ll win fairly or not at all. ...Was that a real offer?'],
   });
   W('work.ask.rival.tipped', {
-    _: ['That\'s it? That simple? ...I\'ll try it. I\'ll practise tonight.', 'Huh. I\'d have never thought of that. Right. To work.'],
+    _: ['That\'s it? That simple? ...I\'ll try it. I\'ll practice tonight.', 'Huh. I\'d have never thought of that. Right. To work.'],
     cheerful: ['Oh, that\'s clever! I\'m going to win! Probably! Possibly!'],
     ornery: ['Hm. Might work. If it does I\'ll say I thought of it.'],
     shy: ['...Thank you. I\'ll try. Don\'t tell {workRival}.'],
@@ -1822,7 +1822,7 @@ talkPack('work4', () => {
   W('work.ask.rival.kind', {
     _: ['Kind. Hm. It WOULD drive them mad. ...I\'ll try it.', 'Ha! That\'s devious. I like it.'],
     shy: ['...I can do kind. I\'m good at kind.'],
-    witty: ['Weaponised kindness. Oh, that\'s wicked. I\'m in.'],
+    witty: ['Weaponized kindness. Oh, that\'s wicked. I\'m in.'],
   });
   W('work.ask.rival.can', { _: ['...You think I can? Then I\'ll try.', 'Myself. Yes. That\'d mean more.'], gloomy: ['...Maybe. Maybe I can.'], proud: ['I can. I know I can.'], cheerful: ['I can! I CAN! Watch me!'] });
   W('work.ask.rival.luck', { _: ['Thank you. I\'ll need it.', 'I\'ll make my own luck. With your tip.'], proud: ['I won\'t need luck. But thank you.'], shy: ['...Thank you. Will you come and watch?'], witty: ['Luck\'s for those without a wizard\'s tip.'] });

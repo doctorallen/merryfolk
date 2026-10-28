@@ -6,7 +6,7 @@
 // married, a cradle for the baby), chairs round the kitchen table, the
 // larder's actual stock on the pantry shelves, tools of their trades, and
 // the hearth, cold if the woodpile's run out. Whoever's home is in there
-// too, asleep, at table, baking, or pottering from room to room.
+// too, asleep, at table, baking, or puttering from room to room.
 
 const Interior = {
   home: null, L: null, key: '', scale: 2, folk: new Map(), boxes: [], hover: null,
@@ -62,7 +62,7 @@ function interiorLayout(h) {
   if (!study && h.grand) study = 'books';
   const lost = res.some((v) => v.lost > 0.05);
   // Every hole was dug its own way, and always the same way for the same
-  // hole: which side of the hall the parlour is, whether the pantry is
+  // hole: which side of the hall the parlor is, whether the pantry is
   // tucked between the hall and the kitchen or beyond it, whether the
   // bedrooms run down one passage or sit at both ends, which end the study
   // and the workshop are at, where the hearth is, how roomy each room is,
@@ -155,7 +155,7 @@ function placeRoom(L, r) {
     hot(r.x1 - 16, 46, r.x1 - 3, 98, () => `The hall clock says ${hud2(Game.hour)}.`);
     hot(r.x0 + 2, 50, r.x0 + 22, 90, () => `Coats on the pegs: ${L.res.filter((v) => v.isGrown()).map((v) => v.first).join(', ') || 'none'}.`);
   } else if (r.kind === 'parlour') {
-    r.name = 'The parlour';
+    r.name = 'The parlor';
     const { plan } = L, arr = plan.arr, hearth = !plan.hearthKitchen;
     const hx = cx + [0, -22, 22][arr], chairX = arr === 0 ? [hx - 36, hx + 36] : arr === 1 ? [hx + 34, hx + 58] : [hx - 58, hx - 34];
     if (hearth) { L.hearth = { x: hx, y: WALL_B }; add({ t: 'hearth', x: hx }); } else add({ t: 'lamp', x: hx });
@@ -398,7 +398,7 @@ function paintRoom(L, r) {
     IR(x, t, 1, WALL_B - t, wall);
     IR(x, t, 1, 3, shade(wall, -0.2)); IR(x, t + 3, 1, 2, wd);
     for (let y = t + 6; y < WALL_B - 22; y += 2) if (hash2(x * 7 + r.x0, y * 3) < 0.05) IP(x, y, hash2(x, y) < 0.5 ? wd : wl);
-    // wainscot panelling
+    // wainscot paneling
     const p = L.pal;
     IR(x, WALL_B - 22, 1, 22, (x - r.x0) % 14 === 0 ? p.d : (x - r.x0) % 14 === 1 ? p.l : p.m);
     IP(x, WALL_B - 22, p.h); IP(x, WALL_B - 21, p.d); IP(x, WALL_B - 1, p.d);
@@ -506,7 +506,7 @@ function drawItem(L, it, part, t = 0) {
       IR(x + 3, b - 20, 12, 12, '#1a1a1e'); IR(x + 4, b - 19, 10, 10, '#3a2a20'); IR(x + 16, b - 14, 2, 2, '#b8902a');
       IR(x + 20, b - 20, 11, 5, '#1a1a1e'); IR(x + 20, b - 12, 11, 8, '#1a1a1e'); IR(x + 21, b - 11, 9, 1, il);
       IR(x + 1, b - 3, 3, 3, iron); IR(x + 30, b - 3, 3, 3, iron);
-      // a kettle and a pot on the hob
+      // a kettle and a pot on the stove
       IR(x + 3, b - 33, 9, 6, '#6a6a74'); IR(x + 4, b - 34, 7, 1, '#8a8a94'); IR(x + 11, b - 32, 3, 1, '#6a6a74'); IR(x + 6, b - 36, 3, 2, '#2a2a30');
       IR(x + 21, b - 32, 10, 5, '#5a3a2a'); IR(x + 20, b - 32, 12, 1, '#7a5a4a');
       return;
@@ -569,7 +569,7 @@ function drawItem(L, it, part, t = 0) {
         const col = v.isRiftborn() ? '#1a1d30' : ex.vest;
         IR(cx - 2, 60, 5, 16, shade(col, -0.15)); IR(cx - 1, 60, 3, 18, col); IP(cx, 61, shade(col, 0.25));
       });
-      // a walking stick and a brolly
+      // a walking stick and an umbrella
       IR(x + 22, 84, 4, 14, '#5a3a22'); IR(x + 22, 84, 4, 1, '#7a5030');
       IR(x + 23, 70, 1, 14, '#6e4628'); IP(x + 24, 70, '#6e4628');
       return;
@@ -1166,7 +1166,7 @@ function drawLight(L, folk, t) {
   if (Interior.baking) { const rg = L.items.find((i) => i.t === 'range'); if (rg) glow(rg.x + 9, WALL_B - 14, 26, 0.6); }
   if (L.neon) for (const r of L.rooms) glow((r.x0 + r.x1) / 2, L.top(r, Math.round((r.x0 + r.x1) / 2)) + 6, 30, 0.35);
   IX.drawImage(lc, 0, 0);
-  // warm colour from the fire and lamps
+  // warm color from the fire and lamps
   IX.save(); IX.globalCompositeOperation = 'lighter';
   const warm = (x, y, r, a, col) => { for (let k = 3; k >= 1; k--) disc(IX, Math.round(x), Math.round(y), Math.round((r * k) / 3), col.replace('A', a * 0.4)); };
   if (L.hearth && Interior.fire > 0.5) warm(L.hearth.x, WALL_B - 12, 60, 0.18 * fl * (0.4 + dk), 'rgba(255,130,40,A)');

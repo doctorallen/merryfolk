@@ -19,7 +19,7 @@
 // Facts of your own: addFacts((v, F, T) => { F.myFact = ... ?? null; }) — set the key
 //   even when it doesn't apply (null), so the lint knows it exists.
 // Threads: see addThread in js/threads.js. Keep their lines short (a phone
-//   screen: 140 characters at most), British English, cosy and gently funny.
+//   screen: 140 characters at most), American English, cozy and gently funny.
 // ---------------------------------------------------------------------------
 
 talkPack('core', () => {
@@ -34,7 +34,7 @@ talkPack('core', () => {
     { text: ['Good day to you, wizard.', 'Oh! Hello.', 'Well, now. Hello.'] },
     { if: { met: false, stage: 'child' }, text: ['Are you really a wizard? A real one?', 'Can you do magic? Go on. Do some magic.', 'You\'re very tall. Are all wizards tall?'] },
     { if: { met: false, stage: ['grown', 'elder'] }, text: ['Well, bless me. The wizard himself, in our lane.', 'Good morning! ...Or is it? You always say that, I hear.', 'So you\'re the wizard. You\'re taller than they said.'] },
-    { if: { met: true, fond: { min: 0.3 } }, text: ['There you are! I hoped you\'d come by.', '{Wiz}! Sit, sit. Have you eaten?', 'Ah, my favourite wizard.'] },
+    { if: { met: true, fond: { min: 0.3 } }, text: ['There you are! I hoped you\'d come by.', '{Wiz}! Sit, sit. Have you eaten?', 'Ah, my favorite wizard.'] },
     { if: { met: true, fond: { max: -0.15 } }, text: ['Oh. It\'s you.', 'Yes? What is it?', 'Come to meddle, have you?'] },
     { if: { met: true, joke: (j) => !!j }, pri: 1, text: ['Ah, it\'s you. "{joke}" I still laugh at that.', 'If it isn\'t the wizard. "{joke}"'] },
     { if: { met: true, lastLabel: (x) => !!x, daysSince: { min: 1, max: 4 } }, text: ['Back again! We were talking about {lastLabel}, last time.', 'I\'ve been thinking about what we said. About {lastLabel}.'] },
@@ -64,7 +64,7 @@ talkPack('core', () => {
   lines('close.soon', [
     { text: ['I really ought to be getting on.', 'Is that the time?', 'I mustn\'t keep you. Or me.'] },
     { if: { job: (j) => !!j }, text: ['The work won\'t do itself, you know.', 'Work\'s waiting.'] },
-    { if: { stage: 'child' }, text: ['Mum\'ll be calling me in a minute.', 'I\'m meant to be somewhere. I forget where.'] },
+    { if: { stage: 'child' }, text: ['Mom\'ll be calling me in a minute.', 'I\'m meant to be somewhere. I forget where.'] },
     { if: { hungry: true }, pri: 1, text: ['My stomach\'s rumbling. Sorry. It does that.'] },
   ]);
   lines('close.patience', [
@@ -138,7 +138,7 @@ talkPack('core', () => {
     { if: { spouse: (s) => !!s }, text: ['{Spouse} made me breakfast in bed. Crumbs everywhere. Lovely.'] },
   ]);
   lines('how.truly', [{ text: ['Well... a bit weary, maybe. The days run together.', 'Truly? I\'m all right. A bit restless.'] }, { if: { bored: true }, text: ['Bored, if I\'m honest. Same lane, same faces.'] }, { if: { lonely: true }, text: ['A bit lonely, I suppose. Don\'t tell anyone.'] }]);
-  lines('how.tease', [{ text: ['Four? Five. Don\'t tell.', 'I resent that. It was three and a half.'] }, { if: { temper: 'ornery' }, text: ['I\'ll eat as many breakfasts as I please.'] }, { if: { stage: 'child' }, text: ['I had SIX. Mum doesn\'t know about two of them.'] }]);
+  lines('how.tease', [{ text: ['Four? Five. Don\'t tell.', 'I resent that. It was three and a half.'] }, { if: { temper: 'ornery' }, text: ['I\'ll eat as many breakfasts as I please.'] }, { if: { stage: 'child' }, text: ['I had SIX. Mom doesn\'t know about two of them.'] }]);
   lines('how.more', [{ text: ['...It\'s just nice to be asked, that\'s all.', 'You\'re a patient one. Most people don\'t wait.'] }, { if: { temper: 'shy' }, text: ['...Nobody usually waits for the rest.'] }]);
   lines('how.set', [{ text: ['Honestly? {WishText}. Daft, isn\'t it?', 'If I\'m honest... {wishText}.'] }, { text: ['I don\'t know. Something to look forward to.'] }]);
   lines('how.comforted', [{ text: ['...Thank you. That helps, a bit.', 'You\'re kind. Kinder than a wizard needs to be.'] }, { if: { temper: 'ornery' }, text: ['Yes, well. Hmph. ...Thank you.'] }]);
@@ -213,7 +213,7 @@ talkPack('core', () => {
   lines('news.start', [{ text: ['Nothing you won\'t have heard.', 'Quiet as a mouse this week.'] }, { if: { newsText: (n) => !!n }, text: ['Did you hear? {NewsText}!', 'Well! {NewsText}.', 'You\'ll never guess. {NewsText}.'] }]);
   lines('news.opinion', [{ text: ['Good luck to them, I say.', 'About time, if you ask me.', 'Not my business. ...But I have opinions.'] }, { if: { temper: 'ornery' }, text: ['Nonsense, the lot of it.'] }, { if: { temper: 'cheerful' }, text: ['Isn\'t it lovely? I love a bit of news.'] }]);
   lines('news.more', [{ text: ['That\'s all I know! Ask at the Badger.', 'I\'ve told you everything. Nearly.'] }, { if: { temper: 'witty' }, text: ['I could make some more up, if you like.'] }]);
-  lines('news.who', [{ text: ['The innkeeper hears everything. Everything.', 'Ask the postie. She reads the backs of letters.'] }]);
+  lines('news.who', [{ text: ['The innkeeper hears everything. Everything.', 'Ask the mail carrier. She reads the backs of letters.'] }]);
 
   // --- Their evenings (the thread from the research report) ---------------------------
   addThread({
@@ -237,7 +237,7 @@ talkPack('core', () => {
       secret: { line: 'evenings.secret', fx: { confide: { k: 'evenings.project', t: '{Name} is making {madeMany} for everyone on the lane, for Yule', secret: true } }, go: [
         { ap: 'jest', say: 'Am I in it?', to: 'bishop' }, { ap: 'warm', say: 'Your secret\'s safe with me.', to: 'safe' },
       ] },
-      bishop: { line: 'evenings.bishop', fx: { joke: { k: 'bishop', t: 'You\'re the bishop. It\'s the hat.' }, fond: 0.02 }, go: [{ ap: 'warm', say: 'I\'m honoured. Truly.', to: 'end' }, { ap: 'jest', say: 'Bishops move diagonally, you know. Very wizardly.', to: 'end' }] },
+      bishop: { line: 'evenings.bishop', fx: { joke: { k: 'bishop', t: 'You\'re the bishop. It\'s the hat.' }, fond: 0.02 }, go: [{ ap: 'warm', say: 'I\'m honored. Truly.', to: 'end' }, { ap: 'jest', say: 'Bishops move diagonally, you know. Very wizardly.', to: 'end' }] },
       safe: { line: 'evenings.safe', fx: { trust: 0.05, promise: { k: 'secret.evenings', t: 'You promised to keep the Yule secret', days: 30 } }, end: true },
       show: { line: 'evenings.show', end: true },
       taught: { line: 'evenings.taught', end: true },
@@ -255,7 +255,7 @@ talkPack('core', () => {
     { if: { pastime: 'carving', temper: 'shy' }, text: ['...I carve little animals. They\'re not very good.'] },
     { if: { pastime: 'knitting' }, text: ['Knitting. Everyone on the lane is getting a scarf, whether they like it or not.'] },
     { if: { pastime: 'knitting', season: 'winter', made: { min: 2 } }, text: ['Knitting, by the fire. I\'ve done {made}. Nobody\'s cold on my watch.'] },
-    { if: { pastime: 'birdwatching' }, text: ['I watch the birds settle. The heron\'s my favourite.'] },
+    { if: { pastime: 'birdwatching' }, text: ['I watch the birds settle. The heron\'s my favorite.'] },
     { if: { pastime: 'painting' }, text: ['I paint. Badly, but with feeling.'] },
     { if: { pastime: 'pottery' }, text: ['I throw pots. Mostly at the wheel. Sometimes across the room.'] },
     { if: { pastime: 'basketry' }, text: ['Baskets! I weave baskets. We have a great many baskets.'] },
@@ -270,7 +270,7 @@ talkPack('core', () => {
   lines('evenings.secret', [{ text: ['...Don\'t laugh. I\'m making one for everyone on the lane. For Yule. I\'ve done eleven.'] }, { if: { temper: 'shy' }, text: ['...Can you keep a secret? I\'m making one for everyone. For Yule. Don\'t tell.'] }]);
   lines('evenings.bishop', [{ text: ['You\'re the bishop. Don\'t ask me why. It\'s the hat.'] }]);
   lines('evenings.safe', [{ text: ['Thank you. And if you see anyone, don\'t say a word.', 'I knew I could tell you.'] }]);
-  lines('evenings.show', [{ text: ['Maybe. If you\'re good.', 'Come by some evening. Bring biscuits.'] }]);
+  lines('evenings.show', [{ text: ['Maybe. If you\'re good.', 'Come by some evening. Bring cookies.'] }]);
   lines('evenings.taught', [{ text: ['Nobody. I taught myself, badly, and then less badly.', 'My {parent}. Patient as stone.'] }]);
   lines('evenings.swap', [{ text: ['Walking sticks! That\'s cheating, that is. It\'s just a stick.', 'Ha! I\'ve seen your staff. I wondered.'] }]);
 

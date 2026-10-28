@@ -40,7 +40,7 @@ talkPack('children2', () => {
         { ap: 'advise', say: 'Then keep it somewhere safe. You\'ll need it one day.', to: 'keep', fx: { respect: 0.02 } },
         { ap: 'warm', say: 'That\'s the best reason there is.', to: 'end' },
       ] },
-      keep: { line: 'child.story.keep', fx: { remember: 'The wizard says to keep my favourite story somewhere safe.' }, end: true },
+      keep: { line: 'child.story.keep', fx: { remember: 'The wizard says to keep my favorite story somewhere safe.' }, end: true },
       there: { line: 'child.story.there', go: [
         { ap: 'jest', say: 'I was. I held everyone\'s coats.', to: 'coats' },
         { ap: 'share', say: 'I was. And I was frightened the whole time.', to: 'scared', need: { open: 1 }, soft: true },
@@ -60,7 +60,7 @@ talkPack('children2', () => {
       praise: { line: 'child.story.praise', end: true },
       voices: { line: 'child.story.voices', fx: { fond: 0.02 }, end: true },
       wiztale: { line: 'child.story.wiztale', go: [
-        { ap: 'tale', say: 'Beyond the hills are mountains, and beyond them more, and then the Sea, grey and endless.', label: 'A tale of the wide world', to: 'world', fx: { lean: 'rift' } },
+        { ap: 'tale', say: 'Beyond the hills are mountains, and beyond them more, and then the Sea, gray and endless.', label: 'A tale of the wide world', to: 'world', fx: { lean: 'rift' } },
         { ap: 'tale', say: 'There was once a hobbit who went all the way round the world, only to find his own door the finest.', label: 'A tale of coming home', to: 'home', fx: { lean: 'hill' } },
         { ap: 'tale', say: 'There\'s a city past the rifts where the lamps never go out, and a kind old engine tends them all.', label: 'A tale of Neverdark', to: 'neverdark', need: { if: { childRiftStage: { min: 2 } } }, fx: { lean: 'rift' } },
       ] },
@@ -113,7 +113,7 @@ talkPack('children2', () => {
   ]);
   lines('child.story.there', [
     { text: ['You were THERE?', 'You were NOT.', 'Were you really? What did you do?'] },
-    { if: { childTemper: 'ornery' }, text: ['Prove it. What colour was the dragon?'] },
+    { if: { childTemper: 'ornery' }, text: ['Prove it. What color was the dragon?'] },
   ]);
   lines('child.story.coats', [
     { text: ['The COATS? That\'s all you did?', 'Ha! The coat-holder! That\'s not in the story!', 'Somebody has to hold the coats, I suppose.'] },
@@ -130,7 +130,7 @@ talkPack('children2', () => {
     { text: ['Ha! It was like a pig with a cold.', 'It went GRRRK-phew. GRRRK-phew. Like that.', 'Snores are better than stories, sometimes.'] },
   ]);
   lines('child.story.teller', [
-    { text: ['Nice. Strict about letters. Not strict about biscuits.', 'Good! Except when they do the same story twice.', 'They make the voices. The troll voice is the best.'] },
+    { text: ['Nice. Strict about letters. Not strict about cookies.', 'Good! Except when they do the same story twice.', 'They make the voices. The troll voice is the best.'] },
     { if: { childTemper: 'ornery' }, text: ['Bossy. But fair. Mostly bossy.'] },
     { if: { childTemper: 'shy' }, text: ['Kind. They let me sit near and not answer.'] },
   ]);
@@ -197,7 +197,7 @@ talkPack('children2', () => {
       promise: { line: 'child.letters.promise', fx: { fond: 0.03, promise: { k: 'child.book', t: 'You said you\'d bring {name} a book from the road', days: 10 } }, end: true },
       sums: { line: 'child.letters.sums', go: [
         { ap: 'jest', say: 'If you have seven apples and I eat three...', to: 'apples' },
-        { ap: 'advise', say: 'The rift-folk count with only ones and noughts. With acorns.', to: 'binary', need: { if: { childRiftFolk: true } }, fx: { lean: 'rift' } },
+        { ap: 'advise', say: 'The rift-folk count with only ones and zeros. With acorns.', to: 'binary', need: { if: { childRiftFolk: true } }, fx: { lean: 'rift' } },
         { ap: 'warm', say: 'Sums are only stories about how many.', to: 'many', fx: { lean: 'hill' } },
       ] },
       apples: { line: 'child.letters.apples', fx: { fond: 0.02 }, end: true },
@@ -271,11 +271,11 @@ talkPack('children2', () => {
     { text: ['FOUR. And you\'d have a tummy ache.', 'Why are YOU eating my apples?', 'Four. Unless you eat the cores. Do wizards eat the cores?'] },
   ]);
   lines('child.letters.binary', [
-    { text: ['Acorns? Like this? One acorn, no acorn...', 'Only ones and noughts? How do they say seven?', 'That\'s silly. ...Show me. No, I\'ll ask them.'] },
+    { text: ['Acorns? Like this? One acorn, no acorn...', 'Only ones and zeros? How do they say seven?', 'That\'s silly. ...Show me. No, I\'ll ask them.'] },
     { if: { riftWays: true }, text: ['I know! One-one-one is seven! I can do it with pebbles too!'] },
   ]);
   lines('child.letters.many', [
-    { text: ['Stories about how many. Huh. I like that.', 'So adding is a happy story and taking away is sad.', 'How many puddings. That\'s my favourite story.'] },
+    { text: ['Stories about how many. Huh. I like that.', 'So adding is a happy story and taking away is sad.', 'How many puddings. That\'s my favorite story.'] },
   ]);
 
   // =====================================================================================
@@ -336,7 +336,7 @@ talkPack('children2', () => {
   ]);
   lines('child.treasure.start', [
     { text: ['Lots. A stone, a string, a feather, a button, a stone that\'s different, and a bit of cake.', 'Nothing! ...Some things. Treasures.', 'Don\'t look. It\'s private. ...You can look a bit.'] },
-    { if: { pastime: 'collecting', made: { min: 2 }, madeMany: has }, text: ['I\'ve got {made} {madeMany} at home. These are just the travelling ones.', 'Only the best ones. {Made} {madeMany} so far. I keep a list.'] },
+    { if: { pastime: 'collecting', made: { min: 2 }, madeMany: has }, text: ['I\'ve got {made} {madeMany} at home. These are just the traveling ones.', 'Only the best ones. {Made} {madeMany} so far. I keep a list.'] },
     { if: { season: 'autumn' }, text: ['Conkers. Fourteen. And an acorn with a hat on.', 'Conkers, a crab apple and a leaf shaped like a hand.'] },
     { if: { season: 'spring' }, text: ['A bird\'s egg. Blue. It was already broken. I didn\'t take it.', 'A snail shell with nobody in it. I checked.'] },
     { if: { season: 'summer' }, text: ['A pebble from the river that\'s see-through if you lick it.', 'Feathers. A jay one. It\'s got blue in.'] },
@@ -542,7 +542,7 @@ talkPack('children2', () => {
     { if: { rift: true }, text: ['No wires. No battery. Where\'s the power coming from?'] },
   ]);
   lines('child.magic.ration', [
-    { text: ['Like CAKE? That\'s the worst rule.', 'Who rations it? Is there a wizard mum?', 'I\'d never ration cake. Or magic.'] },
+    { text: ['Like CAKE? That\'s the worst rule.', 'Who rations it? Is there a wizard mom?', 'I\'d never ration cake. Or magic.'] },
   ]);
   lines('child.magic.what', [
     { text: ['Make every day a party. With the good cake.', 'Make it summer forever. And never have bedtime.', 'Fly. Over the hill, and over the next hill, and the next.'] },
@@ -645,7 +645,7 @@ talkPack('children2', () => {
     { if: { childRiddle: 'candle' }, pri: 5, text: ['You take it to bed. Not IN bed.', 'It\'s got a wick.'] },
   ]);
   lines('child.pass.riddle.turnip', [
-    { text: ['A TURNIP? No! Why would it be a turnip?', 'It\'s never a turnip. Nothing\'s ever a turnip.', 'Ha! Turnip! You\'re rubbish!'] },
+    { text: ['A TURNIP? No! Why would it be a turnip?', 'It\'s never a turnip. Nothing\'s ever a turnip.', 'Ha! Turnip! You\'re hopeless!'] },
   ]);
   lines('child.pass.riddle.answer', [
     { text: ['An egg! Obviously!'] },
@@ -774,7 +774,7 @@ talkPack('children2', () => {
     { if: { band: 'youth' }, text: ['I\'m going to see it. I\'ve decided. Don\'t tell anyone yet.'] },
   ]);
   lines('child.story.home', [
-    { if: { childTemper: 'shy' }, text: ['...That\'s my favourite kind. Thank you.'] },
+    { if: { childTemper: 'shy' }, text: ['...That\'s my favorite kind. Thank you.'] },
     { if: { childTemper: 'gloomy' }, text: ['I\'m glad he got home. Not everyone does, in stories.'] },
     { if: { band: 'youth' }, text: ['Bit soppy. ...I liked it.'] },
   ]);
@@ -791,7 +791,7 @@ talkPack('children2', () => {
   lines('child.letters.sums', [
     { if: { childTemper: 'curious' }, text: ['I counted the stars. I got to two hundred and then there were more. How many are there?'] },
     { if: { childTemper: 'shy' }, text: ['I\'m good at sums. Nobody knows. I do them in my head at supper.'] },
-    { if: { riftWays: true }, text: ['I can do sums with ones and noughts. The rift-folk taught me. It\'s faster. And weirder.'] },
+    { if: { riftWays: true }, text: ['I can do sums with ones and zeros. The rift-folk taught me. It\'s faster. And weirder.'] },
   ]);
   lines('child.letters.apples', [
     { if: { childTemper: 'ornery' }, text: ['None. Because they\'re MY apples and you\'re not having any.'] },
@@ -814,7 +814,7 @@ talkPack('children2', () => {
     { if: { childTemper: 'cheerful' }, text: ['ALL of them! But this one! No, this one!'] },
   ]);
   lines('child.treasure.see', [
-    { if: { childTween: true }, pri: 1, text: ['*sets out a stone worn smooth, a ribbon gone grey, and a key to nothing*'] },
+    { if: { childTween: true }, pri: 1, text: ['*sets out a stone worn smooth, a ribbon gone gray, and a key to nothing*'] },
     { if: { childTemper: 'shy' }, text: ['*opens one hand: a single blue bead*'] },
   ]);
   lines('child.treasure.hoard', [
@@ -997,7 +997,7 @@ talkPack('children2', () => {
   ]);
   lines('child.fest.fireworks', [
     { text: ['THE DRAGON! Do the dragon!', 'A firework or two? Or ten. Ten\'s nicer.', 'Fireworks! Can I light one? I won\'t burn anything. Much.'] },
-    { if: { childTemper: 'shy' }, text: ['...Could they be quiet ones? The bangs make me jump. I like the colours.'] },
+    { if: { childTemper: 'shy' }, text: ['...Could they be quiet ones? The bangs make me jump. I like the colors.'] },
     { if: { childTemper: 'ornery' }, text: ['Only two? You\'re a wizard. Bring a cartload.'] },
   ]);
   lines('child.fest.promise', [
@@ -1120,7 +1120,7 @@ talkPack('children2', () => {
   lines('child.pass.weather.start', [
     { text: ['It\'s all right. It\'s weather.', 'I like it! I like all weather. Except the boring kind.', 'It\'s the best day! Well. It\'s a day.'] },
     { if: { weather: 'rain' }, text: ['I\'ve jumped in every puddle in the lane. Some twice. My boots are full.', 'Rain\'s the best! You can make rivers in the mud. Dams! Whole lakes!'] },
-    { if: { weather: 'snow' }, text: ['I made a snow-hobbit! It\'s got a carrot nose and a pipe. It looks like Grandad.', 'SNOW! I\'ve eaten loads. Is that bad? It tastes of nothing.'] },
+    { if: { weather: 'snow' }, text: ['I made a snow-hobbit! It\'s got a carrot nose and a pipe. It looks like Granddad.', 'SNOW! I\'ve eaten loads. Is that bad? It tastes of nothing.'] },
     { if: { season: 'summer', weather: 'fair' }, text: ['It\'s so hot! I\'ve been in the river all morning! I\'ve gone wrinkly!'] },
     { if: { season: 'autumn', weather: 'fair' }, text: ['I\'ve made a leaf pile as big as me! Then I jumped in it! Then I lost a boot!'] },
     { if: { season: 'spring', weather: 'fair' }, text: ['There are lambs! In the far field! They BOUNCE!'] },
@@ -1233,7 +1233,7 @@ talkPack('children2', () => {
     { if: { rift: true }, text: ['I fix things. The lamp, the clock, the kettle. Hill-folk just put up with things being broken.'] },
   ]);
   lines('child.helping.worst', [
-    { if: { childTemper: 'shy' }, text: ['Taking things to the neighbours. You have to knock. And then TALK.'] },
+    { if: { childTemper: 'shy' }, text: ['Taking things to the neighbors. You have to knock. And then TALK.'] },
     { if: { childTemper: 'ornery' }, text: ['All of them. Every single one. Especially the ones I\'m doing right now.'] },
   ]);
   lines('child.pass.weather.start', [

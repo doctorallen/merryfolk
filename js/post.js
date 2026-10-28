@@ -1,12 +1,12 @@
 'use strict';
 // ---------------------------------------------------------------------------
-// Letters and the post. Hobbits are great letter-writers, even to someone two
+// Letters and the mail. Hobbits are great letter-writers, even to someone two
 // doors down. Folk sit down at home and write: a thank-you after a birthday
 // present, an invitation to tea, news for a friend they haven't seen in a
 // while. Adventurers away on the road write home. Every letter goes into the
-// mailbag at the Common Store and the postie takes them round, door by door,
+// mailbag at the Common Store and the mail carrier takes them round, door by door,
 // oldest first. A letter through the door is a little lift for a day; while a
-// village has no postie yet, neighbours pass the letters on, a day late.
+// village has no mail carrier yet, neighbors pass the letters on, a day late.
 // ---------------------------------------------------------------------------
 
 const LETTER_LINES = {
@@ -34,7 +34,7 @@ function deliverLetters(home, by) {
     const f = Game.villagers.find((o) => o.id === l.from);
     if (f) r.bond(f, 0.05);
     r.stats.letters = (r.stats.letters || 0) + 1;
-    if (l.kind === 'away' && R.chance(0.5)) chronicle(`${by ? by.first + ' the postie' : 'A neighbour'} brought ${r.first} a letter from ${l.fromName}, away adventuring: "${l.text}"`, 'letter');
+    if (l.kind === 'away' && R.chance(0.5)) chronicle(`${by ? by.first + ' the mail carrier' : 'A neighbor'} brought ${r.first} a letter from ${l.fromName}, away adventuring: "${l.text}"`, 'letter');
     devLog('story', `${r.first} got a letter from ${l.fromName}: "${l.text}"`);
   }
   return ls.length;
@@ -65,9 +65,9 @@ ACTIONS.write_letter = {
 ACTION_NAMES.write_letter = 'Writing letters';
 HABIT_KEYS.push('write_letter');
 
-// The postie's round: the oldest letter's door first.
+// The mail carrier's round: the oldest letter's door first.
 Object.assign(ACTIONS.work_post, {
-  label: 'Delivering the post',
+  label: 'Delivering the mail',
   avail: () => mailbag().some((l) => World.homes[l.home] && World.homes[l.home].mailbox),
   extra: () => 0.2 + Math.min(0.4, mailbag().length * 0.03),
   target: (v) => {
@@ -76,7 +76,7 @@ Object.assign(ACTIONS.work_post, {
     const h = World.homes[l.home];
     return { x: h.mailbox.x + 6, y: h.mailbox.y + 2, facing: 'left', mail: h };
   },
-  done: (v, task) => { const n = deliverLetters(task.target.mail, v); if (n && R.chance(0.3)) v.say(n > 1 ? `Post! ${n} for you today.` : 'Post!', 2); },
+  done: (v, task) => { const n = deliverLetters(task.target.mail, v); if (n && R.chance(0.3)) v.say(n > 1 ? `Mail! ${n} for you today.` : 'Mail!', 2); },
 });
 
 // A birthday present wants a thank-you letter.
@@ -94,7 +94,7 @@ function postDaily() {
     const kin = Game.villagers.filter((o) => (a.data.parents && a.data.parents.includes(o.id)) || o.parents.includes(a.data.id) || a.data.spouse === o.id || (o.rel[a.data.id] || 0) > 0.5);
     if (kin.length && R.chance(0.5)) postLetter({ id: a.data.id, first: a.data.first }, R.pick(kin), 'away');
   }
-  // with nobody on the round, a neighbour passes letters on after a day
+  // with nobody on the round, a neighbor passes letters on after a day
   if (!Game.villagers.some((v) => v.job === 'postie' && !v.leaving)) {
     for (const h of World.homes) if (lettersFor(h).some((l) => Game.day - l.day >= 1)) deliverLetters(h, null);
   }

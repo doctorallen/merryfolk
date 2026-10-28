@@ -20,10 +20,10 @@ talkPack('moods', () => {
   // --- facts ------------------------------------------------------------------
   const sexed = (a, f, m, n) => (!a || !a.genes ? n : a.genes.sex === 'f' ? f : m);
   const kinWord = (v, a) => {
-    if (v.parents.includes(a.id)) return sexed(a, 'mum', 'dad', 'mum');
+    if (v.parents.includes(a.id)) return sexed(a, 'mom', 'dad', 'mom');
     if (v.spouse === a.id || a.spouse === v.id) return sexed(a, 'wife', 'husband', 'wife');
     if (a.parents && a.parents.includes(v.id)) return sexed(a, 'daughter', 'son', 'son');
-    if (v.parents.some((p) => { const pp = person(p); return pp && pp.parents && pp.parents.includes(a.id); })) return sexed(a, 'gran', 'grandad', 'gran');
+    if (v.parents.some((p) => { const pp = person(p); return pp && pp.parents && pp.parents.includes(a.id); })) return sexed(a, 'gran', 'granddad', 'gran');
     if (v.parents.length && a.parents && a.parents.some((p) => v.parents.includes(p))) return sexed(a, 'sister', 'brother', 'brother');
     return 'friend';
   };
@@ -189,7 +189,7 @@ talkPack('moods', () => {
   L('cross.grudging', ['...Hm. It is a bit, isn\'t it.'], { ornery: ['Hmph. ...Bonnet. Hmph.'], witty: ['That\'s nearly funny. Don\'t let it go to your head.'], child: ['...A bit funny.'] });
   L('cross.laughs', ['Ha! ...Oh, don\'t. I\'m meant to be cross.'], { ornery: ['Ha! Stop it. I\'m cross. I\'m very... ha.'], witty: ['Ha! Fine. You win this one.'], gloomy: ['Ha. ...Ha. I\'d forgotten I could do that.'], child: ['AHAHA! Do it again!'] });
   L('cross.think', ['Maybe. Let me sleep on it.'], { ornery: ['I said I\'ll think about it. Thinking is not agreeing.'], proud: ['I shall give it due consideration.'] });
-  L('cross.goes', ['All right. All right! I\'ll go. Stop looking at me like that.'], { ornery: ['Fine. I\'ll go. But I\'m not saying sorry. I\'m saying... something else.'], shy: ['...Will you watch? From a distance? ...All right.'], proud: ['I shall go, and be gracious about it. Very gracious.'], child: ['FINE. I\'ll go and say sorry. Then can I have a biscuit?'] });
+  L('cross.goes', ['All right. All right! I\'ll go. Stop looking at me like that.'], { ornery: ['Fine. I\'ll go. But I\'m not saying sorry. I\'m saying... something else.'], shy: ['...Will you watch? From a distance? ...All right.'], proud: ['I shall go, and be gracious about it. Very gracious.'], child: ['FINE. I\'ll go and say sorry. Then can I have a cookie?'] });
   L('cross.fuss', ['I don\'t need fussing.'], { ornery: ['Hands off. I\'m not a lost lamb.'], proud: ['I\'m quite capable of being cross on my own, thank you.'] });
   L('cross.pat', ['...Hm. That\'s... all right, then.'], { shy: ['...Oh. Thank you.'], gloomy: ['...That helps, a bit. Don\'t tell anyone.'] });
   L('cross.thanks', ['I\'ll be all right. It was just... a lot.'], { cheerful: ['There. Cross over. Thank you, wizard.'], gloomy: ['You\'re kind. I\'d not been expecting kind.'] });
@@ -197,7 +197,7 @@ talkPack('moods', () => {
     ornery: ['Good. Off you go. ...Thanks.', 'Hmph. You\'re less annoying than most.'], shy: ['...Thank you. Really.'], proud: ['I appreciate your discretion, wizard.'], child: ['Okay. Bye. ...Sorry I was grumpy.'], cheerful: ['Bless you. I\'ll be my old self by supper.'],
   });
   L('mood.cross.sorry', ['...Apology accepted. Mostly.', 'Well. That\'s handsome of you.'], { ornery: ['Hmph. A wizard saying sorry. I\'ll tell my grandchildren.'], proud: ['Accepted. Graciously.'], child: ['S\'okay.'] });
-  L('mood.cross.stopping', ['Saying sorry first. I can\'t. It sticks in my throat like a fishbone.'], { ornery: ['Me, go crawling? After what was said? I\'d sooner eat my hat.'], proud: ['One does not apologise first. One has standards.'], shy: ['...I wouldn\'t know what to say. I\'d go red. I\'m going red now.'] });
+  L('mood.cross.stopping', ['Saying sorry first. I can\'t. It sticks in my throat like a fishbone.'], { ornery: ['Me, go crawling? After what was said? I\'d sooner eat my hat.'], proud: ['One does not apologize first. One has standards.'], shy: ['...I wouldn\'t know what to say. I\'d go red. I\'m going red now.'] });
   L('mood.cross.cold', ['Don\'t be nice at me. I\'m not in the mood for nice.'], { ornery: ['Save it. Sweet words won\'t mend this.'], proud: ['I don\'t need cheering, thank you.'], gloomy: ['Easy to say.'] });
   L('mood.cross.warmed', ['...You\'re a good sort, wizard. All right. Since you\'re on my side.', 'Oh, don\'t be kind, I\'ll cry, and then I\'ll be cross AND soggy.'], { ornery: ['Hmph. Well. At least someone is.'], cheerful: ['Oh, that\'s nice to hear. Today of all days.'], child: ['You\'re on MY side? Really?'] });
   L('mood.cross.notyou', ['This isn\'t about you, wizard. For once.', 'I don\'t want your stories. I want to be cross.'], { ornery: ['I don\'t care about your dwarf.'], proud: ['How fascinating. Now, about MY day.'] });
@@ -316,7 +316,7 @@ talkPack('moods', () => {
   ]);
   lines('sit.grief.ask', [
     { text: ['Tell me about {moodGrief}.', 'What was {moodGrief} like, {name}?'] },
-    { if: { moodGriefRel: ['mum', 'dad', 'gran', 'grandad', 'wife', 'husband', 'brother', 'sister'] }, text: ['Your {moodGriefRel}. Tell me about {moodGoneThem}.'] },
+    { if: { moodGriefRel: ['mom', 'dad', 'gran', 'granddad', 'wife', 'husband', 'brother', 'sister'] }, text: ['Your {moodGriefRel}. Tell me about {moodGoneThem}.'] },
     { if: { moodGriefKnew: true }, text: ['I knew {moodGrief} a little. Will you tell me the rest?'] },
   ]);
   lines('sit.grief.comfort', [
@@ -336,7 +336,7 @@ talkPack('moods', () => {
     { if: { moodGriefKnew: true }, text: ['{MoodGrief} still owes me a game of conkers. I shall expect it in the next world.'] },
   ]);
 
-  L('mood.grief.w.like', ['What was {moodGrief} like?', 'Tell me about {moodGrief}. The ordinary things.'], {}, [{ if: { moodGriefRel: ['mum', 'dad', 'gran', 'grandad'] }, text: ['What was {moodGoneThey} like, your {moodGriefRel}?'] }]);
+  L('mood.grief.w.like', ['What was {moodGrief} like?', 'Tell me about {moodGrief}. The ordinary things.'], {}, [{ if: { moodGriefRel: ['mom', 'dad', 'gran', 'granddad'] }, text: ['What was {moodGoneThey} like, your {moodGriefRel}?'] }]);
   L('mood.grief.w.would', ['What would {moodGrief} say, if {moodGoneThey} saw you now?', 'If {moodGrief} were here, what would {moodGoneThey} tell you?']);
   L('mood.grief.w.stone', ['Go up to the Green. Sit by {moodGoneTheir} stone. Tell {moodGoneThem} the news.', 'Have you been up to the stone yet? It helps, they say.']);
   L('mood.grief.w.trouble', ['{MoodGoneThey} sounds like trouble.', 'I like the sound of {moodGoneThem}. A rascal.']);
@@ -350,7 +350,7 @@ talkPack('moods', () => {
     cheerful: ['...Sorry. I keep thinking I\'ll be fine and then I\'m not.', 'I\'m usually the one who talks. Funny, that.'],
     dreamy: ['...Do you think {moodGrief} can see the same clouds?', '...I keep watching the road. Silly. {MoodGoneThey}\'s not coming back down it.'],
     proud: ['...I am perfectly all right. I just wanted some air.'], witty: ['...I\'ve nothing clever to say. First time for everything.'],
-    child: ['...Is {moodGrief} coming back? Mum says no. You\'re a wizard. Is {moodGoneThey}?', '*sniffs, very hard, and wipes their nose on a sleeve*'],
+    child: ['...Is {moodGrief} coming back? Mom says no. You\'re a wizard. Is {moodGoneThey}?', '*sniffs, very hard, and wipes their nose on a sleeve*'],
     elder: ['...We came up the lane together, {moodGrief} and me. Now there\'s only me to walk it.', '*taps their pipe out on the wall, slowly*'],
   }, [{ if: { moodGriefFresh: false }, text: ['...It gets easier. That\'s what\'s hard, in a way. Easier means further away.'] }]);
 
@@ -359,15 +359,15 @@ talkPack('moods', () => {
     shy: ['{MoodGrief} always knew when I didn\'t want to talk. {MoodGoneThey}\'d just pass the jam.', '...{MoodGoneThey} used to hum. All day. I never told {moodGoneThem} I liked it.'],
     cheerful: ['Oh, {moodGrief} was a scream. Laughed at everything. Even the bad things. Especially those.', '{MoodGrief} made the best of every day. I\'m trying. It\'s harder without {moodGoneThem}.'],
     gloomy: ['{MoodGrief} was the cheerful one. Now there\'s no cheerful one.', 'I\'ll never hear {moodGoneThem} say my name again. That\'s the bit I can\'t get past.'],
-    dreamy: ['{MoodGrief} used to say the hills went on for ever. Now {moodGoneThey}\'ll find out.', 'I dreamt of {moodGoneThem} last night. {MoodGoneThey} was laughing at something I couldn\'t see.'],
+    dreamy: ['{MoodGrief} used to say the hills went on for ever. Now {moodGoneThey}\'ll find out.', 'I dreamed of {moodGoneThem} last night. {MoodGoneThey} was laughing at something I couldn\'t see.'],
     proud: ['{MoodGrief} was the finest hobbit in this valley, and I will hear no argument.', 'I learned everything worth knowing from {moodGrief}. Everything.'],
-    witty: ['{MoodGrief} had a saying for everything. Most of them rude. All of them right.', '{MoodGoneThey} once told the Steward his hat looked like a tea cosy. To his face. I miss that.'],
+    witty: ['{MoodGrief} had a saying for everything. Most of them rude. All of them right.', '{MoodGoneThey} once told the Steward his hat looked like a tea cozy. To his face. I miss that.'],
     curious: ['{MoodGrief} knew the name of every bird. I\'m trying to learn them, now. I keep getting the finches wrong.', 'Do you think {moodGoneThey} took the long road or the short one? {MoodGoneThey} always took the long one.'],
     child: ['{MoodGrief} let me have the crust. Nobody else lets me have the crust.', '{MoodGoneThey} told the best stories. With voices. Nobody does the voices now.'],
     elder: ['We were children together, {moodGrief} and me. Stole apples from the same tree.', 'I\'ll be going that way myself, one of these days. I hope {moodGoneThey} keeps the kettle on.'],
   }, [
-    { if: { moodGriefRel: ['mum', 'dad'] }, text: ['My {moodGriefRel} used to wake me with a song. The house is so quiet in the mornings now.', 'I keep turning to ask my {moodGriefRel} things. How long to boil an egg. Silly things.'] },
-    { if: { moodGriefRel: ['gran', 'grandad'] }, text: ['My {moodGriefRel} always had a toffee in one pocket. Always. I checked.', '{MoodGrief} taught me to whistle. I can\'t, very well. But {moodGoneThey} taught me.'] },
+    { if: { moodGriefRel: ['mom', 'dad'] }, text: ['My {moodGriefRel} used to wake me with a song. The house is so quiet in the mornings now.', 'I keep turning to ask my {moodGriefRel} things. How long to boil an egg. Silly things.'] },
+    { if: { moodGriefRel: ['gran', 'granddad'] }, text: ['My {moodGriefRel} always had a toffee in one pocket. Always. I checked.', '{MoodGrief} taught me to whistle. I can\'t, very well. But {moodGoneThey} taught me.'] },
     { if: { moodGriefRel: ['wife', 'husband'] }, pri: 1, text: ['Forty years I made two cups of tea in the morning. I still do. Then I drink them both.', 'The bed\'s too big. Isn\'t that a silly thing to say? It\'s too big.'] },
     { if: { moodGriefRel: ['brother', 'sister'] }, text: ['We fought like cats, {moodGrief} and me. Every day. I\'d give anything for one more fight.'] },
     { if: { moodGriefJob: has }, text: ['Nobody\'s been a {moodGriefJob} like {moodGrief}. I walk past and expect to see {moodGoneThem} at it.'] },
@@ -416,10 +416,10 @@ talkPack('moods', () => {
   });
   L('mood.grief.kindred', ['...I talk to {moodGoneThem} too. Out loud. I thought I was going daft.', '...So it\'s not daft. Talking to them. Good. Because I do. Every night.'], {
     shy: ['...I\'ve never told anyone. I tell {moodGoneThem} about my day. Every evening.'], ornery: ['...I give {moodGoneThem} a piece of my mind, most nights. Some habits don\'t stop.'],
-    child: ['I tell {moodGrief} things in bed. Mum thinks I\'m saying prayers.'], elder: ['At my age half your friends are on the other side of the hills. You learn to talk to them.'],
+    child: ['I tell {moodGrief} things in bed. Mom thinks I\'m saying prayers.'], elder: ['At my age half your friends are on the other side of the hills. You learn to talk to them.'],
   });
   L('mood.grief.missmost', ['The little things. The way {moodGoneThey} said good morning. Like it was news.', 'Being told off. Isn\'t that daft? I miss being told off.'], {
-    cheerful: ['The laughing. The whole house used to rattle with it.'], gloomy: ['Being somebody\'s favourite. I was {moodGoneTheir} favourite. Now I\'m nobody\'s.'], dreamy: ['The way {moodGoneThey} looked at the evening. As if it were a present.'],
+    cheerful: ['The laughing. The whole house used to rattle with it.'], gloomy: ['Being somebody\'s favorite. I was {moodGoneTheir} favorite. Now I\'m nobody\'s.'], dreamy: ['The way {moodGoneThey} looked at the evening. As if it were a present.'],
     child: ['The stories. And the crusts. And being picked up.'], proud: ['Being argued with by someone who knew what they were talking about.'], ornery: ['Someone to grumble at who grumbled back.'],
   });
   L('mood.grief.wouldsay', ['{MoodGoneThey}\'d say: stop moping and put the kettle on. ...So I suppose I will.', '{MoodGoneThey}\'d tell me to eat something. {MoodGoneThey} always said that. Eat something.'], {
@@ -444,7 +444,7 @@ talkPack('moods', () => {
   // --- More ways of saying it (additive: rules only, no new fallbacks) ---------------------
   const A = (key, by, more) => lines(key, Object.keys(by || {}).map((k) => ({ if: COND[k] || { temper: k }, text: by[k] })).concat(more || []));
   const G = (rel, text, pri) => ({ if: { moodGriefRel: rel }, pri: pri || 1, text });
-  const PARENT = ['mum', 'dad'], GRAND = ['gran', 'grandad'], WED = ['wife', 'husband'], SIB = ['brother', 'sister'];
+  const PARENT = ['mom', 'dad'], GRAND = ['gran', 'granddad'], WED = ['wife', 'husband'], SIB = ['brother', 'sister'];
 
   // the wizard's side of grief
   A('mood.grief.w.like', { child: ['What was {moodGrief} like? Was {moodGoneThey} fun?'], elder: ['You knew {moodGrief} longer than anyone. What was {moodGoneThey} like, young?'] }, [G(WED, ['How did you two meet, you and {moodGrief}?']), G('friend', ['How did you and {moodGrief} come to be friends?'])]);
@@ -456,16 +456,16 @@ talkPack('moods', () => {
   lines('sit.grief.listen', [{ if: { weather: 'rain' }, text: ['*You stand with them in the rain, and say nothing at all.*'] }, { if: { hour: ['evening', 'night'] }, text: ['*You sit by them while the evening comes in, and say nothing.*'] }]);
   lines('sit.grief.ask', [{ if: { stage: 'child' }, text: ['Do you want to tell me about {moodGrief}?'] }, { if: { moodGriefFresh: false }, text: ['You\'ve been up to the Green. Tell me about {moodGrief}.'] }]);
   lines('sit.grief.comfort', [{ if: { stage: 'elder' }, text: ['Oh, my old friend. I heard. I\'m sorry.'] }, { if: { moodGriefRel: ['wife', 'husband'] }, text: ['I heard, {name}. All those years. I\'m so sorry.'] }]);
-  lines('sit.grief.warm', [{ if: { stage: 'child' }, text: ['{MoodGrief} loved you to bits, you know. Everyone could see.'] }, { if: { moodGriefRel: ['mum', 'dad'] }, text: ['Your {moodGriefRel} was so proud of you, {name}. Everyone knew it.'] }]);
-  lines('sit.grief.jest', [{ if: { moodGriefRel: ['gran', 'grandad'] }, text: ['I hear your {moodGriefRel} took the last of the good biscuits on the road. Sensible.'] }]);
+  lines('sit.grief.warm', [{ if: { stage: 'child' }, text: ['{MoodGrief} loved you to bits, you know. Everyone could see.'] }, { if: { moodGriefRel: ['mom', 'dad'] }, text: ['Your {moodGriefRel} was so proud of you, {name}. Everyone knew it.'] }]);
+  lines('sit.grief.jest', [{ if: { moodGriefRel: ['gran', 'granddad'] }, text: ['I hear your {moodGriefRel} took the last of the good cookies on the road. Sensible.'] }]);
 
   // what they say
-  A('mood.grief.quiet', { curious: ['...I keep wondering what\'s over the hills. Where {moodGoneThey} is walking now. Isn\'t that odd?'], plain: ['...Ta. For just standing. Folk talk too much at a time like this.'], fine: ['...One is grateful for silence. People do insist on saying things.'] }, [G(WED, ['...Forty years of company and then the house goes quiet. You\'re the first noise I\'ve wanted.'], 2), G(SIB, ['...{MoodGrief} always said I couldn\'t keep quiet for five minutes. Look at me now.'])]);
-  A('mood.grief.remembers', { plain: ['{MoodGrief} were a good sort. Never said much. Didn\'t need to.'], fine: ['{MoodGrief} had a way of making every room a little more civilised.'], rift: ['{MoodGrief} was the first hill-folk who didn\'t stare at me. Gave me an apple. Just like that.'] }, [{ if: { hour: 'morning' }, text: ['Mornings are the worst. {MoodGrief} always had the kettle on before I was up.'] }, { if: { hour: ['evening', 'night'] }, text: ['Evenings we\'d sit out and watch the bats. I sat out last night. Too many bats. Not enough {moodGrief}.'] }, { if: { season: 'autumn' }, text: ['{MoodGrief} loved the apple harvest. Ate more than {moodGoneThey} picked. Every year.'] }, { if: { season: 'summer' }, text: ['{MoodGrief} would be in the river by now, paddling, with {moodGoneTheir} trousers rolled up.'] }]);
+  A('mood.grief.quiet', { curious: ['...I keep wondering what\'s over the hills. Where {moodGoneThey} is walking now. Isn\'t that odd?'], plain: ['...Thanks. For just standing. Folk talk too much at a time like this.'], fine: ['...One is grateful for silence. People do insist on saying things.'] }, [G(WED, ['...Forty years of company and then the house goes quiet. You\'re the first noise I\'ve wanted.'], 2), G(SIB, ['...{MoodGrief} always said I couldn\'t keep quiet for five minutes. Look at me now.'])]);
+  A('mood.grief.remembers', { plain: ['{MoodGrief} were a good sort. Never said much. Didn\'t need to.'], fine: ['{MoodGrief} had a way of making every room a little more civilized.'], rift: ['{MoodGrief} was the first hill-folk who didn\'t stare at me. Gave me an apple. Just like that.'] }, [{ if: { hour: 'morning' }, text: ['Mornings are the worst. {MoodGrief} always had the kettle on before I was up.'] }, { if: { hour: ['evening', 'night'] }, text: ['Evenings we\'d sit out and watch the bats. I sat out last night. Too many bats. Not enough {moodGrief}.'] }, { if: { season: 'autumn' }, text: ['{MoodGrief} loved the apple harvest. Ate more than {moodGoneThey} picked. Every year.'] }, { if: { season: 'summer' }, text: ['{MoodGrief} would be in the river by now, paddling, with {moodGoneTheir} trousers rolled up.'] }]);
   A('mood.grief.story', { plain: ['One harvest {moodGrief} carried a whole sack up the hill on a bet. Won a pint. Couldn\'t lift the pint.'], fine: ['{MoodGrief} once recited the whole of the Lay of Leithian at a wedding. Nobody had asked.'], rift: ['When I first came through, {moodGrief} tried to plug my visor in to the mill. To charge it. Sweetest thing.'] }, [G(PARENT, ['When I was small my {moodGriefRel} made me a kite out of a tablecloth. It flew. The tablecloth was never the same.'], 2), G(GRAND, ['My {moodGriefRel} kept a toad in the garden called Sir Humphrey. Talked to it every morning. It never answered.'], 2), G(SIB, ['When we were little, {moodGrief} hid my boots in the hen house for a whole summer. I went barefoot. I loved it.'], 2)]);
   A('mood.grief.laughcry', { shy: ['*a laugh comes out, surprised, and then a sob right behind it*'], gloomy: ['Ha... oh. I didn\'t think I\'d laugh again. Not this week.'], proud: ['Ha! ...Excuse me. I am not crying. I am... laughing damply.'], elder: ['Ha! Rascal is right. Seventy years a rascal. Oh, dear. Oh, dear.'] });
   A('mood.grief.smile', { shy: ['*a very small smile, quickly hidden*'], gloomy: ['...Yes. {MoodGoneThey} would have.'], cheerful: ['Ha. ...Yes. Yes, {moodGoneThey} would. Thank you.'], elder: ['Heh. You\'ve the measure of {moodGoneThem}, wizard.'] });
-  A('mood.grief.aghast', { cheerful: ['...I can\'t laugh today, wizard. Not even for you.'], witty: ['That\'s not funny. And I\'d know.'], elder: ['I\'ve buried my sense of humour along with the rest, wizard. Leave it be.'] });
+  A('mood.grief.aghast', { cheerful: ['...I can\'t laugh today, wizard. Not even for you.'], witty: ['That\'s not funny. And I\'d know.'], elder: ['I\'ve buried my sense of humor along with the rest, wizard. Leave it be.'] });
   A('mood.grief.forgiven', { shy: ['...It\'s all right. Really.'], proud: ['Apology accepted. You meant no harm.'], gloomy: ['...Never mind. Nothing comes out right this week.'], elder: ['Bless you. At my age you learn folk mean well.'] });
   A('mood.grief.toosoon', { cheerful: ['Oh, I... can we not? Not yet. I\'ll cry, and I\'ve only just stopped.'], gloomy: ['What\'s the use of talking? {MoodGoneThey}\'s gone.'], elder: ['Let it rest a while, lad. Some things want a week before words.'] });
   A('mood.grief.stiff', { shy: ['...I\'m fine. Thank you. I\'m fine.'], witty: ['Me? I\'m right as rain. Rain\'s been very upset lately.'], elder: ['I\'m old, wizard. I\'ve seen plenty go. I\'m all right.'] }, [{ if: { job: has }, text: ['I\'m fine. I\'ve the {jobWord}ing to see to. Keeps a body busy.'] }]);
@@ -523,7 +523,7 @@ talkPack('moods', () => {
   A('mood.cross.leave', { curious: ['...Thank you. I\'ll work it out. I always do, in the end.'], dreamy: ['...Yes. Later. It\'ll look different after the sun goes down.'], witty: ['Good. I need to go and think of a better answer. A crushing one.'], gloomy: ['...Thank you. Not that it\'ll help.'], elder: ['Off you go, then. I\'ll be here. I\'m always here.'] });
   A('mood.cross.sorry', { curious: ['...Accepted. You couldn\'t have known.'], dreamy: ['...It\'s all right. Words just come out wrong some days.'], witty: ['Accepted. I\'ll put it on your account.'], elder: ['Bless you. I\'ve been said worse to.'] });
   A('mood.cross.stopping', { curious: ['I don\'t know what I\'d say. I\'ve tried it out loud. It sounds wrong every way.'], dreamy: ['...I keep picturing it going badly. Over and over.'], witty: ['Pride. Pure pride. I\'ve a great deal of it. It\'s very heavy.'], elder: ['I\'ve never said sorry first in seventy years. I don\'t know the words.'] });
-  A('mood.cross.cold', { curious: ['Why is everyone being NICE? I\'m trying to be cross here.'], dreamy: ['...Please. Just let me sit with it.'], witty: ['Don\'t be lovely at me. I\'ve no defence against lovely.'], elder: ['I\'m too old to be jollied along.'] });
+  A('mood.cross.cold', { curious: ['Why is everyone being NICE? I\'m trying to be cross here.'], dreamy: ['...Please. Just let me sit with it.'], witty: ['Don\'t be lovely at me. I\'ve no defense against lovely.'], elder: ['I\'m too old to be jollied along.'] });
   A('mood.cross.warmed', { curious: ['You don\'t even know what happened. ...But you\'re on my side? Huh.'], dreamy: ['...That\'s the nicest thing anyone\'s said all day.'], witty: ['On my side? A wizard? I\'ll have that in writing.'], elder: ['Bless you. At my age you forget anyone takes your side.'] });
   A('mood.cross.notyou', { cheerful: ['Oh, wizard. Not now. Your stories are lovely but not now.'], curious: ['A dwarf? ...No. No, I\'m not going to ask. I\'m cross.'], dreamy: ['...I don\'t want somebody else\'s quarrel. I\'ve got my own.'], witty: ['Is this a quarrel or a competition?'], elder: ['I\'ve heard all the old tales, wizard. Mine\'s new.'] });
   A('mood.cross.swapped', { cheerful: ['Ha! A hundred years! Well, mine\'s only been since Tuesday.'], shy: ['...Oh. I didn\'t think anyone else got this cross.'], dreamy: ['...A hundred years. Imagine. I\'d hate to be cross that long.'], gloomy: ['A hundred years. That\'s about how long mine will last.'], elder: ['A hundred years? I\'ve one going on fifty. Same goat, same fence.'] });
@@ -549,7 +549,7 @@ talkPack('moods', () => {
   A('mood.grief.keepsake', { curious: ['{MoodGrief}\'s {moodKeepsake}. I keep finding new scratches on it. Every one\'s a story I\'ll never hear.'], dreamy: ['{MoodGrief}\'s {moodKeepsake}. If I hold it tight enough I can nearly feel {moodGoneTheir} hand.'], witty: ['{MoodGrief}\'s {moodKeepsake}. {MoodGoneThey} said it was the most valuable thing {moodGoneThey} owned. It\'s worth about a penny.'], gloomy: ['{MoodGrief}\'s {moodKeepsake}. It\'s all there is of {moodGoneThem} now, in my hand.'] });
   A('mood.grief.keepuse', { shy: ['...Only at night. When nobody\'s looking.'], curious: ['Every day. I\'m learning how {moodGoneThey} used it. There\'s a knack.'], dreamy: ['Sometimes I just hold it and look out of the window.'], witty: ['Every day. Badly. {MoodGoneThey} always said I would.'], proud: ['Daily. It deserves to be used, not hidden.'], gloomy: ['I can\'t. If I use it, it\'ll wear out. Then there\'ll be nothing.'] });
   A('mood.grief.wishknown', { cheerful: ['Oh, you\'d have got on like a house on fire! Literally, probably. With your fireworks.'], curious: ['You\'d have had so much to ask each other. {MoodGoneThey} always wanted to meet a proper wizard.'], dreamy: ['{MoodGoneThey} used to watch for your cart, you know. Every summer.'], witty: ['{MoodGoneThey}\'d have made fun of your hat. Lovingly. Mostly.'] });
-  A('mood.grief.stone', { cheerful: ['Yes! I\'ll take a picnic. {MoodGrief} never said no to a picnic.'], curious: ['I\'ll go and look at the carving. I want to see if they spelt it right.'], dreamy: ['I\'ll go at sunset. {MoodGoneThey} liked sunsets.'], witty: ['I\'ll go and give {moodGoneThem} a piece of my mind. It\'ll be like old times.'] });
+  A('mood.grief.stone', { cheerful: ['Yes! I\'ll take a picnic. {MoodGrief} never said no to a picnic.'], curious: ['I\'ll go and look at the carving. I want to see if they spelled it right.'], dreamy: ['I\'ll go at sunset. {MoodGoneThey} liked sunsets.'], witty: ['I\'ll go and give {moodGoneThem} a piece of my mind. It\'ll be like old times.'] });
   A('mood.grief.maybe', { cheerful: ['Maybe! When I\'m less soggy.'], curious: ['Maybe. I don\'t know what you do there. Do you talk? Out loud?'], dreamy: ['Perhaps. When it feels right. It doesn\'t yet.'], witty: ['Maybe. If I can think of something worth saying.'], proud: ['In due course.'], elder: ['Soon. There\'s no hurry. {MoodGoneThey}\'s not going anywhere. Well. Not any more.'] });
   A('mood.grief.notready', { cheerful: ['...I can\'t. I\'m sorry. I\'d just cry all over the daisies.'], ornery: ['I\'m not going up there to stare at a lump of rock.'], curious: ['...What do you even say, to a stone?'], dreamy: ['...If I go, {moodGoneThey}\'s up there. If I don\'t, {moodGoneThey}\'s still on the road. I like the road better.'], witty: ['Not yet. I\'m not ready to see {moodGoneThem} so quiet.'] });
   A('mood.grief.supper', { curious: ['Yes. I\'ve not been to {moodPal}\'s in an age. I wonder what\'s new.'], dreamy: ['...Supper by somebody else\'s fire. Yes. I\'d like that.'], witty: ['{MoodPal}\'s cooking. Well. Grief can\'t make it any worse.'], proud: ['I\'ll accept {moodPal}\'s hospitality. Graciously.'], gloomy: ['...All right. Better than sitting in the dark.'] });

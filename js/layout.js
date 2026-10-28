@@ -136,7 +136,7 @@ function forestDepth(x, y) {
 // goes on gentle ground on the north bank, the store, bakehouse, inn and
 // brewhouse close round it, the fields on the flattest land within walking
 // distance, the barn between them and the square, the pond in a hollow, the
-// herbalist by the pond, the workshop towards the woods, the mills where the
+// herbalist by the pond, the workshop toward the woods, the mills where the
 // river runs straight, the windmill on the high ground, the party field, the
 // story oak, the old orchard on a sunny slope, the Hall on the Hill above the
 // square and the other knolls on south-facing slopes round about, with six
@@ -309,7 +309,7 @@ function planValley(seed, W = MAP_W, H = MAP_H) {
     if (p) take(...p, 2);
     L.anchors.cow = [L.pond.cx - 14, L.pond.cy + 2];
   }
-  // --- the herbalist by the pond, with the herb beds beside it; the workshop towards the woods ---
+  // --- the herbalist by the pond, with the herb beds beside it; the workshop toward the woods ---
   L.forest = { side: flip > 0 ? 'east' : 'west', depth: Math.round(16 * sx) };
   L.exit = { x: flip > 0 ? 4 : W * 16 - 4, y: 0 };
   {

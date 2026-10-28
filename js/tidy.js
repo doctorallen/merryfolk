@@ -3,7 +3,7 @@
 // Tidying the story (from the playtests): names are kept unique (no two
 // living hobbits share a first name, and a baby takes its family's surname),
 // and the small hours' churn of growing-up news (comings of age, first steps,
-// grey hairs) is gathered into one line in the morning rather than a flurry
+// gray hairs) is gathered into one line in the morning rather than a flurry
 // at midnight.
 // ---------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ function uniqueFirst(v) {
 // the founding families too: two Burdocks from day one would muddle every letter and natter
 addHook('afterNewVillage', () => { for (const v of Game.villagers) uniqueFirst(v); });
 // the morning digest
-const DIGEST = /(is toddling about now|has come of age!|is getting on a bit, and has gone a little grey)/;
+const DIGEST = /(is toddling about now|has come of age!|is getting on a bit, and has gone a little gray)/;
 window.addEventListener('DOMContentLoaded', () => {
   const ch = chronicle;
   chronicle = function (text, kind = 'info') {
@@ -48,12 +48,12 @@ window.addEventListener('DOMContentLoaded', () => {
       const d = Game.digest; Game.digest = [];
       const of = d.filter((t) => /come of age/.test(t)).map((t) => t.replace(/ has come of age!.*/, ''));
       const toddle = d.filter((t) => /toddling/.test(t)).map((t) => t.replace(/^Little /, '').replace(/ is toddling.*/, ''));
-      const grey = d.filter((t) => /grey/.test(t)).map((t) => t.replace(/ has gone a little grey.*/, ''));
+      const grey = d.filter((t) => /gray/.test(t)).map((t) => t.replace(/ has gone a little gray.*/, ''));
       const list = (xs) => xs.length > 1 ? xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1] : xs[0];
       const bits = [];
       if (of.length) bits.push(`${list(of)} ${of.length > 1 ? 'have' : 'has'} come of age${Game.party.planned || Game.party.on ? ' (there\'ll be a party tonight)' : ''}`);
       if (toddle.length) bits.push(`little ${list(toddle)} ${toddle.length > 1 ? 'are' : 'is'} toddling about now`);
-      if (grey.length) bits.push(`${list(grey)} ${grey.length > 1 ? 'have' : 'has'} gone a little grey`);
+      if (grey.length) bits.push(`${list(grey)} ${grey.length > 1 ? 'have' : 'has'} gone a little gray`);
       if (bits.length) chronicle(`Growing up and growing old: ${bits.join('; ')}.`, of.length ? 'party' : 'birth');
     }
   });

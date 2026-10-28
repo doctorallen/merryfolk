@@ -98,7 +98,7 @@ talkPack('seasons4', () => {
     { if: { register: 'plain' }, text: ['River\'s a river. Wet, mostly. I like it, mind.', 'Goes past. Comes back next day. Good river.'] },
     { if: { weather: 'fog' }, text: ['In fog the river\'s just a sound. You follow it home like a friend calling.'] },
     { if: { kid: (k) => !!k }, text: ['I\'m forever fishing {kid} out of it. Wet to the ears, and grinning.'] },
-    { text: ['Oh, the river. It\'s always there, isn\'t it? Like an old aunt humming.', 'I go down most days. Just to look at it. Is that odd?', 'The river\'s the best neighbour in the valley. Never borrows anything.'] },
+    { text: ['Oh, the river. It\'s always there, isn\'t it? Like an old aunt humming.', 'I go down most days. Just to look at it. Is that odd?', 'The river\'s the best neighbor in the valley. Never borrows anything.'] },
     { if: { season: 'spring' }, text: ['It\'s high and fast and full of snow from somewhere. You can hear it from bed.', 'Spring river. All froth and hurry, like a youngster late for a dance.'] },
     { if: { season: 'summer' }, text: ['Low and warm and lazy. Dragonflies everywhere. Perfect.', 'In summer it goes so slow you could have a conversation with it.'] },
     { if: { season: 'autumn' }, text: ['Leaves all over it like a quilt. Red and gold, going round and round.', 'The autumn river smells of leaves and mud and something sweet.'] },
@@ -193,9 +193,9 @@ talkPack('seasons4', () => {
   ]);
   lines('season.river.heron', [
     { text: ['The heron! Stands like a stick for an hour, then STAB. Never misses.', 'Every morning, same stone. He looks at me like I\'m in his way.'] },
-    { if: { pastime: 'birdwatching' }, pri: 1, text: ['The heron\'s my favourite. Grey and patient and a bit grumpy. Like my grandfather.'] },
+    { if: { pastime: 'birdwatching' }, pri: 1, text: ['The heron\'s my favorite. Gray and patient and a bit grumpy. Like my grandfather.'] },
     { if: { job: 'fisher' }, pri: 1, text: ['That heron takes more trout than I do and never pays a penny of tithe.'] },
-    { if: { temper: 'ornery' }, text: ['That bird\'s a thief in a grey coat. I\'ve told him so.'] },
+    { if: { temper: 'ornery' }, text: ['That bird\'s a thief in a gray coat. I\'ve told him so.'] },
     { if: { temper: 'dreamy' }, text: ['When he flies he looks like something out of an old story. Slow and ancient.'] },
     { if: { temper: 'witty' }, text: ['He\'s the only one in the valley who\'s patient. It\'s a bit shaming.'] },
     { if: { temper: 'shy' }, text: ['...He lets me sit near him if I\'m very still. We\'re both very still.'] },
@@ -316,11 +316,11 @@ talkPack('seasons4', () => {
         { ap: 'ask', say: 'And how are the beasts in the pens?', to: 'pens', need: { if: { pens: (p) => !!p && p.length > 0 } } },
       ] },
       birds: { line: 'season.wild.birds', go: [
-        { ap: 'ask', say: 'Which is your favourite?', to: 'fav' },
+        { ap: 'ask', say: 'Which is your favorite?', to: 'fav' },
         { ap: 'share', say: 'I can whistle a blackbird, you know. Badly.', to: 'whistle' },
         { ap: 'listen', say: '*You wait, head on one side, like a robin.*', label: 'Wait, head on one side', to: 'list', need: { open: 1 }, soft: true },
       ] },
-      fav: { line: 'season.wild.fav', fx: { learn: ['season.bird', '{Name} has a favourite bird, and will tell you about it at length'] }, go: [
+      fav: { line: 'season.wild.fav', fx: { learn: ['season.bird', '{Name} has a favorite bird, and will tell you about it at length'] }, go: [
         { ap: 'warm', say: 'A good choice. It suits you.', to: 'suits' },
         { ap: 'tale', say: 'There\'s a thrush in a story I know who carried a message to a king.', to: 'thrush' },
       ] },
@@ -377,7 +377,7 @@ talkPack('seasons4', () => {
     { if: { register: 'plain' }, text: ['Birds. Rabbits. A fox. Same as ever.', 'Hedge is full of something. Rustles all night.'] },
     { if: { weather: 'rain' }, text: ['The blackbirds love the rain. Worms come up to see what the fuss is, and that\'s that.'] },
     { if: { kid: (k) => !!k }, text: ['{Kid} brought home a frog in a teacup. It\'s living in the sink now. We all wash in the river.'] },
-    { text: ['Oh, the usual. Birds in the hedge, something in the bins, a cat that isn\'t mine.', 'Plenty! You can\'t move for creatures in this valley.', 'There\'s always something rustling. I\'ve stopped looking.'] },
+    { text: ['Oh, the usual. Birds in the hedge, something in the trash cans, a cat that isn\'t mine.', 'Plenty! You can\'t move for creatures in this valley.', 'There\'s always something rustling. I\'ve stopped looking.'] },
     { if: { season: 'spring' }, text: ['The swallows are back under the eaves! Same nest as last year, I\'m sure of it.', 'Lambs in the field, frogspawn in the pond and a blackbird who won\'t stop singing at four in the morning.'] },
     { if: { season: 'summer' }, text: ['Bees in the clover, swifts screaming round the hill at dusk. Lovely racket.', 'There\'s a hedgehog who comes to the step of an evening. I leave him a saucer.'] },
     { if: { season: 'autumn' }, text: ['Rooks in the barley stubble, squirrels burying everything. Busy, busy.', 'The swallows are gathering on the fence. Lined up like they\'re waiting for a coach.'] },
@@ -459,7 +459,7 @@ talkPack('seasons4', () => {
   lines('season.wild.teach', [
     { text: ['Purse your lips and think of dusk. That\'s the trick. Think of dusk.', 'Come by at dusk. The blackbird will teach us both.'] },
     { if: { temper: 'shy' }, text: ['...I could. If you didn\'t laugh.'] },
-    { if: { temper: 'proud' }, text: ['I\'m the best whistler in the valley. You\'ll have to practise.'] },
+    { if: { temper: 'proud' }, text: ['I\'m the best whistler in the valley. You\'ll have to practice.'] },
   ]);
   lines('season.wild.list', [
     { text: ['...I keep a list, you know. Every bird I\'ve ever seen. Since I was small.', '...I write them down. The date and where. My grandfather started it, in the same book.'] },
@@ -529,7 +529,7 @@ talkPack('seasons4', () => {
   lines('season.wild.fond', [
     { text: ['...There\'s a hedgehog. I call him Old Prickles. He comes for his saucer at nine sharp.', '...A toad lives under my step. I\'ve never told anyone I talk to him.'] },
     { if: { stage: 'child' }, text: ['...The rabbit. The one that ate the lettuces. I give him bits from my plate.'] },
-    { if: { likes: 'animals' }, text: ['...All of them, if I\'m honest. Don\'t tell, but I like the creatures better than the neighbours.'] },
+    { if: { likes: 'animals' }, text: ['...All of them, if I\'m honest. Don\'t tell, but I like the creatures better than the neighbors.'] },
   ]);
   lines('season.wild.soft', [
     { text: ['Soft heart! I\'ll have you know... well. Maybe a bit. Don\'t tell.', 'Hmph. A grumble\'s just a heart with its coat on.'] },
@@ -624,10 +624,10 @@ talkPack('seasons4', () => {
     { if: { season: 'spring' }, text: ['The banks are full of {flowerNow}, {name}. Have you seen?', 'Spring\'s put on its best, {name}. Every hedge in bloom.'] },
     { if: { season: 'autumn' }, text: ['The woods have gone copper, {name}. Have you been up there?', 'Mushrooms everywhere this morning, {name}. Is it a good year for them?'] },
     { if: { season: 'winter' }, text: ['Is anything in flower in this cold, {name}?', 'I found {flowerNow} in the snow, {name}. Brave little things.'] },
-    { if: { stage: 'child' }, text: ['Have you picked any flowers, {name}? What colour were they?', 'What\'s the best flower, {name}? I need to know for a wizard reason.'] },
+    { if: { stage: 'child' }, text: ['Have you picked any flowers, {name}? What color were they?', 'What\'s the best flower, {name}? I need to know for a wizard reason.'] },
   ]);
   lines('season.flowers.start', [
-    { if: { register: 'fine' }, text: ['The verges are a perfect riot of colour. One feels one ought to send a note of thanks.'] },
+    { if: { register: 'fine' }, text: ['The verges are a perfect riot of color. One feels one ought to send a note of thanks.'] },
     { if: { register: 'plain' }, text: ['Flowers. Lots. Yellow ones mostly. Pretty.'] },
     { if: { spouse: (s) => !!s }, text: ['{Spouse} brought me a fistful of {flowerNow} this morning. Roots and all. Still lovely.'] },
     { if: { hour: 'evening' }, text: ['The honeysuckle comes out strongest in the evening. Smell that. That\'s the lane at dusk.'] },
@@ -663,19 +663,19 @@ talkPack('seasons4', () => {
     { if: { temper: 'proud' }, text: ['I arrange them. There\'s an art to it. Most people just jam them in a jug.'] },
     { if: { temper: 'gloomy' }, text: ['Sometimes. They don\'t last. I keep doing it anyway.'] },
     { if: { temper: 'curious' }, text: ['I pick one of every kind I find. I\'m on forty. Forty-one with that weed. It\'s a weed, but it counts.'] },
-    { if: { stage: 'child' }, text: ['I pick them for Mum! She puts them in a cup. Even the dandelions.', 'I picked ALL the buttercups in the field. Well. Nearly. There were a lot.'] },
+    { if: { stage: 'child' }, text: ['I pick them for Mom! She puts them in a cup. Even the dandelions.', 'I picked ALL the buttercups in the field. Well. Nearly. There were a lot.'] },
     { if: { stage: 'elder' }, text: ['My hands are too stiff for the stems now. The little ones pick them for me.'] },
     { if: { spouse: (s) => !!s }, text: ['Every Highday, for {spouse}. Thirty years. Never missed one.'] },
     { if: { rift: true }, text: ['I picked one and felt guilty. Like I\'d stolen something from the ground.'] },
   ]);
   lines('season.flowers.for', [
     { text: ['For the house. For me. For whoever comes in the door.', '...For somebody. That\'s all I\'m saying.'] },
-    { if: { spouse: (s) => !!s }, pri: 1, text: ['For {spouse}. Who else? Even when we\'ve quarrelled. Especially then.', '{Spouse} pretends not to notice. Then puts them in the best jug.'] },
+    { if: { spouse: (s) => !!s }, pri: 1, text: ['For {spouse}. Who else? Even when we\'ve quarreled. Especially then.', '{Spouse} pretends not to notice. Then puts them in the best jug.'] },
     { if: { spouse: (s) => !s, stage: ['grown', 'elder'] }, text: ['...For nobody. ...For somebody. I leave them on a doorstep. They don\'t know it\'s me.', '...There\'s someone. I leave them on the step and run. Like a child. Don\'t laugh.'] },
     { if: { kid: (k) => !!k }, text: ['For {kid}. {Kid} puts them in the bath and calls it a pond.'] },
-    { if: { stage: 'child' }, text: ['For my best friend! And for Mum. And one for you. Here. It\'s a bit squashed.'] },
+    { if: { stage: 'child' }, text: ['For my best friend! And for Mom. And one for you. Here. It\'s a bit squashed.'] },
     { if: { stage: 'elder', spouse: (s) => !s }, pri: 1, text: ['...For the stone up the hill. Someone I used to pick them for. I still do.'] },
-    { if: { temper: 'ornery' }, text: ['None of your business. ...The neighbour\'s old aunt. She\'s nobody else.'] },
+    { if: { temper: 'ornery' }, text: ['None of your business. ...The neighbor\'s old aunt. She\'s nobody else.'] },
   ]);
   lines('season.flowers.lucky', [
     { text: ['...I hope they think so.', 'That\'s nice of you. I\'ll tell them a wizard said so. No I won\'t.'] },
@@ -780,14 +780,14 @@ talkPack('seasons4', () => {
     { if: { temper: 'witty' }, text: ['I always wondered what kept that hat up. Sentiment.'] },
     { if: { temper: 'dreamy' }, text: ['Oh, that\'s lovely. Who gave it you?'] },
     { if: { stage: 'child' }, text: ['Can I SEE it? Is it a magic flower?'] },
-    { if: { temper: 'ornery' }, text: ['Hmph. Sentimental wizards. ...What colour?'] },
+    { if: { temper: 'ornery' }, text: ['Hmph. Sentimental wizards. ...What color?'] },
   ]);
   lines('season.flowers.book', [
     { text: ['A whole book of them. Every one\'s a day I remember.', 'In my mother\'s old recipe book. Between the pies. Primroses on the apple tart page.'] },
     { if: { temper: 'dreamy' }, pri: 1, text: ['Three books. I open them in winter and it\'s spring for a minute.'] },
     { if: { temper: 'ornery' }, text: ['One. A cowslip. Don\'t ask why.'] },
     { if: { stage: 'child' }, text: ['I tried! I squashed it in Dad\'s big book. It went brown. And so did the page.'] },
-    { if: { pastime: 'collecting' }, pri: 1, text: ['Pressed flowers are a whole drawer of my collection. Labelled. In ink.'] },
+    { if: { pastime: 'collecting' }, pri: 1, text: ['Pressed flowers are a whole drawer of my collection. Labeled. In ink.'] },
   ]);
   lines('season.flowers.given', [
     { text: ['...Oh. That\'s a lovely thing to carry. And a sad one.', 'Long ago. They must have been special. I won\'t pry.'] },
@@ -892,28 +892,28 @@ talkPack('seasons4', () => {
     { if: { moon: 'full' }, text: ['I once crossed a whole mountain by the light of a moon like this one.'] },
   ]);
   lines('season.stars.names', [
-    { if: { register: 'fine' }, text: ['A few of the better-known figures. The Sickle, the Plough, and that rather dashing fellow, the Lantern-bearer.'] },
+    { if: { register: 'fine' }, text: ['A few of the better-known figures. The Sickle, the Plow, and that rather dashing fellow, the Lantern-bearer.'] },
     { if: { spouse: (s) => !!s }, text: ['{Spouse} named one after me once. That faint one there. I chose to take it kindly.'] },
-    { text: ['A few. That\'s the Sickle, there, for cutting barley. And the Plough, pointing north.', 'The Lantern-bearer. See? The bright one, and the three in a line for his arm.'] },
-    { if: { stage: 'elder' }, text: ['All of them, once. The Sickle, the Plough, the Hen and Chicks, the Lantern-bearer. I\'m losing a few now.'] },
+    { text: ['A few. That\'s the Sickle, there, for cutting barley. And the Plow, pointing north.', 'The Lantern-bearer. See? The bright one, and the three in a line for his arm.'] },
+    { if: { stage: 'elder' }, text: ['All of them, once. The Sickle, the Plow, the Hen and Chicks, the Lantern-bearer. I\'m losing a few now.'] },
     { if: { temper: 'ornery' }, text: ['Names? They\'re stars. That one\'s "star", that one\'s "another star".'] },
     { if: { temper: 'cheerful' }, text: ['I make my own up! That\'s the Dancing Pig. That\'s Uncle Bob\'s Nose.'] },
-    { if: { temper: 'shy' }, text: ['...Only one. The little cluster. The Hen and Chicks. She\'s my favourite.'] },
+    { if: { temper: 'shy' }, text: ['...Only one. The little cluster. The Hen and Chicks. She\'s my favorite.'] },
     { if: { temper: 'dreamy' }, text: ['I know them by the stories, not the names. That one\'s the lady who waits.'] },
-    { if: { temper: 'witty' }, text: ['That one\'s the Sickle. That one\'s the Plough. Farmers named the sky. Can you tell?'] },
+    { if: { temper: 'witty' }, text: ['That one\'s the Sickle. That one\'s the Plow. Farmers named the sky. Can you tell?'] },
     { if: { temper: 'proud' }, text: ['Every one worth knowing. My grandfather was a great one for stars. He taught me the lot.'] },
     { if: { temper: 'gloomy' }, text: ['A few. Not that it matters. They don\'t know mine.'] },
     { if: { temper: 'curious' }, text: ['I\'ve been making a chart! Every clear night. The Sickle moves round, you know. Slowly.'] },
-    { if: { stage: 'child' }, text: ['That\'s the Big Spoon! And that one\'s a DRAGON. Mum says it\'s a plough. It\'s a dragon.'] },
-    { if: { rift: true }, text: ['Not yet. The hill-folk are teaching me. I keep calling the Plough "the Shopping Trolley".'] },
-    { if: { job: 'farmer' }, pri: 1, text: ['The Sickle, the Plough and the Seed-bag. When the Sickle stands up, it\'s harvest. Never fails.'] },
+    { if: { stage: 'child' }, text: ['That\'s the Big Spoon! And that one\'s a DRAGON. Mom says it\'s a plow. It\'s a dragon.'] },
+    { if: { rift: true }, text: ['Not yet. The hill-folk are teaching me. I keep calling the Plow "the Shopping Cart".'] },
+    { if: { job: 'farmer' }, pri: 1, text: ['The Sickle, the Plow and the Seed-bag. When the Sickle stands up, it\'s harvest. Never fails.'] },
   ]);
   lines('season.stars.taught', [
     { text: ['My grandmother, on the step, with a cup of cocoa and a very long finger.', 'Nobody. I looked till they started to look like things.'] },
     { if: { parent: (p) => !!p }, text: ['{Parent}. We\'d go out on the hill on clear nights. I was always cold and always happy.'] },
     { if: { stage: 'child' }, text: ['The storyteller! At school. And Dad, but Dad gets them wrong.'] },
     { if: { rift: true }, text: ['A hill-hobbit child. She was very stern about it. I had a test.'] },
-    { if: { stage: 'elder' }, text: ['My father, more than eighty years gone. I hear his voice every time I find the Plough.'] },
+    { if: { stage: 'elder' }, text: ['My father, more than eighty years gone. I hear his voice every time I find the Plow.'] },
   ]);
   lines('season.stars.teapot', [
     { text: ['A teapot! Ha! Oh, it is, though. There\'s the spout.', 'You\'re right! How did nobody see that before?'] },
@@ -924,7 +924,7 @@ talkPack('seasons4', () => {
   ]);
   lines('season.stars.moon', [
     { text: ['Doing what she does. Watching us. Lighting the lane.', 'She\'s pulling the river about, they say. And my moods.'] },
-    { if: { moon: 'full' }, text: ['Full as a pie. Bright enough to see the colours of the flowers. Nearly.', 'She\'s round and showing off. Every owl in the valley\'s out hunting.'] },
+    { if: { moon: 'full' }, text: ['Full as a pie. Bright enough to see the colors of the flowers. Nearly.', 'She\'s round and showing off. Every owl in the valley\'s out hunting.'] },
     { if: { moon: 'new' }, text: ['Hiding. She does that. Comes back thin and shy in a day or two.'] },
     { if: { moon: 'waxing' }, text: ['Getting fatter. Like the rest of us before Yule.'] },
     { if: { moon: 'waning' }, text: ['Getting thinner, coming up late. She looks tired. I know the feeling.'] },
@@ -994,7 +994,7 @@ talkPack('seasons4', () => {
     { if: { spouse: (s) => !s, stage: ['grown', 'elder'] }, pri: 1, text: ['...That somebody would look at me the way old couples look at each other. That\'s all.'] },
     { if: { kid: (k) => !!k }, pri: 1, text: ['...That {kid} would grow up happier than I did. That\'s the wish. Every time.'] },
     { if: { lost: (l) => !!l }, pri: 2, text: ['...That {lost} is looking at the same stars, wherever {lost} is.'] },
-    { if: { stage: 'child' }, text: ['...That Mum and Dad would stop being cross. They\'re not cross now. So it worked?'] },
+    { if: { stage: 'child' }, text: ['...That Mom and Dad would stop being cross. They\'re not cross now. So it worked?'] },
     { if: { rift: true }, text: ['...That I\'d find a place I belong. ...Don\'t say anything. I\'m still deciding.'] },
     { if: { dream: (d) => !!d }, text: ['...That one day I\'d {dreamText}. Silly, isn\'t it, telling a star.'] },
   ]);
@@ -1019,7 +1019,7 @@ talkPack('seasons4', () => {
     { if: { stage: 'child' }, text: ['Wizards don\'t need to wish! ...Do they?'] },
   ]);
   lines('season.stars.hat', [
-    { text: ['Ha! The star had a sense of humour.', 'A better hat! And the star said "no". Wise star.'] },
+    { text: ['Ha! The star had a sense of humor.', 'A better hat! And the star said "no". Wise star.'] },
     { if: { temper: 'witty' }, text: ['It came true. That IS the better hat. The first one must have been dreadful.'] },
     { if: { stage: 'child' }, text: ['I LIKE your hat!'] },
   ]);
@@ -1202,7 +1202,7 @@ talkPack('seasons4', () => {
     { if: { temper: 'dreamy' }, text: ['The night the whole sky was lanterns. I\'ve never seen anything so beautiful.'] },
     { if: { temper: 'witty' }, text: ['Second breakfast on the third Highday of summer. Peak of my career.'] },
     { if: { temper: 'curious' }, text: ['The day I worked out why the mill-wheel creaks. Nobody else cared. I cared.'] },
-    { if: { rift: true }, text: ['Somebody here called me "neighbour". Just like that. I went home and sat down.'] },
+    { if: { rift: true }, text: ['Somebody here called me "neighbor". Just like that. I went home and sat down.'] },
     { if: { stage: 'elder' }, text: ['A grandchild\'s laugh. Doesn\'t matter whose. They\'re all mine, at my age.'] },
     { if: { pastime: (p) => !!p }, text: ['Finishing a {madeOne} I was proud of. Really proud. That doesn\'t happen often.'] },
   ]);
@@ -1230,7 +1230,7 @@ talkPack('seasons4', () => {
     { if: { lost: (l) => !!l }, pri: 2, text: ['Not knowing where {lost} is. Every day of the year, that.'] },
     { if: { stage: 'elder' }, text: ['The friends who didn\'t see it out. There\'s a few more stones on the hill.'] },
     { if: { homeless: true }, pri: 2, text: ['Nights with nowhere to go. You don\'t forget a night in a hedge.'] },
-    { if: { temper: 'ornery' }, text: ['The rain. The neighbours. The rain on the neighbours. Mostly the neighbours.'] },
+    { if: { temper: 'ornery' }, text: ['The rain. The neighbors. The rain on the neighbors. Mostly the neighbors.'] },
     { if: { temper: 'gloomy' }, text: ['Do you want a list? It\'s a long list.'] },
     { if: { temper: 'shy' }, text: ['...Being lonely, some days. Nobody noticed. That\'s fine.'] },
     { if: { temper: 'proud' }, text: ['I don\'t dwell on the worst. ...There was a quarrel. I was right. It still hurt.'] },
@@ -1253,7 +1253,7 @@ talkPack('seasons4', () => {
     { if: { lost: (l) => !!l }, pri: 2, text: ['...{Lost}. Every single day. I talk to {lost} at night, and it\'s like shouting into the rift.'] },
     { if: { stage: 'elder' }, pri: 1, text: ['...The one I married. Gone now. Every turning of the year I walk up the hill and tell them the news.'] },
     { if: { rift: true }, text: ['...Everyone I left on the other side. Some days I can\'t remember their faces. That\'s the worst.'] },
-    { if: { temper: 'shy' }, text: ['...A friend who moved to Bree. They never wrote. I still look for the post.'] },
+    { if: { temper: 'shy' }, text: ['...A friend who moved to Bree. They never wrote. I still look for the mail.'] },
   ]);
   lines('season.year.glad2', [
     { text: ['...Do you think? I hope so.', '...That\'s a kind thing to say. I\'ll tell them you said it.'] },
@@ -1331,7 +1331,7 @@ talkPack('seasons4', () => {
   ]);
   lines('season.wildpass.wren', [
     { text: ['On an eagle\'s back! Cheeky little thing. That\'s a wren all over.', 'Ha! So the smallest won by cheating. That\'s a hobbit story if ever I heard one.'] },
-    { if: { stage: 'child' }, text: ['Can I ride on an eagle? Small ones first. To practise.'] },
+    { if: { stage: 'child' }, text: ['Can I ride on an eagle? Small ones first. To practice.'] },
     { if: { temper: 'proud' }, text: ['Small but clever. I like that. Very like us.'] },
   ]);
   lines('season.wildpass.singing', [

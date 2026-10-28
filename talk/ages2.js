@@ -100,7 +100,7 @@ talkPack('ages2', () => {
   L('ages.coming.first', {
     _: ['Stay up as late as I like. Then go to bed early anyway, because I can.', 'Get my own pipe. A long one. Like yours.'],
     'k:cheerful': ['Throw the biggest party Thistledown\'s ever seen! With presents for everyone!', 'Dance at the Badger! All night! Grown-ups are allowed!'],
-    'k:ornery': ['Eat what I want, when I want. Starting with dessert.', 'Move my bed. Mum says it stays where it is. It won\'t.'],
+    'k:ornery': ['Eat what I want, when I want. Starting with dessert.', 'Move my bed. Mom says it stays where it is. It won\'t.'],
     'k:shy': ['...Have a room to myself, maybe. With a door that shuts.', 'Choose my own seat at the Moot. At the back.'],
     'k:curious': ['Go to Bree. Just to see. I\'ve heard there are Big Folk there taller than doors.', 'Read every book in the Hall. Even the dull ones. Especially the dull ones.'],
     'k:gloomy': ['Work, probably. That\'s what grown-ups do. Work and worry.', 'I don\'t know. Nothing feels like it\'ll change.'],
@@ -120,7 +120,7 @@ talkPack('ages2', () => {
   L('ages.coming.nerves', {
     _: ['Yes. No. Both. Is that allowed?', 'I am. I think. Some days I\'m not.'],
     'k:cheerful': ['YES! I\'ve wanted to be grown since I was six!', 'Oh, so much! Everything will be new!'],
-    'k:ornery': ['Course I am. Then nobody can tell me off.', 'Why wouldn\'t I be? Being young is rubbish.'],
+    'k:ornery': ['Course I am. Then nobody can tell me off.', 'Why wouldn\'t I be? Being young is the worst.'],
     'k:shy': ['...I\'m a bit scared, actually. Everyone looks at you.', 'Not really. I like being young. Nobody expects much.'],
     'k:curious': ['I want to know what it feels like. Do you feel different the next morning?', 'I\'m curious more than looking forward. Is that strange?'],
     'k:gloomy': ['No. Grown-ups are always tired.', 'Not really. It means the fun bit\'s over.'],
@@ -176,7 +176,7 @@ talkPack('ages2', () => {
     'k:cheerful': ['REALLY?! I\'m telling everyone! The wizard\'s doing my party!'],
     'k:ornery': ['You\'d better. I\'ll remember.'],
     'k:shy': ['...Truly? Just a small one would be perfect.'],
-    'k:curious': ['What colour? Can I choose? Can it spell my name?'],
+    'k:curious': ['What color? Can I choose? Can it spell my name?'],
     'k:gloomy': ['...Really? For me? Oh.'],
   });
   L('ages.coming.fine', {
@@ -285,7 +285,7 @@ talkPack('ages2', () => {
     'k:curious': ['A tinker! Or a herbalist! Or the storyteller! I can\'t decide. I want to know everything.', 'Something where you find things out. Is there a trade for that?'],
     'k:gloomy': ['Whatever I\'m told, probably.', 'I\'m not good at anything. So, something easy.'],
   }, [
-    { if: { stage: 'grown', job: 'baker' }, text: ['I burnt a loaf so badly the baker took me on out of pity. Best day of my life.'] },
+    { if: { stage: 'grown', job: 'baker' }, text: ['I burned a loaf so badly the baker took me on out of pity. Best day of my life.'] },
     { if: { stage: 'grown', job: 'fisher' }, text: ['I sat by the river so often they gave me a rod to make it official.'] },
     { if: { stage: 'grown', job: 'postie' }, text: ['I knew everyone\'s door and everyone\'s business. It seemed a waste not to.'] },
     { if: { stage: 'grown', job: 'storyteller' }, text: ['I told my first tale at six. It went on for three days. They\'ve been paying me to stop since.'] },
@@ -305,7 +305,7 @@ talkPack('ages2', () => {
     witty: ['They wanted a lawyer. We don\'t have lawyers. So, anything.'],
     proud: ['The best. And they got it.'],
     gloomy: ['Something better than they had. I don\'t think I managed.'],
-    'k:cheerful': ['Mum says anything, as long as I\'m home for supper!'],
+    'k:cheerful': ['Mom says anything, as long as I\'m home for supper!'],
     'k:ornery': ['Dad wants me to do what he does. I don\'t want to.'],
     'k:shy': ['...They want me to be happy. I don\'t know what that looks like yet.'],
     'k:curious': ['They keep suggesting things. I keep asking why. They keep sighing.'],
@@ -375,7 +375,7 @@ talkPack('ages2', () => {
     witty: ['I\'ll quote you at supper. They\'ll love that.'],
     proud: ['Quite right.'],
     gloomy: ['...That\'s kind. I don\'t know if it\'s true.'],
-    'k:cheerful': ['Yay! I\'m telling Mum the wizard said!'],
+    'k:cheerful': ['Yay! I\'m telling Mom the wizard said!'],
     'k:ornery': ['Ha! Finally!'],
     'k:shy': ['...Thank you.'],
     'k:curious': ['How do I know what I want, though? Truly?'],
@@ -488,7 +488,7 @@ talkPack('ages2', () => {
     proud: ['It\'ll find the right door.'],
     gloomy: ['...All right.'],
     'k:cheerful': ['I\'ll leave it open ALL the time!'],
-    'k:ornery': ['Mum\'ll say shut the door.'],
+    'k:ornery': ['Mom\'ll say shut the door.'],
     'k:shy': ['...Just a crack.'],
     'k:curious': ['How will I know when it\'s knocking?'],
     'k:gloomy': ['...Maybe.'],
@@ -505,7 +505,7 @@ talkPack('ages2', () => {
     beats: {
       start: { line: 'ages.love.start', go: [
         { ap: 'ask', say: 'Who is it, then?', to: 'who', need: { if: { ageSweetheart: has } } },
-        { ap: 'jest', say: 'You\'ve gone the colour of a radish.', to: 'radish' },
+        { ap: 'jest', say: 'You\'ve gone the color of a radish.', to: 'radish' },
         { ap: 'warm', say: 'You don\'t have to tell me.', to: 'admit' },
       ] },
       radish: { line: 'ages.love.radish', go: [
@@ -622,7 +622,7 @@ talkPack('ages2', () => {
     shy: ['...I can\'t. I\'ll just look. That\'s enough.'],
     curious: ['I\'ve been researching. Everyone does it differently. Some just say it.'],
     dreamy: ['On a summer evening, by the river, with the light just so.'],
-    witty: ['I was going to have it carved on a marrow.'],
+    witty: ['I was going to have it carved on a pumpkin.'],
     proud: ['They\'ll come to me. They always do.'],
     gloomy: ['I won\'t. They\'ll say no.'],
     'k:cheerful': ['I\'ll give them my best conker!'],
@@ -827,9 +827,9 @@ talkPack('ages2', () => {
     dreamy: ['I made a pie once that tasted of summer. I\'ve never managed it again.'],
     witty: ['I can boil an egg. Not on purpose, but I can.'],
     proud: ['I\'m a very good cook. When I try.'],
-    gloomy: ['Burnt, mostly. Everything comes out burnt.'],
+    gloomy: ['Burned, mostly. Everything comes out burned.'],
   }, [
-    { if: { job: ['baker', 'innkeeper'] }, pri: 1, text: ['All day I cook for the village. At home I have a biscuit and go to bed.'] },
+    { if: { job: ['baker', 'innkeeper'] }, pri: 1, text: ['All day I cook for the village. At home I have a cookie and go to bed.'] },
   ]);
   L('ages.own.miss', {
     _: ['Sometimes. Mostly the cooking. And being told to wear a coat.', 'More than I thought. The noise. I miss the noise.'],
@@ -860,7 +860,7 @@ talkPack('ages2', () => {
     cheerful: ['Ha! Charcoal seasoning! A delicacy!'],
     ornery: ['That\'s what I\'ve been saying.'],
     shy: ['...Ha. That\'s nice of you.'],
-    curious: ['Is it, though? Does it count as a flavour?'],
+    curious: ['Is it, though? Does it count as a flavor?'],
     dreamy: ['Smoke-kissed. That sounds better.'],
     witty: ['I serve it with a side of excuses.'],
     proud: ['It\'s a style. It\'s my style.'],
@@ -884,7 +884,7 @@ talkPack('ages2', () => {
     shy: ['...I\'ll go. I\'ll just sit in the kitchen.'],
     curious: ['I\'ll go. I\'ve questions for them anyway.'],
     dreamy: ['I\'ll go before supper. While the light\'s warm.'],
-    witty: ['A bad cake. My speciality. I\'m going.'],
+    witty: ['A bad cake. My specialty. I\'m going.'],
     proud: ['I\'ll take a good cake. Obviously.'],
     gloomy: ['...Yes. I\'ve been meaning to.'],
   });
@@ -995,7 +995,7 @@ talkPack('ages2', () => {
     'k:ornery': ['Yes. And nobody\'s allowed to stop me.'],
     'k:shy': ['...Maybe. If someone came with me.'],
     'k:curious': ['What IS over the hills? Nobody will tell me properly!'],
-    'k:gloomy': ['Mum won\'t let me.'],
+    'k:gloomy': ['Mom won\'t let me.'],
   }, [
     { if: { ageTrips: { min: 1 } }, pri: 1, text: ['I\'ve been! Once. I came back with blisters and a story. I\'d go again tomorrow.'] },
     { if: { ageAway: has }, text: ['{AgeAway}\'s off on the road right now. I\'m so jealous I could spit.'] },
@@ -1142,7 +1142,7 @@ talkPack('ages2', () => {
     proud: ['I\'d be a great asset to you.'],
     gloomy: ['...You\'d want me along?'],
     'k:cheerful': ['TAKE ME! TAKE ME!'],
-    'k:ornery': ['Mum wouldn\'t let me. ...Would she?'],
+    'k:ornery': ['Mom wouldn\'t let me. ...Would she?'],
     'k:shy': ['...Really?'],
     'k:curious': ['Where? When? HOW FAR?'],
     'k:gloomy': ['...You\'d take me? Me?'],
@@ -1518,7 +1518,7 @@ talkPack('ages2', () => {
   L('ages.worry.start', {
     _: ['Oh, the usual. Will the stores last. Will the roof hold. Will it all be all right.', 'Everything, a bit. Nothing, really. It\'s the middle of the night that does it.'],
     cheerful: ['Nothing keeps me up! Well. Sometimes. The odd thing.', 'Oh, I sleep like a log! ...Mostly. There are nights.'],
-    ornery: ['The neighbours. And their hens. And the state of the lane.', 'What doesn\'t? Nobody else worries, so I have to do it for them.'],
+    ornery: ['The neighbors. And their hens. And the state of the lane.', 'What doesn\'t? Nobody else worries, so I have to do it for them.'],
     shy: ['...Little things. That get big in the dark.', 'I go over things I said. Over and over.'],
     curious: ['I lie awake wondering how things work. Then whether they\'ll stop working.', 'Questions. Mostly ones without answers.'],
     dreamy: ['Time. How fast it goes. I lie awake listening to it go.', 'Whether I\'m living the right life, or just a life.'],
@@ -1558,7 +1558,7 @@ talkPack('ages2', () => {
   ]);
   L('ages.worry.all', {
     _: ['*it all comes out* The roof. The stores. The young ones. My back. Whether I left the gate open.', 'The winter. The harvest. Whether anyone would notice if I stopped.'],
-    cheerful: ['Well, if you\'re asking. The cake didn\'t rise, the hens aren\'t laying, and I miss my old mum.'],
+    cheerful: ['Well, if you\'re asking. The cake didn\'t rise, the hens aren\'t laying, and I miss my old mom.'],
     ornery: ['The lane\'s a disgrace, the Moot\'s useless, the weather\'s wrong and nobody listens.'],
     shy: ['...That I\'m not good enough. At anything. That\'s it, really.'],
     curious: ['Whether we\'re ready for what comes. Nobody ever is.'],
@@ -1574,7 +1574,7 @@ talkPack('ages2', () => {
     shy: ['...Ha. The owls are all right. It\'s my head that\'s noisy.'],
     curious: ['Actually, I\'ve been counting the owls. Three. One has a cough.'],
     dreamy: ['I like the owls. They keep me company when I can\'t sleep.'],
-    witty: ['The owls are very inconsiderate. They never bring biscuits.'],
+    witty: ['The owls are very inconsiderate. They never bring cookies.'],
     proud: ['Owls don\'t bother me.'],
     gloomy: ['Ha. If only it were owls.'],
   });
@@ -1702,7 +1702,7 @@ talkPack('ages2', () => {
     ornery: ['No. I thought folk would listen to me by now.', 'I thought I\'d have more say. And a bigger garden.'],
     shy: ['...I didn\'t think much about it. I just hoped it\'d be quiet.', 'It\'s quieter. Which is what I wanted. I think.'],
     curious: ['Not remotely. I didn\'t even know half these things existed.', 'Interesting question. I\'ve been comparing notes with my younger self.'],
-    dreamy: ['I thought I\'d be somewhere else. Somewhere further. But here is lovely.', 'The colours are different from what I pictured. Softer.'],
+    dreamy: ['I thought I\'d be somewhere else. Somewhere further. But here is lovely.', 'The colors are different from what I pictured. Softer.'],
     witty: ['I pictured more adventure and fewer drains.', 'I thought I\'d be taller. That\'s about the extent of the disappointment.'],
     proud: ['Very much as I planned. I planned carefully.', 'Better than I expected. I worked for it.'],
     gloomy: ['No. Nothing ever is.', 'I thought I\'d be happier. I don\'t know why I\'m not.'],
@@ -1725,7 +1725,7 @@ talkPack('ages2', () => {
     { if: { pastime: (p) => !!p }, text: ['I wanted to be known for my {pastimeWord}. I still might.'] },
   ]);
   L('ages.half.dragon', {
-    _: ['Ha! Close. A dragon-spotter. From a safe distance.', 'Ha! A dragon-tamer! I wanted to be a postie. Same thing, really.'],
+    _: ['Ha! Close. A dragon-spotter. From a safe distance.', 'Ha! A dragon-tamer! I wanted to be a mail carrier. Same thing, really.'],
     cheerful: ['Ha! Yes! Isn\'t everyone?'],
     ornery: ['Don\'t be daft.'],
     shy: ['...Ha. No. Something quieter.'],

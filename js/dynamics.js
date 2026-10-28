@@ -4,12 +4,12 @@
 // a way of being together that comes from their natures: Close (warm, easy),
 // Jokesters (forever teasing), Competitive (everything's a contest), or a bit
 // Distant (fond, but they don't say much). It's on the Kin tab, and it
-// colours family dinners and bedtime stories: what's said round the table,
+// colors family dinners and bedtime stories: what's said round the table,
 // and how everyone feels after.
 // ---------------------------------------------------------------------------
 
 const DYNAMICS = {
-  close: { label: 'Close', lines: ['Pass the gravy, love.', 'How was your day, really?', 'I\'m proud of you, you know.'], feel: ['A cosy family dinner', 0.05] },
+  close: { label: 'Close', lines: ['Pass the gravy, love.', 'How was your day, really?', 'I\'m proud of you, you know.'], feel: ['A cozy family dinner', 0.05] },
   jokers: { label: 'Jokesters', lines: ['Who put salt in my tea? WHO?', 'That\'s not a pie, that\'s a doorstop.', 'Knock knock! No, stop groaning.'], feel: ['Laughed till we cried at dinner', 0.06] },
   rivals: { label: 'Competitive', lines: ['Bet I can eat more than you.', 'I\'ll beat you at conkers tomorrow.', 'Mine\'s the bigger slice. Fair\'s fair.'], feel: ['A lively dinner (I won)', 0.03] },
   distant: { label: 'A bit distant', lines: ['...', 'Pass the salt.', 'Mm.'], feel: ['A quiet dinner; nobody said much', -0.02] },

@@ -24,11 +24,11 @@ talkPack('phrasing_pass2', () => {
     'That pale one is the Baker\'s Loaf. It rises a little later every night.',
   ];
   const SPY = [
-    { l: 'B', a: 'beard', g: 'A bucket? A bird? A BEE?', h: 'It\'s on my chin. And it\'s grey.' },
+    { l: 'B', a: 'beard', g: 'A bucket? A bird? A BEE?', h: 'It\'s on my chin. And it\'s gray.' },
     { l: 'H', a: 'hat', g: 'A hedge? A hen? A HOUSE?', h: 'Look up. Further up. Higher than that.' },
     { l: 'S', a: 'staff', g: 'A sock? A snail? The SKY?', h: 'I lean on it. I\'m leaning on it now.' },
     { l: 'C', a: 'cloud', g: 'A cat? A cart? A CAKE? Is it a cake?', h: 'It\'s up in the sky, and it\'s fluffy.' },
-    { l: 'G', a: 'gate', g: 'Grass? A goose? Grandad?', h: 'You swing on it when nobody\'s looking.' },
+    { l: 'G', a: 'gate', g: 'Grass? A goose? Granddad?', h: 'You swing on it when nobody\'s looking.' },
     { l: 'N', a: 'nose', g: 'A nest? A nettle? NOTHING?', h: 'It\'s on your face. Right in the middle.' },
     { l: 'P', a: 'pipe', g: 'A pig? A pie? A PONY?', h: 'I smoke it of an evening. Puff, puff.' },
     { l: 'T', a: 'toes', g: 'A tree? A tart? A TROLL?', h: 'You\'ve got ten of them. Furry ones.' },
@@ -85,7 +85,7 @@ talkPack('phrasing_pass2', () => {
   lines('pass.rainbet.open', [{ text: ['Rain by tomorrow, I\'d say, {name}. Care to wager?', 'My hat says rain before this time tomorrow, {name}. Bet against it?', 'Smell that, {name}? Rain\'s coming. I\'d put a toffee on it.'] }]);
   lines('pass.rainbet.start', [
     { text: ['Rain? Look at that sky. Not a chance.', 'Rain. Hm. My knees haven\'t said anything.'] },
-    { if: { weather: 'cloudy' }, text: ['Well, it\'s grey enough. But grey\'s not wet.'] },
+    { if: { weather: 'cloudy' }, text: ['Well, it\'s gray enough. But gray\'s not wet.'] },
     { if: { weather: 'clear' }, text: ['Rain? Out of that? You\'ve been at the Badger\'s cider.'] },
     { if: { weather: 'fog' }, text: ['Fog\'s not rain, wizard. Fog\'s just rain that can\'t be bothered.'] },
     { if: { job: 'farmer' }, text: ['I\'d like a drop for the barley. But I don\'t think so.'] },
@@ -177,7 +177,7 @@ talkPack('phrasing_pass2', () => {
   lines('pass.clouds.another', [
     { text: ['That one\'s a castle. With a tower. And the tower\'s falling off.', 'That one\'s a fish. Swimming the wrong way.'] },
     tm('dreamy', 'That one\'s a door. Everything behind it is golden.'),
-    tm('gloomy', 'That one\'s a grave. ...No, a bed. A cosy bed. Hm.'),
+    tm('gloomy', 'That one\'s a grave. ...No, a bed. A cozy bed. Hm.'),
     tm('curious', 'That one\'s changing! It was a bear and now it\'s a boot!'),
     kid('That one\'s YOU! It\'s got a pointy hat! It\'s you!'),
   ]);
@@ -208,7 +208,7 @@ talkPack('phrasing_pass2', () => {
   });
   lines('pass.stars.open', [{ text: ['*You point up with your staff.* See that bright one, {name}? It has a name.', 'The stars are out, {name}. Do you know any of them?', 'Look up, {name}. Clear as a bell tonight.'] }]);
   lines('pass.stars.know', [
-    { text: ['That\'s the Sickle, isn\'t it? My grandad showed me.', 'I know that one. Well, I know it\'s a star.'] },
+    { text: ['That\'s the Sickle, isn\'t it? My granddad showed me.', 'I know that one. Well, I know it\'s a star.'] },
     tm('dreamy', 'I know them all. I\'ve given them names. Don\'t ask me to say them out loud.'),
     tm('curious', 'How far away are they? Further than Bree? Further than the Mountain?'),
     tm('gloomy', 'They\'ll be there when we\'re all gone. Comforting, in a way.'),
@@ -247,7 +247,7 @@ talkPack('phrasing_pass2', () => {
       start: { line: 'pass.breakfast.menu', go: [
         { ap: 'jest', say: 'Only that? Are you poorly?', to: 'only' },
         { ap: 'ask', say: 'And second breakfast?', to: 'second' },
-        { ap: 'share', say: 'I had a hard biscuit on the road. It had a hard life too.', to: 'pity' },
+        { ap: 'share', say: 'I had a hard cookie on the road. It had a hard life too.', to: 'pity' },
       ] },
       only: { line: 'pass.breakfast.only', go: [
         { ap: 'ask', say: 'And second breakfast?', to: 'second' },
@@ -267,7 +267,7 @@ talkPack('phrasing_pass2', () => {
     end: { fond: 0.02 },
   });
   lines('pass.breakfast.open', [
-    { text: ['What did you have for breakfast, {name}? And don\'t say "nothing".', 'Tell me about breakfast, {name}. I\'ve had a hard biscuit and I want to suffer.'] },
+    { text: ['What did you have for breakfast, {name}? And don\'t say "nothing".', 'Tell me about breakfast, {name}. I\'ve had a hard cookie and I want to suffer.'] },
   ]);
   lines('pass.breakfast.menu', [
     { text: ['Eggs, bacon, mushrooms, toast, the last of the plum jam, and a small pork pie for luck.', 'Porridge with honey, then bacon, then a bit more porridge to settle the bacon.'] },
@@ -278,11 +278,11 @@ talkPack('phrasing_pass2', () => {
     { if: { hungry: true }, pri: 1, text: ['Breakfast? I barely remember breakfast. It was hours ago. HOURS.'] },
     tm('ornery', 'Porridge. Same as yesterday. Same as tomorrow. Porridge.'),
     tm('gloomy', 'Half an egg. The other half looked at me funny.'),
-    tm('proud', 'Devilled kidneys. My own sauce. Folk have asked for the recipe.'),
+    tm('proud', 'Deviled kidneys. My own sauce. Folk have asked for the recipe.'),
     tm('dreamy', 'I forget. I was looking out of the window. Something with jam, I think.'),
     tm('cheerful', 'Pancakes! With butter! And sugar! And then more pancakes!'),
     tm('shy', '...Toast. Just toast. Is that bad?'),
-    kid('Jam. Just jam. On a spoon.', 'Three eggs and a sausage and Mum doesn\'t know about the sausage.'),
+    kid('Jam. Just jam. On a spoon.', 'Three eggs and a sausage and Mom doesn\'t know about the sausage.'),
     rift('Toast. Real toast. Toast from actual bread. I could cry.'),
     elder('Porridge. At my age you have porridge. You don\'t argue with porridge.'),
   ]);
@@ -297,12 +297,12 @@ talkPack('phrasing_pass2', () => {
     tm('gloomy', 'I skipped it. ...I had elevenses early to make up.'),
     tm('dreamy', 'Second breakfast was out on the step, in the sun. Honey and bread. Bliss.'),
     tm('witty', 'Second breakfast was a triumph. First breakfast was just the rehearsal.'),
-    kid('I had FOUR breakfasts. Don\'t tell Mum about three of them.'),
+    kid('I had FOUR breakfasts. Don\'t tell Mom about three of them.'),
     rift('Second breakfast. You lot invented the perfect system and never told anyone.'),
   ]);
-  lines('pass.breakfast.eleven', [{ text: ['Elevenses? A small cake. A modest cake. With a bigger cake behind it.', 'Ha! Only a crumpet. Two crumpets. Butter.'] }, kid('Elevenses is my FAVOURITE. It\'s like breakfast\'s little brother.')]);
+  lines('pass.breakfast.eleven', [{ text: ['Elevenses? A small cake. A modest cake. With a bigger cake behind it.', 'Ha! Only a crumpet. Two crumpets. Butter.'] }, kid('Elevenses is my FAVORITE. It\'s like breakfast\'s little brother.')]);
   lines('pass.breakfast.pity', [
-    { text: ['A biscuit? Oh, you poor thing. Come round, I\'ll do you a proper breakfast.', 'A hard biscuit! That\'s not a breakfast, that\'s a punishment!'] },
+    { text: ['A cookie? Oh, you poor thing. Come round, I\'ll do you a proper breakfast.', 'A hard cookie! That\'s not a breakfast, that\'s a punishment!'] },
     tm('cheerful', 'Oh, no! Come in, come in, I\'ll put the pan on!'),
     tm('ornery', 'Serves you right for wandering about. ...There\'s a pie. You can have the pie.'),
     tm('shy', '...I could give you some toast. If you like.'),
@@ -354,7 +354,7 @@ talkPack('phrasing_pass2', () => {
     tm('dreamy', 'It looks like a mountain. A little blue mountain, walking about.'),
     kid('Can I wear it? Can I? CAN I?', 'Is there a rabbit in it? Wizards keep rabbits in hats.'),
     rift('It\'s very retro. Like, the most retro thing I\'ve ever seen. I love it.'),
-    elder('I\'ve seen that hat come up this lane for longer than I\'ve had grey hairs.'),
+    elder('I\'ve seen that hat come up this lane for longer than I\'ve had gray hairs.'),
   ]);
   lines('pass.hat.guess', [
     { text: ['A name! Is it Hatty? It\'s Hatty, isn\'t it.', 'Old Pointy? Sir Pointington? Lord Blue?'] },
@@ -429,7 +429,7 @@ talkPack('phrasing_pass2', () => {
   lines('pass.ispy.again', [
     { text: ['Then it\'s... a BUTTERFLY. Is it? It\'s not. Is it a worm?', 'A... a... I don\'t KNOW. Give me a clue! A little one!'] },
     { if: { band: 'youth' }, text: ['I\'m not guessing again. ...Fine. A wheel? No. Ugh.'] },
-    { if: { band: 'young' }, text: ['Is it Mummy? Is it a SPOON?'] },
+    { if: { band: 'young' }, text: ['Is it Mommy? Is it a SPOON?'] },
   ]);
   lines('pass.ispy.got', [
     { text: ['Your {phrSpyA}! It\'s your {phrSpyA}! I GOT IT!', 'OH! {PhrSpyA}! That\'s so EASY!'] },
@@ -628,7 +628,7 @@ talkPack('phrasing_pass2', () => {
     { text: ['Fine day for it, {name}.', 'Weather\'s turning, {name}, I think.'] },
     { if: { weather: 'rain' }, text: ['Wet one today, {name}.', 'Raining on the just and the unjust alike, {name}.'] },
     { if: { weather: 'snow' }, text: ['Cold enough for you, {name}?'] },
-    { if: { weather: 'cloudy' }, text: ['Grey old sky today, {name}.'] },
+    { if: { weather: 'cloudy' }, text: ['Gray old sky today, {name}.'] },
     { if: { weather: 'fog' }, text: ['Can\'t see the hills for the fog, {name}.'] },
     { if: { weather: 'clear' }, text: ['Not a cloud in the sky, {name}.'] },
   ]);
@@ -639,7 +639,7 @@ talkPack('phrasing_pass2', () => {
     { if: { weather: 'snow' }, text: ['Cold? My nose has gone. I\'ve no idea where.', 'The well\'s froze over. Had to break it with a ladle.'] },
     { if: { weather: 'clear' }, text: ['Lovely. Hay weather. Bee weather.', 'Hot enough to fry an egg on a stone. The children have tried.'] },
     { if: { weather: 'clear', season: 'winter' }, text: ['Bright, but there\'s a bite to it. Frost on the cabbages.'] },
-    { if: { weather: 'cloudy' }, text: ['Grey. Can\'t make its mind up, the sky.'] },
+    { if: { weather: 'cloudy' }, text: ['Gray. Can\'t make its mind up, the sky.'] },
     { if: { weather: 'fog' }, text: ['Thick as porridge. I walked into the gatepost.'] },
     tm('ornery', 'Weather. Always weather. Never the right sort.'),
     tm('gloomy', 'It\'ll turn. It always turns.'),
@@ -731,7 +731,7 @@ talkPack('phrasing_pass2', () => {
     kid('YOU do it! You do it! Go go go!'),
   ]);
   lines('pass.twister.theirs', [
-    { text: ['Try this one. Red lorry, yellow lorry. Ten times.', 'Here\'s my gran\'s: she sells sea-shells by the sea-shore. Go on.'] },
+    { text: ['Try this one. Red leather, yellow leather. Ten times.', 'Here\'s my gran\'s: she sells sea-shells by the sea-shore. Go on.'] },
     { if: { job: 'miller' }, text: ['A miller\'s one: which wheel would a wheelwright wheel if a wheelwright would wheel wheels?'] },
     { if: { job: 'baker' }, text: ['A baker\'s one: Betty baked a batch of better buns. Fast as you can.'] },
     tm('witty', 'Mine\'s a cruel one. The sixth sick sheikh\'s sixth sheep\'s sick.'),
@@ -830,7 +830,7 @@ talkPack('phrasing_pass2', () => {
     { if: { band: 'youth' }, text: ['That\'s the worst joke I\'ve ever heard. ...Ha.'] },
     { if: { band: 'young' }, text: ['*laughs, then asks* ...Why is it funny?'] },
     { if: { register: 'bright' }, text: ['Ha! It\'s a pun. Lettuce, let us. I see what you did.'] },
-    rift('Ha! Okay, analogue jokes hit different.'),
+    rift('Ha! Okay, analog jokes hit different.'),
   ]);
   lines('pass.knock.theirs', [{ text: ['Knock knock!', 'My turn! Knock knock! KNOCK KNOCK!'] }, { if: { band: 'youth' }, text: ['Fine. Knock knock.'] }]);
   lines('pass.knock.punch', [
@@ -839,7 +839,7 @@ talkPack('phrasing_pass2', () => {
     { if: { band: 'youth' }, text: ['Atch. ...Bless you. Ha. Got you.'] },
     rift('Signal. Signal who? Exactly. There isn\'t any. Ha!'),
   ]);
-  lines('pass.knock.loud', [{ text: ['*beams with pride*', 'I KNEW you\'d like it! I made it up! Well, Grandad did.'] }, { if: { band: 'youth' }, text: ['It wasn\'t THAT funny. ...It was quite funny.'] }]);
+  lines('pass.knock.loud', [{ text: ['*beams with pride*', 'I KNEW you\'d like it! I made it up! Well, Granddad did.'] }, { if: { band: 'youth' }, text: ['It wasn\'t THAT funny. ...It was quite funny.'] }]);
 
   // --- More voices for the beats above ---------------------------------------------------
   lines('pass.stars.taleback', [
@@ -897,7 +897,7 @@ talkPack('phrasing_pass2', () => {
   ]);
   lines('pass.signal.moth', [
     tm('cheerful', 'Moths! That\'s brilliant! Can I send one?'),
-    tm('gloomy', 'Moths. Slow, and they get eaten. Sounds like the city post.'),
+    tm('gloomy', 'Moths. Slow, and they get eaten. Sounds like the city mail.'),
     kid('Can I send a moth to my friend? She lives three holes down.'),
   ]);
   lines('pass.weather.talk', [
@@ -958,10 +958,10 @@ talkPack('phrasing_pass2', () => {
     elder('Second breakfast was a nap. At my age that counts.'),
   ]);
   lines('pass.breakfast.pity', [
-    tm('witty', 'A hard biscuit. And you call yourself a wizard. Sit. I\'ll make you a real one.'),
-    tm('gloomy', 'Poor thing. I know how that biscuit feels.'),
+    tm('witty', 'A hard cookie. And you call yourself a wizard. Sit. I\'ll make you a real one.'),
+    tm('gloomy', 'Poor thing. I know how that cookie feels.'),
     tm('dreamy', 'Oh, you should have a breakfast with a view. Come to mine. There\'s a view of the hill.'),
-    elder('A biscuit! At your age! You\'ll waste away. Come in, come in.'),
+    elder('A cookie! At your age! You\'ll waste away. Come in, come in.'),
   ]);
   lines('pass.fortune.kindback', [
     tm('cheerful', 'Oh, I\'ll believe it! I always believe the nice ones!'),
@@ -989,7 +989,7 @@ talkPack('phrasing_pass2', () => {
   ]);
   lines('pass.ispy.got', [
     { if: { band: 'young' }, text: ['*points* THAT! That one! The {phrSpyA}!'] },
-    rift('{PhrSpyA}. Found it. Object recognised.'),
+    rift('{PhrSpyA}. Found it. Object recognized.'),
   ]);
   lines('pass.ispy.notit', [{ if: { band: 'young' }, text: ['NO! WIZARD! W is for WIZARD! I\'m so clever!'] }, rift('Nope! W for wizard. Obviously.')]);
 });

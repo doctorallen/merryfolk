@@ -135,7 +135,7 @@ const MORNING = (h) => (h < 11 ? 2 : 0.3), AFTERNOON = (h) => (h >= 13 ? 1.5 : 0
       if (!d || !d.task || !d.task.data.waiting) return;
       d.task.data.ordered = v.id;
       const food = d.task.a.id === 'ale' ? 'ale' : FOODS[d.task.data.order] ? FOODS[d.task.data.order].label : 'stew';
-      if (R.chance(0.6)) { v.say(R.pick(['What\'ll it be?', 'Evening! What can I get you?', 'The usual?']), 2.4, { to: d }); d.say(R.pick([`The ${food}, please.`, `${food.charAt(0).toUpperCase() + food.slice(1)}, and don't be long about it.`, `Just the ${food}, ta.`]), 2.6, { to: v }); }
+      if (R.chance(0.6)) { v.say(R.pick(['What\'ll it be?', 'Evening! What can I get you?', 'The usual?']), 2.4, { to: d }); d.say(R.pick([`The ${food}, please.`, `${food.charAt(0).toUpperCase() + food.slice(1)}, and don't be long about it.`, `Just the ${food}, thanks.`]), 2.6, { to: v }); }
       d.task.data.orderedAt = d.task.data.waitT;
       const orders = (v._orders || (v._orders = [])); orders.push(d);
       // any other table still waiting is seen to first, then one trip to the kitchen and a plate for each
@@ -201,11 +201,11 @@ const MORNING = (h) => (h < 11 ? 2 : 0.3), AFTERNOON = (h) => (h >= 13 ? 1.5 : 0
   subTask(Hb, 'beds', { label: 'Tending the herb beds', dur: 12, prop: 'hoe', need: () => (World.season !== 'winter' && World.herbBeds.length ? 1 : 0), target: (v) => plotOf(v, World.herbBeds, (p) => p.stage < 4), tick: (v, task, dt) => { for (const q of World.herbBeds) if (q.stage >= 1 && q.stage < 4) q.prog += dt / 300; } });
 }
 {
-  // the postie: sort the letters, deliver, collect from the board
+  // the mail carrier: sort the letters, deliver, collect from the board
   const P = 'work_post';
-  // the round is walked whether or not there's post: boxes checked, the board cleared
+  // the round is walked whether or not there's mail: boxes checked, the board cleared
   { const av = ACTIONS.work_post.avail; ACTIONS.work_post.avail = (v, h) => (av && av(v, h)) || World.homes.some((hm) => hm.built && hm.mailbox); }
-  subTask(P, 'sort', { label: 'Sorting the post', dur: 8, inside: true, pose: 'inside', need: (v, h) => (h < 11 ? 1.5 : 0.3), target: inside('store') });
+  subTask(P, 'sort', { label: 'Sorting the mail', dur: 8, inside: true, pose: 'inside', need: (v, h) => (h < 11 ? 1.5 : 0.3), target: inside('store') });
   step(P, ACTIONS.work_post, 6, () => (typeof mailbag === 'function' && mailbag().length ? 3 : 0), { label: 'Delivering', repeat: 3 });
   subTask(P, 'round', { label: 'Walking the round', dur: 4, pose: 'stand', prop: 'letter', need: () => 1.2, repeat: 3, sat: { lonely: -0.1 },
     target: (v) => { const homes = World.homes.filter((h) => h.built && h.mailbox && h.id !== v._lastBox); const h = homes.length ? homes.sort((a, b) => dist(a.mailbox.x, a.mailbox.y, v.x, v.y) - dist(b.mailbox.x, b.mailbox.y, v.x, v.y))[Math.floor(Math.random() * Math.min(3, homes.length))] : null; if (!h) return null; v._lastBox = h.id; return { x: h.mailbox.x + 6, y: h.mailbox.y + 2, facing: 'left' }; }, say: ['Nothing today.', 'Morning!', 'Box is empty.'] });

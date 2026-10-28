@@ -17,7 +17,7 @@ const CLIFF_MIN = 0.35;          // mask strength at which a bank turns to rock
 const CLIFF_FACE = [16, 40];     // how far a face drops, in world pixels, as the mask strengthens
 const cliffFaceH = (m) => Math.round(CLIFF_FACE[0] + clamp((m - CLIFF_MIN) / 0.3, 0, 1) * (CLIFF_FACE[1] - CLIFF_FACE[0]));
 
-// The mask at a world pixel, blended between tile centres.
+// The mask at a world pixel, blended between tile centers.
 function cliffAt(px, py, M = World.cliffMask) {
   if (!M) return 0;
   const gx = clamp(px / TILE - 0.5, 0, MAP_W - 1.001), gy = clamp(py / TILE - 0.5, 0, MAP_H - 1.001);
@@ -43,7 +43,7 @@ function nearCliff(tx, ty, r = 3) {
   return false;
 }
 
-// Called at world generation once the built ground is levelled, before the
+// Called at world generation once the built ground is leveled, before the
 // hedges, woods and grass go in, so they keep off the rock.
 function computeCliffs(seed) {
   World.cliffMask = null; World.cliffZone = null; World.cliff = null;
@@ -106,7 +106,7 @@ function computeCliffs(seed) {
     }
     // a crag is a stretch of bank, not one stone: lone tiles are let go, and
     // gaps of one tile closed; then the rock spreads a tile either way, so it
-    // still counts once blended between tile centres
+    // still counts once blended between tile centers
     const one = new Float32Array(M2);
     for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
       const i = y * W + x;
@@ -250,7 +250,7 @@ function rockColour(px, py, k, fh, P, winter) {
   let c = sh > 0 ? lerpRGB(P.mid, P.hi, sh * 0.85) : lerpRGB(P.mid, P.lo, -sh * 0.9);
   if (d2 - d1 < 2.2) c = lerpRGB(c, P.lo, 0.45);
   c = lerpRGB(c, id < 0.5 ? P.lo : P.hi, Math.abs(id - 0.5) * 0.25);
-  // darker towards the foot, in the shadow of the rock above
+  // darker toward the foot, in the shadow of the rock above
   c = lerpRGB(c, P.gap, clamp(k / fh, 0, 1) * 0.3);
   // moss (or snow) on the tops of some stones
   if (ly < -1.4 && sh > 0.15 && (winter || id < 0.35)) c = lerpRGB(c, P.moss, winter ? 0.85 : 0.6);
@@ -264,8 +264,8 @@ function stepColour(px, py, k) {
   return lerpRGB([150, 138, 112], [170, 158, 128], n);
 }
 
-// The colour of a world pixel of grass or path where a cliff runs, or null
-// to paint it as usual. `col` is the ground's own colour there.
+// The color of a world pixel of grass or path where a cliff runs, or null
+// to paint it as usual. `col` is the ground's own color there.
 function cliffPixel(px, py, lv, col, ctx) {
   const reach = CLIFF_FACE[1] + 6, m = cliffAt(px, py);
   if (m <= CLIFF_MIN && cliffAt(px, py - reach) <= CLIFF_MIN) return null;

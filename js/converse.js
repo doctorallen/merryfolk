@@ -62,7 +62,7 @@ function relKind(a, b) {
 const WARM = { spouse: 1, sweetheart: 1, kin: 0.8, close: 0.9, friend: 0.6, acquaintance: 0.3, stranger: 0.1, rival: 0.2, sour: 0 };
 
 // --- the words, filled in -----------------------------------------------------------
-const weatherWord = () => (Game.weather === 'storm' ? 'this storm' : Game.raining ? 'this rain' : Game.weather === 'snow' ? 'the snow' : Game.weather === 'fog' ? 'this fog' : Game.weather === 'cloudy' ? 'this grey sky' : 'this sunshine');
+const weatherWord = () => (Game.weather === 'storm' ? 'this storm' : Game.raining ? 'this rain' : Game.weather === 'snow' ? 'the snow' : Game.weather === 'fog' ? 'this fog' : Game.weather === 'cloudy' ? 'this gray sky' : 'this sunshine');
 function kidsOf(v) { return Game.villagers.filter((o) => o.parents.includes(v.id) && !o.leaving); }
 function fillTalk(text, s, l, ctx = {}) {
   if (!text) return null; // a pool run dry: the caller skips the turn
@@ -106,19 +106,19 @@ const TOPICS = {
       cheerful: ['Oh, I don\'t mind it. Good for the garden!', 'Every kind of weather\'s good for something, that\'s what I say.'],
       ornery: ['It\'s weather. It happens.', 'I\'ve seen worse. I\'ve seen better. What of it?'],
       shy: ['...Yes. It\'s quite something.', 'Mm. I suppose it is.'],
-      curious: ['Do you know, I\'ve been wondering what makes the clouds go that colour.', 'The old almanac says it means a hard winter. Do you believe that?'],
+      curious: ['Do you know, I\'ve been wondering what makes the clouds go that color.', 'The old almanac says it means a hard winter. Do you believe that?'],
       dreamy: ['I like the sky when it\'s like this. It looks like the start of a story.', 'It makes me want to walk out along the river and keep going.'],
       witty: ['Weather for ducks, this. And I\'ve met the ducks. They\'re not impressed either.', 'If I\'d wanted {weather} I\'d have asked for it.'],
       proud: ['I predicted this on Sterday, you know. Nobody listened.', 'My barley doesn\'t mind it. Mine never does.'],
       gloomy: ['It\'ll turn. It always turns.', 'Suits my mood, that\'s all I\'ll say.'],
-      child: ['I like it! Can we go to the river?', 'Mum says it\'s good for the taters.'],
+      child: ['I like it! Can we go to the river?', 'Mom says it\'s good for the taters.'],
     },
     more: { grown: ['Mind you, it was worse the {season} before last. You remember.', 'Good for the barley, whatever it does to my hat.', 'Still, you can\'t argue with the sky.'], child: ['When it\'s dry can we play by the oak?', 'I hope it snows. Proper snow.'] },
     back: { any: ['That\'s true enough.', 'Aye, well. We take what comes.', 'You never said a truer word.'], ornery: ['If you say so.'], witty: ['You can argue with it. You just don\'t win.'], child: ['Yeah!', 'Can we? Can we really?'] },
   },
   food_here: {
     w: 3, when: (s, l, c) => !!c.dish,
-    open: { grown: ['Now, {dish}. Just the thing.', 'Who made the {dish}? It wants congratulating.', 'I could eat {dish} every day of the week and twice on Highday.', 'Pass the salt, {name}. The {dish} could take a pinch more.'], child: ['Mmm, {dish}! My favourite!', 'Is there more {dish}?'] },
+    open: { grown: ['Now, {dish}. Just the thing.', 'Who made the {dish}? It wants congratulating.', 'I could eat {dish} every day of the week and twice on Highday.', 'Pass the salt, {name}. The {dish} could take a pinch more.'], child: ['Mmm, {dish}! My favorite!', 'Is there more {dish}?'] },
     reply: {
       cheerful: ['Isn\'t it? I had seconds before I\'d finished my firsts.', 'Best {dish} this side of Bree, I\'d say.'],
       ornery: ['It\'s all right. Bit heavy on the salt.', 'My mother\'s was better. Everyone\'s mother\'s was better.'],
@@ -165,7 +165,7 @@ const TOPICS = {
     w: 1.2, when: (s, l) => s.isGrown() && (kidsOf(s).length > 0 || s.spouse != null),
     open: { grown: ['How\'s your lot keeping, {name}?', 'A full house is a loud house, {name}, and I wouldn\'t swap it.'], kid: ['{kid}\'s growing like a weed, you know.', 'The little ones had me up at dawn again. {kid} wanted the dawn explained.'], spouse: ['{spouse} says I talk too much. Can you imagine?', '{spouse} has me up a ladder every Highday. It\'s never the same ladder.'] },
     reply: {
-      cheerful: ['Children! Worth every grey hair.', 'Mine are thriving, thank you for asking.'],
+      cheerful: ['Children! Worth every gray hair.', 'Mine are thriving, thank you for asking.'],
       ornery: ['Noisy. All children are noisy.', 'Don\'t get me started on mine.'],
       shy: ['They\'re... well. Thank you. And yours?', 'It\'s nice to have a full house. Mostly.'],
       curious: ['Does {kid} ask you questions all day long? Mine never stops.', 'What were you like as a child, {name}? I bet you were a terror.'],
@@ -173,7 +173,7 @@ const TOPICS = {
       witty: ['Mine are angels. Loud, muddy angels.', 'I had a quiet house once. Nineteen years ago.'],
       proud: ['Mine take after me, luckily for them.', '{kid} can already read better than the storyteller.'],
       gloomy: ['They grow up and off they go. That\'s the way of it.', 'We do our best. It never feels like enough.'],
-      child: ['My dad snores so loud the windows shake!', 'My mum makes the best pie. Better than yours.'],
+      child: ['My dad snores so loud the windows shake!', 'My mom makes the best pie. Better than yours.'],
     },
     more: { grown: ['Still, a house with no little feet in it is a quiet house.', 'They\'ll look after us in our old age. Or so I keep telling them.', 'Bring yours round for supper one evening, {name}.'] },
     back: { any: ['We\'d like that very much.', 'True. Quiet\'s overrated.', 'If they remember who we are!'], ornery: ['Only if they behave.'], child: ['Can I bring my conker?'] },
@@ -199,9 +199,9 @@ const TOPICS = {
   },
   party: {
     w: 1.4, when: () => !!Game.party.planned || Game.party.on,
-    open: { grown: ['Are you going to the party, {name}?', 'There\'s a do tonight. I\'ve had my waistcoat out.', 'Fireworks tonight, they say. Or so the children insist.'], child: ['There\'s a party! Are you going? Are you?', 'I\'m staying up for the fireworks. Mum said.'] },
+    open: { grown: ['Are you going to the party, {name}?', 'There\'s a do tonight. I\'ve had my waistcoat out.', 'Fireworks tonight, they say. Or so the children insist.'], child: ['There\'s a party! Are you going? Are you?', 'I\'m staying up for the fireworks. Mom said.'] },
     reply: {
-      cheerful: ['Wouldn\'t miss it! I\'ll be first at the barrel and last to leave.', 'I\'ve been practising my steps all afternoon.'],
+      cheerful: ['Wouldn\'t miss it! I\'ll be first at the barrel and last to leave.', 'I\'ve been practicing my steps all afternoon.'],
       ornery: ['All that noise. I might show my face. Might not.', 'Parties. Someone always treads on my feet.'],
       shy: ['I might come for a little while. Just to see.', 'I\'ll stand at the edge, I think.'],
       curious: ['Who\'s playing the fiddle this time? I want to see how they do that fast bit.', 'Do you think the rift-folk will dance?'],
@@ -244,7 +244,7 @@ const TOPICS = {
       witty: ['You\'re falling to bits, {name}. I\'ll hold you together with string.', 'Try standing nearer the fire and further from work.'],
       proud: ['I\'ve never had a day\'s illness. Good stock.', 'What you want is my remedy. Famous for it.'],
       gloomy: ['Join the club. I ache in places I didn\'t know I had.', 'It\'s the damp. It gets into everything.'],
-      child: ['Yuck. Don\'t give it to me!', 'Mum says honey and lemon. And no sweets. Which is unfair.'],
+      child: ['Yuck. Don\'t give it to me!', 'Mom says honey and lemon. And no candy. Which is unfair.'],
     },
     more: { grown: ['I\'ll be fine. A pipe and a sit-down, that\'s all I need.', 'Growing old\'s not for the faint-hearted, {name}.', 'I\'ll see the herbalist if it\'s no better tomorrow.'] },
     back: { any: ['You do that.', 'Mind you do.', 'Growing old beats the alternative.'], ornery: ['Pipe won\'t fix a back.'], cheerful: ['That\'s the spirit!'], child: ['Can I have your pudding if you\'re poorly?'] },
@@ -306,7 +306,7 @@ const TOPICS = {
       witty: ['This old thing? I only wear it on days ending in y.', 'The talk of the village? That\'s usually bad news.'],
       proud: ['Yes, it is rather good, isn\'t it?', 'I know. But it\'s nice to hear it said.'],
       gloomy: ['Kind of you. I don\'t feel it.', 'Looking well? I must be a better actor than I thought.'],
-      child: ['Thanks! I like yours too.', 'I know! I practised ALL summer.'],
+      child: ['Thanks! I like yours too.', 'I know! I practiced ALL summer.'],
     },
     more: { grown: ['I mean it. Don\'t let anyone tell you otherwise.', 'Well, I notice these things. Somebody should.'] },
     back: { any: ['You\'re a good sort, {name}.', 'Somebody should. Thank you.'], ornery: ['Hm. All right.'], shy: ['...Thank you.'], child: ['You\'re my best friend.'] },
@@ -314,7 +314,7 @@ const TOPICS = {
   },
   joke: {
     w: 0.9, when: (s) => s.genes.wit > 0.4 || s.genes.merriness > 0.6,
-    open: { grown: ['Why did the hobbit cross the river, {name}?', 'What\'s brown and sticky? ...A stick.', 'I\'d tell you the joke about the barley, but it\'s corny.', 'What do you call a dragon with no fire? Cold.'], child: ['Knock knock!', 'What\'s a cow\'s favourite day? Moo-nday!'] },
+    open: { grown: ['Why did the hobbit cross the river, {name}?', 'What\'s brown and sticky? ...A stick.', 'I\'d tell you the joke about the barley, but it\'s corny.', 'What do you call a dragon with no fire? Cold.'], child: ['Knock knock!', 'What\'s a cow\'s favorite day? Moo-nday!'] },
     reply: {
       cheerful: ['Ha! Ha ha! Oh, that\'s a good one.', 'I\'ll be telling that at the inn tonight.'],
       ornery: ['That\'s not funny.', 'I\'ve heard it. It wasn\'t funny then either.'],
@@ -334,7 +334,7 @@ const TOPICS = {
     w: 0.6, when: (s, l) => (s.inside === World.inn || Game.party.on || s.isTipsy()) && s.isGrown(),
     open: { grown: ['Do you know the one about the willow lamp, {name}?', 'Sing us a verse, then. You\'ve the voice for it.', '"Oh, the road goes ever on and on..." Come on, join in.'] },
     reply: {
-      cheerful: ['"...down from the door where it began!" Everybody now!', 'Only if you harmonise. Badly.'],
+      cheerful: ['"...down from the door where it began!" Everybody now!', 'Only if you harmonize. Badly.'],
       ornery: ['I don\'t sing. And nor should you.', 'Not in here. Folk are eating.'],
       shy: ['Oh, I couldn\'t. Not in front of people.', '...Maybe a quiet one.'],
       curious: ['Who wrote that one, do you know? I\'ve always wondered.', 'Teach me the second verse. I only know the chorus.'],
@@ -384,7 +384,7 @@ const TOPICS = {
       witty: ['Me, after the inn. Oh, you mean a river.', 'A towel. And what gets drier the more it drinks? The brewer.'],
       proud: ['Child\'s play. A river.', 'Too easy. Give me a hard one.'],
       gloomy: ['A river. I used to like riddles.', 'Mm. A towel. Is that all?'],
-      child: ['A clock! A clock! Was I right?', 'A sponge! My mum told me that one.'],
+      child: ['A clock! A clock! Was I right?', 'A sponge! My mom told me that one.'],
     },
     more: { grown: ['Right first time. Here\'s a harder one: what has a neck but no head?', 'Not bad. The storyteller\'s been teaching you.', 'A bottle. ...No, listen, that\'s the next one.'], child: ['You got it! Now you ask me one!'] },
     back: { any: ['A bottle. Now you\'re showing off.', 'She has. I\'m her best pupil. Don\'t tell her.', 'A shirt! No, a bottle!'], ornery: ['A bottle. Are we done?'], curious: ['A bottle! Another, another!'], child: ['Umm... what has four legs and goes moo?'] },

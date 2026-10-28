@@ -4,7 +4,7 @@
 // drives in villager.js. Three more needs (comfort, quiet, and an unease that
 // hazards, rifts and sickness feed), a mood that steers what they choose,
 // pastimes that pall with repetition, dreams that pull like wishes, memories
-// that colour the mood and come up in talk, and breaks: binges, wanders,
+// that color the mood and come up in talk, and breaks: binges, wanders,
 // sharp spells and children's tantrums. Everything here patches the earlier
 // code with wrappers, and every number lives in TUNE (tuning.js).
 // ---------------------------------------------------------------------------
@@ -29,7 +29,7 @@ const LEISURE_KIND = {
   party: 'party', fiddle: 'music', watch: 'watch', chat: 'chat', gather: 'game', nap: 'nap', garden: 'garden', forage: 'forage', market: 'market', tea: 'tea', pet_pet: 'pet',
   hobby_carving: 'craft', hobby_basketry: 'craft', hobby_pottery: 'craft', hobby_knitting: 'craft', hobby_painting: 'craft', hobby_collecting: 'collect', hobby_birdwatching: 'collect',
 };
-const KIND_WORD = { drink: 'the ale', smoke: 'the pipe', read: 'books', fish: 'fishing', stroll: 'strolling', potter: 'pottering', play: 'games', party: 'parties', music: 'music', watch: 'watching', chat: 'nattering', game: 'get-togethers', nap: 'naps', garden: 'the garden', forage: 'foraging', market: 'the market', tea: 'tea', pet: 'the pet', craft: 'the workbench', collect: 'collecting' };
+const KIND_WORD = { drink: 'the ale', smoke: 'the pipe', read: 'books', fish: 'fishing', stroll: 'strolling', potter: 'puttering', play: 'games', party: 'parties', music: 'music', watch: 'watching', chat: 'nattering', game: 'get-togethers', nap: 'naps', garden: 'the garden', forage: 'foraging', market: 'the market', tea: 'tea', pet: 'the pet', craft: 'the workbench', collect: 'collecting' };
 
 // Which actions comfort, which cheer, and which are work.
 const COMFORT_ACTS = new Set(['eat_home', 'sleep', 'ale', 'smoke', 'read', 'nap', 'potter', 'tea', 'chat', 'pet_pet', 'eat_inn', 'bake_home']);
@@ -98,13 +98,13 @@ const sickAbout = () => Game.villagers.filter((o) => o.isSick()).length;
     if (this.isChild()) d.unease = Math.min(d.unease, 0.6);
     // a child in a tantrum wails about it
     if (this.tantrum) {
-      if (Game.time > this.tantrum.until) { this.tantrum = null; this.say(R.pick(['*sniff* ...Okay.', '...I\'m better now.', 'Can I have a biscuit?']), 2.5); }
+      if (Game.time > this.tantrum.until) { this.tantrum = null; this.say(R.pick(['*sniff* ...Okay.', '...I\'m better now.', 'Can I have a cookie?']), 2.5); }
       else if (!this.bubble && R.chance(dt * 0.2)) this.say(R.pick(['I don\'t WANT to!', 'Waaah!', '*stamps feet*', 'It\'s not FAIR!', 'NO!', '*sobs*']), 2.2);
     }
   }, 'minds');
 }
 
-// The hole they live in colours every day, and the memories they carry too.
+// The hole they live in colors every day, and the memories they carry too.
 {
   const sf = stateFeelings;
   stateFeelings = function (v) {
@@ -112,7 +112,7 @@ const sickAbout = () => Game.villagers.filter((o) => o.isSick()).length;
     if (v.homeId >= 0 && v.isGrown()) {
       const q = homeQuality(v.home()), at = v.inside === v.home() ? 1 : 0.5;
       if (q > 0.65) out.push(['A well-kept hole', TUNE.comfort.homeGood * at]);
-      else if (q < 0.3) out.push(['A bare, draughty hole', TUNE.comfort.homeBare * at]);
+      else if (q < 0.3) out.push(['A bare, drafty hole', TUNE.comfort.homeBare * at]);
     }
     const ml = memoryLift(v);
     if (ml > 0.01) out.push(['Fond memories', ml]);
