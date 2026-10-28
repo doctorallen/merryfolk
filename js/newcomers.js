@@ -195,8 +195,8 @@ Object.assign(ACTIONS, {
     avail: (v) => homeless(v),
     target: (v) => roughSpot(v),
     tick: (v, task, dt, h) => {
-      // a cold, broken sleep
-      v.drives.tired = Math.max(0, v.drives.tired - dt * (0.1 / 60));
+      // a cold, broken sleep (with Tyrell, it relieves tiredness there: MIND_SLEEP in shell.js)
+      if (!minded(v)) v.drives.tired = Math.max(0, v.drives.tired - dt * (0.1 / 60));
       v.drives.cold = Math.min(1, v.drives.cold + dt * 0.0015);
       if (v.drives.tired < 0.08 && h >= 6 && h < 20) task.t = 0;
       if (h >= 6.5 && h < 20) task.t = Math.min(task.t, 1);

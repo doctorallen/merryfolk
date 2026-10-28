@@ -36,8 +36,8 @@ jobs:
         run: |
           mkdir -p _site
           cp -r index.html css js talk _site/
-          # Tycho, the engine (a git submodule): only its built scripts
-          mkdir -p _site/vendor/tycho/dist && cp vendor/tycho/dist/tycho.js _site/vendor/tycho/dist/
+          # Tycho, the engine (a git submodule), and Tyrell, the minds engine in it: only their built scripts
+          mkdir -p _site/vendor/tycho/dist && cp vendor/tycho/dist/tycho.js vendor/tycho/dist/tyrell.js _site/vendor/tycho/dist/
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:

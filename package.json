@@ -4,7 +4,7 @@
   "private": true,
   "description": "Merryfolk, a browser village sim in plain JavaScript. The game itself needs nothing installed: these are the test tools only.",
   "scripts": {
-    "test": "sh test/check.sh && node test/golden.js && node test/sprites.js && node test/pictures.js && node test/smoke.js && node test/valley.js && node test/wizard.js && node test/talk.js",
+    "test": "sh test/check.sh && node test/golden.js && node test/sprites.js && node test/pictures.js && node test/smoke.js && node test/minds.js && node test/valley.js && node test/wizard.js && node test/talk.js",
     "check": "sh test/check.sh",
     "golden": "node test/golden.js",
     "golden:update": "node test/golden.js --update",
@@ -13,6 +13,8 @@
     "pictures": "node test/pictures.js",
     "pictures:update": "node test/pictures.js --update",
     "smoke": "node test/smoke.js",
+    "minds": "node test/minds.js",
+    "season": "node test/season.js",
     "valley": "node test/valley.js",
     "wizard": "node test/wizard.js",
     "talk": "node test/talk.js"

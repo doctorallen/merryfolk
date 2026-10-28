@@ -37,12 +37,15 @@ class Villager {
     this.sweetheart = o.sweetheart ?? null;
     this.x = o.x ?? 0; this.y = o.y ?? 0;
     // the needs that minds.js adds start at nothing (so an older village's folk aren't seeded with them)
-    this.drives = Object.assign(Object.fromEntries(DRIVES.map((d) => [d, typeof NEW_DRIVES !== 'undefined' && NEW_DRIVES.includes(d) ? 0 : R.f(0.05, 0.35)])), o.drives || {});
-    this.drives.ache = o.drives ? (o.drives.ache || 0) : 0;
-    this.drives.cold = o.drives ? (o.drives.cold || 0) : 0;
+    const drives = Object.assign(Object.fromEntries(DRIVES.map((d) => [d, typeof NEW_DRIVES !== 'undefined' && NEW_DRIVES.includes(d) ? 0 : R.f(0.05, 0.35)])), o.drives || {});
+    drives.ache = o.drives ? (o.drives.ache || 0) : 0;
+    drives.cold = o.drives ? (o.drives.cold || 0) : 0;
     this.chem = Object.assign({ ale: 0, germs: 0, toxin: 0, immune: 0, hangover: 0 }, o.chem || {});
-    this.weights = o.weights ?? {};
-    for (const a in ACTIONS) if (typeof this.weights[a] !== 'number') this.weights[a] = 1;
+    const weights = Object.assign({}, o.weights || {});
+    for (const a in ACTIONS) if (typeof weights[a] !== 'number') weights[a] = 1;
+    // the drives and habits are Tyrell's (shell.js): these read and write its needs and habits
+    this.drives = mindDrives(this, drives);
+    this.weights = mindHabits(this, weights);
     this.foodLike = Object.assign(Object.fromEntries(PANTRY_KINDS.concat(['stew']).map((k) => [k, 1])), o.foodLike || {});
     this.rel = o.rel ?? {};
     this.love = o.love ?? {};
@@ -240,11 +243,20 @@ class Villager {
     return s + noise;
   }
 
-  // Picks something to do: anything queued first, otherwise one of the three
-  // best-scoring actions, weighted by score squared. Each choice is kept, with
-  // its runners-up, for dev mode.
+  // Picks something to do: anything queued first, otherwise what Tyrell
+  // chose for them (shell.js: it weighs every action with the reasons score()
+  // gives, and Palantír keeps the choice for dev mode). Without Tyrell, the
+  // old way: one of the three best-scoring actions, weighted by score squared.
   think(h) {
     this.thinkDelay = 2;
+    if (minded(this)) {
+      if (this.queue.length) { const q = this.queue.shift(); if (this.begin(q.a, h, q.extra)) return; }
+      Shell.decide(this, h);
+      return;
+    }
+    this.thinkAlone(h);
+  }
+  thinkAlone(h) {
     const care = careLoad(this);
     this._arms = care.arms; this._kids = care.kids; this._stuck = care.stuck; this._flagging = care.flagging;
     if (this.queue.length) {
@@ -377,13 +389,16 @@ class Villager {
     const task = this.task;
     if (!task) return;
     const a = task.a;
+    task.done = true; // (Tyrell hears it's done when the task is put down, and learns from it then)
     if (a.done) a.done(this, task);
-    // reward learning: how much did that actually help?
-    let r = 0;
-    for (const d of DRIVES) r += Math.max(0, task.before[d] - this.drives[d]) * (d === 'industry' ? 0.6 : 1);
-    if (task.data.quarrel) r -= 0.3;
-    const w = this.weights[a.id] + 0.08 * (r * (this.genes.taste[a.id] || 1) - 0.25);
-    if (!a.queued) this.weights[a.id] = clamp(w, 0.35, 2.2);
+    if (!minded(this)) {
+      // without Tyrell, reward learning: how much did that actually help?
+      let r = 0;
+      for (const d of DRIVES) r += Math.max(0, task.before[d] - this.drives[d]) * (d === 'industry' ? 0.6 : 1);
+      if (task.data.quarrel) r -= 0.3;
+      const w = this.weights[a.id] + 0.08 * (r * (this.genes.taste[a.id] || 1) - 0.25);
+      if (!a.queued) this.weights[a.id] = clamp(w, 0.35, 2.2);
+    }
     this.stats[a.id] = (this.stats[a.id] || 0) + 1;
     if (a.id === 'chat' && task.partner) this.bond(task.partner, task.data.quarrel ? -0.04 : 0.03);
     if (a.id === 'chat' && task.partner && task.data.ask) newcomerMet(this, task.partner);
@@ -432,14 +447,19 @@ class Villager {
     const g = this.genes, d = this.drives, c = this.chem;
     const rate = dt / 60;
     const baby = this.stage === 'baby', grown = this.isGrown();
-    d.hunger += rate * (baby ? 0.13 : 0.085) * (0.6 + g.appetite * 0.8) * mul * (c.toxin > 0.4 ? 0.3 : 1) * (World.season === 'winter' ? 0.85 : 1);
-    d.thirst += rate * 0.08 * mul;
-    if (!sleeping) d.tired += rate * (baby ? 0.09 : this.isChild() ? 0.06 : 0.045) * (0.8 + g.laziness * 0.4) * (this.task && this.task.a.id === 'party' ? 0.6 : 1) * (this.isSick() ? 1.6 : 1) * (c.ale > 0.6 ? 1.5 : 1);
-    d.lonely += rate * (baby ? 0.09 : 0.05) * (0.4 + g.sociability) * mul;
-    d.bored += rate * 0.06 * (0.5 + g.curiosity) * mul;
-    if (grown) d.craving += rate * 0.04 * g.pipeLove * mul;
-    if (grown && this.job && h > 6.5 && h < 19) d.industry += rate * 0.12 * (1.25 - g.laziness) * (this.stage === 'elder' ? 0.6 : 1);
-    else if (grown && !this.job && h > 7 && h < 18) d.industry += rate * (typeof TUNE !== 'undefined' ? (this.stage === 'elder' ? TUNE.purpose.elderRate : TUNE.purpose.joblessRate) : 0.02) * (1.1 - g.laziness);
+    const mind = minded(this);
+    // the needs rise by themselves in Tyrell, at each one's own rates (shell.js,
+    // MIND_RISE); without it, they rise here
+    if (!mind) {
+      d.hunger += rate * (baby ? 0.13 : 0.085) * (0.6 + g.appetite * 0.8) * mul * (c.toxin > 0.4 ? 0.3 : 1) * (World.season === 'winter' ? 0.85 : 1);
+      d.thirst += rate * 0.08 * mul;
+      if (!sleeping) d.tired += rate * (baby ? 0.09 : this.isChild() ? 0.06 : 0.045) * (0.8 + g.laziness * 0.4) * (this.task && this.task.a.id === 'party' ? 0.6 : 1) * (this.isSick() ? 1.6 : 1) * (c.ale > 0.6 ? 1.5 : 1);
+      d.lonely += rate * (baby ? 0.09 : 0.05) * (0.4 + g.sociability) * mul;
+      d.bored += rate * 0.06 * (0.5 + g.curiosity) * mul;
+      if (grown) d.craving += rate * 0.04 * g.pipeLove * mul;
+      if (grown && this.job && h > 6.5 && h < 19) d.industry += rate * 0.12 * (1.25 - g.laziness) * (this.stage === 'elder' ? 0.6 : 1);
+      else if (grown && !this.job && h > 7 && h < 18) d.industry += rate * (typeof TUNE !== 'undefined' ? (this.stage === 'elder' ? TUNE.purpose.elderRate : TUNE.purpose.joblessRate) : 0.02) * (1.1 - g.laziness);
+    }
     // warmth: drifts toward how chilly it is where they are
     let chill;
     if (this.inside) chill = this.inside.kind === 'home' && this.inside.chilly ? 0.35 : 0;
@@ -470,7 +490,7 @@ class Villager {
     if (baby && (this.heldBy || (this.inside && this.inside.kind === 'home' && this.inside.inside.some((id) => { const o = Game.villagers.find((x) => x.id === id); return o && o.isGrown(); })))) {
       d.hunger -= rate * 0.16; d.thirst -= rate * 0.16; d.lonely -= rate * 0.2;
     }
-    for (const k of DRIVES) d[k] = clamp(d[k], 0, 1);
+    if (!mind) for (const k of DRIVES) d[k] = clamp(d[k], 0, 1); // (Tyrell keeps its needs to 0..1)
     moodTick(this, dt);
     if (this.stage === 'baby' || this.isChild()) { d.craving = 0; d.industry = 0; }
 
@@ -509,12 +529,15 @@ class Villager {
       return;
     }
 
+    // Tyrell may have moved on (something more pressing came up): what it no longer wants done is put down
+    if (mind && this.task) Shell.follow(this);
     if (!this.task) {
       this.thinkDelay -= dt;
       if (this.thinkDelay <= 0) this.think(h);
       return;
     }
     const task = this.task;
+    if (mind) Shell.lengthen(this, task);
     if (task.a.follow) { followMinder(this, task, dt); return; }
     if (task.phase === 'go') {
       if (task.target.other) return this.updateApproach(dt);
@@ -531,10 +554,13 @@ class Villager {
       if (!this.path) this.arrive();
       return;
     }
-    // doing
+    // doing (with Tyrell, the relief comes as it does there: a little at a
+    // time over the action, all of it when it's done; shell.js tells it how
+    // far they got)
     const a = task.a;
     const sat = task.sat || a.sat;
-    if (!a.manual) {
+    task.el = (task.el || 0) + dt;
+    if (!a.manual && !mind) {
       for (const k in sat) {
         const per = sat[k] / a.dur;
         d[k] = clamp(d[k] + per * dt, 0, 1);
