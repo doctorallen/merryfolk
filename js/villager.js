@@ -391,16 +391,10 @@ class Villager {
     const task = this.task;
     if (!task) return;
     const a = task.a;
-    task.done = true; // (Tyrell hears it's done when the task is put down, and learns from it then)
+    task.done = true; // (Tyrell hears it's done when the task is put down)
     if (a.done) a.done(this, task);
-    if (!minded(this)) {
-      // without Tyrell, reward learning: how much did that actually help?
-      let r = 0;
-      for (const d of DRIVES) r += Math.max(0, task.before[d] - this.drives[d]) * (d === 'industry' ? 0.6 : 1);
-      if (task.data.quarrel) r -= 0.3;
-      const w = this.weights[a.id] + 0.08 * (r * (this.genes.taste[a.id] || 1) - 0.25);
-      if (!a.queued) this.weights[a.id] = clamp(w, 0.35, 2.2);
-    }
+    const mind = minded(this);
+    if (!mind) this.learnFrom(task, task.before);
     this.stats[a.id] = (this.stats[a.id] || 0) + 1;
     if (a.id === 'chat' && task.partner) this.bond(task.partner, task.data.quarrel ? -0.04 : 0.03);
     if (a.id === 'chat' && task.partner && task.data.ask) newcomerMet(this, task.partner);
@@ -408,8 +402,22 @@ class Villager {
     if (a.job) { this.lastJobAt = Game.time; this.lastJob = a.id; }
     this.releaseTask(task);
     this.task = null;
+    // (with Tyrell, once it has given what the task relieved, reckoned from
+    // when Tyrell's doing of it began)
+    if (mind && minded(this)) this.learnFrom(task, task.from || task.before);
     this.pose = 'stand';
     this.thinkDelay = R.f(0.5, 3);
+  }
+  // Reward learning: how much did that actually help? What relieved a lot
+  // grows into a habit (a meal at the inn, a natter, a night's sleep), and
+  // what hardly helped fades; a squabble sours a natter.
+  learnFrom(task, before) {
+    const a = task.a;
+    let r = 0;
+    for (const d of DRIVES) r += Math.max(0, before[d] - this.drives[d]) * (d === 'industry' ? 0.6 : 1);
+    if (task.data.quarrel) r -= 0.3;
+    const w = this.weights[a.id] + 0.08 * (r * (this.genes.taste[a.id] || 1) - 0.25);
+    if (!a.queued) this.weights[a.id] = clamp(w, 0.35, 2.2);
   }
 
   pat() {

@@ -6,8 +6,10 @@
 //
 // What lives in Tyrell: the twelve needs (villager.js's drives and minds.js's
 // three more), each rising at a pace the villager's genes, age and trade set
-// (MIND_RISE, mindRates); the habits they learn, and your pats and tut-tuts
-// (Bicameral's habits and world.reward); their inborn instincts (the genome's
+// (MIND_RISE, mindRates); the habits they learn (the game's way: what
+// relieved them a lot grows into a habit, villager.js's learnFrom), and your
+// pats and tut-tuts (Bicameral's habits, moved by world.reward alone, its own
+// learning off: MIND_CONFIG); their inborn instincts (the genome's
 // tastes); and every choice of what to do next. Tyrell weighs each action by
 // the relief it promises for the needs it meets, and by every reason the
 // game's own score() gives (the hour, their nature, the weather, a baby in
@@ -53,13 +55,17 @@ const MIND_VITAL = new Set(['hunger', 'thirst', 'tired']);
 // (about a sixth an hour; a rough night less).
 const MIND_SLEEP_RATES = { hunger: 0.35, thirst: 0.35, lonely: 0.35, bored: 0.35, craving: 0.35, tired: 0 };
 const MIND_SLEEP = { sleep: 2, lodge: 2, sleep_rough: 1.2 };
-// Tyrell's settings (its docs, deciding.md): habits learned at Merryfolk's
-// pace and kept to its range, no weight for the walk (the game picks the
-// nearest spot), half an hour before something that failed is tried again,
-// each moment's checks thought over once (someone who keeps on with what
-// they're doing, or whose doing the game lengthens, would otherwise have the
-// same check queued again), and a short log (it goes in the save).
-const MIND_CONFIG = { logSize: 200, decisions: 6, habitFast: 0.1, habitSlow: 0.05, habitMin: 0.35, habitMax: 2.2, travelScale: 1e9, backoff: 30, idle: 10, checksOnce: true };
+// Tyrell's settings (its docs, deciding.md and tuning.md): habits kept to
+// Merryfolk's range and learned only the game's way (villager.js's
+// learnFrom: what relieved a lot grows into a habit, through world.reward;
+// Bicameral's own learning, by how an action went against what was
+// expected, is off: its habits knob at 0), no weight for the walk (the game
+// picks the nearest spot), half an hour before something that failed is
+// tried again, each moment's checks thought over once (someone who keeps on
+// with what they're doing, or whose doing the game lengthens, would
+// otherwise have the same check queued again), and a short log (it goes in
+// the save).
+const MIND_CONFIG = { logSize: 200, decisions: 6, habits: 0, habitMin: 0.35, habitMax: 2.2, travelScale: 1e9, backoff: 30, idle: 10, checksOnce: true };
 // The multipliers score() gives that Tyrell works out for itself.
 const MIND_OWN = new Set(['habit', 'instinct', 'did it last']);
 // Cradle's settings: a Merryfolk year is a day, and its stages; the game
@@ -738,9 +744,9 @@ const Shell = {
     if (i !== undefined) { v._hcAt[i] = v._hcGen; v._hcLv[i] = x; }
     return x;
   },
-  // a habit the game nudged (a pat, a tut-tut, a good example): Tyrell's reward
-  // moves the fast weight, and a quarter as much the slow, so the habit by
-  // 0.625 of it
+  // a habit the game nudged (what a task taught them, a pat, a tut-tut, a
+  // good example): Tyrell's reward moves the fast weight, and a quarter as
+  // much the slow, so the habit by 0.625 of it
   setHabit(v, k, x) {
     if (!Number.isFinite(x)) return;
     if (!minded(v)) { v._mh[k] = x; return; }
@@ -922,13 +928,16 @@ const Shell = {
     const cur = p.doing ? p.doing.seq : null;
     // the same thing carried on in a new task (a natter that's begun, say)
     const same = !!(old && t && old.ty != null && old.ty === cur && t.ty == null && old.a.id === t.a.id);
-    if (same && !t.chatLock) { t.ty = old.ty; return; }
+    if (same && !t.chatLock) { t.ty = old.ty; t.from = old.from; return; }
     if (old && old.ty != null && old.ty === cur && this.quiet !== v && !same) this.ended(v, old);
     if (t && t.ty == null) {
       if (this.picking && this.picking.v === v && this.picking.id === t.a.id) t.ty = this.picking.seq;
       // (a natter both have stopped for is held to its end, as the game always
       // held one: hunger waits for it, and only a break comes first)
       else t.ty = this.tell(v, 'mf.do', [this.pid(v), t.a.id, t.chatLock ? 3 : mindRank(t.a)]) ?? -1;
+      // their needs as the doing begins (Tyrell's relief comes from then on, the
+      // walk there included): what it relieved is reckoned from here (learnFrom)
+      t.from = { ...v.drives };
     }
   },
   // the game is done with a task: how it went
@@ -939,8 +948,6 @@ const Shell = {
     v._tyDone = task.ty;
     if (task.done && frac >= 0.9) this.tell(v, 'report', [id, 'done', '']);
     else this.tell(v, 'mf.stop', [id, frac]);
-    // a squabble isn't what anyone hoped of a natter
-    if (task.data && task.data.quarrel && task.a.id === 'chat') this.tell(v, 'reward', [id, 'chat', -0.05]);
   },
   // What a task really relieved, where that differs from what Tyrell expected
   // of the action (a meal of their favorite, a natter with the innkeeper, a
