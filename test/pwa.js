@@ -57,19 +57,24 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     await page.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
     await page.reload();
     await ready();
-    await waitFor(page, () => !!navigator.serviceWorker.controller, { timeout: 30000 });
+    await waitFor(page, () => !!navigator.serviceWorker.controller, { timeout: 120000 }); // (the worker keeps every file first)
     const cached = await page.evaluate(async () => { const c = await caches.open((await caches.keys())[0]); return (await c.keys()).map((r) => new URL(r.url).pathname); });
     for (const f of ['/index.html', '/js/main.js', '/js/pwa.js', '/css/style.css', '/manifest.webmanifest', '/icons/icon-512.png', '/vendor/tycho/dist/tycho.js', '/talk/core.js']) if (!cached.includes(f)) failures.push('the worker did not keep ' + f);
 
-    // a deploy of the build already running: no reload
+    // a deploy of the build already running: once its worker has taken over
+    // (keeping every file can take a while on a slow machine), no reload
     await mark();
+    await page.evaluate(() => { window.__took = 0; navigator.serviceWorker.addEventListener('controllerchange', () => window.__took++); });
     await bump('a2', null);
-    if (await reloaded(6000)) failures.push('a deploy of the build already running reloaded the page');
+    const took = await waitFor(page, () => window.__took > 0, { timeout: 120000 }).then(() => true, () => false);
+    if (!took) failures.push('a deploy of the build already running never took over');
+    await wait(2000);
+    if (await reloaded(1000)) failures.push('a deploy of the build already running reloaded the page');
 
     // a new build: saved and loaded onto
     await mark();
     await bump('a3', 'v999.1 · test');
-    if (!(await reloaded(15000))) {
+    if (!(await reloaded(120000))) {
       // what the worker and the page were doing (CI's logs can't be read from where this is fixed)
       const st = await page.evaluate(async () => {
         const a = Pwa.app, reg = await navigator.serviceWorker.getRegistration();
