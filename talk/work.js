@@ -60,9 +60,9 @@ talkPack('work', () => {
     woodwright: { perk: 'firewood', one: 'load of timber', good: 'wood', goods: 'loads of timber', tool: 'axe', pride: 'a round door that swings true and shuts soft', grumble: 'a blunt axe and a knotty log', place: 'the woods', fix: 'woodwright_sharpen' },
     herbalist: { perk: 'peppermint tea', one: 'remedy', good: 'remedy', goods: 'remedies', tool: 'pestle', pride: 'a fever broken by morning', grumble: 'folk who won\'t take their tonic', place: 'the herb beds', fix: 'herbalist_beds' },
     orchardist: { perk: 'honey', one: 'basket of apples', good: 'apple', goods: 'apples', tool: 'pruning hook', pride: 'a tree so heavy it needs propping', grumble: 'wasps in the windfalls', place: 'the orchard', fix: 'orchardist_prune' },
-    postie: { perk: 'gossip', one: 'letter', good: null, goods: 'letters', tool: 'satchel', pride: 'every letter through the right door, first time', grumble: 'dogs, and folk who move house without telling me', place: 'the round', fix: 'postie_sort' },
-    storyteller: { perk: 'biscuits', one: 'tale', good: null, goods: 'tales', tool: 'the old storybook', pride: 'a little one reading a whole page alone', grumble: 'fidgeting in the third row', place: 'the old oak', fix: 'read' },
-    nanny: { perk: 'biscuits', one: 'lullaby', good: null, goods: 'naps', tool: 'a lullaby', pride: 'six little ones asleep at once', grumble: 'jam in places jam should never be', place: 'the nursery', fix: 'tea' },
+    mailcarrier: { perk: 'gossip', one: 'letter', good: null, goods: 'letters', tool: 'satchel', pride: 'every letter through the right door, first time', grumble: 'dogs, and folk who move house without telling me', place: 'the round', fix: 'mailcarrier_sort' },
+    storyteller: { perk: 'cookies', one: 'tale', good: null, goods: 'tales', tool: 'the old storybook', pride: 'a little one reading a whole page alone', grumble: 'fidgeting in the third row', place: 'the old oak', fix: 'read' },
+    nanny: { perk: 'cookies', one: 'lullaby', good: null, goods: 'naps', tool: 'a lullaby', pride: 'six little ones asleep at once', grumble: 'jam in places jam should never be', place: 'the nursery', fix: 'tea' },
     tinker: { perk: 'scrap', one: 'gadget', good: 'scrap', goods: 'bits of scrap', tool: 'soldering iron', pride: 'a lamp that runs on nothing but sunshine', grumble: 'rust, and hill-folk who poke the wires', place: 'the Relay', fix: 'work_relay' },
     lamplighter: { perk: 'lamp oil', one: 'lamp', good: null, goods: 'lamps', tool: 'pole', pride: 'the whole lane coming on one lamp at a time', grumble: 'wind that blows them out behind me', place: 'the lanes', fix: 'work_lamps' },
   };
@@ -147,7 +147,7 @@ talkPack('work', () => {
 
   // --- How's the work going? ----------------------------------------------------------
   addThread({
-    id: 'work.day', label: (F) => ({ farmer: 'How are the fields?', herder: 'How are the animals?', miller: 'How\'s the mill turning?', baker: 'How\'s the Bakehouse?', brewer: 'How\'s the brewing?', innkeeper: 'How\'s the taproom?', fisher: 'How\'s the fishing?', postie: 'How\'s the round?', nanny: 'How are the little ones?', tinker: 'How\'s the tinkering?' }[F.job] || 'How\'s the work going?'),
+    id: 'work.day', label: (F) => ({ farmer: 'How are the fields?', herder: 'How are the animals?', miller: 'How\'s the mill turning?', baker: 'How\'s the Bakehouse?', brewer: 'How\'s the brewing?', innkeeper: 'How\'s the taproom?', fisher: 'How\'s the fishing?', mailcarrier: 'How\'s the round?', nanny: 'How are the little ones?', tinker: 'How\'s the tinkering?' }[F.job] || 'How\'s the work going?'),
     about: 'work', weight: 1.1, cool: 2,
     when: (F) => !!F.job && F.stage !== 'child',
     rel: (F) => (F.workShort || F.workShortHanded || F.workHazard ? 1.4 : 1.1),
@@ -230,7 +230,7 @@ talkPack('work', () => {
     'job=woodwright': ['Felled anything large today, {name}?', 'How\'s the timber, {name}?'],
     'job=herbalist': ['Anyone poorly, {name}? Or are we all well?', 'What\'s in the mortar today, {name}?'],
     'job=orchardist': ['How are the trees, {name}?', 'Bees in a good mood, {name}?'],
-    'job=postie': ['Much in the bag today, {name}?', 'How\'s the round, {name}? Any dogs?'],
+    'job=mailcarrier': ['Much in the bag today, {name}?', 'How\'s the round, {name}? Any dogs?'],
     'job=storyteller': ['How are your little scholars, {name}?', 'Any good tales this week, {name}?'],
     'job=nanny': ['How are the little ones, {name}? All in one piece?', 'Have you had a moment\'s peace today, {name}?'],
     'job=tinker': ['How\'s the tinkering, {name}? Anything sparking?', 'Is the Relay humming, {name}?'],
@@ -252,7 +252,7 @@ talkPack('work', () => {
     'job=fisher': ['I hear the fish have started a petition against you.', 'Is it fishing, or sitting by a river with a stick?'],
     'job=farmer': ['Do you talk to the barley? It looks like it\'s listening.', 'Does the scarecrow get paid?'],
     'job=miller': ['Is it true millers just watch a wheel go round all day?'],
-    'job=postie': ['Read any good letters lately?', 'I hear you know everyone\'s business by the weight of the envelope.'],
+    'job=mailcarrier': ['Read any good letters lately?', 'I hear you know everyone\'s business by the weight of the envelope.'],
     'job=herder': ['Do the sheep know your name yet? Mine never learn.', 'Have you ever lost one and counted yourself instead?'],
     'job=nanny': ['How many have you lost today? Only joking. Mostly.', 'Do you get paid by the nap?'],
     'job=tinker': ['Have you set fire to anything this week?', 'Is it meant to spark like that?'],
@@ -325,7 +325,7 @@ talkPack('work', () => {
     'job=orchardist': ['The trees are heavy and the bees are busy. I\'m somewhere in the middle.', 'Pruning, picking, and talking to the hives. They like to be told the news.'],
     'job=orchardist season=spring': ['Blossom! The whole orchard\'s pink. Pray for no frost.'],
     'job=orchardist season=autumn': ['Apples by the basket. My arms are longer than they were in summer.'],
-    'job=postie': ['Bag\'s heavy, feet are sore, and nobody\'s dog has bitten me today. A good day.', 'Up the lane, down the lane, and a word at every door.'],
+    'job=mailcarrier': ['Bag\'s heavy, feet are sore, and nobody\'s dog has bitten me today. A good day.', 'Up the lane, down the lane, and a word at every door.'],
     'job=mail carrier workLetters>5': ['{WorkLetters} letters still in the bag! Hobbits will write to anyone.'],
     'job=mail carrier workLetters<0': ['Empty bag! Nobody\'s written a word all day. Are they cross with each other?'],
     'job=storyteller': ['The little ones did their letters beautifully this morning. Well. Most of them.', 'We did sums with acorns. Half the acorns were eaten.'],
@@ -353,7 +353,7 @@ talkPack('work', () => {
     'job=farmer': ['Bringing the last sheaf in, and the whole village there to see it.'],
     'job=innkeeper': ['When a stranger walks in cold and walks out singing. That\'s mine, that.'],
     'job=nanny': ['When a little one I minded comes back grown and says hello. Every time.'],
-    'job=postie': ['A letter from far off for someone who\'d given up waiting. Their face.'],
+    'job=mailcarrier': ['A letter from far off for someone who\'d given up waiting. Their face.'],
     'job=storyteller': ['A little one who couldn\'t read in spring reading to me by autumn.'],
     'workMasterpiece ^2': ['{WorkMasterpiece}. You\'ve seen it? Folk still come to look.'],
   });
@@ -466,7 +466,7 @@ talkPack('work', () => {
     'job=woodwright': ['Measure twice. Cut once. Apologize to the tree.'],
     'job=herbalist': ['Taste nothing you can\'t name.'],
     'job=brewer': ['Clean the vats like your life depends on it. Your ale does.'],
-    'job=postie': ['Learn the dogs\' names first. Then the folk.'],
+    'job=mailcarrier': ['Learn the dogs\' names first. Then the folk.'],
     'job=nanny': ['Count them. Then count them again.'],
   });
   W('work.day.why', {
@@ -639,7 +639,7 @@ talkPack('work', () => {
   W('work.how.free', {
     _: ['The free {workPerk}! Ha. Well, it didn\'t hurt.', 'Ha! You\'ve found me out.'],
     'job=nanny|storyteller': ['The cookies are very good. I won\'t pretend otherwise.'],
-    'job=postie': ['The gossip! Ha. I hear everything first. It\'s a terrible temptation.'],
+    'job=mailcarrier': ['The gossip! Ha. I hear everything first. It\'s a terrible temptation.'],
     ornery: ['Free? Nothing\'s free. I pay for it in sore feet.'],
     witty: ['The perks are excellent. The hours are criminal.'],
     'stage=elder': ['I lost a bet! To my grandmother. She cheated. I\'ve been at it ever since.'],
@@ -652,7 +652,7 @@ talkPack('work', () => {
     'job=innkeeper': ['I poured my first pint into a hat. The hat\'s owner was not amused.'],
     'job=woodwright': ['My first tree fell the wrong way and flattened a hen-house. No hens in it. Mostly.'],
     'job=herbalist': ['I gave somebody a tonic for their cough. It was for warts. They stopped coughing, mind.'],
-    'job=postie': ['I delivered every letter to the wrong door. Folk were very nice about it.'],
+    'job=mailcarrier': ['I delivered every letter to the wrong door. Folk were very nice about it.'],
     'job=brewer': ['My first ale was so strong it took the varnish off the table.'],
     'job=miller': ['I let the stones run dry and the whole mill smelled of toast.'],
     'job=herder': ['A ram knocked me into the trough. I\'ve not trusted a ram since.'],
@@ -787,8 +787,8 @@ talkPack('work', () => {
     'workTrouble=herbalist.1': ['There\'s an old fellow on the lane won\'t take his tonic. Says it tastes of ditch. It does. It works, though.', 'My remedies are going stale on the shelf before anyone takes them.'],
     'workTrouble=orchardist.0': ['The bees are cross. All of them. They\'ve never been cross with me.', 'The hives have turned against me. I went to say good morning and they said otherwise.'],
     'workTrouble=orchardist.1': ['Half the apples are dropping before they\'re ripe.', 'Windfalls everywhere and none of them ready. Green as grass.'],
-    'workTrouble=postie.0': ['There\'s a dog on the round that won\'t let me past. Sits in the lane. Looks at me.', 'A dog. A small dog. It has decided the lane is its lane.'],
-    'workTrouble=postie.1': ['A letter\'s come with no name on it. Just "to the one who\'ll know". Who\'ll know?', 'Letters go missing from the bag. Not lost. Missing. I count them.'],
+    'workTrouble=mailcarrier.0': ['There\'s a dog on the round that won\'t let me past. Sits in the lane. Looks at me.', 'A dog. A small dog. It has decided the lane is its lane.'],
+    'workTrouble=mailcarrier.1': ['A letter\'s come with no name on it. Just "to the one who\'ll know". Who\'ll know?', 'Letters go missing from the bag. Not lost. Missing. I count them.'],
     'workTrouble=storyteller.0': ['The little ones have heard all my tales. Every one. They say the endings before I do.', 'They know every story by heart. They correct me. Little ones correcting me!'],
     'workTrouble=storyteller.1': ['One of them won\'t sit still. Not for anything. I don\'t want to be cross.', 'There\'s one who fidgets so much the others can\'t hear. I\'ve tried everything.'],
     'workTrouble=nanny.0': ['They won\'t nap. None of them. They\'ve formed a sort of union.', 'Not one nap all week. They take it in turns to keep each other awake.'],
@@ -822,8 +822,8 @@ talkPack('work', () => {
     'workTrouble=herbalist.1': ['Tend the beds and grow something sweeter. Mint hides a ditch nicely.'],
     'workTrouble=orchardist.0': ['See to the hives slowly, with smoke, and tell them the village news. They hate being left out.'],
     'workTrouble=orchardist.1': ['Prune the old wood. Light and air, and the trees will hold their fruit.'],
-    'workTrouble=postie.0': ['Sort the bag before you set out, and go round the other way. Dogs hate surprises more than mail carriers.'],
-    'workTrouble=postie.1': ['Sort the bag twice, in the order of the lane. Then you\'ll know where they go.'],
+    'workTrouble=mailcarrier.0': ['Sort the bag before you set out, and go round the other way. Dogs hate surprises more than mail carriers.'],
+    'workTrouble=mailcarrier.1': ['Sort the bag twice, in the order of the lane. Then you\'ll know where they go.'],
     'workTrouble=storyteller.0': ['Read something new. The old book has a chapter at the back nobody\'s opened.'],
     'workTrouble=storyteller.1': ['Read up something with marching in it, and let the fidget do the marching.'],
     'workTrouble=nanny.0': ['Have a cup of tea. Sit down. When you\'re calm, they\'ll be calm. Mostly.'],
@@ -975,7 +975,7 @@ talkPack('work', () => {
   });
   W('work.tools.open', {
     _: ['Is that your {workTool}, {name}? May I see?', 'That\'s a well-used {workTool}, {name}.'],
-    'job=postie': ['That satchel\'s seen some miles, {name}.'],
+    'job=mailcarrier': ['That satchel\'s seen some miles, {name}.'],
     'job=lamplighter': ['That\'s a fine long pole, {name}. May I see?'],
     'job=tinker': ['What is that, {name}? It\'s humming.'],
   });
@@ -984,7 +984,7 @@ talkPack('work', () => {
     'job=woodwright': ['The axe-head\'s been ground so often it\'s half the size it was.'],
     'job=baker': ['The peel\'s blade is scorched black at the tip, smooth as a pebble.'],
     'job=tinker': ['It\'s wrapped in hill-folk twine and something glowing faintly blue.'],
-    'job=postie': ['The satchel strap has been mended three different ways.'],
+    'job=mailcarrier': ['The satchel strap has been mended three different ways.'],
   });
   W('work.tools.start', {
     _: ['This? My {workTool}. Best friend I\'ve got, after the kettle.', 'Ah, the old {workTool}. Mind it, it bites the careless.'],
@@ -1128,7 +1128,7 @@ talkPack('work', () => {
     'workMade>3 workGoodWord': ['{WorkMade} {workGoodWord} in the Store between us today. That\'s what.'],
     'job=baker': ['Three batches and a cake for somebody\'s birthday.'],
     'job=farmer': ['A row sown, a row weeded, and a fence that\'s nearly a fence again.'],
-    'job=postie': ['Every letter delivered and only one dog.'],
+    'job=mailcarrier': ['Every letter delivered and only one dog.'],
     'job=woodwright': ['A tree down and sawn, and a stack you could build a hole with.'],
   });
   W('work.pass.busy', {
@@ -1209,7 +1209,7 @@ talkPack('work', () => {
     'workFamilyTrade': ['Is the {jobWord}\'s trade in the family, {name}?'],
   });
   W('work.how.jest', {
-    'job=postie': ['I expect you wanted to read everyone\'s letters.'], 'job=storyteller': ['I expect you just liked the sound of your own voice.'],
+    'job=mailcarrier': ['I expect you wanted to read everyone\'s letters.'], 'job=storyteller': ['I expect you just liked the sound of your own voice.'],
   });
   W('work.how.greener', {
     cheerful: ['Ha! And the grass on this side is quite green enough.'], shy: ['...I suppose it does. Thank you.'], dreamy: ['Greener in the mist. Yes.'], proud: ['My side\'s green enough, thank you.'], gloomy: ['Both sides are muddy if you stand on them long enough.'],
@@ -1234,7 +1234,7 @@ talkPack('work', () => {
   W('work.trouble.taleheard', { witty: ['A tale! Good. I like my advice with a plot.'], dreamy: ['Oh, a tale. Yes, please.'], proud: ['Go on. Though I doubt she had it worse.'] });
   W('work.trouble.jested', { shy: ['...Oh. Yes. Ha.'], proud: ['It\'s not a laughing matter, wizard.'], gloomy: ['Very funny. It\'s still broken.'] });
   W('work.trouble.nocharge', { cheerful: ['Ha! You\'re a treasure, wizard.'], ornery: ['This time. I know your sort.'], 'job=orchardist': ['I\'ll owe you a pot of honey. A big one.'], 'job=herder': ['I\'ll owe you a cheese. A ripe one.'] });
-  W('work.tools.mend', { 'job=woodwright': ['That edge wants a whetstone. Shall I show you a trick?'], 'job=postie': ['That strap\'s going. A stitch in time?'] });
+  W('work.tools.mend', { 'job=woodwright': ['That edge wants a whetstone. Shall I show you a trick?'], 'job=mailcarrier': ['That strap\'s going. A stitch in time?'] });
   W('work.tools.comforted', { cheerful: ['They do, don\'t they! Oh, that\'s cheered me.'], shy: ['...Thank you.'], proud: ['They\'d better be good ones.'] });
   W('work.tools.jest', { 'job=tinker': ['Is it supposed to hum like that?'], 'job=lamplighter': ['Do you ever knock hats off with that?'] });
   W('work.tools.answer', { cheerful: ['Ha! It wags, nearly.'], shy: ['...Sometimes it seems to.'], gloomy: ['It never argues. That\'s more than I can say for folk.'] });

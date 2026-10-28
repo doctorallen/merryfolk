@@ -50,7 +50,7 @@ function idleTrade(j) {
   const h = 11;
   return !acts.some((a) => !a.avail || a.avail(worker, h));
 }
-const IDLE_WHY = { miller: 'the flour bins are full', baker: 'the bread shelves are full', brewer: 'the ale cellar is full', fisher: 'the fish are not biting', woodwright: 'nothing to build or fell', farmer: 'nothing to sow or reap just now', herbalist: 'no one is poorly and the herbs are in', orchardist: 'nothing to pick yet', herder: 'the animals are tended', grower: 'the leaf field is resting', postie: 'no letters in the bag', tinker: 'nothing to salvage or fix' };
+const IDLE_WHY = { miller: 'the flour bins are full', baker: 'the bread shelves are full', brewer: 'the ale cellar is full', fisher: 'the fish are not biting', woodwright: 'nothing to build or fell', farmer: 'nothing to sow or reap just now', herbalist: 'no one is poorly and the herbs are in', orchardist: 'nothing to pick yet', herder: 'the animals are tended', grower: 'the leaf field is resting', mailcarrier: 'no letters in the bag', tinker: 'nothing to salvage or fix' };
 
 window.addEventListener('DOMContentLoaded', () => {
   for (const t of TOOLS) if (GIFT_COST[t.id]) t.hint += ` (Costs ${giftCostWord(t.id)}.)`;

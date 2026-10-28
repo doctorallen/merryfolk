@@ -18,7 +18,7 @@
 // ---------------------------------------------------------------------------
 
 // The main action of each trade (the one the brain picks), and the trades' rounds.
-const MAIN_WORK = { farmer: 'work_farm', herder: 'work_herd', innkeeper: 'work_inn', woodwright: 'work_wood', baker: 'work_bake', brewer: 'work_brew', miller: 'work_mill', herbalist: 'work_herb', postie: 'work_post', fisher: 'work_fish', grower: 'work_leaf', orchardist: 'work_orchard' };
+const MAIN_WORK = { farmer: 'work_farm', herder: 'work_herd', innkeeper: 'work_inn', woodwright: 'work_wood', baker: 'work_bake', brewer: 'work_brew', miller: 'work_mill', herbalist: 'work_herb', mailcarrier: 'work_mail', fisher: 'work_fish', grower: 'work_leaf', orchardist: 'work_orchard' };
 const ROUNDS = {};
 // what's left of the trade's output when the day is a proper working day with several stints
 const YIELD = { work_farm: 0.25, work_herd: 0.5, work_wood: 0.55, work_bake: 0.65, work_brew: 0.5, work_mill: 0.85, work_herb: 0.55, work_fish: 0.5, work_leaf: 0.5, work_orchard: 0.5, work_allot: 0.6 };
@@ -202,11 +202,11 @@ const MORNING = (h) => (h < 11 ? 2 : 0.3), AFTERNOON = (h) => (h >= 13 ? 1.5 : 0
 }
 {
   // the mail carrier: sort the letters, deliver, collect from the board
-  const P = 'work_post';
+  const P = 'work_mail';
   // the round is walked whether or not there's mail: boxes checked, the board cleared
-  { const av = ACTIONS.work_post.avail; ACTIONS.work_post.avail = (v, h) => (av && av(v, h)) || World.homes.some((hm) => hm.built && hm.mailbox); }
+  { const av = ACTIONS.work_mail.avail; ACTIONS.work_mail.avail = (v, h) => (av && av(v, h)) || World.homes.some((hm) => hm.built && hm.mailbox); }
   subTask(P, 'sort', { label: 'Sorting the mail', dur: 8, inside: true, pose: 'inside', need: (v, h) => (h < 11 ? 1.5 : 0.3), target: inside('store') });
-  step(P, ACTIONS.work_post, 6, () => (typeof mailbag === 'function' && mailbag().length ? 3 : 0), { label: 'Delivering', repeat: 3 });
+  step(P, ACTIONS.work_mail, 6, () => (typeof mailbag === 'function' && mailbag().length ? 3 : 0), { label: 'Delivering', repeat: 3 });
   subTask(P, 'round', { label: 'Walking the round', dur: 4, pose: 'stand', prop: 'letter', need: () => 1.2, repeat: 3, sat: { lonely: -0.1 },
     target: (v) => { const homes = World.homes.filter((h) => h.built && h.mailbox && h.id !== v._lastBox); const h = homes.length ? homes.sort((a, b) => dist(a.mailbox.x, a.mailbox.y, v.x, v.y) - dist(b.mailbox.x, b.mailbox.y, v.x, v.y))[Math.floor(Math.random() * Math.min(3, homes.length))] : null; if (!h) return null; v._lastBox = h.id; return { x: h.mailbox.x + 6, y: h.mailbox.y + 2, facing: 'left' }; }, say: ['Nothing today.', 'Morning!', 'Box is empty.'] });
   subTask(P, 'collect', { label: 'Collecting letters from the board', dur: 5, pose: 'stand', prop: 'letter', need: () => 1, target: () => (World.postSpot ? { x: World.postSpot.x, y: World.postSpot.y, facing: 'up' } : null) });
@@ -256,7 +256,7 @@ function planRound(v, main, h) {
   if (rest && out.length >= 3) out.push(rest);
   return out;
 }
-const ORDER = { farmer_fetchwater: 1, farmer_water: 2, herder_fetchwater: 1, herder_water: 2, herder_feed: 0, innkeeper_fire: 0, innkeeper_serve: 0, work_wood: 1, woodwright_lop: 2, woodwright_stack: 3, baker_flour: 0, baker_knead: 1, work_bake: 2, baker_cool: 3, baker_tostore: 4, brewer_barley: 0, brewer_malt: 1, brewer_mash: 2, work_brew: 3, brewer_tap: 4, brewer_barrel: 5, miller_sacks: 0, work_mill: 1, miller_bag: 2, miller_tobakery: 3, fisher_bait: 0, work_fish: 1, fisher_gut: 2, postie_sort: 0, work_post: 1, postie_collect: 2, grower_hoe: 0, work_leaf: 1, grower_hang: 2 };
+const ORDER = { farmer_fetchwater: 1, farmer_water: 2, herder_fetchwater: 1, herder_water: 2, herder_feed: 0, innkeeper_fire: 0, innkeeper_serve: 0, work_wood: 1, woodwright_lop: 2, woodwright_stack: 3, baker_flour: 0, baker_knead: 1, work_bake: 2, baker_cool: 3, baker_tostore: 4, brewer_barley: 0, brewer_malt: 1, brewer_mash: 2, work_brew: 3, brewer_tap: 4, brewer_barrel: 5, miller_sacks: 0, work_mill: 1, miller_bag: 2, miller_tobakery: 3, fisher_bait: 0, work_fish: 1, fisher_gut: 2, mailcarrier_sort: 0, work_mail: 1, mailcarrier_collect: 2, grower_hoe: 0, work_leaf: 1, grower_hang: 2 };
 
 // How urgently the trade calls right now: 1 on shift, less at the edges, 0 off.
 function onShift(v, h) {
@@ -432,7 +432,7 @@ Village.innkeeperOn = function () { return Game.villagers.some((v) => v.task && 
   const jt = jobTargets;
   jobTargets = function () { const t = jt(); const adults = Game.villagers.filter((v) => v.isGrown() && !v.leaving).length; if (adults >= 18 && !(Game.jobPlan && typeof Game.jobPlan.innkeeper === 'number')) t.innkeeper = 2; return t; };
   // the empty mugs and plates on the tables
-  Object.assign(BUILDING_SPOTS, { innkeeper_fire: 'oven', innkeeper_cook: 'oven', innkeeper_fetch: 'bar', innkeeper_wash: 'bar', innkeeper_keg: 'bar', baker_knead: 'kneading', baker_flour: 'counter', baker_tostore: 'counter', brewer_malt: 'copper', brewer_mash: 'copper', brewer_tap: 'copper', brewer_barley: 'counter', brewer_barrel: 'counter', miller_bag: 'mill', miller_sacks: 'counter', miller_tobakery: 'counter', herbalist_dry: 'herbs', herbalist_grind: 'herbs', postie_sort: 'counter', grower_hang: 'counter' });
+  Object.assign(BUILDING_SPOTS, { innkeeper_fire: 'oven', innkeeper_cook: 'oven', innkeeper_fetch: 'bar', innkeeper_wash: 'bar', innkeeper_keg: 'bar', baker_knead: 'kneading', baker_flour: 'counter', baker_tostore: 'counter', brewer_malt: 'copper', brewer_mash: 'copper', brewer_tap: 'copper', brewer_barley: 'counter', brewer_barrel: 'counter', miller_bag: 'mill', miller_sacks: 'counter', miller_tobakery: 'counter', herbalist_dry: 'herbs', herbalist_grind: 'herbs', mailcarrier_sort: 'counter', grower_hang: 'counter' });
   const bws = buildWorldSprites;
   buildWorldSprites = function () {
     bws();

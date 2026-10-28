@@ -169,5 +169,6 @@ function importVillagerCode(code) {
   let data;
   try { data = JSON.parse(decodeURIComponent(escape(atob(code.slice(4))))); } catch (e) { throw new Error('The letter is smudged. The code seems incomplete.'); }
   if (!data || !data.g || !data.f) throw new Error('The letter is missing its traveler.');
-  return data;
+  // a code from a game before the names were American has them put right (save.js)
+  return renamedSave(data);
 }

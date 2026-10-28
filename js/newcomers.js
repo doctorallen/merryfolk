@@ -209,4 +209,4 @@ ACTIONS.lodge.time = (h, v) => (isNight(h) || h >= 20.5 ? 4.5 : v.drives.tired >
 for (const k of ['ask_around', 'explore', 'lodge', 'sleep_rough']) ACTIONS[k].id = k;
 Object.assign(ACTION_NAMES, { ask_around: 'Asking around', explore: 'Exploring', lodge: 'Lodging at the inn', sleep_rough: 'Sleeping rough' });
 // what someone without a home of their own can't do
-const HOMELESS_NO = new Set(['sleep', 'eat_home', 'tea', 'potter', 'market', 'garden', 'bake_home', 'tend_baby', 'bedtime_story', 'work_nanny']);
+const HOMELESS_NO = new Set(['sleep', 'eat_home', 'tea', 'putter', 'market', 'garden', 'bake_home', 'tend_baby', 'bedtime_story', 'work_nanny']);

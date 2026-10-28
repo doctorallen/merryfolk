@@ -44,7 +44,7 @@ talkPack('work4', () => {
   const OLD = {
     farmer: ['hoe', 'the barley fields'], herder: ['crook', 'the pens'], miller: ['flour scoop', 'the mill'], baker: ['peel', 'the Bakehouse'], brewer: ['mash paddle', 'the brewhouse'],
     innkeeper: ['ladle', 'the inn'], grower: ['leaf knife', 'the leaf field'], fisher: ['rod', 'the river'], woodwright: ['axe', 'the woods'], herbalist: ['pestle', 'the herb beds'],
-    orchardist: ['pruning hook', 'the orchard'], postie: ['satchel', 'the round'], storyteller: ['old storybook', 'the old oak'], nanny: ['rocking chair', 'the nursery'], tinker: ['soldering iron', 'the Relay'], lamplighter: ['pole', 'the lanes'],
+    orchardist: ['pruning hook', 'the orchard'], mailcarrier: ['satchel', 'the round'], storyteller: ['old storybook', 'the old oak'], nanny: ['rocking chair', 'the nursery'], tinker: ['soldering iron', 'the Relay'], lamplighter: ['pole', 'the lanes'],
   };
   const SKILL_JOB = { farming: 'farmer', cooking: 'baker', brewing: 'brewer', fishing: 'fisher', woodcraft: 'woodwright', herbalism: 'herbalist', lore: 'storyteller', music: 'innkeeper', tinkering: 'tinker' };
   const IDLE = { garden: 'puttering in the garden', fish: 'a bit of fishing', stroll: 'walking the lanes', read: 'reading by the window', forage: 'mushrooming', work_odd: 'odd jobs about the place', smoke: 'a pipe on the step', nap: 'napping, if I\'m honest', chat: 'nattering', fiddle: 'fiddling', bake_home: 'baking at home' };
@@ -941,7 +941,7 @@ talkPack('work4', () => {
     'workRetired=farmer': ['I still look at the sky first thing and think, good drying day.'],
     'workRetired=fisher': ['I go down to the river and don\'t fish. Just look. The fish seem relieved.'],
     'workRetired=innkeeper': ['I sit on the customer side of the bar now. It\'s very strange. The stools are lower.'],
-    'workRetired=postie': ['My feet still walk the round on their own. I end up at doors with nothing to give.'],
+    'workRetired=mailcarrier': ['My feet still walk the round on their own. I end up at doors with nothing to give.'],
   });
   W('work.retired.miss', {
     _: ['Miss it? Every morning, for about a minute. Then I put the kettle on.', 'I miss being needed. The work, less. The being needed, a lot.'],
@@ -1625,7 +1625,7 @@ talkPack('work4', () => {
       ] },
       tea: { line: 'work.ask.apprentice.tea', go: [
         { ap: 'ask', say: 'No, but truly. What\'s holding you back?', to: 'holding' },
-        { ap: 'jest', say: 'And the cookies. Don\'t forget the cookies.', to: 'biscuits' },
+        { ap: 'jest', say: 'And the cookies. Don\'t forget the cookies.', to: 'cookies' },
       ] },
       feels: { line: 'work.ask.apprentice.feels', go: [
         { ap: 'advise', say: 'Then do it scared. That\'s the only way.', to: 'scared' },
@@ -1633,7 +1633,7 @@ talkPack('work4', () => {
       ] },
       takeon: { line: 'work.ask.apprentice.takeon', fx: { respect: 0.03, remember: 'The wizard thinks I should take on an apprentice.', rv: 1 }, end: true },
       watch: { line: 'work.ask.apprentice.watch', fx: { respect: 0.02, run: (T, v) => { pushQ(v, 'apprentice'); runLean(T, v); } }, end: true },
-      biscuits: { line: 'work.ask.apprentice.cookies', fx: { fond: 0.02 }, end: true },
+      cookies: { line: 'work.ask.apprentice.cookies', fx: { fond: 0.02 }, end: true },
       scared: { line: 'work.ask.apprentice.scared', fx: { trust: 0.03 }, end: true },
       ready: { line: 'work.ask.apprentice.ready', fx: { trust: 0.02, fond: 0.02 }, end: true },
     },

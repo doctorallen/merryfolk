@@ -61,8 +61,8 @@ talkPack('family', () => {
     F.parentWord = parents[0] ? sexWord(parents[0], 'mom', 'dad') : null;
     F.parentOld = !!(parents[0] && parents[0].stage === 'elder');
     F.parentAway = !!(parents[0] && parents[0].homeId !== v.homeId);
-    const mum = parents.find((p) => p.genes.sex === 'f'), dad = parents.find((p) => p.genes.sex !== 'f');
-    F.mum = mum ? mum.first : null;
+    const mom = parents.find((p) => p.genes.sex === 'f'), dad = parents.find((p) => p.genes.sex !== 'f');
+    F.mom = mom ? mom.first : null;
     F.dad = dad ? dad.first : null;
     // brothers and sisters
     const sibs = (v.parents || []).length ? Game.villagers.filter((o) => o !== v && alive(o) && o.parents && o.parents.some((p) => v.parents.includes(p))) : [];

@@ -221,7 +221,7 @@ talkPack('village4', () => {
       ] },
       chances: { line: 'village.contest.chances', go: [
         { ap: 'warm', say: 'I\'ll be at the front, cheering.', to: 'cheer' },
-        { ap: 'advise', say: 'Try it on the Badger crowd first. They\'re honest critics.', to: 'practise' },
+        { ap: 'advise', say: 'Try it on the Badger crowd first. They\'re honest critics.', to: 'practice' },
         { ap: 'ask', say: 'What\'s the secret of a good {vContestThing}?', to: 'secret', need: { open: 1 }, soft: true },
       ] },
       cheat: { line: 'village.contest.cheat', go: [
@@ -233,7 +233,7 @@ talkPack('village4', () => {
         { ap: 'jest', say: 'I shall enter one myself, then. Watch out.', to: 'enter' },
       ] },
       cheer: { line: 'village.contest.cheer', fx: { fond: 0.02 }, end: true },
-      practise: { line: 'village.contest.practice', fx: { respect: 0.02 }, end: true },
+      practice: { line: 'village.contest.practice', fx: { respect: 0.02 }, end: true },
       fair: { line: 'village.contest.fair', fx: { respect: 0.01 }, end: true },
       sparkle: { line: 'village.contest.sparkle', fx: { joke: { k: 'village.sparkle', t: 'A very small sparkle on {name}\'s {vContestThing}. Nobody would notice.' } }, end: true },
       safe: { line: 'village.contest.safe', fx: { trust: 0.03 }, end: true },
@@ -436,7 +436,7 @@ talkPack('village4', () => {
         { ap: 'warm', say: 'I\'m teasing. Tell me.', to: 'tell' },
         { ap: 'advise', say: 'Perhaps it\'s best kept, then.', to: 'yours' },
       ] },
-      safe: { line: 'village.ask.secret.safe', fx: { trust: 0.04, promise: { k: 'secret.village.neighbour', t: 'You promised to keep {name}\'s secret about {vSecretAbout}', days: 20 } }, end: true },
+      safe: { line: 'village.ask.secret.safe', fx: { trust: 0.04, promise: { k: 'secret.village.neighbor', t: 'You promised to keep {name}\'s secret about {vSecretAbout}', days: 20 } }, end: true },
       why: { line: 'village.ask.secret.why', fx: { trust: 0.02 }, end: true },
       sky: { line: 'village.ask.secret.sky', end: true },
       good: { line: 'village.ask.secret.good', fx: { fond: 0.02 }, end: true },
@@ -510,7 +510,7 @@ talkPack('village4', () => {
   // Their turn: what they say about the wizard
   // =================================================================================
   addThread({
-    id: 'village.ask.wizrumour', theirs: true, label: 'They\'ve heard something about you', cool: 5, ask: '{Name} has heard something about you.',
+    id: 'village.ask.wizrumor', theirs: true, label: 'They\'ve heard something about you', cool: 5, ask: '{Name} has heard something about you.',
     when: (F) => F.met && F.talks >= 1 && has(F.vWizRumor),
     beats: {
       start: { line: 'village.ask.wizrumor.q', go: [
@@ -527,7 +527,7 @@ talkPack('village4', () => {
         { ap: 'warm', say: 'I\'m only an old man with a hat.', to: 'oldman' },
       ] },
       jest: { line: 'village.ask.wizrumor.jest', fx: { fond: 0.02 }, end: true },
-      half: { line: 'village.ask.wizrumor.half', fx: { joke: { k: 'village.wizrumour', t: 'They say {vWizRumor}. The wizard says that\'s only the half of it.' } }, end: true },
+      half: { line: 'village.ask.wizrumor.half', fx: { joke: { k: 'village.wizrumor', t: 'They say {vWizRumor}. The wizard says that\'s only the half of it.' } }, end: true },
       tellsome: { line: 'village.ask.wizrumor.tellsome', end: true },
       oldman: { line: 'village.ask.wizrumor.oldman', fx: { trust: 0.02 }, end: true },
     },

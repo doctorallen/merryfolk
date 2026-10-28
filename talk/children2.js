@@ -1059,7 +1059,7 @@ talkPack('children2', () => {
     { if: { childParentJob: 'innkeeper' }, text: ['I collect the mugs at the Badger. I hear EVERYTHING. I\'m not telling.'] },
     { if: { childParentJob: 'tinker' }, text: ['I sort the screws. Big ones, little ones, and ones that look like little ones but aren\'t.'] },
     { if: { childParentJob: 'brewer' }, text: ['I stir. I\'m not allowed to taste. I\'ve smelled. That\'s nearly tasting.'] },
-    { if: { childParentJob: 'postie' }, text: ['I carry the letters to the near houses. I don\'t read them. I read the outsides.'] },
+    { if: { childParentJob: 'mailcarrier' }, text: ['I carry the letters to the near houses. I don\'t read them. I read the outsides.'] },
     { if: { childParentJob: 'storyteller' }, text: ['I hold the book and turn the pages. And I mouth along to the scary bits.'] },
     { if: { band: 'young' }, text: ['I help! I carry the little basket! It\'s got one egg in!'] },
     { if: { childTemper: 'ornery' }, text: ['I do enough. More than enough. More than anyone else in that house.'] },

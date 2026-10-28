@@ -389,14 +389,14 @@ talkPack('pastimes4', () => {
     beats: {
       start: { line: 'pastime.tea.start', go: [
         { ap: 'ask', say: 'How do you take it?', to: 'take' },
-        { ap: 'ask', say: 'And what goes with it?', to: 'biscuits' },
+        { ap: 'ask', say: 'And what goes with it?', to: 'cookies' },
         { ap: 'jest', say: 'I hear some folk read the leaves. Is my future very tall?', to: 'leaves' },
       ] },
       take: { line: 'pastime.tea.take', fx: { learn: ['pastime.tea', '{Name} has strong views on tea'] }, go: [
         { ap: 'jest', say: 'Milk in first, I always say. *You wait for the explosion.*', label: 'Milk in first, I always say', to: 'milk' },
         { ap: 'warm', say: 'Then that\'s how I\'ll have it, next time.', to: 'next' },
       ] },
-      biscuits: { line: 'pastime.tea.cookies', go: [
+      cookies: { line: 'pastime.tea.cookies', go: [
         { ap: 'ask', say: 'Do you dunk?', to: 'dunk' },
         { ap: 'warm', say: 'There\'s no better hour in the day.', to: 'hour' },
       ] },
@@ -648,14 +648,14 @@ talkPack('pastimes4', () => {
     beats: {
       start: { line: 'pastime.baking.start', go: [
         { ap: 'ask', say: 'What do you bake best?', to: 'best' },
-        { ap: 'jest', say: 'I heard about the loaf that set off the alarm bell.', to: 'burnt' },
+        { ap: 'jest', say: 'I heard about the loaf that set off the alarm bell.', to: 'burned' },
         { ap: 'share', say: 'I baked once. The bread came out hard enough to stop a door. It did, for years.', to: 'wizbread' },
       ] },
       best: { line: 'pastime.baking.best', fx: { learn: ['pastime.baking', '{Name} bakes at home, and is proud of it'] }, go: [
         { ap: 'ask', say: 'What\'s the trick of it?', to: 'trick' },
         { ap: 'warm', say: 'I can smell it from here. Or I\'m imagining it.', to: 'smell' },
       ] },
-      burnt: { line: 'pastime.baking.burned', fx: { joke: { k: 'pastime.burnt', t: 'The loaf that was mistaken for a lump of coal.' } }, go: [
+      burned: { line: 'pastime.baking.burned', fx: { joke: { k: 'pastime.burned', t: 'The loaf that was mistaken for a lump of coal.' } }, go: [
         { ap: 'comfort', say: 'Every baker has a black loaf in their past.', to: 'every' },
         { ap: 'jest', say: 'Did anyone eat it?', to: 'ate' },
       ] },

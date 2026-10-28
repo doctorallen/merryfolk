@@ -62,12 +62,12 @@ function kinWord(kid, o) {
 }
 
 // What a grown-up can do with a baby in their arms, or with little ones in tow.
-const ARMS_OK = new Set(['sleep', 'eat_home', 'eat_inn', 'tea', 'well', 'chat', 'stroll', 'market', 'read', 'potter', 'tend_baby', 'watch', 'party',
+const ARMS_OK = new Set(['sleep', 'eat_home', 'eat_inn', 'tea', 'well', 'chat', 'stroll', 'market', 'read', 'putter', 'tend_baby', 'watch', 'party',
   'read_item', 'eat_item', 'remedy_item', 'bake_home', 'fetch_child', 'collect_child', 'drop_off', 'work_story']);
 const NOT_WITH_KIDS = new Set(['ale', 'smoke', 'ale_item', 'leaf_item', 'nap', 'nurse']);
 // and with little ones in tow, home by their bedtime
 function kidsOk(a, h) { return !NOT_WITH_KIDS.has(a.id) && (HOME_ACTS.has(a.id) || !(h >= 20.5 || h < 6)); }
-const HOME_ACTS = new Set(['sleep', 'eat_home', 'tea', 'potter', 'bake_home', 'tend_baby']);
+const HOME_ACTS = new Set(['sleep', 'eat_home', 'tea', 'putter', 'bake_home', 'tend_baby']);
 
 // ----- the nursery -----
 // A nanny minds little ones in her own hole while their folk are at work.

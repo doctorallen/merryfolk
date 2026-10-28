@@ -42,7 +42,7 @@ const JOBS = {
   herbalist: { label: 'Herbalist', skill: 'herbalism', icon: 'herb', desc: 'Gathers herbs, brews remedies and nurses the poorly.' },
   orchardist: { label: 'Orchard-keeper', skill: 'farming', icon: 'apple', desc: 'Picks apples and gathers honey from the hives.' },
   herder: { label: 'Herder', skill: 'farming', icon: 'sheep', desc: 'Tends the sheep, cows and pigs: milk for cheese, wool for winter woolens.' },
-  postie: { label: 'Mail carrier', skill: 'lore', icon: 'letter', desc: 'Carries letters from hole to hole (and from far-off adventurers).' },
+  mailcarrier: { label: 'Mail carrier', skill: 'lore', icon: 'letter', desc: 'Carries letters from hole to hole (and from far-off adventurers).' },
   storyteller: { label: 'Storyteller', skill: 'lore', icon: 'book', desc: 'Gathers the little ones beneath the old oak and teaches them letters, sums and tales.' },
   tinker: { label: 'Tinker', skill: 'tinkering', icon: 'chip', desc: 'Rift know-how: salvages scrap from rifts, wires hobbit-holes with neon and sun-glass, keeps the Relay humming, and lends a hand building.' },
 };
@@ -87,7 +87,7 @@ const PHRASES = {
   build: ['Dig, dig, dig!', 'A fine smial this\'ll be.', 'Round door, round door...'],
   work_herb: ['Feverfew... and a bit of mint.', 'Smells like healing.'],
   work_orchard: ['Rosy ones!', 'Easy, bees, easy.'],
-  work_post: ['Mail!', 'A letter for you!', 'Mind the dog.'],
+  work_mail: ['Mail!', 'A letter for you!', 'Mind the dog.'],
   work_inn: ['What\'ll it be?', 'Mind the step!', 'Fresh stew on!'],
   sick: ['Achoo!', '*sniffle*', 'Ooh, my head...', '*cough cough*'],
   tipsy: ['Hic!', 'Lalala...', 'I love you all!', 'Who moved the road?'],
@@ -247,7 +247,7 @@ function afterMeal(v, kind) {
 // and the lazy stay up and lie in; others are early birds), shifted by their
 // trade (bakers are up before dawn, the innkeeper keeps late hours), and a
 // little different from one day to the next.
-const TRADE_HOURS = { baker: -1.7, farmer: -0.8, herder: -1.1, miller: -0.5, fisher: -0.9, orchardist: -0.4, innkeeper: 1.7, brewer: 0.3, storyteller: 0.4, postie: -0.3 };
+const TRADE_HOURS = { baker: -1.7, farmer: -0.8, herder: -1.1, miller: -0.5, fisher: -0.9, orchardist: -0.4, innkeeper: 1.7, brewer: 0.3, storyteller: 0.4, mailcarrier: -0.3 };
 function bodyClock(v) {
   const g = v.genes;
   return (g.merriness - 0.5) * 1.2 + (g.laziness - 0.5) * 1.5 + (hash2(v.id, 3) - 0.5) * 1.3 + (v.stage === 'elder' ? -0.7 : 0);
@@ -673,7 +673,7 @@ const ACTIONS = {
     trait: (v) => 0.6 + v.genes.curiosity * 0.6,
     target: (v) => strollTarget(v),
   },
-  potter: {
+  putter: {
     label: 'Puttering about at home', icon: 'house', sat: { bored: -0.12, tired: -0.1, cold: -0.4 }, dur: 45, pose: 'inside',
     extra: (v, h) => (Game.raining ? 0.22 : 0.012) + (h >= 20 ? 0.05 : 0) + (World.season === 'winter' ? 0.06 : 0),
     target: (v) => ({ building: v.home() }),
@@ -915,7 +915,7 @@ const ACTIONS = {
     },
     done: (v, task) => { const p = task.target.project; if (p && Village.projects.includes(p)) workProject(v, p); },
   },
-  plough: {
+  plow: {
     label: 'Plowing a new field', icon: 'hoe', sat: { industry: -0.5, bored: -0.25 }, dur: 70, pose: 'work', prop: 'hoe', outdoor: true, job: 'farmer', skill: 'farming',
     avail: () => Village.projects.some((p) => p.kind === 'field') && World.season !== 'winter',
     time: (h) => workHours(h, 7, 18),
@@ -1044,8 +1044,8 @@ const ACTIONS = {
     },
     release: (v, task) => { if (task.target.plot) task.target.plot.claimed = null; },
   },
-  work_post: {
-    label: 'Delivering the mail', icon: 'letter', sat: { industry: -0.45, lonely: -0.3, bored: -0.2 }, dur: 6, pose: 'stand', prop: 'letter', outdoor: true, job: 'postie', skill: 'lore',
+  work_mail: {
+    label: 'Delivering the mail', icon: 'letter', sat: { industry: -0.45, lonely: -0.3, bored: -0.2 }, dur: 6, pose: 'stand', prop: 'letter', outdoor: true, job: 'mailcarrier', skill: 'lore',
     time: (h) => workHours(h, 8, 17),
     extra: () => 0.06,
     target: (v) => {
@@ -1096,11 +1096,11 @@ const ACTION_NAMES = {
   sleep: 'Sleeping in', tea: 'Tea', eat_home: 'Meals at home', eat_inn: 'Dining at the inn', ale: 'Ale', well: 'The well', smoke: 'Pipe-smoking',
   read: 'Reading', nap: 'Napping', garden: 'Gardening', forage: 'Mushrooming', fish: 'Fishing', market: 'Trips to the Store', chat: 'Gossip',
   gift: 'Courting', tend_baby: 'Baby-minding', party: 'Parties', fiddle: 'Fiddling', watch: 'Fireworks', play: 'Playing', chase: 'Chasing rabbits',
-  school: 'Story time', apprentice: 'Watching grown-ups work', read_item: 'Storybooks', stroll: 'Strolling', potter: 'Puttering', crawl: 'Crawling',
+  school: 'Story time', apprentice: 'Watching grown-ups work', read_item: 'Storybooks', stroll: 'Strolling', putter: 'Puttering', crawl: 'Crawling',
   cradle: 'The cradle', eat_item: 'Cake', ale_item: 'Kegs', leaf_item: 'Free leaf', remedy_item: 'Remedies', deliver: 'Carrying', work_farm: 'Farm work',
   work_mill: 'Milling', work_bake: 'Baking', work_brew: 'Brewing', work_inn: 'Inn-keeping', work_leaf: 'Leaf-growing', work_fish: 'Fishing for the Store',
-  work_wood: 'Timber-felling', build: 'Building', plough: 'Plowing', work_herb: 'Herb-gathering', nurse: 'Nursing', work_orchard: 'Orchard work', work_herd: 'Herding', work_allot: 'Allotments', work_post: 'Mail rounds',
+  work_wood: 'Timber-felling', build: 'Building', plow: 'Plowing', work_herb: 'Herb-gathering', nurse: 'Nursing', work_orchard: 'Orchard work', work_herd: 'Herding', work_allot: 'Allotments', work_mail: 'Mail rounds',
   work_story: 'Storytelling', work_odd: 'Odd jobs', bake_home: 'Home baking',
 };
 // habits worth showing in the Mind tab
-const HABIT_KEYS = ['eat_home', 'eat_inn', 'ale', 'tea', 'smoke', 'read', 'nap', 'garden', 'forage', 'fish', 'chat', 'party', 'stroll', 'potter', 'play', 'chase', 'school', 'gift'];
+const HABIT_KEYS = ['eat_home', 'eat_inn', 'ale', 'tea', 'smoke', 'read', 'nap', 'garden', 'forage', 'fish', 'chat', 'party', 'stroll', 'putter', 'play', 'chase', 'school', 'gift'];

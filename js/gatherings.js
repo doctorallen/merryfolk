@@ -15,7 +15,7 @@ MOODLETS.gathered = ['{x} with friends', 0.07, 420, ['Good company, that was.', 
 const GATHER_COOL = 110; // game minutes between one gathering and the next
 function gatheringsList() { return Game.gatherings || (Game.gatherings = []); }
 function gatheringOf(v) { const id = v.task && v.task.a.id === 'gather' && v.task.data.g; return id ? gatheringsList().find((g) => g.id === id) : null; }
-const TIED_JOBS = new Set(['innkeeper', 'lamplighter', 'nanny', 'herder', 'postie']);
+const TIED_JOBS = new Set(['innkeeper', 'lamplighter', 'nanny', 'herder', 'mailcarrier']);
 const freeToGather = (v) => !v.inside && !v.leaving && !(v.job && TIED_JOBS.has(v.job) && Game.hour >= 7 && Game.hour < 21) && !v.carried && !v.heldBy && v.stage !== 'baby' && !needsMinder(v) && !v.sulk && !v.isSick() && v.mood() > 0.3 && v.drives.hunger < 0.7 && v.drives.tired < 0.7
   && !(v.task && (v.task.a.job || v.task.chatLock || ['sleep', 'deliver', 'work_lamps', 'scene', 'see_off', 'gather', 'gift', 'eat_inn', 'ale', 'party', 'school', 'cradle', 'tend_baby', 'nurse', 'build', 'drop_off', 'collect_child', 'fetch_child', 'lesson', 'wizard_tale'].includes(v.task.a.id)));
 // a walkable spot near a point, in tiles

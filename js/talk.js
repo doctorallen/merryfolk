@@ -224,7 +224,7 @@ function masterOf(v) { return v.master ? personById(v.master.id) : null; }
 function apprenticesOf(m) { return Game.villagers.filter((o) => o.master && o.master.id === m.id && !o.leaving); }
 const MASTER_AT = { skill: 32, hobby: 25 }, GRADUATE_AT = { skill: 45, hobby: 40 };
 // trades whose work can't be watched by day, or isn't the craft itself
-const UNTAUGHT = new Set(['lamplighter', 'nanny', 'postie']);
+const UNTAUGHT = new Set(['lamplighter', 'nanny', 'mailcarrier']);
 function canMaster(m, c) {
   if (!m.isGrown() || m.leaving || m.newcomer || craftLevel(m, c) < MASTER_AT[craftParts(c)[0]]) return false;
   const [t, k] = craftParts(c);

@@ -48,12 +48,12 @@ window.addEventListener('DOMContentLoaded', () => {
       const d = Game.digest; Game.digest = [];
       const of = d.filter((t) => /come of age/.test(t)).map((t) => t.replace(/ has come of age!.*/, ''));
       const toddle = d.filter((t) => /toddling/.test(t)).map((t) => t.replace(/^Little /, '').replace(/ is toddling.*/, ''));
-      const grey = d.filter((t) => /gray/.test(t)).map((t) => t.replace(/ has gone a little gray.*/, ''));
+      const gray = d.filter((t) => /gray/.test(t)).map((t) => t.replace(/ has gone a little gray.*/, ''));
       const list = (xs) => xs.length > 1 ? xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1] : xs[0];
       const bits = [];
       if (of.length) bits.push(`${list(of)} ${of.length > 1 ? 'have' : 'has'} come of age${Game.party.planned || Game.party.on ? ' (there\'ll be a party tonight)' : ''}`);
       if (toddle.length) bits.push(`little ${list(toddle)} ${toddle.length > 1 ? 'are' : 'is'} toddling about now`);
-      if (grey.length) bits.push(`${list(grey)} ${grey.length > 1 ? 'have' : 'has'} gone a little gray`);
+      if (gray.length) bits.push(`${list(gray)} ${gray.length > 1 ? 'have' : 'has'} gone a little gray`);
       if (bits.length) chronicle(`Growing up and growing old: ${bits.join('; ')}.`, of.length ? 'party' : 'birth');
     }
   });

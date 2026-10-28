@@ -265,14 +265,14 @@ talkPack('rift3', () => {
     beats: {
       start: { line: 'rift.hill.young.start', go: [
         { ap: 'ask', say: 'What do you like best about them?', to: 'best' },
-        { ap: 'ask', say: 'Does your mom mind them?', to: 'mum' },
+        { ap: 'ask', say: 'Does your mom mind them?', to: 'mom' },
         { ap: 'tale', say: 'Do you know where they come from?', to: 'where' },
       ] },
       best: { line: 'rift.hill.young.best', go: [
         { ap: 'advise', say: 'Ask {riftNeighbor} to show you a gadget. Politely.', to: 'go', need: { if: { riftNeighbor: (x) => !!x } } },
         { ap: 'ask', say: 'And what do you like best about the hills?', to: 'hillbest' },
       ] },
-      mum: { line: 'rift.hill.young.mom', go: [
+      mom: { line: 'rift.hill.young.mom', go: [
         { ap: 'advise', say: 'Your mom\'s right about staring. Ask instead.', to: 'askinstead' },
         { ap: 'warm', say: 'Your mom and the rift-folk will be friends one day.', to: 'both' },
       ] },

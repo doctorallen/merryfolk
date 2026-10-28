@@ -47,7 +47,7 @@ talkPack('ages', () => {
     F.ageGrownWord = F.ageGrown != null ? numWord(F.ageGrown) : null;
     F.ageJobA = v.job && JOBS[v.job] ? aAn(JOBS[v.job].label.toLowerCase()) : null;
     F.ageNature = v.isChild() ? temperOf(v) : null;
-    F.ageTrade = v.job ? ({ farmer: 'farming', miller: 'milling', baker: 'baking', brewer: 'brewing', innkeeper: 'innkeeping', grower: 'leaf-growing', fisher: 'fishing', woodwright: 'woodwork', herbalist: 'herb-craft', orchardist: 'orchard work', herder: 'herding', postie: 'mail round', storyteller: 'storytelling', tinker: 'tinkering', nanny: 'minding the little ones', lamplighter: 'lamplighting' }[v.job] || 'work') : null;
+    F.ageTrade = v.job ? ({ farmer: 'farming', miller: 'milling', baker: 'baking', brewer: 'brewing', innkeeper: 'innkeeping', grower: 'leaf-growing', fisher: 'fishing', woodwright: 'woodwork', herbalist: 'herb-craft', orchardist: 'orchard work', herder: 'herding', mailcarrier: 'mail round', storyteller: 'storytelling', tinker: 'tinkering', nanny: 'minding the little ones', lamplighter: 'lamplighting' }[v.job] || 'work') : null;
     F.ageFounder = v.isGrown() && !v.born && !(v.isRiftborn && v.isRiftborn());
     // the eldest in the village, and the littlest
     const live = Game.villagers.filter((o) => !o.leaving);
@@ -894,7 +894,7 @@ talkPack('ages', () => {
       start: { line: 'ages.grandkids.start', go: [
         { ap: 'ask', say: 'How many is it now?', to: 'count', need: { if: { ageGrandkids: { min: 2 } } } },
         { ap: 'ask', say: 'Who do they take after?', to: 'takes' },
-        { ap: 'jest', say: 'And how much candy have you slipped them this week?', to: 'sweets' },
+        { ap: 'jest', say: 'And how much candy have you slipped them this week?', to: 'candy' },
         { ap: 'warm', say: 'You light up, talking about them.', to: 'lightup' },
       ] },
       count: { line: 'ages.grandkids.count', go: [
@@ -906,7 +906,7 @@ talkPack('ages', () => {
         { ap: 'ask', say: 'What will you teach them, while you can?', to: 'teach' },
         { ap: 'jest', say: 'Heaven help the village.', to: 'heaven' },
       ] },
-      sweets: { line: 'ages.grandkids.candy', fx: { joke: { k: 'ages.sweets', t: 'Candy for the grandchildren, and the wizard knows the pocket.' } }, go: [
+      candy: { line: 'ages.grandkids.candy', fx: { joke: { k: 'ages.candy', t: 'Candy for the grandchildren, and the wizard knows the pocket.' } }, go: [
         { ap: 'jest', say: 'Your secret\'s safe. Which pocket?', to: 'pocket' },
         { ap: 'ask', say: 'What else do you give them? Besides candy?', to: 'teach' },
       ] },
@@ -1177,11 +1177,11 @@ talkPack('ages', () => {
       ] },
       proud: { line: 'ages.regrets.proud', fx: { learn: ['ages.proud', '{Name} is proudest of a life well spent'] }, go: [
         { ap: 'warm', say: 'So you should be.', to: 'should' },
-        { ap: 'jest', say: 'More than your pumpkins?', to: 'marrows' },
+        { ap: 'jest', say: 'More than your pumpkins?', to: 'pumpkins' },
       ] },
       small: { line: 'ages.regrets.small', fx: { respect: 0.03, feel: 'inspired' }, end: true },
       should: { line: 'ages.regrets.should', fx: { fond: 0.02 }, end: true },
-      marrows: { line: 'ages.regrets.pumpkins', end: true },
+      pumpkins: { line: 'ages.regrets.pumpkins', end: true },
     },
     end: { fond: 0.02, trust: 0.02 },
   });
@@ -2151,7 +2151,7 @@ talkPack('ages', () => {
       start: { line: 'ages.eldest.start', go: [
         { ap: 'jest', say: 'Do they ask you when the world began?', to: 'began' },
         { ap: 'ask', say: 'Does it weigh on you, being the eldest?', to: 'weigh' },
-        { ap: 'warm', say: 'It\'s an honor, and you wear it well.', to: 'honour' },
+        { ap: 'warm', say: 'It\'s an honor, and you wear it well.', to: 'honor' },
       ] },
       began: { line: 'ages.eldest.began', go: [
         { ap: 'ask', say: 'What do they ask you, really?', to: 'ask' },
@@ -2161,7 +2161,7 @@ talkPack('ages', () => {
         { ap: 'comfort', say: 'You don\'t have to carry it all. They\'ll help.', to: 'help' },
         { ap: 'ask', say: 'Who was the eldest, when you were young?', to: 'before' },
       ] },
-      honour: { line: 'ages.eldest.honor', fx: { fond: 0.02 }, go: [
+      honor: { line: 'ages.eldest.honor', fx: { fond: 0.02 }, go: [
         { ap: 'ask', say: 'Who was the eldest, when you were young?', to: 'before' },
         { ap: 'ask', say: 'What do folk come to you for?', to: 'ask' },
       ] },

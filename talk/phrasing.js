@@ -24,7 +24,7 @@ talkPack('phrasing', () => {
   const DOING = {
     eat_home: 'meal', eat_inn: 'meal', eat_item: 'meal', feast: 'meal', supper_guest: 'meal', bake_home: 'baking', ale: 'ale', ale_item: 'ale', tea: 'tea',
     smoke: 'pipe', leaf_item: 'pipe', garden: 'garden', fish: 'fish', forage: 'forage', read: 'read', read_item: 'read', write_letter: 'letter',
-    nap: 'nap', sleep: 'nap', stroll: 'stroll', potter: 'stroll', well: 'stroll', play: 'play', chase: 'play', swing: 'play', party: 'party', fiddle: 'party', watch: 'party',
+    nap: 'nap', sleep: 'nap', stroll: 'stroll', putter: 'stroll', well: 'stroll', play: 'play', chase: 'play', swing: 'play', party: 'party', fiddle: 'party', watch: 'party',
     chat: 'chat', gift: 'court', give_present: 'court', market: 'market', tend_baby: 'baby', cradle: 'baby', school: 'lesson', lesson: 'lesson', apprentice: 'lesson',
     pet_pet: 'pet', visit_stone: 'grave', bring_soup: 'soup',
   };
@@ -306,7 +306,7 @@ talkPack('phrasing', () => {
     at(4.4, { phrDoing: 'work', job: 'herbalist' }, ['Mind the feverfew! You\'re standing in it. Lovely, thank you.', 'Hold out your hand. No, just smell this. Good, isn\'t it?']),
     at(4.4, { phrDoing: 'work', job: 'orchardist' }, ['Mind the bees! They\'re friendly. Mostly.', 'Apple? Go on. Windfalls. Nobody\'ll miss one.']),
     at(4.4, { phrDoing: 'work', job: 'herder' }, ['Mind where you step, wizard. The sheep have been busy.', 'Don\'t let Buttercup see your hat. She eats hats.']),
-    at(4.4, { phrDoing: 'work', job: 'postie' }, ['Nothing for you today. Nothing for anyone, from the weight of this bag.', 'Can\'t stop! Letters to take. One\'s a love letter. I can tell by the smudges.']),
+    at(4.4, { phrDoing: 'work', job: 'mailcarrier' }, ['Nothing for you today. Nothing for anyone, from the weight of this bag.', 'Can\'t stop! Letters to take. One\'s a love letter. I can tell by the smudges.']),
     at(4.4, { phrDoing: 'work', job: 'storyteller' }, ['Shh! The little ones are doing their letters. Whisper.', 'You can stay if you sit on the floor. Everyone sits on the floor.']),
     at(4.4, { phrDoing: 'work', job: 'tinker' }, ['Hold this. No, the other end. Thanks. Hi, wizard.', 'Don\'t touch the blue wire. Or the red one. Hi.']),
     at(4.5, { phrDoing: 'work', temper: 'ornery' }, ['Some of us have work to do, wizard. Some of us aren\'t wizards.', 'If you\'re not here to help, you\'re in the way. Hello.']),
@@ -680,7 +680,7 @@ talkPack('phrasing', () => {
 
     // at work, a word for every trade and temper
     at(4.6, { phrDoing: 'work', job: 'miller', temper: 'ornery' }, ['Mind the sacks. And the wheel. And me.']),
-    at(4.6, { phrDoing: 'work', job: 'postie', temper: 'cheerful' }, ['A wizard! I\'ve delivered to all sorts, never a wizard. Got an address?']),
+    at(4.6, { phrDoing: 'work', job: 'mailcarrier', temper: 'cheerful' }, ['A wizard! I\'ve delivered to all sorts, never a wizard. Got an address?']),
     at(4.6, { phrDoing: 'work', job: 'innkeeper', temper: 'witty' }, ['A wizard walks into an inn. Stop me if you\'ve heard it.']),
     at(4.6, { phrDoing: 'work', job: 'herbalist', temper: 'shy' }, ['Oh! Careful... that\'s foxglove. Don\'t touch. Hello.']),
     at(4.6, { phrDoing: 'work', job: 'fisher', temper: 'gloomy' }, ['Nothing biting. Never is.']),
@@ -693,7 +693,7 @@ talkPack('phrasing', () => {
     at(4.6, { phrDoing: 'work', job: 'brewer', temper: 'cheerful' }, ['Wizard! Taste this. No, don\'t. It\'s not ready. Taste it anyway.']),
     at(4.6, { phrDoing: 'work', job: 'farmer', temper: 'cheerful' }, ['Wizard! The barley\'s up to my waist! Well, my waist.']),
     at(4.6, { phrDoing: 'work', job: 'baker', temper: 'gloomy' }, ['The bread didn\'t rise. Nothing rises. Hello.']),
-    at(4.6, { phrDoing: 'work', job: 'postie', temper: 'witty' }, ['Letter for you! No. Just wanted to see your face.']),
+    at(4.6, { phrDoing: 'work', job: 'mailcarrier', temper: 'witty' }, ['Letter for you! No. Just wanted to see your face.']),
     at(4.6, { phrDoing: 'work', job: 'herbalist', temper: 'proud' }, ['My remedies have cured half the lane. The other half won\'t take them.']),
     at(4.6, { phrDoing: 'work', job: 'innkeeper', temper: 'gloomy' }, ['Washing tankards. They just get dirty again. Like life.']),
     at(4.6, { phrDoing: 'work', job: 'woodwright', temper: 'shy' }, ['*lowers the axe* Oh. Hello. I\'ll be careful. I\'m always careful.']),
@@ -762,7 +762,7 @@ talkPack('phrasing', () => {
     // first meetings at work, by trade
     at(8.8, { met: false, phrDoing: 'work', job: 'innkeeper' }, ['A wizard in the Badger! First drink\'s on the house. Second\'s on you.']),
     at(8.8, { met: false, phrDoing: 'work', job: 'baker' }, ['A wizard! Have a bun. Everybody gets a bun on first meeting. Rule of the house.']),
-    at(8.8, { met: false, phrDoing: 'work', job: 'postie' }, ['A wizard! Have you an address? Everybody needs an address.']),
+    at(8.8, { met: false, phrDoing: 'work', job: 'mailcarrier' }, ['A wizard! Have you an address? Everybody needs an address.']),
     at(8.8, { met: false, phrDoing: 'work', job: 'farmer' }, ['A wizard in my barley! Mind where you tread. How do you do?']),
     at(8.8, { met: false, phrDoing: 'work', job: 'tinker' }, ['Oh! A wizard. Hi. Don\'t touch anything. Actually, touch that. Does it spark?']),
   ]);

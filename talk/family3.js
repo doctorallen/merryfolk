@@ -234,13 +234,13 @@ talkPack('family3', () => {
       ] },
       bare: { line: 'family.lar.bare', fx: { confide: { k: 'family.bare', t: '{Name}\'s larder is bare, and {they}\'s worried' } }, go: [
         { ap: 'warm', say: 'I\'ll speak to the Store. Nobody in Thistledown goes hungry.', to: 'promise' },
-        { ap: 'advise', say: 'Ask your neighbors. Pride\'s a poor supper.', to: 'neighbours' },
+        { ap: 'advise', say: 'Ask your neighbors. Pride\'s a poor supper.', to: 'neighbors' },
       ] },
       recipe: { line: 'family.lar.recipe', fx: { confide: { k: 'family.recipe', t: '{Name}\'s family recipe' } }, end: true },
       sample: { line: 'family.lar.sample', fx: { joke: { k: 'family.sample', t: 'The wizard asked for a sample. Purely to confirm.' }, fond: 0.02 }, end: true },
       advice: { line: 'family.lar.advice', fx: { respect: 0.02 }, end: true },
       promise: { line: 'family.lar.promise', fx: { promise: { k: 'family.larder', t: 'You said you\'d see that {name}\'s larder was filled', days: 3 }, trust: 0.04 }, end: true },
-      neighbours: { line: 'family.lar.neighbors', fx: { respect: 0.01 }, end: true },
+      neighbors: { line: 'family.lar.neighbors', fx: { respect: 0.01 }, end: true },
     },
     end: { fond: 0.015 },
   });

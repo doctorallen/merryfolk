@@ -287,7 +287,7 @@ talkPack('ages2', () => {
   }, [
     { if: { stage: 'grown', job: 'baker' }, text: ['I burned a loaf so badly the baker took me on out of pity. Best day of my life.'] },
     { if: { stage: 'grown', job: 'fisher' }, text: ['I sat by the river so often they gave me a rod to make it official.'] },
-    { if: { stage: 'grown', job: 'postie' }, text: ['I knew everyone\'s door and everyone\'s business. It seemed a waste not to.'] },
+    { if: { stage: 'grown', job: 'mailcarrier' }, text: ['I knew everyone\'s door and everyone\'s business. It seemed a waste not to.'] },
     { if: { stage: 'grown', job: 'storyteller' }, text: ['I told my first tale at six. It went on for three days. They\'ve been paying me to stop since.'] },
     { if: { stage: 'grown', job: 'tinker' }, text: ['I took apart a clock. Then a lamp. Then the rift-folk turned up and I had real things to take apart.'] },
     { if: { stage: 'grown', job: 'farmer' }, text: ['My family\'s farmed this valley since before the lanes. I was born with soil in my ears.'] },

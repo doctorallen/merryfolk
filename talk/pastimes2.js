@@ -654,7 +654,7 @@ talkPack('pastimes2', () => {
         { ap: 'warm', say: 'You\'d better show me again. Slowly.', to: 'lesson' },
       ] },
       verdict: { line: 'pastime.teach.verdict', go: [
-        { ap: 'warm', say: 'I\'ll practice. On the road. By the fire.', to: 'practise' },
+        { ap: 'warm', say: 'I\'ll practice. On the road. By the fire.', to: 'practice' },
         { ap: 'jest', say: 'Shall I stick to fireworks?', to: 'fireworks' },
       ] },
       heron: { line: 'pastime.teach.heron', end: true },
@@ -663,7 +663,7 @@ talkPack('pastimes2', () => {
         { ap: 'ask', say: 'And who will you teach?', to: 'next' },
       ] },
       meant: { line: 'pastime.teach.meant', end: true },
-      practise: { line: 'pastime.teach.practice', fx: { respect: 0.02, feel: 'taught' }, end: true },
+      practice: { line: 'pastime.teach.practice', fx: { respect: 0.02, feel: 'taught' }, end: true },
       fireworks: { line: 'pastime.teach.fireworks', end: true },
       next: { line: 'pastime.teach.next', end: true },
     },

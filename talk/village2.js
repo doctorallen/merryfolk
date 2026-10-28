@@ -264,7 +264,7 @@ talkPack('village2', () => {
   // Wild rumors
   // =================================================================================
   addThread({
-    id: 'village.rumour', label: 'Any wild rumors going round?', weight: 0.8, cool: 4,
+    id: 'village.rumor', label: 'Any wild rumors going round?', weight: 0.8, cool: 4,
     when: (F) => has(F.vRumor),
     open: { jest: 'village.rumor.open' },
     beats: {

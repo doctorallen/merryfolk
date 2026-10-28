@@ -48,7 +48,7 @@ talkPack('pastimes', () => {
     painting: ['the river', 'the Hill', 'the mill', 'the orchard'],
   };
   const RARE = ['kingfisher', 'nightingale', 'hoopoe', 'waxwing', 'barn owl', 'dipper', 'goldcrest', 'cuckoo', 'snipe', 'treecreeper'];
-  const LEISURE = { ale: 'ale', eat_inn: 'inn', smoke: 'pipe', fish: 'fishing', garden: 'garden', forage: 'mushrooms', read: 'reading', nap: 'napping', stroll: 'strolling', tea: 'tea', bake_home: 'baking', potter: 'puttering', party: 'dancing' };
+  const LEISURE = { ale: 'ale', eat_inn: 'inn', smoke: 'pipe', fish: 'fishing', garden: 'garden', forage: 'mushrooms', read: 'reading', nap: 'napping', stroll: 'strolling', tea: 'tea', bake_home: 'baking', putter: 'puttering', party: 'dancing' };
   addFacts((v, F) => {
     const hs = typeof hobbiesOf === 'function' ? hobbiesOf(v) : [];
     const st = v.stats || {}, sk = v.hobbySkill || {};
@@ -682,7 +682,7 @@ talkPack('pastimes', () => {
       party: { line: 'pastime.pottery.party', end: true },
       bread: { line: 'pastime.pottery.bread', end: true },
       glaze: { line: 'pastime.pottery.glaze', go: [
-        { ap: 'ask', say: 'Is there a color you\'ve never managed?', to: 'colour', need: { open: 1 }, soft: true },
+        { ap: 'ask', say: 'Is there a color you\'ve never managed?', to: 'color', need: { open: 1 }, soft: true },
         { ap: 'warm', say: 'That sounds lovely. Like the valley in a cup.', to: 'end' },
       ] },
       tea: { line: 'pastime.pottery.tea', fx: { fond: 0.02 }, go: [
@@ -693,7 +693,7 @@ talkPack('pastimes', () => {
       goes: { line: 'pastime.pottery.goes', fx: { promise: { k: 'pastime.wheel', t: '{Name} said you could have a go at the wheel some evening', days: 7 } }, end: true },
       hands: { line: 'pastime.pottery.hands', fx: { trust: 0.02 }, end: true },
       again: { line: 'pastime.pottery.again', end: true },
-      colour: { line: 'pastime.pottery.color', fx: { confide: { k: 'pastime.pottery.blue', t: '{Name} has been trying for years to get a glaze the blue of a kingfisher' } }, go: [
+      color: { line: 'pastime.pottery.color', fx: { confide: { k: 'pastime.pottery.blue', t: '{Name} has been trying for years to get a glaze the blue of a kingfisher' } }, go: [
         { ap: 'warm', say: 'You\'ll find it. I\'d bet my hat.', to: 'end', fx: { hook: 'pastime.pottery' } },
         { ap: 'share', say: 'I saw that blue once, on a dragon\'s scale. Never since.', to: 'dragon' },
       ] },
@@ -881,7 +881,7 @@ talkPack('pastimes', () => {
       ] },
       wizard: { line: 'pastime.knitting.wizard', go: [
         { ap: 'warm', say: 'I\'d wear it on every road.', to: 'promise', need: { fond: 0.2 }, soft: true },
-        { ap: 'jest', say: 'Gray, please. To match the beard.', to: 'grey' },
+        { ap: 'jest', say: 'Gray, please. To match the beard.', to: 'gray' },
       ] },
       warm: { line: 'pastime.knitting.warm', end: true },
       stop: { line: 'pastime.knitting.stop', go: [
@@ -901,7 +901,7 @@ talkPack('pastimes', () => {
         { ap: 'warm', say: 'Then I hope someone knits you one.', to: 'end', fx: { fond: 0.02 } },
       ] },
       promise: { line: 'pastime.knitting.promise', fx: { promise: { k: 'pastime.wizscarf', t: '{Name} said they\'d knit you a scarf for the road', days: 14 }, fond: 0.03 }, end: true },
-      grey: { line: 'pastime.knitting.gray', end: true },
+      gray: { line: 'pastime.knitting.gray', end: true },
       think: { line: 'pastime.knitting.think', fx: { trust: 0.02 }, go: [
         { ap: 'listen', say: '*You let the needles click, and wait.*', label: 'Let it be quiet a while', to: 'quiet', need: { open: 2 }, soft: true },
         { ap: 'warm', say: 'That sounds like a good way to spend an evening.', to: 'end' },
@@ -1072,7 +1072,7 @@ talkPack('pastimes', () => {
     beats: {
       start: { line: 'pastime.painting.start', go: [
         { ap: 'ask', say: 'What did you paint last?', to: 'last' },
-        { ap: 'ask', say: 'Where do your colors come from?', to: 'colours' },
+        { ap: 'ask', say: 'Where do your colors come from?', to: 'colors' },
         { ap: 'jest', say: 'Have you painted me yet? I\'ll want my good side.', to: 'me' },
       ] },
       last: { line: 'pastime.painting.last', fx: { learn: ['pastime.painting', '{Name} paints the valley: last of all, {paintLast}'] }, go: [
@@ -1080,7 +1080,7 @@ talkPack('pastimes', () => {
         { ap: 'warm', say: 'I\'d love to see it.', to: 'see' },
         { ap: 'share', say: 'I\'ve seen that view from the road. It stays with you.', to: 'road' },
       ] },
-      colours: { line: 'pastime.painting.colors', go: [
+      colors: { line: 'pastime.painting.colors', go: [
         { ap: 'ask', say: 'Is there a color you can\'t make?', to: 'cant' },
         { ap: 'jest', say: 'So if I eat your paints, I\'ll be fine?', to: 'eat' },
       ] },

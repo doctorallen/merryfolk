@@ -15,7 +15,7 @@ for (const d of NEW_DRIVES) if (!DRIVES.includes(d)) DRIVES.push(d);
 Object.assign(DRIVE_LABEL, { comfort: 'Want of comfort', crowded: 'Want of quiet', unease: 'Unease' });
 
 MOODLETS.unsettled = ['Unsettled', -0.04, 240, ['Something in the air I don\'t like.', 'I keep looking over my shoulder.', 'Can\'t settle to anything today.']];
-MOODLETS.cosy = ['Snug as anything', 0.05, 180, ['Nothing like your own chair.', 'Feet up. Bliss.']];
+MOODLETS.cozy = ['Snug as anything', 0.05, 180, ['Nothing like your own chair.', 'Feet up. Bliss.']];
 MOODLETS.tantrum = ['Had a tantrum', -0.05, 90, ['I don\'t WANT to!', '*sniff*']];
 MOODLETS.binge = ['On a bit of a binge', -0.04, 300, ['Just the one more.']];
 MOODLETS.heartened = ['The Steward sees it my way: {x}', 0.06, 720, ['Someone up there has sense.']];
@@ -25,14 +25,14 @@ MOODLETS.tradition_kept = ['Thistledown stands for {x}', 0.05, 2880, ['That\'s t
 // What a pastime is, for the sake of variety: the same kind of pleasure
 // satisfies less each time, until it has been let alone a while.
 const LEISURE_KIND = {
-  ale: 'drink', ale_item: 'drink', smoke: 'smoke', read: 'read', read_item: 'read', fish: 'fish', stroll: 'stroll', potter: 'potter', play: 'play', chase: 'play', swing: 'play',
+  ale: 'drink', ale_item: 'drink', smoke: 'smoke', read: 'read', read_item: 'read', fish: 'fish', stroll: 'stroll', putter: 'putter', play: 'play', chase: 'play', swing: 'play',
   party: 'party', fiddle: 'music', watch: 'watch', chat: 'chat', gather: 'game', nap: 'nap', garden: 'garden', forage: 'forage', market: 'market', tea: 'tea', pet_pet: 'pet',
   hobby_carving: 'craft', hobby_basketry: 'craft', hobby_pottery: 'craft', hobby_knitting: 'craft', hobby_painting: 'craft', hobby_collecting: 'collect', hobby_birdwatching: 'collect',
 };
-const KIND_WORD = { drink: 'the ale', smoke: 'the pipe', read: 'books', fish: 'fishing', stroll: 'strolling', potter: 'puttering', play: 'games', party: 'parties', music: 'music', watch: 'watching', chat: 'nattering', game: 'get-togethers', nap: 'naps', garden: 'the garden', forage: 'foraging', market: 'the market', tea: 'tea', pet: 'the pet', craft: 'the workbench', collect: 'collecting' };
+const KIND_WORD = { drink: 'the ale', smoke: 'the pipe', read: 'books', fish: 'fishing', stroll: 'strolling', putter: 'puttering', play: 'games', party: 'parties', music: 'music', watch: 'watching', chat: 'nattering', game: 'get-togethers', nap: 'naps', garden: 'the garden', forage: 'foraging', market: 'the market', tea: 'tea', pet: 'the pet', craft: 'the workbench', collect: 'collecting' };
 
 // Which actions comfort, which cheer, and which are work.
-const COMFORT_ACTS = new Set(['eat_home', 'sleep', 'ale', 'smoke', 'read', 'nap', 'potter', 'tea', 'chat', 'pet_pet', 'eat_inn', 'bake_home']);
+const COMFORT_ACTS = new Set(['eat_home', 'sleep', 'ale', 'smoke', 'read', 'nap', 'putter', 'tea', 'chat', 'pet_pet', 'eat_inn', 'bake_home']);
 const MERRY_ACTS = new Set(['party', 'gift', 'give_present', 'play', 'chase', 'fiddle', 'gather', 'swing', 'market']);
 const isHobbyAct = (id) => id.startsWith('hobby_');
 
@@ -40,8 +40,8 @@ const isHobbyAct = (id) => id.startsWith('hobby_');
 // brain weighs and the relief that comes, a little each minute of the task).
 {
   const add = (id, sat) => { const a = ACTIONS[id]; if (a) a.sat = { ...a.sat, ...sat }; };
-  for (const [id, c] of Object.entries({ eat_home: -0.15, potter: -0.12, tea: -0.2, read: -0.15, smoke: -0.12, nap: -0.25, ale: -0.12, pet_pet: -0.15, bake_home: -0.1, eat_inn: -0.1 })) add(id, { comfort: c });
-  for (const [id, c] of Object.entries({ stroll: -0.25, fish: -0.3, read: -0.3, nap: -0.3, potter: -0.1, garden: -0.25, forage: -0.25, smoke: -0.15, hobby_carving: -0.2, hobby_basketry: -0.2, hobby_pottery: -0.2, hobby_knitting: -0.2, hobby_painting: -0.2, hobby_collecting: -0.2, hobby_birdwatching: -0.25 })) add(id, { crowded: c });
+  for (const [id, c] of Object.entries({ eat_home: -0.15, putter: -0.12, tea: -0.2, read: -0.15, smoke: -0.12, nap: -0.25, ale: -0.12, pet_pet: -0.15, bake_home: -0.1, eat_inn: -0.1 })) add(id, { comfort: c });
+  for (const [id, c] of Object.entries({ stroll: -0.25, fish: -0.3, read: -0.3, nap: -0.3, putter: -0.1, garden: -0.25, forage: -0.25, smoke: -0.15, hobby_carving: -0.2, hobby_basketry: -0.2, hobby_pottery: -0.2, hobby_knitting: -0.2, hobby_painting: -0.2, hobby_collecting: -0.2, hobby_birdwatching: -0.25 })) add(id, { crowded: c });
   for (const [id, c] of Object.entries({ eat_home: -0.2, chat: -0.15, ale: -0.15, tea: -0.15, party: -0.2, pet_pet: -0.15, eat_inn: -0.1 })) add(id, { unease: c });
 }
 // Purpose: for folk with no trade (and the retired), making and helping
@@ -92,7 +92,7 @@ const sickAbout = () => Game.villagers.filter((o) => o.isSick()).length;
       const ease = T.unease.ease * (atHome ? 2 : 1) * (up ? 0.5 : 1);
       d.unease += (up - ease) * (5 / 60);
       if (d.unease > 0.6 && this.isGrown() && R.chance(0.15)) feel(this, 'unsettled');
-      if (atHome && d.comfort < 0.15 && d.cold < 0.2 && R.chance(0.1) && (h >= 18 || Game.raining)) feel(this, 'cosy');
+      if (atHome && d.comfort < 0.15 && d.cold < 0.2 && R.chance(0.1) && (h >= 18 || Game.raining)) feel(this, 'cozy');
     }
     for (const k of NEW_DRIVES) d[k] = clamp(d[k] || 0, 0, 1);
     if (this.isChild()) d.unease = Math.min(d.unease, 0.6);

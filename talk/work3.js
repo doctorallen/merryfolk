@@ -775,8 +775,8 @@ talkPack('work3', () => {
 
   // --- The mail carrier: the round, the letters, and the dogs -------------------------------------
   addThread({
-    id: 'work.postie', label: 'What\'s in the post bag today?', about: 'work', weight: 1, cool: 4,
-    when: job('postie'), rel: (F) => (F.workLetters > 3 ? 1.4 : 1.2),
+    id: 'work.mailcarrier', label: 'What\'s in the post bag today?', about: 'work', weight: 1, cool: 4,
+    when: job('mailcarrier'), rel: (F) => (F.workLetters > 3 ? 1.4 : 1.2),
     open: { ask: 'work.post.open' },
     beats: {
       start: { line: 'work.post.start', go: [
@@ -821,7 +821,7 @@ talkPack('work3', () => {
       giveme: { line: 'work.post.giveme', fx: { trust: 0.05, promise: { k: 'work.post.carry', t: 'You offered to carry {name}\'s undelivered letter', days: 30 } }, end: true },
       honest: { line: 'work.post.honest', end: true },
       twodoors: { line: 'work.post.twodoors', fx: { fond: 0.02 }, end: true },
-      sort: { line: 'work.post.sort', fx: { respect: 0.02, queue: 'postie_sort' }, end: true },
+      sort: { line: 'work.post.sort', fx: { respect: 0.02, queue: 'mailcarrier_sort' }, end: true },
       dog: { line: 'work.post.dog', fx: { joke: { k: 'work.post.dog', t: 'The wizard offered to have a word with the dogs. In dog.' }, fond: 0.02 }, end: true },
     },
     end: { fond: 0.02, trust: 0.01 },

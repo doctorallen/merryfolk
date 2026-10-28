@@ -55,13 +55,13 @@ talkPack('wizard4', () => {
     else if (F.register === 'plain' && h(3) < 0.45) f = 'letter';
     else if ((F.temper === 'witty' || F.temper === 'cheerful') && h(4) < 0.4) f = 'bet';
     else f = FAVORS[Math.floor(h(5) * FAVORS.length)];
-    F.favour = f;
+    F.favor = f;
     const baby = Game.villagers.find((o) => o.stage === 'baby' && o.parents && o.parents.includes(v.id));
     F.baby = baby ? baby.first : null;
     F.blessOn = baby ? 'baby' : !v.isChild() && v.homeId >= 0 ? 'home' : null;
     F.adviceOn = F.feeling && F.feelingText && (F.mood === 'low' || F.mood === 'miserable') ? 'feeling' : F.rival ? 'rival' : F.wish && F.wishText ? 'wish' : F.job ? 'work' : 'life';
   });
-  for (const f of ['roof', 'door', 'ring', 'hen', 'teapot', 'kite', 'cough', 'washing', 'letter', 'bet']) WZ['f_' + f] = { favour: f };
+  for (const f of ['roof', 'door', 'ring', 'hen', 'teapot', 'kite', 'cough', 'washing', 'letter', 'bet']) WZ['f_' + f] = { favor: f };
   for (const b of ['baby', 'home']) WZ['b_' + b] = { blessOn: b };
   for (const a of ['feeling', 'rival', 'wish', 'work', 'life']) WZ['a_' + a] = { adviceOn: a };
   WZ.housed = { home: has };
@@ -71,7 +71,7 @@ talkPack('wizard4', () => {
 
   // --- A favor: they want something done, and a wizard's the one to ask ----------------
   addThread({
-    id: 'wiz.favour', theirs: true, label: 'They ask you a favor', cool: 4, ask: '{Name} hovers, as if working up to asking something.',
+    id: 'wiz.favor', theirs: true, label: 'They ask you a favor', cool: 4, ask: '{Name} hovers, as if working up to asking something.',
     when: (F) => F.met && F.band !== 'toddler',
     beats: {
       start: { line: 'wiz.favor.start', go: [
@@ -90,8 +90,8 @@ talkPack('wizard4', () => {
       ] },
       whyme: { line: 'wiz.favor.whyme', go: [
         { ap: 'warm', say: 'Well, you\'ve asked me now. Let\'s see it.', to: 'look' },
-        { ap: 'advise', say: 'Ask {friend}. Neighbors are better than wizards for most things.', to: 'neighbour', need: { if: { friend: has } } },
-        { ap: 'advise', say: 'Ask a neighbor first. Wizards are a last resort.', to: 'neighbour', need: { if: { friend: (x) => !x } } },
+        { ap: 'advise', say: 'Ask {friend}. Neighbors are better than wizards for most things.', to: 'neighbor', need: { if: { friend: has } } },
+        { ap: 'advise', say: 'Ask a neighbor first. Wizards are a last resort.', to: 'neighbor', need: { if: { friend: (x) => !x } } },
         { ap: 'comfort', say: 'There\'s no shame in asking. Not ever.', to: 'look' },
       ] },
       look: { line: 'wiz.favor.look', go: [
@@ -112,11 +112,11 @@ talkPack('wizard4', () => {
         { ap: 'warm', say: 'See? You never needed me at all.', to: 'thanks' },
         { ap: 'advise', say: 'Now show someone else. That\'s the price.', to: 'thanks', fx: { respect: 0.02 } },
       ] },
-      neighbour: { line: 'wiz.favor.neighbor', fx: { respect: 0.02 }, go: [
+      neighbor: { line: 'wiz.favor.neighbor', fx: { respect: 0.02 }, go: [
         { ap: 'warm', say: 'And if they can\'t, come back. I\'ll be about.', to: 'end' },
         { ap: 'comfort', say: 'Oh, very well. Show me. I can\'t bear that face.', to: 'look' },
       ] },
-      tomorrow: { line: 'wiz.favor.tomorrow', fx: { promise: { k: 'wiz.visit.favour', t: 'You said you\'d come back tomorrow and see to it', days: 2 } }, end: true },
+      tomorrow: { line: 'wiz.favor.tomorrow', fx: { promise: { k: 'wiz.visit.favor', t: 'You said you\'d come back tomorrow and see to it', days: 2 } }, end: true },
       thanks: { line: 'wiz.favor.thanks', end: true },
     },
     end: { fond: 0.02 },

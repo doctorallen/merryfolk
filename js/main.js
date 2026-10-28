@@ -14,7 +14,7 @@ const Game = {
   villagers: [], archive: {}, away: [], census: [], stats: {},
   party: { on: false, until: 0, planned: null, reason: '' }, fireworks: { x: 0, y: 0, until: -1 },
   raining: false, weather: 'clear', rainUntil: 0, darkness: 0, tool: 'hand', selected: null, hovered: null, follow: false,
-  log: [], planted: [], cam: { x: 0, y: 0, w: 400, h: 240 }, zoom: 3, lastHour: -1, lastDay: 1, started: false, lastTraveller: -9,
+  log: [], planted: [], cam: { x: 0, y: 0, w: 400, h: 240 }, zoom: 3, lastHour: -1, lastDay: 1, started: false, lastTraveler: -9,
   schedulePartyTonight(reason) {
     this.party.planned = reason;
     if (this.hour >= 17 && this.hour < 23 && !this.raining) startParty(reason);
@@ -276,7 +276,7 @@ function propFor(v) {
   if (task && task.phase === 'do') prop = task.target.prop || (task.spot && task.spot.kind === 'partyseat' ? (task.spot.prop || 'mug') : task.a.prop);
   if (task && task.phase === 'go' && (task.target.carry || task.a.id === 'deliver')) prop = 'sack';
   if (task && task.phase === 'go' && task.a.id === 'gift') prop = 'flowers';
-  if (task && task.phase === 'go' && task.a.id === 'work_post') prop = 'letter';
+  if (task && task.phase === 'go' && task.a.id === 'work_mail') prop = 'letter';
   return prop;
 }
 
@@ -1236,7 +1236,7 @@ function handleClick(sx, sy) {
   const uses = { cake: 4, ale: 6, leaf: 3, remedy: 2, book: 6 }[tool];
   World.items.push({ kind: tool, x: Math.round(wx), y: Math.round(wy) + 4, uses, claims: 0 });
   Sound.drop(); FX.sparkle(wx, wy);
-  for (const v of Game.villagers) if (!v.inside && dist(v.x, v.y, wx, wy) < 20 * 16 && v.task && ['stroll', 'read', 'potter', 'fish', 'nap', 'play'].includes(v.task.a.id)) v.task.t = Math.min(v.task.t, 1);
+  for (const v of Game.villagers) if (!v.inside && dist(v.x, v.y, wx, wy) < 20 * 16 && v.task && ['stroll', 'read', 'putter', 'fish', 'nap', 'play'].includes(v.task.a.id)) v.task.t = Math.min(v.task.t, 1);
 }
 
 function plantFlowers(x, y, seed) {

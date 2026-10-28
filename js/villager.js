@@ -122,7 +122,7 @@ class Villager {
     if (!this.task) return false;
     const id = this.task.a.id;
     // folk will happily down tools for a natter, but not mid-errand
-    return ['sleep', 'potter', 'party', 'eat_inn', 'ale', 'chat', 'gift', 'watch', 'deliver', 'school', 'work_story', 'fiddle', 'cradle', 'tend_baby', 'nurse', 'build', 'bake_home'].includes(id) ||
+    return ['sleep', 'putter', 'party', 'eat_inn', 'ale', 'chat', 'gift', 'watch', 'deliver', 'school', 'work_story', 'fiddle', 'cradle', 'tend_baby', 'nurse', 'build', 'bake_home'].includes(id) ||
       (this.task.a.job && this.task.a.pose === 'inside') || this.task.chatLock;
   }
   activity() {
@@ -266,7 +266,7 @@ class Villager {
       if (this.begin(chosen[1], h)) { this.noteDecision(chosen[1].id, attempt ? `picked (try ${attempt + 1}, the first had nowhere to go)` : 'picked', options); return; }
       top.splice(top.indexOf(chosen), 1);
     }
-    const fallback = this.stage === 'baby' ? ACTIONS.cradle : needsMinder(this) ? ACTIONS.potter : ACTIONS.stroll;
+    const fallback = this.stage === 'baby' ? ACTIONS.cradle : needsMinder(this) ? ACTIONS.putter : ACTIONS.stroll;
     this.begin(fallback, h);
     this.noteDecision(fallback.id, 'fallback: nothing else worked out', options);
   }
@@ -306,7 +306,7 @@ class Villager {
     this.task = task;
     this.showIcon(a);
     if (this.isGrown() && R.chance(0.12) && PHRASES[a.id] && a.id !== 'chat') this.say(R.pick(PHRASES[a.id]));
-    if (Game.raining && a.id === 'potter' && R.chance(0.4)) this.say(R.pick(PHRASES.rain));
+    if (Game.raining && a.id === 'putter' && R.chance(0.4)) this.say(R.pick(PHRASES.rain));
     return true;
   }
 

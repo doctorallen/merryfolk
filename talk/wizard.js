@@ -374,7 +374,7 @@ talkPack('wizard', () => {
       inside: { line: 'wiz.hat.inside', go: [
         { ap: 'tale', say: '*You reach into the crown and bring out a puff of colored stars.*', label: 'Reach in and show them', to: 'pulled', fx: { run: magic('stars') } },
         { ap: 'jest', say: 'A spare hat. A very small one. For emergencies.', to: 'spare' },
-        { ap: 'warm', say: 'Mostly my head. And a cookie, in case of a long afternoon.', to: 'biscuit' },
+        { ap: 'warm', say: 'Mostly my head. And a cookie, in case of a long afternoon.', to: 'cookie' },
       ] },
       pulled: { line: 'wiz.hat.pulled', fx: { fond: 0.02, drive: { bored: -0.15 } }, go: [
         { ap: 'warm', say: 'Would you like to try it on? Mind the stars.', to: 'tryon' },
@@ -384,7 +384,7 @@ talkPack('wizard', () => {
         { ap: 'warm', say: 'Go on. Try it on.', to: 'tryon' },
         { ap: 'jest', say: 'And a spare beard. Don\'t tell anyone.', to: 'birds' },
       ] },
-      biscuit: { line: 'wiz.hat.cookie', go: [
+      cookie: { line: 'wiz.hat.cookie', go: [
         { ap: 'share', say: '*You find the cookie, break it, and give them half.*', label: 'Share the cookie', to: 'shared', fx: { fond: 0.03, drive: { hunger: -0.05 } } },
         { ap: 'jest', say: 'It\'s from the Old Took\'s birthday. Still good. Probably.', to: 'old' },
       ] },

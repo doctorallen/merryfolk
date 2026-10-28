@@ -15,10 +15,10 @@ const Interior = {
 const IH = 128, CEIL = 30, WALL_B = 98, FLOOR_B = 112, PAD = 34, WT = 10, RC = 10;
 const IWOOD = { o: '#2a1c12', d: '#4a2e1a', m: '#6e4628', l: '#8e6038', h: '#ae7c4a' };
 const WALLS = ['#ead6ac', '#e6cf9e', '#efdcb6', '#e2cca6', '#ead2b4'];
-const STUDY_JOBS = { tinker: 'tinker', herbalist: 'herbs', storyteller: 'books', postie: 'books' };
+const STUDY_JOBS = { tinker: 'tinker', herbalist: 'herbs', storyteller: 'books', mailcarrier: 'books' };
 const JOB_PROPS = {
   fisher: 'rod', woodwright: 'axe', farmer: 'fork', grower: 'can', orchardist: 'basket', herder: 'crook',
-  brewer: 'tankard', baker: 'pin', miller: 'sack', innkeeper: 'keys', postie: 'satchel',
+  brewer: 'tankard', baker: 'pin', miller: 'sack', innkeeper: 'keys', mailcarrier: 'satchel',
 };
 
 let IX = null; // the context being drawn into

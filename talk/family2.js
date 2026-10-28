@@ -1397,7 +1397,7 @@ talkPack('family2', () => {
   const KH = { stage: 'child' };
   addThread({
     id: 'family.kidhome', label: 'What\'s it like at home?', weight: 1.2, cool: 3,
-    when: (F) => F.stage === 'child' && (!!F.mum || !!F.dad || !!F.sibling),
+    when: (F) => F.stage === 'child' && (!!F.mom || !!F.dad || !!F.sibling),
     open: { ask: 'family.kh.open' },
     beats: {
       start: { line: 'family.kh.start', go: [
@@ -1431,7 +1431,7 @@ talkPack('family2', () => {
   L('family.kh.open', KH, [FB('What\'s it like at home, {name}?', 'And who\'s at home with you, {name}?')]);
   L('family.kh.start', KH, [
     FB('Noisy! And there\'s always soup.', 'It\'s all right. There\'s a cat. The cat\'s not ours. It just comes.'),
-    W({ mum: has }, 'Mom makes the best pancakes in the world. In the WORLD.', 'Mom sings when she cooks. Really loud. I sing too. Then the dog howls.'),
+    W({ mom: has }, 'Mom makes the best pancakes in the world. In the WORLD.', 'Mom sings when she cooks. Really loud. I sing too. Then the dog howls.'),
     W({ dad: has }, 'Dad snores like a bear. Like a REAL bear. I\'ve never heard a real bear but I know.', 'Dad lets me help in the garden. I\'m in charge of worms.'),
     W({ sibling: has }, '{Sibling} hogs the blanket. And the pudding. And the window seat.', '{Sibling} said I was adopted. From the goblins. I\'m NOT.'),
     W({ babySib: has }, 'There\'s a new baby. {BabySib}. {BabySib} just cries and eats. Like a little pig. I love {babySib}.'),
@@ -1444,7 +1444,7 @@ talkPack('family2', () => {
   ]);
   L('family.kh.bossy', KH, [
     FB('Mom. No, Dad. No, the cat.', 'Everyone except me! I\'m never in charge!'),
-    W({ mum: has }, 'Mom! Mom says \'wash behind your ears\'. Why? Nobody looks there!'),
+    W({ mom: has }, 'Mom! Mom says \'wash behind your ears\'. Why? Nobody looks there!'),
     W({ dad: has }, 'Dad says \'because I said so\'. That\'s not a REASON.'),
     W({ sibling: has, siblingOlder: true }, '{Sibling}! {Sibling} thinks being older means being the boss! It doesn\'t!'),
     W({ sibling: has, siblingOlder: false }, '{Sibling}\'s little but SO bossy. Bossier than a hen.'),
@@ -1496,7 +1496,7 @@ talkPack('family2', () => {
     W({ band: 'toddler' }, 'A DOG.', 'Big!'),
     W({ riftWays: true }, 'A rift-runner! Through the sky doors! And back for tea.'),
     W({ rift: true }, 'A grid-tech like my mom. Or a farmer. Can you be both?'),
-    W({ mum: has }, 'Like Mom. Mom can do everything.'),
+    W({ mom: has }, 'Like Mom. Mom can do everything.'),
     W({ dad: has }, 'Like Dad. Dad can lift a whole pig.'),
   ]);
 

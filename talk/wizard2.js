@@ -919,7 +919,7 @@ talkPack('wizard2', () => {
       ] },
       hat: { line: 'wiz.learn.hat', go: [
         { ap: 'warm', say: 'Very well. The first lesson, then.', to: 'first' },
-        { ap: 'jest', say: 'And you have to be very, very old. Start aging now.', to: 'ageing' },
+        { ap: 'jest', say: 'And you have to be very, very old. Start aging now.', to: 'aging' },
       ] },
       first: { line: 'wiz.learn.first', go: [
         { ap: 'listen', say: 'Look at something properly. Really look, for a whole minute. I\'ll wait.', to: 'looked' },
@@ -931,7 +931,7 @@ talkPack('wizard2', () => {
       ] },
       letters: { line: 'wiz.learn.letters', fx: { respect: 0.02 }, end: true },
       tinker: { line: 'wiz.learn.tinker', fx: { respect: 0.02 }, end: true },
-      ageing: { line: 'wiz.learn.aging', end: true },
+      aging: { line: 'wiz.learn.aging', end: true },
       noticed: { line: 'wiz.learn.noticed', fx: { fond: 0.03, remember: 'The wizard taught me the first spell. Noticing.', promise: { k: 'wiz.visit.lesson', t: 'You promised {name} a second lesson', days: 3 } }, end: true },
       sneeze: { line: 'wiz.learn.sneeze', fx: { joke: { k: 'wiz.learn.sneeze', t: 'The second spell is a sneeze. Very important.' } }, go: [
         { ap: 'tale', say: '*As they sneeze, you snap your fingers, and a few stars burst out.*', label: 'Make their sneeze sparkle', to: 'sparkled', fx: { run: magic('stars') } },

@@ -665,7 +665,7 @@ talkPack('seasons3', () => {
       ] },
       fav: { line: 'season.food.fav', fx: { learn: ['season.favfood', '{Name}\'s favorite is {seasonFavFood}'] }, go: [
         { ap: 'ask', say: 'And who made it best?', to: 'who', need: { open: 1 }, soft: true },
-        { ap: 'jest', say: 'I\'ll remember that, next time I need a favor.', to: 'favour' },
+        { ap: 'jest', say: 'I\'ll remember that, next time I need a favor.', to: 'favor' },
         { ap: 'share', say: 'Mine\'s mushrooms on toast, by a fire, after a long wet road.', to: 'wizfav' },
       ] },
       best: { line: 'season.food.best', go: [
@@ -680,13 +680,13 @@ talkPack('seasons3', () => {
       ] },
       gone: { line: 'season.food.gone', fx: { confide: { k: 'season.dish', t: 'How {name} misses the dish someone used to make for them' }, trust: 0.03 }, go: [
         { ap: 'comfort', say: 'Food remembers people. That\'s why it matters so much.', to: 'remembers' },
-        { ap: 'warm', say: 'If you ever make it, I\'d be honored to taste it.', to: 'honoured' },
+        { ap: 'warm', say: 'If you ever make it, I\'d be honored to taste it.', to: 'honored' },
       ] },
       remembers: { line: 'season.food.remembers', fx: { trust: 0.03, fond: 0.02 }, end: true },
-      honoured: { line: 'season.food.honored', fx: { fond: 0.03, hook: 'season.dish' }, end: true },
+      honored: { line: 'season.food.honored', fx: { fond: 0.03, hook: 'season.dish' }, end: true },
       make: { line: 'season.food.make', fx: { remember: 'The wizard said I should make the old dish myself.', rv: 1 }, end: true },
       taught: { line: 'season.food.taught', end: true },
-      favour: { line: 'season.food.favor', fx: { joke: { k: 'season.favour', t: 'The wizard knows the way to a favor is through {seasonFavFood}.' } }, end: true },
+      favor: { line: 'season.food.favor', fx: { joke: { k: 'season.favor', t: 'The wizard knows the way to a favor is through {seasonFavFood}.' } }, end: true },
       wizfav: { line: 'season.food.wizfav', fx: { trust: 0.02 }, end: true },
       again: { line: 'season.food.again', end: true },
       porridge: { line: 'season.food.porridge', fx: { fond: 0.01 }, end: true },

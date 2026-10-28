@@ -405,8 +405,8 @@ window.addEventListener('DOMContentLoaded', () => {
     let s = jf.apply(this, arguments);
     const c = Game.upb && Game.upb[v.id] && Game.upb[v.id].cls;
     if (c === 'hill' && ['farmer', 'herder', 'brewer', 'miller', 'baker', 'orchardist', 'fisher', 'grower', 'storyteller'].includes(j)) s += 6;
-    if (c === 'rift' && ['tinker', 'herbalist', 'postie'].includes(j)) s += 8;
-    if (c === 'both' && ['postie', 'innkeeper', 'storyteller', 'tinker'].includes(j)) s += 5;
+    if (c === 'rift' && ['tinker', 'herbalist', 'mailcarrier'].includes(j)) s += 8;
+    if (c === 'both' && ['mailcarrier', 'innkeeper', 'storyteller', 'tinker'].includes(j)) s += 5;
     return s;
   }, 'upbringing');
 

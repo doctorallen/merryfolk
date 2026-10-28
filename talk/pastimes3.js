@@ -888,7 +888,7 @@ talkPack('pastimes3', () => {
       follow: { line: 'pastime.mushrooms.follow', end: true },
       bad: { line: 'pastime.mushrooms.bad', go: [
         { ap: 'comfort', say: 'It happens to the best of us.', to: 'end' },
-        { ap: 'jest', say: 'And did you see colors?', to: 'colours' },
+        { ap: 'jest', say: 'And did you see colors?', to: 'colors' },
       ] },
       mirkwood: { line: 'pastime.mushrooms.mirkwood', fx: { joke: { k: 'pastime.mirkwood', t: 'The wizard ate a mushroom in Mirkwood and saw music for a week.' } }, end: true },
       hungry: { line: 'pastime.mushrooms.hungry', fx: { fond: 0.02 }, go: [
@@ -898,7 +898,7 @@ talkPack('pastimes3', () => {
       taught: { line: 'pastime.mushrooms.taught', end: true },
       safe: { line: 'pastime.mushrooms.safe', fx: { trust: 0.04, promise: { k: 'pastime.patch', t: 'You promised never to tell where {name}\'s mushrooms grow', days: 60 } }, end: true },
       dawn: { line: 'pastime.mushrooms.dawn', end: true },
-      colours: { line: 'pastime.mushrooms.colors', end: true },
+      colors: { line: 'pastime.mushrooms.colors', end: true },
       invite: { line: 'pastime.mushrooms.invite', fx: { fond: 0.03, promise: { k: 'pastime.mushsupper', t: '{Name} has asked you to a mushroom supper', days: 7 } }, end: true },
     },
     end: { fond: 0.02 },

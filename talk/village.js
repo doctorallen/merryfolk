@@ -408,7 +408,7 @@ talkPack('village', () => {
         { ap: 'advise', say: 'Go and see {vRegardsFrom}. Put it behind you both.', to: 'mend', need: { if: { vRegardsSorry: true } } },
         { ap: 'ask', say: 'Anything you\'d like me to carry back?', to: 'back' },
         { ap: 'listen', say: '*You wait. They look as if there\'s more.*', label: 'Wait', to: 'more' },
-        { ap: 'jest', say: 'I\'m a wizard, not a mail carrier. But for you, I made an exception.', to: 'postie', need: { if: { vRegardsSorry: false } } },
+        { ap: 'jest', say: 'I\'m a wizard, not a mail carrier. But for you, I made an exception.', to: 'mailcarrier', need: { if: { vRegardsSorry: false } } },
       ] },
       back: { line: 'village.regards.back', fx: { run: (T, v) => promiseRegards(T, v, who(T, 'vRegardsFromId')) }, go: [
         { ap: 'warm', say: 'I\'ll see it gets there.', to: 'end' },
@@ -419,7 +419,7 @@ talkPack('village', () => {
         { ap: 'advise', say: 'Go and see {vRegardsFrom}. Put it behind you both.', to: 'mend', need: { if: { vRegardsSorry: true } } },
         { ap: 'warm', say: 'I think {vRegardsFrom} knows.', to: 'end' },
       ] },
-      postie: { line: 'village.regards.postie', go: [
+      mailcarrier: { line: 'village.regards.mailcarrier', go: [
         { ap: 'ask', say: 'Anything to carry back, while I\'m being useful?', to: 'back' },
         { ap: 'warm', say: 'Any time.', to: 'end' },
       ] },
@@ -490,7 +490,7 @@ talkPack('village', () => {
     dreamy: ['It\'s funny how much a few words can weigh. These weigh a lot.'],
     elder: ['At my age, wizard, you start to wonder who\'ll still ask after you. Thank you.'],
   });
-  say('village.regards.postie', {
+  say('village.regards.mailcarrier', {
     _: ['Ha! Don\'t let the mail carrier hear. You\'ll be out of a job, and so will {they}.', 'An exception! I feel very special.'],
     witty: ['The mail carrier charges a penny. You\'re cheaper. Slower, mind.'],
     ornery: ['You\'d make a poor mail carrier. Too much chat.'],
@@ -1528,7 +1528,7 @@ talkPack('village', () => {
     ornery: ['A satchel! You\'d look like the mail carrier\'s grandfather.'],
     proud: ['A satchel would suit you. Leather. With a buckle.'],
   });
-  say('village.regards.postie', {
+  say('village.regards.mailcarrier', {
     cheerful: ['Ha! A wizard mail carrier! I\'d write every day!'],
     shy: ['...Thank you for making an exception.'],
   });

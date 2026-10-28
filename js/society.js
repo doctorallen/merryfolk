@@ -45,7 +45,7 @@ const Village = {
   innkeeperOn() { return Game.villagers.some((v) => v.task && v.task.a.id === 'work_inn' && v.task.phase === 'do'); },
 
   // The mail carrier drops a letter through a door.
-  deliverLetter(postie, home) {
+  deliverLetter(mailcarrier, home) {
     const residents = Game.villagers.filter((o) => o.homeId === home.id);
     if (!residents.length) return;
     const r = R.pick(residents);
@@ -55,7 +55,7 @@ const Village = {
       const a = R.pick(away);
       from = a.data.first;
       const line = R.pick(['I\'ve seen mountains taller than ten party trees!', 'The sea is ever so big, and ever so wet.', 'Met an elf. Very tall. Very polite.', 'Missing second breakfast terribly.', 'Found a cave full of glittering things!', 'Do water my tomatoes.']);
-      chronicle(`${postie.first} the mail carrier brought ${r.first} a letter from ${from}, away adventuring: "${line}"`, 'letter');
+      chronicle(`${mailcarrier.first} the mail carrier brought ${r.first} a letter from ${from}, away adventuring: "${line}"`, 'letter');
       r.remember(`Got a letter from ${from}, far away.`, 2);
     } else {
       const friends = Object.entries(r.rel).filter(([id, f]) => f > 0.35 && +id !== r.id).map(([id]) => Game.villagers.find((o) => o.id === +id && o.homeId !== r.homeId)).filter(Boolean);
@@ -63,14 +63,14 @@ const Village = {
       if (f) { from = f.first; r.bond(f, 0.04); if (R.chance(0.3)) r.remember(`A letter from ${f.first} came through the door.`, 1); }
     }
     r.drives.lonely = Math.max(0, r.drives.lonely - 0.2);
-    postie.say(R.pick(PHRASES.work_post));
+    mailcarrier.say(R.pick(PHRASES.work_mail));
   },
 };
 
 // ---------------------------------------------------------------------------
 // Trades: chosen from talent, practice, family trade and what the village needs.
 // ---------------------------------------------------------------------------
-const JOB_HABIT = { tinker: 'gadget', herder: 'stroll', farmer: 'garden', fisher: 'fish', herbalist: 'forage', innkeeper: 'eat_inn', brewer: 'ale', grower: 'smoke', storyteller: 'read', orchardist: 'garden', postie: 'chat', baker: 'eat_home', miller: 'eat_home', woodwright: 'stroll' };
+const JOB_HABIT = { tinker: 'gadget', herder: 'stroll', farmer: 'garden', fisher: 'fish', herbalist: 'forage', innkeeper: 'eat_inn', brewer: 'ale', grower: 'smoke', storyteller: 'read', orchardist: 'garden', mailcarrier: 'chat', baker: 'eat_home', miller: 'eat_home', woodwright: 'stroll' };
 function jobFit(v, j) {
   const J = JOBS[j];
   let s = (v.skills[J.skill] || 0) + v.genes.apt[J.skill] * 40;
@@ -79,7 +79,7 @@ function jobFit(v, j) {
   const habit = JOB_HABIT[j];
   if (habit) s += (v.weights[habit] - 1) * 15;
   // lettered trades want schooling; the unlettered lean to work of the hands
-  const LETTERED = { storyteller: 40, herbalist: 25, postie: 20, brewer: 10 };
+  const LETTERED = { storyteller: 40, herbalist: 25, mailcarrier: 20, brewer: 10 };
   if (LETTERED[j]) s += (v.edu - 0.35) * LETTERED[j] * 1.5 - (v.edu < 0.2 ? 20 : 0);
   else if (['farmer', 'woodwright', 'fisher', 'grower'].includes(j)) s += (0.4 - v.edu) * 8;
   if (j === 'storyteller') s += v.stage === 'elder' ? 25 : -20;
@@ -96,7 +96,7 @@ function jobTargets() {
   const t = (min, frac) => Math.max(min, Math.round(adults * frac));
   return {
     farmer: t(2, 0.2), herder: World.pens.length ? t(1, 0.05) : 0, baker: t(2, 0.11) + (World.buildings.bakery2 ? 1 : 0) + (Village.stores.flour > 40 ? 1 : 0), miller: t(1, 0.05) + (Village.stores.grain > 80 ? 1 : 0) + (Village.stores.grain > 240 ? 1 : 0), brewer: t(1, 0.06), innkeeper: 1, grower: t(1, 0.05), fisher: t(1, 0.1),
-    woodwright: Math.min(Math.max(2, Math.round(adults * 0.22)), t(1, Village.projects.some((p) => p.kind !== 'retrofit') ? 0.12 : 0.08) + (Village.projects.filter((p) => p.kind !== 'retrofit').length > 1 ? 1 : 0) + (Village.stores.wood < 10 + firewoodReserve() ? 1 : 0)), herbalist: 1, orchardist: t(1, 0.05), postie: adults > 10 ? 1 : 0, storyteller: kids ? 1 : 0,
+    woodwright: Math.min(Math.max(2, Math.round(adults * 0.22)), t(1, Village.projects.some((p) => p.kind !== 'retrofit') ? 0.12 : 0.08) + (Village.projects.filter((p) => p.kind !== 'retrofit').length > 1 ? 1 : 0) + (Village.stores.wood < 10 + firewoodReserve() ? 1 : 0)), herbalist: 1, orchardist: t(1, 0.05), mailcarrier: adults > 10 ? 1 : 0, storyteller: kids ? 1 : 0,
     nanny: (() => { const n = Game.villagers.filter((v) => needsMinder(v)).length; return n >= 8 ? 2 : n >= 2 ? 1 : 0; })(),
     tinker: techAdults ? clamp(Math.round(techAdults * 0.25), 1, 4) + (Village.projects.some((p) => p.kind === 'retrofit') ? 1 : 0) : 0,
   };
@@ -127,7 +127,7 @@ function assignJobs(announce = true) {
       if (v.stage === 'elder' && j !== 'storyteller' && v.age > ELDER_DAYS * 1.2) continue;
       const n = need(j);
       // the trades that only want one or two never take on extra hands
-      if (n <= 0 && ['storyteller', 'herbalist', 'postie', 'innkeeper', 'tinker', 'nanny', 'lamplighter'].includes(j)) continue;
+      if (n <= 0 && ['storyteller', 'herbalist', 'mailcarrier', 'innkeeper', 'tinker', 'nanny', 'lamplighter'].includes(j)) continue;
       const s = jobFit(v, j) + (n > 0 ? 30 + n * 10 : -25 + n * 10);
       if (s > bs) { bs = s; best = j; }
     }
@@ -335,7 +335,7 @@ function welcomeTraveler(data, quiet = false, sex = null) {
   v.say('Hello! Is this Thistledown?', 5);
   for (const o of Game.villagers) if (o !== v) { o.rel[v.id] = 0.1; v.rel[o.id] = 0.1; }
   assignJobs(!quiet);
-  if (!quiet) { chronicle(`A traveler, ${v.name()}, has come walking up the West Road, looking for somewhere to stay.`, 'birth'); Game.lastTraveller = Game.day; }
+  if (!quiet) { chronicle(`A traveler, ${v.name()}, has come walking up the West Road, looking for somewhere to stay.`, 'birth'); Game.lastTraveler = Game.day; }
   return { ok: true, v };
 }
 

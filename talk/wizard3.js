@@ -125,7 +125,7 @@ talkPack('wizard3', () => {
     rift: ["A whole settlement of tall people? So a city, basically. How big? Any lights?", "Is Bree a hub? Like, do the roads meet there? That's how you'd build it."],
     innkeeper: ["Another inn! How's their cellar? How's their stew? Better than mine?", "Do they do a better pint than the Badger? Be honest. No, don't."],
     brewer: ["What do they brew in Bree? Is it brown? Is it any good?"],
-    postie: ["Bree! Do letters get there? How long do they take? I could walk it in a week."],
+    mailcarrier: ["Bree! Do letters get there? How long do they take? I could walk it in a week."],
   });
   wz('wiz.where.dodge', {
     _: ["That's not an answer, that's a riddle.", "You always say things like that. Go on, properly.", "The far end of a long road. Well, which way's that?"],
@@ -1543,7 +1543,7 @@ talkPack('wizard3', () => {
     elder: ["My legs won't take me to the tree these days. I'd like a tale, though.", "I used to sit under that tree for tales when I was a girl. I miss it."],
     rift: ["Everyone keeps referencing your stories. I've got no context. Help.", "So there's a story thing at the tree? I've never been. Is it a ritual?"],
     'baker': ["Your tales are always in the afternoon. That's bread time. I never get to come."],
-    'postie': ["I'm always on my round when you tell your tales. I hear the end from the lane."],
+    'mailcarrier': ["I'm always on my round when you tell your tales. I hear the end from the lane."],
   });
   wz('wiz.want.sort', {
     _: ["Something with a dragon in it. Or the sea. Or both!", "A funny one. With a happy ending. I like those.", "Something true. Something that really happened to you."],

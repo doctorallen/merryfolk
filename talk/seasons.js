@@ -116,10 +116,10 @@ talkPack('seasons', () => {
       blame: { line: 'season.weather.blame', go: [
         { ap: 'jest', say: 'Very well. A fine Highday, for one seed-cake. Paid in advance.', to: 'bargain' },
         { ap: 'ask', say: 'And if you could choose? What would you have?', to: 'choose' },
-        { ap: 'warm', say: 'If I could mend the sky for you, {name}, I would.', to: 'cosy' },
+        { ap: 'warm', say: 'If I could mend the sky for you, {name}, I would.', to: 'cozy' },
       ] },
       mind: { line: 'season.weather.mind', go: [
-        { ap: 'ask', say: 'And what does a day like this make you want to do?', to: 'cosy' },
+        { ap: 'ask', say: 'And what does a day like this make you want to do?', to: 'cozy' },
         { ap: 'ask', say: 'Does it make the work harder?', to: 'work', need: { if: { job: (j) => !!j } } },
         { ap: 'listen', say: '*You lean on your staff and wait.*', label: 'Wait for more', to: 'memory', need: { open: 1 }, soft: true },
       ] },
@@ -138,8 +138,8 @@ talkPack('seasons', () => {
         { ap: 'jest', say: 'I\'ll put in a word. Upstairs.', to: 'end' },
         { ap: 'ask', say: 'Is there a day like that you remember?', to: 'memory', need: { open: 1 }, soft: true },
       ] },
-      cosy: { line: 'season.weather.cozy', go: [
-        { ap: 'warm', say: 'That sounds the very thing.', to: 'end', fx: { feel: 'cosy' } },
+      cozy: { line: 'season.weather.cozy', go: [
+        { ap: 'warm', say: 'That sounds the very thing.', to: 'end', fx: { feel: 'cozy' } },
         { ap: 'jest', say: 'And a second supper, to be safe.', to: 'supper' },
         { ap: 'share', say: 'I\'d join you, if my hat would go through your door.', to: 'invite', need: { fond: 0.15 }, soft: true },
       ] },
@@ -231,8 +231,8 @@ talkPack('seasons', () => {
     { if: { job: 'farmer', weather: 'clear' }, text: ['Good drying weather. If it holds, we\'ll have the hay in by Highday.'] },
     { if: { job: 'fisher', weather: 'rain' }, text: ['Fish bite better in the rain. So do midges.'] },
     { if: { job: 'fisher', weather: 'fog' }, text: ['Fog on the river. Can\'t see the float, can\'t see the fish. Peaceful, though.'] },
-    { if: { job: 'postie', weather: 'rain' }, text: ['Every letter in my bag is soggy. Somebody\'s getting a love letter in blots.'] },
-    { if: { job: 'postie', weather: 'snow' }, text: ['Snow\'s up to the mailboxes. I\'ve mailed three letters into drifts.'] },
+    { if: { job: 'mailcarrier', weather: 'rain' }, text: ['Every letter in my bag is soggy. Somebody\'s getting a love letter in blots.'] },
+    { if: { job: 'mailcarrier', weather: 'snow' }, text: ['Snow\'s up to the mailboxes. I\'ve mailed three letters into drifts.'] },
     { if: { job: 'miller', weather: 'rain' }, text: ['River\'s up, so the wheel\'s fairly singing. Good milling weather.'] },
     { if: { job: 'herder', weather: 'rain' }, text: ['Wet sheep. There\'s no smell like it. Thank goodness.'] },
     { if: { job: 'brewer' }, text: ['Any weather\'s brewing weather. Hot, they want it cold. Cold, they want it mulled.'] },
@@ -373,7 +373,7 @@ talkPack('seasons', () => {
     { text: ['Everything takes twice as long and comes out half as well.', 'You learn the weather, in a trade. It\'s the first thing you learn.'] },
     { if: { job: 'farmer' }, text: ['The rain and I have an arrangement. It comes when I don\'t want it.', 'Sow in the wet, reap in the dry, and pray the two don\'t swap.'] },
     { if: { job: 'fisher' }, text: ['The fish don\'t care about the weather. I do. My feet do.'] },
-    { if: { job: 'postie' }, text: ['Rain, snow, fog. The mail goes through. Soggy, but through.'] },
+    { if: { job: 'mailcarrier' }, text: ['Rain, snow, fog. The mail goes through. Soggy, but through.'] },
     { if: { job: 'miller' }, text: ['Too much rain and the wheel races. Too little and it sulks. Like a pony.'] },
     { if: { job: 'baker' }, text: ['Damp gets in the flour. Then the bread won\'t rise, and nor will I.'] },
     { if: { job: 'brewer' }, text: ['Hot days spoil a brew. Cold days slow it. I mostly worry.'] },
@@ -393,7 +393,7 @@ talkPack('seasons', () => {
     { if: { job: 'farmer' }, text: ['Plow across the slope, not down it. The rain stays where you want it.'] },
     { if: { job: 'fisher' }, text: ['Try the deep pool under the willow in the rain. Trout hide there.'] },
     { if: { job: 'baker' }, text: ['Keep the flour by the oven wall. Warm and dry, like a cat.'] },
-    { if: { job: 'postie' }, text: ['Oilcloth round the letters, and run on the downhill bits.'] },
+    { if: { job: 'mailcarrier' }, text: ['Oilcloth round the letters, and run on the downhill bits.'] },
   ]);
   lines('season.weather.advised', [
     { text: ['Huh. I might try that.', 'Now why did nobody tell me that before?'] },
@@ -650,7 +650,7 @@ talkPack('seasons', () => {
     { if: { job: 'grower', season: 'autumn' }, text: ['Hanging the leaf to cure. Rows and rows of it in the shed, going gold.'] },
     { if: { job: 'miller', season: 'autumn' }, text: ['Grinding the new barley. The mill never stops in autumn. Nor does the dust.'] },
     { if: { job: 'innkeeper', season: 'winter' }, text: ['Keeping the fire in and the ale warm. Everybody wants to be at the Badger in winter.'] },
-    { if: { job: 'postie', season: 'winter' }, text: ['Yule cards. Hundreds. Every hobbit writes to every other hobbit to say "happy Yule".'] },
+    { if: { job: 'mailcarrier', season: 'winter' }, text: ['Yule cards. Hundreds. Every hobbit writes to every other hobbit to say "happy Yule".'] },
     { if: { job: 'storyteller', season: 'winter' }, text: ['Winter\'s my season. Long nights want long tales.'] },
     { if: { stage: 'child' }, text: ['Children don\'t work! ...Well, I fed the hens. Twice.', 'I help! I carry the little basket.'] },
     { if: { stage: 'elder' }, text: ['Not much, now. I tell the young ones they\'re doing it wrong. That\'s work.'] },
@@ -783,9 +783,9 @@ talkPack('seasons', () => {
       shared: { line: 'season.hazard.shared', fx: { trust: 0.04 }, end: true },
       plan: { line: 'season.hazard.plan', fx: { respect: 0.02 }, go: [
         { ap: 'warm', say: 'Good. That\'s just the thing.', to: 'end' },
-        { ap: 'advise', say: 'And look in on your neighbors, while you\'re at it.', to: 'neighbours' },
+        { ap: 'advise', say: 'And look in on your neighbors, while you\'re at it.', to: 'neighbors' },
       ] },
-      neighbours: { line: 'season.hazard.neighbors', fx: { respect: 0.02, drive: { lonely: -0.05 } }, end: true },
+      neighbors: { line: 'season.hazard.neighbors', fx: { respect: 0.02, drive: { lonely: -0.05 } }, end: true },
       badger: { line: 'season.hazard.badger', fx: { fond: 0.02 }, end: true },
     },
     end: { fond: 0.01 },

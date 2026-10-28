@@ -7,6 +7,45 @@
 // ---------------------------------------------------------------------------
 const SAVE_KEY = 'thistledown-save-v2';
 
+// ---------------------------------------------------------------------------
+// Names that changed. Merryfolk moved to American English, and a few of the
+// names a save keeps were spelled the British way: a field of Game, a key of
+// a planned valley, a moodlet, the mail carrier's trade and the doings that
+// make it up (as keys of habits, tastes, tolerances and tallies), puttering
+// and plowing, and the wizard's threads, their beats and the keys of what they
+// leave in a bond (jokes and promises). An older save has exactly these
+// renamed as it's read, wherever they are, as keys and as whole string
+// values. Nothing else is touched: the words in the chronicle, a memory or a
+// letter stay as they were written. (A villager's code from an older game is
+// put right the same way when it's received.)
+// ---------------------------------------------------------------------------
+const RENAMED = {
+  // a field of Game, and the planned valley's middle
+  lastTraveller: 'lastTraveler', townCentre: 'townCenter',
+  // a moodlet; the trade and its doings; puttering and plowing
+  cosy: 'cozy', postie: 'mailcarrier', postie_sort: 'mailcarrier_sort', postie_round: 'mailcarrier_round', postie_collect: 'mailcarrier_collect',
+  work_post: 'work_mail', potter: 'putter', plough: 'plow',
+  // the wizard's threads
+  'village.rumour': 'village.rumor', 'village.ask.wizrumour': 'village.ask.wizrumor', 'wiz.favour': 'wiz.favor', 'work.postie': 'work.mailcarrier',
+  // their beats (the stage a thread got to)
+  ageing: 'aging', biscuit: 'cookie', biscuits: 'cookies', burnt: 'burned', colour: 'color', colours: 'colors', favour: 'favor', grey: 'gray',
+  honour: 'honor', honoured: 'honored', marrows: 'pumpkins', mum: 'mom', neighbour: 'neighbor', neighbours: 'neighbors', practise: 'practice', sweets: 'candy',
+  // and the jokes and promises they leave behind
+  'ages.sweets': 'ages.candy', 'child.tale.biscuit': 'child.tale.cookie', 'pastime.burnt': 'pastime.burned', 'season.favour': 'season.favor',
+  'village.wizrumour': 'village.wizrumor', 'secret.village.neighbour': 'secret.village.neighbor', 'wiz.visit.favour': 'wiz.visit.favor',
+};
+const renamedName = (s) => (Object.hasOwn(RENAMED, s) ? RENAMED[s] : s);
+// A copy of saved data with the old names put right.
+function renamedSave(o) {
+  if (Array.isArray(o)) return o.map(renamedSave);
+  if (o && typeof o === 'object') { const out = {}; for (const k of Object.keys(o)) out[renamedName(k)] = renamedSave(o[k]); return out; }
+  return typeof o === 'string' ? renamedName(o) : o;
+}
+// The save in storage, read and put right (null if there's none, or it won't read).
+function readSave() {
+  try { const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); return d ? renamedSave(d) : null; } catch (e) { return null; }
+}
+
 // Each plain field of Game that a save keeps: its key in the save, the
 // default when a save lacks it (`or` fills in for any falsy value, `nullish`
 // only for null or undefined, `bool` stores !!value), and `load`, a default
@@ -106,7 +145,7 @@ function save(force = false) {
       ...gameFieldsForSave(),
       pets:(Game.pets || []).map((pt) => ({ ...pt, say: null, tx: null, route: null })), plans: (Game.plans || []).map((pl) => ({ ...pl, workers: 0 })), lamps: World.lamps.map((l) => (l.lit ? 1 : 0)), time: Game.time, nextId: NEXT_ID, weather: Game.weather, rainUntil: Game.rainUntil, party: Game.party,
       villagers: Game.villagers.filter((v) => !v.leaving).map((v) => ({ ...v.serialize(), inside: v.inside ? (v.inside.kind === 'home' ? 'h' + v.inside.id : 'b' + v.inside.key) : null })),
-      archive: Game.archive, away: Game.away, census: Game.census, lastTraveller: Game.lastTraveller, stats: Game.stats,
+      archive: Game.archive, away: Game.away, census: Game.census, lastTraveler: Game.lastTraveler, stats: Game.stats,
       stores: Village.stores, town: saveTown(), wantHomes: Village.wantHomes,
       homes: World.homes.map((h) => ({ built: h.built, buildProg: h.buildProg, pantry: h.pantry, chilly: h.chilly, neon: !!h.neon, plots: h.plots.map((p) => [p.stage, p.prog]), crafts: h.crafts, collection: h.collection, jars: h.jars || {} })),
       rifts: World.rifts, scars: World.riftScars, riftNext: Game.riftNext, riftsOn: Village.riftsOn, wayHome: Village.wayHome || 0, wayHomeTries: Village.wayHomeTries || 0, riftPower: Village.riftPower || null,
@@ -124,8 +163,7 @@ function save(force = false) {
 function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
 
 function load() {
-  let data;
-  try { data = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { return false; }
+  const data = readSave();
   if (!data || data.v !== 2 || !data.villagers || !data.villagers.length) return false;
   Game.time = data.time; NEXT_ID = data.nextId || 1;
   (data.lamps || []).forEach((on, i) => { const l = World.lamps[i]; if (l) { l.lit = !!on; l.litAt = Game.time - 60; l.st.useAlt = l.lit; } });
@@ -135,7 +173,7 @@ function load() {
   // the two lists saved through a transform
   Game.pets = data.pets || []; Game.plans = data.plans || [];
   placeMemorialStones();
-  Game.archive = data.archive || {}; Game.away = data.away || []; Game.stats = data.stats || {}; Game.census = data.census || []; Game.lastTraveller = data.lastTraveller ?? -9;
+  Game.archive = data.archive || {}; Game.away = data.away || []; Game.stats = data.stats || {}; Game.census = data.census || []; Game.lastTraveler = data.lastTraveler ?? -9;
   Village.reset();
   Object.assign(Village.stores, data.stores || {});
   Village.wantHomes = data.wantHomes || 0;

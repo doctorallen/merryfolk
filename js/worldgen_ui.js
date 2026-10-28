@@ -14,7 +14,8 @@ const GEN_STAGES = 13; // how many lines buildWorldSteps yields
 
 // The world settings saved with the village, if there is one.
 function savedGen() {
-  try { const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); return d && d.world ? d.world : null; } catch (e) { return null; }
+  const d = readSave();
+  return d && d.world ? d.world : null;
 }
 
 function openWorldSetup() {

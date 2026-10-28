@@ -93,7 +93,7 @@ const CLASSIC_LAYOUT = {
     well_south: [44, 64], storehouse: [44, 24], smokehouse: [78, 47], well_east: [96, 26], inn2: [40, 66], field3: [42, 7], bakery2: [82, 72], field4: [80, 80], well_west: [20, 50],
     relay: [58, 14], glowworm: [86, 46], array: [26, 66], turbine: [48, 8], dynamoX: 74,
   },
-  townCentre: { x: 62, y: 46 },
+  townCenter: { x: 62, y: 46 },
   stroll: [[64, 28], [64, 40], [48, 24], [80, 27], [96, 40], [30, 31], [14, 28], [64, 62], [46, 73], [82, 74], [100, 70], [96, 26],
     [40, 50], [72, 50], [20, 16], [56, 80], [94, 60], [26, 60], [110, 50], [74, 88]],
   // the deep border woods: a side of the map, and how far in they reach
@@ -115,7 +115,7 @@ function makeRiverY(p) {
 function applyLayout(L) {
   World.L = L;
   HOME_DEFS = L.homes; ROADS = L.roads; POND = L.pond; PARTY = L.party; PLAZA = L.plaza; INN_RECT = L.inn; WEED_FIELD = L.weed;
-  FIELDS = L.fields; STORY = L.story; WEST_EXIT = L.exit; TOWN_CENTER = L.townCentre;
+  FIELDS = L.fields; STORY = L.story; WEST_EXIT = L.exit; TOWN_CENTER = L.townCenter;
   RIVER_Y = L.river.tilt ? makeRiverY(L.river) : makeRiverY({ ...L.river, tilt: 0, tiltX: 0 });
 }
 // Where a later lot is surveyed from, by key, or its old fixed spot.
@@ -502,7 +502,7 @@ function planValley(seed, W = MAP_W, H = MAP_H) {
   for (const f of L.fields) L.benches.push([f.x0 - 2, f.y0 - 2]);
   // --- the heart of the village, and where folk wander to ---
   const built = L.homes.filter((d) => !d.site);
-  L.townCentre = { x: Math.round((PX + built.reduce((s, d) => s + d.cx, 0)) / (built.length + 1)), y: Math.round((PY + built.reduce((s, d) => s + d.cy, 0)) / (built.length + 1)) };
+  L.townCenter = { x: Math.round((PX + built.reduce((s, d) => s + d.cx, 0)) / (built.length + 1)), y: Math.round((PY + built.reduce((s, d) => s + d.cy, 0)) / (built.length + 1)) };
   L.stroll.push([PX, PY], [PX, PY + 12], [L.party.cx, L.party.cy + 8], [L.pond.cx, L.pond.cy + 7], [b1s[0], b1s[1] + 2], [b2n[0], b2n[1] - 2], [L.story.x, L.story.y + 4]);
   for (const k in L.buildings) { const b = L.buildings[k]; L.stroll.push([Math.round((b.x0 + b.x1) / 2), b.y1 + 2]); }
   for (const f of L.fields) L.stroll.push([Math.round((f.x0 + f.x1) / 2), f.y1 + 2]);

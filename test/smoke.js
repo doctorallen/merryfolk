@@ -1,7 +1,9 @@
 'use strict';
 // Two game days of a new village, headless: no errors, sane numbers, nobody
-// stuck, and a save that survives a reload unchanged. Runs once on a desktop
-// window and once as a phone, where it also takes a screenshot.
+// stuck, and a save that survives a reload unchanged (and, on the desktop, a
+// save with the names from before they were American, which loads the same).
+// Runs once on a desktop window and once as a phone, where it also takes a
+// screenshot.
 const fs = require('fs');
 const path = require('path');
 const { launch, openGame, outDir, finish, waitFor, READY } = require('./lib');
@@ -47,6 +49,55 @@ function reloadAndCompare() {
   return { again, day: Game.day, folk: Game.villagers.length };
 }
 
+// A save from before the names were American (save.js, RENAMED) loads as if
+// it had been written today. The village's own save, with the wizard's bond,
+// a moodlet and the workforce plan given every renamed name, is written back
+// with the old names; loading each (the same draws of chance both times) and
+// saving again must give the same blob, with no old name left in it. The
+// planned valley's middle is read back from an old save's settings, and an
+// old villager's code is received with its names put right.
+function oldNamesRoundTrip() {
+  const NEW = Object.fromEntries(Object.entries(RENAMED).map(([a, b]) => [b, a]));
+  const back = (s) => (Object.hasOwn(NEW, s) ? NEW[s] : s);
+  const old = (o) => (Array.isArray(o) ? o.map(old) : o && typeof o === 'object' ? Object.fromEntries(Object.entries(o).map(([k, v]) => [back(k), old(v)])) : typeof o === 'string' ? back(o) : o);
+  const names = (o, set = new Set()) => { if (Array.isArray(o)) o.forEach((x) => names(x, set)); else if (o && typeof o === 'object') for (const k of Object.keys(o)) { set.add(k); names(o[k], set); } else if (typeof o === 'string') set.add(o); return set; };
+  const data = JSON.parse(localStorage.getItem(SAVE_KEY));
+  // every renamed name somewhere it can be saved
+  const v0 = data.villagers[0];
+  v0.moodlets = (v0.moodlets || []).concat([{ k: 'cozy', x: '', until: data.time + 600 }]);
+  data.jobPlan = Object.assign(data.jobPlan || {}, { mailcarrier: 1 });
+  const threads = ['village.rumor', 'village.ask.wizrumor', 'wiz.favor', 'work.mailcarrier'];
+  const beats = ['aging', 'cookie', 'cookies', 'burned', 'color', 'colors', 'favor', 'gray', 'honor', 'honored', 'pumpkins', 'mom', 'neighbor', 'neighbors', 'practice', 'candy'];
+  data.wizBond = Object.assign(data.wizBond || {}, {
+    [v0.id]: { talks: 2, last: 1, trust: 0.1, gifts: [], notes: [], known: {}, respect: 0, owe: 0, told: [], sore: { 'wiz.favor': 1 }, hooks: [{ k: 'x', thread: 'village.rumor', d: 1 }],
+      seen: Object.fromEntries(threads.map((t) => [t, 1])), stage: Object.fromEntries(beats.map((b, i) => [threads[i % threads.length] + (i < threads.length ? '' : '.' + i), b])), lastThread: 'wiz.favor',
+      jokes: ['ages.candy', 'child.tale.cookie', 'pastime.burned', 'season.favor', 'village.wizrumor'].map((k) => ({ k, t: 'a joke', d: 1 })),
+      promises: ['secret.village.neighbor', 'wiz.visit.favor'].map((k) => ({ k, t: 'a promise', d: 1, due: 4, state: 'open' })) },
+  });
+  const now = JSON.stringify(data), was = JSON.stringify(old(data));
+  const out = { bad: [] };
+  // the old blob really does have the old names in it, all of them
+  const oldNames = names(JSON.parse(was));
+  const missing = Object.keys(RENAMED).filter((k) => k !== 'townCentre' && !oldNames.has(k));
+  if (missing.length) out.bad.push(`the old save lacked ${missing.join(', ')}, so the check proves less than it should`);
+  const roundTrip = (blob) => { localStorage.setItem(SAVE_KEY, blob); Math.random = mulberry32(77); load(); save(true); return localStorage.getItem(SAVE_KEY); };
+  const a = roundTrip(now), b = roundTrip(was);
+  if (a !== b) out.bad.push('a save with the old names loaded differently from the same save with the new ones');
+  const left = Object.keys(RENAMED).filter((k) => names(JSON.parse(b)).has(k));
+  if (left.length) out.bad.push(`old names still in the save after loading: ${left.join(', ')}`);
+  // the planned valley's middle, read by savedGen before the world is built
+  localStorage.setItem(SAVE_KEY, JSON.stringify({ ...JSON.parse(was), world: { ...data.world, plan: { townCentre: { x: 7, y: 9 } } } }));
+  const gen = savedGen();
+  if (!gen || !gen.plan || !gen.plan.townCenter || gen.plan.townCenter.x !== 7 || 'townCentre' in gen.plan) out.bad.push('an old planned valley lost its middle');
+  // a villager's code from an older game
+  const code = exportVillager(Game.villagers.find((v) => v.isGrown()));
+  const json = JSON.parse(decodeURIComponent(escape(atob(code.slice(4)))));
+  const got = importVillagerCode('TD2:' + btoa(unescape(encodeURIComponent(JSON.stringify(old(json))))));
+  if (JSON.stringify(got) !== JSON.stringify(json)) out.bad.push('a villager\'s code from an older game came in changed');
+  localStorage.setItem(SAVE_KEY, a);
+  return out;
+}
+
 // Two save blobs must have the same shape: every key that was saved is still
 // there after a reload, with a value of the same kind, and no list has
 // shrunk. A field written by save() but forgotten by load() shows up here.
@@ -90,6 +141,7 @@ async function run(browser, label, opts, failures) {
   const diff = shapeDifference(JSON.parse(r.saved), JSON.parse(r2.again));
   if (diff) failures.push(`${label}: save changed by a reload: ${diff}`);
   if (r2.folk <= 0) failures.push(`${label}: no villagers after reload`);
+  if (!opts.mobile) for (const b of (await page.evaluate(oldNamesRoundTrip)).bad) failures.push(`${label}: ${b}`);
   for (const e of errors) failures.push(`${label}: page error: ${e}`);
   await page.close();
   return r;

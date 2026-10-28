@@ -23,7 +23,7 @@ const isMarketDay = (day) => weekday(day) === 'Trewsday';
 const isRestDay = (day) => weekday(day) === 'Highday';
 const isSingNight = (day) => weekday(day) === 'Mersday';
 // trades that can't stop for a day of rest
-const NEVER_REST = new Set(['work_inn', 'work_lamps', 'work_nanny', 'work_herd', 'nurse', 'work_post']);
+const NEVER_REST = new Set(['work_inn', 'work_lamps', 'work_nanny', 'work_herd', 'nurse', 'work_mail']);
 const LEISURE = new Set(['garden', 'fish', 'tea', 'stroll', 'read', 'smoke', 'chat', 'play', 'watch', 'eat_inn', 'party', 'forage']);
 
 function dayOfYear(day) { return ((day - 1) % YEAR_DAYS) + 1; }

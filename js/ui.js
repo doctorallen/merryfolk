@@ -523,7 +523,7 @@ function renderVillage() {
   body.querySelectorAll('a[data-v]').forEach((a) => a.addEventListener('click', () => { const o = Game.villagers.find((x) => x.id === +a.dataset.v); if (o) { selectVillager(o); focusVillager(o); } }));
   if (Game.villageTab === 'travelers') {
     $('tr-invite').addEventListener('click', () => {
-      if (Game.day - Game.lastTraveller < 1) { toast('One traveler a day. The road is long.', 'info'); return; }
+      if (Game.day - Game.lastTraveler < 1) { toast('One traveler a day. The road is long.', 'info'); return; }
       const r = welcomeTraveler(null);
       if (!r.ok) toast(r.msg, 'info'); else { selectVillager(r.v); focusVillager(r.v); $('village').hidden = true; }
     });
@@ -645,7 +645,7 @@ function villageRemembered() {
 }
 
 function villageTravelers() {
-  const wait = Game.day - Game.lastTraveller < 1;
+  const wait = Game.day - Game.lastTraveler < 1;
   return `<p class="lede-s">Folk sometimes come walking up the West Road looking for a home, like the eggs in the old Creatures hatchery. Others step out of rifts in the sky. And villages can send their folk to one another, like Docking Station's warp.</p>
   <h3>Welcome a stranger</h3><div class="row-btns"><button id="tr-invite" ${wait || Game.villagers.length >= MAX_POP ? 'disabled' : ''}>Invite a traveler</button><span class="sub">${Game.villagers.length >= MAX_POP ? 'The village is full.' : wait ? 'Another may come tomorrow.' : 'A newcomer with their own genes will arrive along the West Road.'}</span></div>
   ${riftLedger()}

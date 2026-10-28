@@ -66,7 +66,7 @@ ACTION_NAMES.write_letter = 'Writing letters';
 HABIT_KEYS.push('write_letter');
 
 // The mail carrier's round: the oldest letter's door first.
-Object.assign(ACTIONS.work_post, {
+Object.assign(ACTIONS.work_mail, {
   label: 'Delivering the mail',
   avail: () => mailbag().some((l) => World.homes[l.home] && World.homes[l.home].mailbox),
   extra: () => 0.2 + Math.min(0.4, mailbag().length * 0.03),
@@ -95,7 +95,7 @@ function mailDaily() {
     if (kin.length && R.chance(0.5)) mailLetter({ id: a.data.id, first: a.data.first }, R.pick(kin), 'away');
   }
   // with nobody on the round, a neighbor passes letters on after a day
-  if (!Game.villagers.some((v) => v.job === 'postie' && !v.leaving)) {
+  if (!Game.villagers.some((v) => v.job === 'mailcarrier' && !v.leaving)) {
     for (const h of World.homes) if (lettersFor(h).some((l) => Game.day - l.day >= 1)) deliverLetters(h, null);
   }
   // letters to folk who've left go back

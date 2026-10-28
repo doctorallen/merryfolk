@@ -16,7 +16,7 @@ const VALUES = {
   kin: { label: 'Family', say: 'blood and the hearth', acts: ['eat_home', 'tend_baby', 'gift', 'cradle', 'bake_home', 'write_letter'], clash: null, faction: 'kids' },
   craft: { label: 'Craft', say: 'a thing well made', acts: ['hobby_carving', 'hobby_basketry', 'hobby_pottery', 'hobby_knitting', 'hobby_painting', 'build', 'work_wood', 'bake_home'], clash: null, faction: 'crafts' },
   nature: { label: 'The green valley', say: 'the trees and the river', acts: ['fish', 'forage', 'garden', 'stroll', 'hobby_birdwatching', 'nap', 'watch'], clash: 'order', faction: 'farmers' },
-  order: { label: 'Tidiness', say: 'a place for everything', acts: ['potter', 'put_by', 'work_odd', 'market'], clash: 'nature', faction: null },
+  order: { label: 'Tidiness', say: 'a place for everything', acts: ['putter', 'put_by', 'work_odd', 'market'], clash: 'nature', faction: null },
 };
 const VALUE_KEYS = Object.keys(VALUES);
 // which value a Moot's tradition speaks to

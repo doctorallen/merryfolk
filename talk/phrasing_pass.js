@@ -23,7 +23,7 @@ talkPack('phrasing_pass', () => {
   // --- What the games are played with -------------------------------------------------
   const RID = [
     { q: 'What has a mouth but never eats, a bed but never sleeps, and runs but never walks?', a: 'a river', clue: 'You crossed it this morning, if you came by the bridge.', g: 'the mail carrier' },
-    { q: 'The more you take, the more you leave behind. What are they?', a: 'footsteps', clue: 'Look behind you on a muddy lane.', g: 'biscuits' },
+    { q: 'The more you take, the more you leave behind. What are they?', a: 'footsteps', clue: 'Look behind you on a muddy lane.', g: 'cookies' },
     { q: 'What has a neck but no head, and wears a cork for a hat?', a: 'a bottle', clue: 'There\'s a row of them behind the bar at the Badger.', g: 'a very thin hobbit in a very small hat' },
     { q: 'I\'m full of holes, but I still hold water. What am I?', a: 'a sponge', clue: 'You\'ll find one by the washing-up.', g: 'the roof of my larder' },
     { q: 'What gets wetter the more it dries?', a: 'a towel', clue: 'You\'d want one after a bath.', g: 'my aunt\'s eyes at a wedding' },
