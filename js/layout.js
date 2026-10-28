@@ -11,7 +11,7 @@
 // ---------------------------------------------------------------------------
 
 // The heart of the village, set by applyLayout (used by town.js and others).
-let TOWN_CENTRE = { x: 62, y: 46 };
+let TOWN_CENTER = { x: 62, y: 46 };
 
 const CLASSIC_LAYOUT = {
   w: 128, h: 96,
@@ -115,7 +115,7 @@ function makeRiverY(p) {
 function applyLayout(L) {
   World.L = L;
   HOME_DEFS = L.homes; ROADS = L.roads; POND = L.pond; PARTY = L.party; PLAZA = L.plaza; INN_RECT = L.inn; WEED_FIELD = L.weed;
-  FIELDS = L.fields; STORY = L.story; WEST_EXIT = L.exit; TOWN_CENTRE = L.townCentre;
+  FIELDS = L.fields; STORY = L.story; WEST_EXIT = L.exit; TOWN_CENTER = L.townCentre;
   RIVER_Y = L.river.tilt ? makeRiverY(L.river) : makeRiverY({ ...L.river, tilt: 0, tiltX: 0 });
 }
 // Where a later lot is surveyed from, by key, or its old fixed spot.

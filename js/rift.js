@@ -83,7 +83,7 @@ function placeName(x, y) {
 function riftSpot() {
   for (let tries = 0; tries < 600; tries++) {
     const near = tries < 400;
-    const tx = near ? Math.round(TOWN_CENTRE.x + R.f(-38, 38)) : R.i(8, MAP_W - 16), ty = near ? Math.round(TOWN_CENTRE.y + R.f(-28, 28)) : R.i(8, MAP_H - 8);
+    const tx = near ? Math.round(TOWN_CENTER.x + R.f(-38, 38)) : R.i(8, MAP_W - 16), ty = near ? Math.round(TOWN_CENTER.y + R.f(-28, 28)) : R.i(8, MAP_H - 8);
     if (!inMap(tx, ty) || tx < 6 || tx > MAP_W - 14 || ty < 6 || ty > MAP_H - 6) continue;
     const t = tileAt(tx, ty);
     if (t !== T.GRASS && t !== T.LAWN) continue;

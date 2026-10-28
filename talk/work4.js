@@ -1633,7 +1633,7 @@ talkPack('work4', () => {
       ] },
       takeon: { line: 'work.ask.apprentice.takeon', fx: { respect: 0.03, remember: 'The wizard thinks I should take on an apprentice.', rv: 1 }, end: true },
       watch: { line: 'work.ask.apprentice.watch', fx: { respect: 0.02, run: (T, v) => { pushQ(v, 'apprentice'); runLean(T, v); } }, end: true },
-      biscuits: { line: 'work.ask.apprentice.biscuits', fx: { fond: 0.02 }, end: true },
+      biscuits: { line: 'work.ask.apprentice.cookies', fx: { fond: 0.02 }, end: true },
       scared: { line: 'work.ask.apprentice.scared', fx: { trust: 0.03 }, end: true },
       ready: { line: 'work.ask.apprentice.ready', fx: { trust: 0.02, fond: 0.02 }, end: true },
     },
@@ -1671,7 +1671,7 @@ talkPack('work4', () => {
     _: ['Every day! I\'ll be there so much they\'ll HAVE to take me on!', 'Watch, and ask. Right. Starting now.'],
     'band=youth': ['Every day. Until they notice. Then every day after.'],
   });
-  W('work.ask.apprentice.biscuits', { _: ['Ha! The good cookies. It\'s in the contract.', 'Ha! You drive a hard bargain, wizard.'], 'stage=child': ['I can do cookies! I can eat them, anyway.'], ornery: ['Cookies. Ha. Mine, not theirs.'] });
+  W('work.ask.apprentice.cookies', { _: ['Ha! The good cookies. It\'s in the contract.', 'Ha! You drive a hard bargain, wizard.'], 'stage=child': ['I can do cookies! I can eat them, anyway.'], ornery: ['Cookies. Ha. Mine, not theirs.'] });
   W('work.ask.apprentice.scared', { _: ['Do it scared. ...All right. I can do scared.', 'Scared it is, then. I\'m good at scared.'], 'stage=child': ['Scared! Okay! I\'ll be brave and scared!'] });
   W('work.ask.apprentice.ready', { _: ['...You think so? Then maybe I am.', 'Readier than I know. I\'ll remember that.'], 'stage=child': ['READY! I\'m READY!'] });
 

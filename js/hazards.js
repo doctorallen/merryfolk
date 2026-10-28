@@ -143,7 +143,7 @@ ACTIONS.treat_blight = {
   },
 };
 ACTION_NAMES.treat_blight = 'Treating blight';
-function buySulphur() {
+function buySulfur() {
   const z = hazardActive();
   if (!z || z.k !== 'blight') return;
   if ((Game.coin || 0) < 15) { toast('Dwarf sulfur costs 15 pennies.', 'info'); return; }
@@ -211,9 +211,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const sh = stewardHTML;
   stewardHTML = function () {
     const z = hazardActive();
-    return (z && z.k === 'blight' ? `<div class="note">Blight is in the barley. The herbalist can treat it with herbs, or <button id="st-sulphur">buy dwarf sulfur (15p)</button>.</div>` : '') + sh();
+    return (z && z.k === 'blight' ? `<div class="note">Blight is in the barley. The herbalist can treat it with herbs, or <button id="st-sulfur">buy dwarf sulfur (15p)</button>.</div>` : '') + sh();
   };
   const hook = hookStewardUI;
-  hookStewardUI = function (body) { const b = body.querySelector('#st-sulphur'); if (b) b.addEventListener('click', () => { buySulphur(); renderVillage(); }); return hook(body); };
+  hookStewardUI = function (body) { const b = body.querySelector('#st-sulfur'); if (b) b.addEventListener('click', () => { buySulfur(); renderVillage(); }); return hook(body); };
   addHook('newVillage', () => { Game.hazard = null; Game.hazardSeasonDone = -1; });
 });

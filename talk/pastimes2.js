@@ -663,7 +663,7 @@ talkPack('pastimes2', () => {
         { ap: 'ask', say: 'And who will you teach?', to: 'next' },
       ] },
       meant: { line: 'pastime.teach.meant', end: true },
-      practise: { line: 'pastime.teach.practise', fx: { respect: 0.02, feel: 'taught' }, end: true },
+      practise: { line: 'pastime.teach.practice', fx: { respect: 0.02, feel: 'taught' }, end: true },
       fireworks: { line: 'pastime.teach.fireworks', end: true },
       next: { line: 'pastime.teach.next', end: true },
     },
@@ -753,7 +753,7 @@ talkPack('pastimes2', () => {
   L('pastime.teach.meant', ['Of course you did. Of course.', 'Ha! A wizard thing. Everything\'s a wizard thing with you.'], {
     witty: ['A wizard thing. I\'ll tell the lane it was deliberate. They\'ll believe me. They\'ve met you.'],
   });
-  L('pastime.teach.practise', ['Do. And show me next time. I want to see it.', 'Ha! Practice, then. I\'ll test you when you\'re back.'], {
+  L('pastime.teach.practice', ['Do. And show me next time. I want to see it.', 'Ha! Practice, then. I\'ll test you when you\'re back.'], {
     ornery: ['You\'d better. I\'ll know if you haven\'t.'],
     cheerful: ['Yes! Come back and we\'ll do it together!'],
   });

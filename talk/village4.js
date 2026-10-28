@@ -36,7 +36,7 @@ talkPack('village4', () => {
     surprise: '{X} is planning a surprise party for the whole lane', recipe: '{X}\'s prize cake has a spoonful of pepper in it', poems: '{X} writes poems, and hides them in the teapot',
     bree: '{X} has been thinking of moving to Bree', ring: '{X} lost the family ring in the river and hasn\'t told a soul', dance: '{X} has been taking dancing lessons in secret, from a scarecrow',
   };
-  const WIZRUMOURS = {
+  const WIZRUMORS = {
     age: 'you\'re three hundred years old', toad: 'you once turned a Sackville into a toad', hat: 'your hat has no bottom to it', dragon: 'you fought a dragon with a teaspoon',
     sleep: 'you never sleep, just drink tea till morning', mouse: 'you keep a mouse in your beard', stars: 'your fireworks are stars you caught and put in a box',
   };
@@ -47,11 +47,11 @@ talkPack('village4', () => {
     stars: 'The wizard says his fireworks are only borrowed stars, and he always puts them back.',
   };
   const KEYS = ['vFeudA', 'vFeudAId', 'vFeudB', 'vFeudBId', 'vFeudWhat', 'vFeudKind', 'vFeudFav', 'vFeudFavId', 'vContestPrize', 'vContestThing', 'vContestGood', 'vContestWon',
-    'vWishFor', 'vWishKey', 'vSecretAbout', 'vSecretAboutId', 'vSecretKey', 'vSecretText', 'vWizRumour', 'vWizRumourKey', 'vWizNews'];
+    'vWishFor', 'vWishKey', 'vSecretAbout', 'vSecretAboutId', 'vSecretKey', 'vSecretText', 'vWizRumor', 'vWizRumorKey', 'vWizNews'];
   addFacts((v, F, T) => {
     for (const k of KEYS) F[k] = null;
     if (v.stage === 'baby') return;
-    let P = T && T.vxFavours && T.vxFavours.vid === v.id ? T.vxFavours : null;
+    let P = T && T.vxFavors && T.vxFavors.vid === v.id ? T.vxFavors : null;
     if (!P) {
       P = { vid: v.id };
       const folk = Game.villagers.filter((o) => o !== v && o.isGrown() && !o.leaving);
@@ -67,8 +67,8 @@ talkPack('village4', () => {
       const kin = (o) => o.id === v.spouse || (v.parents || []).includes(o.id) || (o.parents || []).includes(v.id);
       P.secret = folk.filter((o) => !kin(o) && (v.rel[o.id] ?? 0) > 0.2).sort((a, b) => (v.rel[b.id] ?? 0) - (v.rel[a.id] ?? 0))[0] || null;
       P.secretKey = pick(Object.keys(SECRETS), v, 2);
-      P.wizKey = pick(Object.keys(WIZRUMOURS), v, 3);
-      if (T && T.v) T.vxFavours = P;
+      P.wizKey = pick(Object.keys(WIZRUMORS), v, 3);
+      if (T && T.v) T.vxFavors = P;
     }
     const live = (o) => o && Game.villagers.includes(o) && !o.leaving;
     if (P.feud && live(P.feud[0]) && live(P.feud[1])) {
@@ -86,7 +86,7 @@ talkPack('village4', () => {
     const vals = typeof valuesOf === 'function' ? valuesOf(v) : [];
     if (vals[0] && WISH_FOR[vals[0]]) { F.vWishFor = WISH_FOR[vals[0]]; F.vWishKey = vals[0]; }
     if (live(P.secret)) Object.assign(F, { vSecretAbout: P.secret.first, vSecretAboutId: P.secret.id, vSecretKey: P.secretKey, vSecretText: SECRETS[P.secretKey].replace('{X}', P.secret.first) });
-    if (P.wizKey) Object.assign(F, { vWizRumour: WIZRUMOURS[P.wizKey], vWizRumourKey: P.wizKey, vWizNews: WIZNEWS[P.wizKey] });
+    if (P.wizKey) Object.assign(F, { vWizRumor: WIZRUMORS[P.wizKey], vWizRumorKey: P.wizKey, vWizNews: WIZNEWS[P.wizKey] });
   });
 
   // =================================================================================
@@ -233,7 +233,7 @@ talkPack('village4', () => {
         { ap: 'jest', say: 'I shall enter one myself, then. Watch out.', to: 'enter' },
       ] },
       cheer: { line: 'village.contest.cheer', fx: { fond: 0.02 }, end: true },
-      practise: { line: 'village.contest.practise', fx: { respect: 0.02 }, end: true },
+      practise: { line: 'village.contest.practice', fx: { respect: 0.02 }, end: true },
       fair: { line: 'village.contest.fair', fx: { respect: 0.01 }, end: true },
       sparkle: { line: 'village.contest.sparkle', fx: { joke: { k: 'village.sparkle', t: 'A very small sparkle on {name}\'s {vContestThing}. Nobody would notice.' } }, end: true },
       safe: { line: 'village.contest.safe', fx: { trust: 0.03 }, end: true },
@@ -305,7 +305,7 @@ talkPack('village4', () => {
     shy: ['...Cheer quietly? Please?'],
     proud: ['Cheer when I win. Not before. It\'s bad luck.'],
   });
-  say('village.contest.practise', {
+  say('village.contest.practice', {
     _: ['The Badger crowd! Ha! They\'ll eat anything and complain about all of it.', 'Honest critics. Yes. Brutal ones. Good idea.'],
     shy: ['In front of everyone? Oh. Oh dear. ...All right.'],
   });
@@ -511,42 +511,42 @@ talkPack('village4', () => {
   // =================================================================================
   addThread({
     id: 'village.ask.wizrumour', theirs: true, label: 'They\'ve heard something about you', cool: 5, ask: '{Name} has heard something about you.',
-    when: (F) => F.met && F.talks >= 1 && has(F.vWizRumour),
+    when: (F) => F.met && F.talks >= 1 && has(F.vWizRumor),
     beats: {
-      start: { line: 'village.ask.wizrumour.q', go: [
-        { ap: 'tale', say: 'village.ask.wizrumour.tale.say', label: 'Make it a good deal worse', to: 'tale' },
+      start: { line: 'village.ask.wizrumor.q', go: [
+        { ap: 'tale', say: 'village.ask.wizrumor.tale.say', label: 'Make it a good deal worse', to: 'tale' },
         { ap: 'advise', say: 'Nonsense, I\'m afraid. Folk will say anything.', to: 'deny' },
-        { ap: 'jest', say: 'village.ask.wizrumour.jest.say', label: 'Laugh it off', to: 'jest' },
+        { ap: 'jest', say: 'village.ask.wizrumor.jest.say', label: 'Laugh it off', to: 'jest' },
       ] },
-      tale: { line: 'village.ask.wizrumour.tale', fx: { news: '{VWizNews}' }, go: [
+      tale: { line: 'village.ask.wizrumor.tale', fx: { news: '{VWizNews}' }, go: [
         { ap: 'jest', say: 'And that\'s only the half of it.', to: 'half' },
         { ap: 'warm', say: 'Don\'t tell everyone. Well. Tell some.', to: 'tellsome' },
       ] },
-      deny: { line: 'village.ask.wizrumour.deny', go: [
+      deny: { line: 'village.ask.wizrumor.deny', go: [
         { ap: 'tale', say: 'Well... there was one small thing.', to: 'tale' },
         { ap: 'warm', say: 'I\'m only an old man with a hat.', to: 'oldman' },
       ] },
-      jest: { line: 'village.ask.wizrumour.jest', fx: { fond: 0.02 }, end: true },
-      half: { line: 'village.ask.wizrumour.half', fx: { joke: { k: 'village.wizrumour', t: 'They say {vWizRumour}. The wizard says that\'s only the half of it.' } }, end: true },
-      tellsome: { line: 'village.ask.wizrumour.tellsome', end: true },
-      oldman: { line: 'village.ask.wizrumour.oldman', fx: { trust: 0.02 }, end: true },
+      jest: { line: 'village.ask.wizrumor.jest', fx: { fond: 0.02 }, end: true },
+      half: { line: 'village.ask.wizrumor.half', fx: { joke: { k: 'village.wizrumour', t: 'They say {vWizRumor}. The wizard says that\'s only the half of it.' } }, end: true },
+      tellsome: { line: 'village.ask.wizrumor.tellsome', end: true },
+      oldman: { line: 'village.ask.wizrumor.oldman', fx: { trust: 0.02 }, end: true },
     },
   });
-  const WR = (k) => ({ if: { vWizRumourKey: k }, pri: 1 });
-  say('village.ask.wizrumour.q', {
-    _: ['Is it true {vWizRumour}? They\'re saying so at the Badger.', 'I heard {vWizRumour}. Is it true? You can tell me.', 'Somebody said {vWizRumour}. I said nonsense. Was I right?'],
-    cheerful: ['Is it TRUE {vWizRumour}? Oh, say it is!'],
-    ornery: ['They\'re saying {vWizRumour}. I told them it\'s nonsense. Is it nonsense?'],
-    shy: ['...Is it true {vWizRumour}? Sorry. I just wondered.'],
-    curious: ['I need to know. Is it true {vWizRumour}? I\'ve a bet on.'],
-    dreamy: ['They say {vWizRumour}. I\'d like it to be true.'],
-    witty: ['The Badger has ruled that {vWizRumour}. Care to appeal?'],
-    proud: ['I don\'t listen to gossip, but is it true {vWizRumour}?'],
-    gloomy: ['They say {vWizRumour}. Probably not. Nothing\'s ever true.'],
-    child: ['Is it true {vWizRumour}? Is it? IS it?', 'My friend says {vWizRumour}! Is that real?'],
-    rift: ['Rumor check: {vWizRumour}. True or false?'],
+  const WR = (k) => ({ if: { vWizRumorKey: k }, pri: 1 });
+  say('village.ask.wizrumor.q', {
+    _: ['Is it true {vWizRumor}? They\'re saying so at the Badger.', 'I heard {vWizRumor}. Is it true? You can tell me.', 'Somebody said {vWizRumor}. I said nonsense. Was I right?'],
+    cheerful: ['Is it TRUE {vWizRumor}? Oh, say it is!'],
+    ornery: ['They\'re saying {vWizRumor}. I told them it\'s nonsense. Is it nonsense?'],
+    shy: ['...Is it true {vWizRumor}? Sorry. I just wondered.'],
+    curious: ['I need to know. Is it true {vWizRumor}? I\'ve a bet on.'],
+    dreamy: ['They say {vWizRumor}. I\'d like it to be true.'],
+    witty: ['The Badger has ruled that {vWizRumor}. Care to appeal?'],
+    proud: ['I don\'t listen to gossip, but is it true {vWizRumor}?'],
+    gloomy: ['They say {vWizRumor}. Probably not. Nothing\'s ever true.'],
+    child: ['Is it true {vWizRumor}? Is it? IS it?', 'My friend says {vWizRumor}! Is that real?'],
+    rift: ['Rumor check: {vWizRumor}. True or false?'],
   });
-  lines('village.ask.wizrumour.tale.say', [
+  lines('village.ask.wizrumor.tale.say', [
     { text: ['True. And that\'s the dull version.'] },
     { ...WR('age'), text: ['Three hundred? I stopped counting at three hundred. Out of politeness.'] },
     { ...WR('toad'), text: ['A newt, not a toad. And the Sackville was much improved by it.'] },
@@ -556,7 +556,7 @@ talkPack('village4', () => {
     { ...WR('mouse'), text: ['There\'s no mouse in my beard. There\'s a wren. She pays rent in song.'] },
     { ...WR('stars'), text: ['Only borrowed stars. I always put them back before dawn.'] },
   ]);
-  lines('village.ask.wizrumour.jest.say', [
+  lines('village.ask.wizrumor.jest.say', [
     { text: ['I\'ll neither confirm nor deny. Mostly deny. Partly confirm.'] },
     { ...WR('age'), text: ['Three hundred! I\'m wounded. Two hundred and ninety-nine, if you please.'] },
     { ...WR('toad'), text: ['Only once. And he asked me to.'] },
@@ -566,7 +566,7 @@ talkPack('village4', () => {
     { ...WR('mouse'), text: ['He\'s not a mouse, he\'s a lodger.'] },
     { ...WR('stars'), text: ['Caught stars? Please. I bought them at Bree market.'] },
   ]);
-  say('village.ask.wizrumour.tale', {
+  say('village.ask.wizrumor.tale', {
     _: ['I KNEW it! I knew it! Wait till I tell the Badger!', 'Oh, my word. Oh, my giddy aunt.', 'Get away! Truly? Oh, that\'s the best thing I\'ve heard all year.'],
     cheerful: ['Ha! Oh, that\'s wonderful! I\'m telling everyone!'],
     ornery: ['Hmph. You\'re pulling my leg. ...Aren\'t you? You\'re not, are you.'],
@@ -579,7 +579,7 @@ talkPack('village4', () => {
     child: ['WHOA. That\'s the BEST. I\'m going to tell EVERYONE.'],
     rift: ['That\'s canon now. You can\'t take it back.'],
   });
-  say('village.ask.wizrumour.deny', {
+  say('village.ask.wizrumor.deny', {
     _: ['Oh. That\'s a shame. It was a good one.', 'Nonsense? Well. I\'ll tell them. They won\'t believe me.'],
     cheerful: ['Oh, bother! I liked that one! Never mind.'],
     ornery: ['Told you. I told them. Nobody listens.'],
@@ -591,7 +591,7 @@ talkPack('village4', () => {
     gloomy: ['Of course not.'],
     child: ['Awww. Are you SURE?'],
   });
-  say('village.ask.wizrumour.jest', {
+  say('village.ask.wizrumor.jest', {
     _: ['Ha! That\'s not an answer. That\'s a hat.', 'You\'re impossible. I\'ll tell them you laughed. That\'ll do.'],
     cheerful: ['Ha! Oh, you\'re wicked! I love it!'],
     ornery: ['A straight answer would kill you, wouldn\'t it.'],
@@ -599,15 +599,15 @@ talkPack('village4', () => {
     child: ['That\'s not an ANSWER!'],
     curious: ['That\'s a dodge. I know a dodge.'],
   });
-  say('village.ask.wizrumour.half', {
+  say('village.ask.wizrumor.half', {
     _: ['Only the HALF? Sit down. Tell me the rest.', 'The half! What\'s the other half? No, don\'t tell me. Yes, tell me.'],
     child: ['WHAT\'S THE OTHER HALF?'],
   });
-  say('village.ask.wizrumour.tellsome', {
+  say('village.ask.wizrumor.tellsome', {
     _: ['Some! I\'ll tell the innkeeper. That\'s all of them.', 'Only some. Yes. The right some.'],
     witty: ['Telling some in Thistledown is telling all by supper.'],
   });
-  say('village.ask.wizrumour.oldman', {
+  say('village.ask.wizrumor.oldman', {
     _: ['An old man with a hat. And fireworks. And a great deal you don\'t say.', 'Ha! Only an old man. I\'ll believe that when your hat stops twinkling.'],
     dreamy: ['That\'s what all the best stories say about the wizard, at the start.'],
     shy: ['...I don\'t think you\'re only anything.'],
@@ -665,7 +665,7 @@ talkPack('village4', () => {
     cheerful: ['Oh, please! The louder the better!'],
     ornery: ['Cheer if you like. Quietly. The judges are touchy.'],
   });
-  say('village.contest.practise', {
+  say('village.contest.practice', {
     proud: ['Critics? I\'ll win them over in one bite.'],
     witty: ['The Badger crowd will eat my practice entries and call it criticism.'],
   });
@@ -722,19 +722,19 @@ talkPack('village4', () => {
     proud: ['I knew I chose well.'],
   });
 
-  say('village.ask.wizrumour.half', {
+  say('village.ask.wizrumor.half', {
     cheerful: ['The HALF! Ooh! I\'ll put the kettle on!'],
     ornery: ['Half. Hmph. Wizards and their halves.'],
   });
-  say('village.ask.wizrumour.tellsome', {
+  say('village.ask.wizrumor.tellsome', {
     cheerful: ['I\'ll tell some! All the some! Every some!'],
     shy: ['I\'ll only tell one person. That\'s some.'],
   });
-  say('village.ask.wizrumour.deny', {
+  say('village.ask.wizrumor.deny', {
     rift: ['False. Noted. Disappointing, but noted.'],
     elder: ['That\'s what you said fifty years ago too.'],
   });
-  say('village.ask.wizrumour.jest', {
+  say('village.ask.wizrumor.jest', {
     proud: ['A charming non-answer. Very wizardly.'],
     shy: ['...Oh. Ha. I think that\'s a yes.'],
     rift: ['Unclear response. I\'ll mark it as true.'],

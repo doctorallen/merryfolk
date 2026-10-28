@@ -27,7 +27,7 @@ const grownOrKid = (v) => v.isGrown() || v.isChild();
 // (checked every hour). nudge: actions they lean toward while they wish it.
 const WISHES = {
   fav_food: {
-    w: (v) => (grownOrKid(v) ? 1 : 0), make: (v) => ({ x: FOODS[v.favouriteFood()].label }),
+    w: (v) => (grownOrKid(v) ? 1 : 0), make: (v) => ({ x: FOODS[v.favoriteFood()].label }),
     text: (w) => `A plate of ${w.x}`, on: ['feel:fav_food'], nudge: ['eat_home', 'eat_inn', 'market', 'bake_home'],
     say: ['I could just eat some {x}.', 'What I wouldn\'t give for {x}.'],
   },

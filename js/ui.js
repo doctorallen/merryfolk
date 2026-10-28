@@ -124,10 +124,10 @@ function buildUI() {
   document.querySelectorAll('#village .tabs button').forEach((b) => b.addEventListener('click', () => { Game.villageTab = b.dataset.tab; renderVillage(); }));
   $('village-close').addEventListener('click', () => { $('village').hidden = true; });
   $('tree-close').addEventListener('click', () => { $('tree').hidden = true; });
-  $('post-close').addEventListener('click', () => { $('post').hidden = true; });
-  $('post-copy').addEventListener('click', () => {
-    const ta = $('post-code'); ta.select();
-    try { navigator.clipboard.writeText(ta.value).then(() => { $('post-copy').textContent = 'Copied!'; }, () => document.execCommand('copy')); } catch (e) { document.execCommand('copy'); }
+  $('send-close').addEventListener('click', () => { $('send').hidden = true; });
+  $('send-copy').addEventListener('click', () => {
+    const ta = $('send-code'); ta.select();
+    try { navigator.clipboard.writeText(ta.value).then(() => { $('send-copy').textContent = 'Copied!'; }, () => document.execCommand('copy')); } catch (e) { document.execCommand('copy'); }
   });
   Game.panelTab = 'life'; Game.villageTab = 'steward';
 }
@@ -261,7 +261,7 @@ function renderPanel(full) {
   hydrateIcons(body);
   body.querySelectorAll('a[data-v]').forEach((a) => a.addEventListener('click', () => { const o = Game.villagers.find((x) => x.id === +a.dataset.v); if (o) { selectVillager(o); focusVillager(o); } }));
   const tb = body.querySelector('[data-tree]'); if (tb) tb.addEventListener('click', () => openTree(v));
-  const pb = body.querySelector('[data-post]'); if (pb) pb.addEventListener('click', () => openPost(v));
+  const pb = body.querySelector('[data-send]'); if (pb) pb.addEventListener('click', () => openSend(v));
   const js = body.querySelector('select[data-job]');
   if (js) js.addEventListener('change', () => {
     const val = js.value;
@@ -288,7 +288,7 @@ function panelLife(v) {
     h += `<div class="drive"><span class="dl">${DRIVE_LABEL[d]}</span><span class="bar"><i data-d="${d}" style="width:${Math.round(v.drives[d] * 100)}%"></i></span></div>`;
   }
   h += `<h3>Health</h3><div class="chips health">${healthChips(v)}</div>`;
-  h += '<div class="humours">';
+  h += '<div class="humors">';
   for (const [k, l] of [['ale', 'Tipsiness'], ['germs', 'Germs'], ['toxin', 'Toxins'], ['immune', 'Immunity']]) h += `<div class="drive small"><span class="dl">${l}</span><span class="bar thin"><i data-c="${k}" class="c-${k}" style="width:${Math.round(clamp(v.chem[k], 0, 1) * 100)}%"></i></span></div>`;
   h += '</div>';
   const home = v.home();
@@ -325,7 +325,7 @@ function panelNature(v) {
   const inst = Object.keys(g.taste).filter((a) => HABIT_KEYS.includes(a) && habitShown(v, a)).sort((a, b) => g.taste[b] - g.taste[a]);
   const foods = PANTRY_KINDS.slice().sort((a, b) => g.food[b] - g.food[a]);
   h += `<div class="likes"><div><b>Born loving</b> ${inst.slice(0, 2).map((a) => ACTION_NAMES[a].toLowerCase()).join(', ')} and ${FOODS[foods[0]].label}</div><div><b>Born wary of</b> ${ACTION_NAMES[inst[inst.length - 1]].toLowerCase()} and ${FOODS[foods[foods.length - 1]].label}</div></div>`;
-  if (v.isGrown()) h += '<div class="row-btns"><button data-post title="Pack this villager\'s genome into a code a friend can paste into their own game of Merryfolk">Send a copy to a friend</button></div>';
+  if (v.isGrown()) h += '<div class="row-btns"><button data-send title="Pack this villager\'s genome into a code a friend can paste into their own game of Merryfolk">Send a copy to a friend</button></div>';
   return h;
 }
 
@@ -516,15 +516,15 @@ function toggleVillage() { const el = $('village'); el.hidden = !el.hidden; if (
 function renderVillage() {
   document.querySelectorAll('#village .tabs button').forEach((b) => b.classList.toggle('active', b.dataset.tab === Game.villageTab));
   const body = $('village-body');
-  body.innerHTML = ({ stores: villageStores, trades: villageTrades, census: villageCensus, remembered: villageRemembered, travellers: villageTravellers }[Game.villageTab] || villageStores)();
+  body.innerHTML = ({ stores: villageStores, trades: villageTrades, census: villageCensus, remembered: villageRemembered, travelers: villageTravelers }[Game.villageTab] || villageStores)();
   hydrateIcons(body);
   if (Game.villageTab === 'census') drawCensus($('census-chart'));
   if (Game.villageTab === 'remembered') body.querySelectorAll('canvas[data-arch]').forEach((c) => { const a = Game.archive[c.dataset.arch]; if (a) drawPortrait(c, a.genes, a.stage === 'baby' ? 'child' : a.stage, true, a.look); });
   body.querySelectorAll('a[data-v]').forEach((a) => a.addEventListener('click', () => { const o = Game.villagers.find((x) => x.id === +a.dataset.v); if (o) { selectVillager(o); focusVillager(o); } }));
-  if (Game.villageTab === 'travellers') {
+  if (Game.villageTab === 'travelers') {
     $('tr-invite').addEventListener('click', () => {
       if (Game.day - Game.lastTraveller < 1) { toast('One traveler a day. The road is long.', 'info'); return; }
-      const r = welcomeTraveller(null);
+      const r = welcomeTraveler(null);
       if (!r.ok) toast(r.msg, 'info'); else { selectVillager(r.v); focusVillager(r.v); $('village').hidden = true; }
     });
     $('tr-rift').addEventListener('click', () => {
@@ -539,7 +539,7 @@ function renderVillage() {
     $('tr-import').addEventListener('click', () => {
       try {
         const data = importVillagerCode($('tr-code').value);
-        const r = welcomeTraveller(data);
+        const r = welcomeTraveler(data);
         if (!r.ok) toast(r.msg, 'info'); else { selectVillager(r.v); focusVillager(r.v); $('village').hidden = true; }
       } catch (e) { $('tr-error').textContent = e.message; }
     });
@@ -644,7 +644,7 @@ function villageRemembered() {
   return h + '</div>';
 }
 
-function villageTravellers() {
+function villageTravelers() {
   const wait = Game.day - Game.lastTraveller < 1;
   return `<p class="lede-s">Folk sometimes come walking up the West Road looking for a home, like the eggs in the old Creatures hatchery. Others step out of rifts in the sky. And villages can send their folk to one another, like Docking Station's warp.</p>
   <h3>Welcome a stranger</h3><div class="row-btns"><button id="tr-invite" ${wait || Game.villagers.length >= MAX_POP ? 'disabled' : ''}>Invite a traveler</button><span class="sub">${Game.villagers.length >= MAX_POP ? 'The village is full.' : wait ? 'Another may come tomorrow.' : 'A newcomer with their own genes will arrive along the West Road.'}</span></div>
@@ -714,11 +714,11 @@ function openTree(v) {
   $('tree').hidden = false;
 }
 
-function openPost(v) {
-  $('post-title').textContent = `Send ${v.first} to a friend`;
-  $('post-code').value = exportVillager(v);
-  $('post-copy').textContent = 'Copy code';
-  $('post').hidden = false;
+function openSend(v) {
+  $('send-title').textContent = `Send ${v.first} to a friend`;
+  $('send-code').value = exportVillager(v);
+  $('send-copy').textContent = 'Copy code';
+  $('send').hidden = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -831,7 +831,7 @@ function openIntro(first) {
 function closeModals() {
   if (Game.started) { $('intro').hidden = true; Game.introOpen = false; }
   closeInterior();
-  $('roster').hidden = true; $('village').hidden = true; $('tree').hidden = true; $('post').hidden = true;
+  $('roster').hidden = true; $('village').hidden = true; $('tree').hidden = true; $('send').hidden = true;
 }
 
 function startGame(fresh) {

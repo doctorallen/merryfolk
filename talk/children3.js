@@ -604,7 +604,7 @@ talkPack('children3', () => {
         { ap: 'advise', say: 'There\'s more to the world than the trades we know. Keep your eyes open.', to: 'wider', fx: { lean: 'rift' } },
       ] },
       fine: { line: 'child.grown.fine', fx: { remember: 'The wizard says I\'d make a fine {childCalling}.', rv: 2 }, end: true },
-      honour: { line: 'child.grown.honour', fx: { respect: 0.02 }, end: true },
+      honour: { line: 'child.grown.honor', fx: { respect: 0.02 }, end: true },
       wider: { line: 'child.grown.wider', fx: { respect: 0.02 }, end: true },
       wizard: { line: 'child.grown.wizard', go: [
         { ap: 'tale', say: 'There was once a hobbit who did a thing no wizard could. So, who knows?', to: 'hobbit', fx: { lean: 'rift' } },
@@ -657,7 +657,7 @@ talkPack('children3', () => {
     { text: ['You think so? Really?', 'A FINE one. I\'m going to remember you said fine.', '...Thank you. Nobody\'s said that.'] },
     { if: { childTemper: 'shy' }, text: ['*very quietly* ...really?'] },
   ]);
-  lines('child.grown.honour', [
+  lines('child.grown.honor', [
     { text: ['Honor. Like in the stories. A farmer with honor.', 'I like that. Keeping everyone fed. That\'s a big job.', 'That\'s what Gran says. Every trade\'s a good trade if you do it well.'] },
   ]);
   lines('child.grown.wider', [
@@ -826,7 +826,7 @@ talkPack('children3', () => {
   lines('child.grown.wider', [
     { if: { childTween: true }, pri: 1, text: ['There\'s more than the trades. Yes. I\'ve been thinking that for a while.'] },
   ]);
-  lines('child.grown.honour', [
+  lines('child.grown.honor', [
     { if: { childTween: true }, pri: 1, text: ['Honor in it. ...Yes. I\'d like to be the sort folk depend on.'] },
   ]);
   // =====================================================================================
@@ -872,7 +872,7 @@ talkPack('children3', () => {
         { ap: 'jest', say: 'It means always carry a spare cookie.', to: 'biscuit' },
       ] },
       right: { line: 'child.q.tale.right', fx: { fond: 0.03 }, end: true },
-      biscuit: { line: 'child.q.tale.biscuit', fx: { joke: { k: 'child.tale.biscuit', t: 'The moral of every story is: always carry a spare cookie.' } }, end: true },
+      biscuit: { line: 'child.q.tale.cookie', fx: { joke: { k: 'child.tale.biscuit', t: 'The moral of every story is: always carry a spare cookie.' } }, end: true },
       off: { line: 'child.q.tale.off', end: true },
     },
     end: { fond: 0.03 },
@@ -923,7 +923,7 @@ talkPack('children3', () => {
   lines('child.q.tale.right', [
     { text: ['I WAS listening! I always listen! Mostly.', 'Ha! I knew it! I\'m going to tell everyone what it means.', 'You can tell me another one tomorrow. That\'s a rule now.'] },
   ]);
-  lines('child.q.tale.biscuit', [
+  lines('child.q.tale.cookie', [
     { text: ['That\'s not what it means! ...Is it?', 'Ha! I always carry a cookie. I\'ve got one now. You can\'t have it.', 'A COOKIE. You\'re silly.'] },
   ]);
   lines('child.q.tale.off', [

@@ -30,8 +30,8 @@ function uniqueFirst(v) {
   const af = arriveFromRift;
   const renamed = (v, old) => { if (!v || v.first === old) return; for (const l of Game.log.slice(0, 4)) if (l.text.includes(old)) l.text = l.text.split(old).join(v.first); if (typeof renderLog === 'function') renderLog(); };
   arriveFromRift = function (r) { const v = af(r); if (v) { const old = v.first; uniqueFirst(v); renamed(v, old); } return v; };
-  const wt = welcomeTraveller;
-  welcomeTraveller = function (data, quiet, sex) { const r = wt(data, quiet, sex); if (r && r.v && !data) { const old = r.v.first; uniqueFirst(r.v); renamed(r.v, old); } return r; };
+  const wt = welcomeTraveler;
+  welcomeTraveler = function (data, quiet, sex) { const r = wt(data, quiet, sex); if (r && r.v && !data) { const old = r.v.first; uniqueFirst(r.v); renamed(r.v, old); } return r; };
 }
 // the founding families too: two Burdocks from day one would muddle every letter and natter
 addHook('afterNewVillage', () => { for (const v of Game.villagers) uniqueFirst(v); });

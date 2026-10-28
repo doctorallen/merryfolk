@@ -189,7 +189,7 @@ button:focus-visible, .tool:focus-visible { outline: 3px solid var(--brass); out
 .bar i.c-ale { background: #c9a227; } .bar i.c-germs { background: #7aa83a; } .bar i.c-toxin { background: #8a4a9a; } .bar i.c-immune { background: #5a8ac8; }
 .bar.good i { background: var(--moss-2) !important; }
 .bar.low i { background: #b88a6a !important; }
-.humours { margin-top: 4px; }
+.humors { margin-top: 4px; }
 .meter { display: inline-block; height: 7px; background: var(--parch-2); border: 1px solid var(--ink-3); border-radius: 2px; overflow: hidden; vertical-align: middle; }
 .meter i { display: block; height: 100%; background: var(--ink-3); }
 .traits { display: grid; gap: 2px; }

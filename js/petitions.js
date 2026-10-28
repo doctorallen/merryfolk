@@ -25,7 +25,7 @@ function standing(f) { return (Game.factions && Game.factions[f]) || 0; }
 function shiftStanding(f, n) { (Game.factions || (Game.factions = {}))[f] = clamp(standing(f) + n, -100, 100); }
 function members(f) { return Game.villagers.filter((v) => !v.leaving && FACTIONS[f].of(v)); }
 function fieldSiteNear() {
-  for (let r = 0; r < 60; r += 2) for (let k = 0; k < 24; k++) { const a = k / 24 * Math.PI * 2, x = Math.round(TOWN_CENTRE.x + Math.cos(a) * r), y = Math.round(TOWN_CENTRE.y + Math.sin(a) * r * 0.7); const s = siteFor('field', x, y); if (s && !s.why) return [x, y]; }
+  for (let r = 0; r < 60; r += 2) for (let k = 0; k < 24; k++) { const a = k / 24 * Math.PI * 2, x = Math.round(TOWN_CENTER.x + Math.cos(a) * r), y = Math.round(TOWN_CENTER.y + Math.sin(a) * r * 0.7); const s = siteFor('field', x, y); if (s && !s.why) return [x, y]; }
   return null;
 }
 const PETITIONS = [

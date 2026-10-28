@@ -384,7 +384,7 @@ talkPack('wizard', () => {
         { ap: 'warm', say: 'Go on. Try it on.', to: 'tryon' },
         { ap: 'jest', say: 'And a spare beard. Don\'t tell anyone.', to: 'birds' },
       ] },
-      biscuit: { line: 'wiz.hat.biscuit', go: [
+      biscuit: { line: 'wiz.hat.cookie', go: [
         { ap: 'share', say: '*You find the cookie, break it, and give them half.*', label: 'Share the cookie', to: 'shared', fx: { fond: 0.03, drive: { hunger: -0.05 } } },
         { ap: 'jest', say: 'It\'s from the Old Took\'s birthday. Still good. Probably.', to: 'old' },
       ] },
@@ -488,7 +488,7 @@ talkPack('wizard', () => {
     elder: ['Old habits. I keep a spare pair of socks in my pocket.'],
     rift: ['Redundancy. Good engineering, that.'],
   });
-  wz('wiz.hat.biscuit', {
+  wz('wiz.hat.cookie', {
     _: ['A cookie in your hat? How long\'s it been there?', 'A hat-cookie. I\'ve heard of everything now.'],
     cheerful: ['A cookie! You\'re a hobbit at heart, wizard.'],
     ornery: ['That\'ll be soft. And full of hat.'],

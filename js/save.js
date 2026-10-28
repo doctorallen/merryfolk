@@ -159,7 +159,7 @@ function load() {
   (data.weed || []).forEach((s, i) => { if (World.weed[i]) World.weed[i].stage = s; });
   (data.allot || []).forEach((a, i) => a.forEach((s, j) => { if (World.allotments[i] && World.allotments[i].plots[j]) World.allotments[i].plots[j].stage = s; }));
   (data.pens || []).forEach((t, i) => { if (World.pens[i]) World.pens[i].tend = t; });
-  Village.woollens = (season === 'autumn' || season === 'winter') && (Village.stores.wool || 0) > 0;
+  Village.woolens = (season === 'autumn' || season === 'winter') && (Village.stores.wool || 0) > 0;
   (data.fields || []).forEach((f, i) => f.forEach((s, j) => { if (World.fields[i] && World.fields[i].plots[j]) World.fields[i].plots[j].stage = s; }));
   (data.herbs || []).forEach((s, i) => { if (World.herbBeds[i]) World.herbBeds[i].stage = s; });
   (data.orchard || []).forEach((n, i) => { if (World.orchard[i]) World.orchard[i].apples = n; });

@@ -906,7 +906,7 @@ talkPack('ages', () => {
         { ap: 'ask', say: 'What will you teach them, while you can?', to: 'teach' },
         { ap: 'jest', say: 'Heaven help the village.', to: 'heaven' },
       ] },
-      sweets: { line: 'ages.grandkids.sweets', fx: { joke: { k: 'ages.sweets', t: 'Candy for the grandchildren, and the wizard knows the pocket.' } }, go: [
+      sweets: { line: 'ages.grandkids.candy', fx: { joke: { k: 'ages.sweets', t: 'Candy for the grandchildren, and the wizard knows the pocket.' } }, go: [
         { ap: 'jest', say: 'Your secret\'s safe. Which pocket?', to: 'pocket' },
         { ap: 'ask', say: 'What else do you give them? Besides candy?', to: 'teach' },
       ] },
@@ -987,7 +987,7 @@ talkPack('ages', () => {
   }, [
     { if: { ageMissed: has, ageMissedRel: ['wife', 'husband'] }, pri: 1, text: ['They\'ve {ageMissed}\'s eyes. Every time they look at me, there {ageMissed} is.'] },
   ]);
-  L('ages.grandkids.sweets', {
+  L('ages.grandkids.candy', {
     _: ['Candy? Me? ...Four pieces. Five. They have very persuasive faces.', 'Only one a day. Each. Per pocket.'],
     cheerful: ['Oh, dozens! What are grandparents for?', 'Hundreds! Don\'t tell their mother!'],
     ornery: ['That\'s between me and them. Mind your own.', 'None. ...None that their mother knows about.'],
@@ -1181,7 +1181,7 @@ talkPack('ages', () => {
       ] },
       small: { line: 'ages.regrets.small', fx: { respect: 0.03, feel: 'inspired' }, end: true },
       should: { line: 'ages.regrets.should', fx: { fond: 0.02 }, end: true },
-      marrows: { line: 'ages.regrets.marrows', end: true },
+      marrows: { line: 'ages.regrets.pumpkins', end: true },
     },
     end: { fond: 0.02, trust: 0.02 },
   });
@@ -1310,7 +1310,7 @@ talkPack('ages', () => {
     proud: ['I am. Very.'],
     gloomy: ['...Maybe I should.'],
   });
-  L('ages.regrets.marrows', {
+  L('ages.regrets.pumpkins', {
     _: ['Ha! Nearly. The pumpkins were close.', 'Don\'t tell the pumpkins.'],
     cheerful: ['Ha! Almost! The pumpkins were a close second!'],
     ornery: ['The pumpkins are a separate matter. Entirely.'],
@@ -2161,7 +2161,7 @@ talkPack('ages', () => {
         { ap: 'comfort', say: 'You don\'t have to carry it all. They\'ll help.', to: 'help' },
         { ap: 'ask', say: 'Who was the eldest, when you were young?', to: 'before' },
       ] },
-      honour: { line: 'ages.eldest.honour', fx: { fond: 0.02 }, go: [
+      honour: { line: 'ages.eldest.honor', fx: { fond: 0.02 }, go: [
         { ap: 'ask', say: 'Who was the eldest, when you were young?', to: 'before' },
         { ap: 'ask', say: 'What do folk come to you for?', to: 'ask' },
       ] },
@@ -2211,7 +2211,7 @@ talkPack('ages', () => {
     proud: ['It\'s heavy, yes. Someone has to carry it.'],
     gloomy: ['Yes. It does. Every day.'],
   });
-  L('ages.eldest.honour', {
+  L('ages.eldest.honor', {
     _: ['Do I? Thank you. I wear it like an old coat. Comfortable, but I notice it.', 'I try to. Mostly I just try to stay upright.'],
     cheerful: ['Thank you! I polish it every morning!'],
     ornery: ['Hmph. It\'s not an honor, it\'s an accident of arithmetic.'],

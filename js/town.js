@@ -167,7 +167,7 @@ function planLots(seed) {
   for (let cy = 8; cy <= MAP_H - 9; cy++) for (let cx = 7; cx <= MAP_W - 14; cx++) {
     const sh = lotShape('home', null, cx, cy);
     if (!lotFree(sh.core, sh.area)) continue;
-    cands.push([cx, cy, Math.hypot(cx - TOWN_CENTRE.x, (cy - TOWN_CENTRE.y) * 1.2)]);
+    cands.push([cx, cy, Math.hypot(cx - TOWN_CENTER.x, (cy - TOWN_CENTER.y) * 1.2)]);
   }
   cands.sort((a, b) => a[2] - b[2]);
   let n = 0;

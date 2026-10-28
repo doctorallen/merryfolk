@@ -86,7 +86,7 @@ function whatTheydLove(v) {
   if (v.isChild()) return R.pick(['A story before bed', 'A squib, and someone to watch it go bang']);
   const likes = typeof likesOf === 'function' ? likesOf(v) : [];
   if (likes.length && LIKES[likes[0]]) return `Anything to do with ${LIKES[likes[0]]}`;
-  return `A plate of ${FOODS[v.favouriteFood()].label}`;
+  return `A plate of ${FOODS[v.favoriteFood()].label}`;
 }
 function notableTies(v, res) {
   const out = [];

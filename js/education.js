@@ -334,7 +334,7 @@ const CHAT = {
 };
 
 function fillLine(v, text, ctx = {}) {
-  const fav = FOOD_SAY[v.favouriteFood()] || 'apple pie';
+  const fav = FOOD_SAY[v.favoriteFood()] || 'apple pie';
   const friendId = Object.entries(v.rel).filter(([id, r]) => r > 0.3 && +id !== v.id).sort((a, b) => b[1] - a[1]).map(([id]) => Game.villagers.find((o) => o.id === +id)).find(Boolean);
   const sweet = v.sweetheart != null ? Game.villagers.find((o) => o.id === v.sweetheart) : null;
   const proj = Village.projects[0];

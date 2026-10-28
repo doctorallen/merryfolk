@@ -47,7 +47,7 @@ talkPack('rift', () => {
     let nb = rf;
     if (!nb && !isRb && v.homeId >= 0) nb = rb.find((o) => o.homeId === v.homeId) || null;
     if (!nb && !isRb) nb = rb.filter((o) => o.isGrown()).sort((x, y) => (v.rel[y.id] || 0) - (v.rel[x.id] || 0))[0] || null;
-    F.riftNeighbour = nb ? nb.first : null;
+    F.riftNeighbor = nb ? nb.first : null;
     F.riftStage = S ? S.stage : 0;
     F.riftDim = typeof voteOpen === 'function' ? !!voteOpen() : false;
     F.riftSide = S && S.stage >= 6 && !S.finale && typeof riftLean === 'function' && v.isGrown() ? leanSide(riftLean(v)) : null;

@@ -105,7 +105,7 @@ function slopeN(tx, ty) { return clamp(landAt('slope', tx, ty) / 0.03, 0, 2); }
 
 // Colors for the dev overlay, one per field.
 const LAND_VIEWS = ['off', 'height', 'slope', 'sun', 'wet', 'flow', 'soil'];
-function landColour(view, i) {
+function landColor(view, i) {
   const L = World.land;
   switch (view) {
     case 'height': { const v = L.h[i]; return `rgba(${Math.round(255 * v)},${Math.round(200 * v)},${Math.round(80 + 100 * (1 - v))},0.55)`; }

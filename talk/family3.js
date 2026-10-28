@@ -240,7 +240,7 @@ talkPack('family3', () => {
       sample: { line: 'family.lar.sample', fx: { joke: { k: 'family.sample', t: 'The wizard asked for a sample. Purely to confirm.' }, fond: 0.02 }, end: true },
       advice: { line: 'family.lar.advice', fx: { respect: 0.02 }, end: true },
       promise: { line: 'family.lar.promise', fx: { promise: { k: 'family.larder', t: 'You said you\'d see that {name}\'s larder was filled', days: 3 }, trust: 0.04 }, end: true },
-      neighbours: { line: 'family.lar.neighbours', fx: { respect: 0.01 }, end: true },
+      neighbours: { line: 'family.lar.neighbors', fx: { respect: 0.01 }, end: true },
     },
     end: { fond: 0.015 },
   });
@@ -362,7 +362,7 @@ talkPack('family3', () => {
     tm(P, 'I\'ll repay it. Every crumb. I insist.'),
     tm(Gl, '...Thank you. I didn\'t think anyone would notice.'),
   ]);
-  L('family.lar.neighbours', HM, [
+  L('family.lar.neighbors', HM, [
     FB('Pride\'s a poor supper. Ha. My gran used to say that.', 'You\'re right. I\'ll ask next door. They owe me a ladder.'),
     tm(C, 'Of course! They\'d help! I\'d help them!'),
     tm(O, 'Ask the neighbors? ...Fine. The ones on the left. Not the right.'),

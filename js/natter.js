@@ -14,7 +14,7 @@ function talkThird(v) {
   const p = t.partner;
   return p && !p.inside && !p.leaving && Game.villagers.includes(p) && dist(p.x, p.y, v.x, v.y) < 40 ? p : null;
 }
-const quarrelling = (T) => !!T.quarrel;
+const quarreling = (T) => !!T.quarrel;
 
 // Both answer in their own way: a remark warms or cools each by their temper.
 function sayToBoth(T, tone, text) {
@@ -40,7 +40,7 @@ const SIDE_LINES = {
 
 addTalkOption({
   id: 'pair_chat', pair: true, order: 35, label: 'Say something to both…',
-  when: (v, T) => !!T.third && !quarrelling(T),
+  when: (v, T) => !!T.third && !quarreling(T),
   run: (v, T) => T.choices(['warm', 'witty', 'curious'].map((tone) => {
     const text = R.pick(PAIR_LINES[tone]);
     return { label: `<span class="tone ${tone}">${tone}</span> ${escapeHtml(text)}`, run: () => { sayToBoth(T, tone, text); T.v.bond(T.third, tone === 'warm' ? 0.02 : 0.01); } };
@@ -78,7 +78,7 @@ addTalkOption({
 });
 addTalkOption({
   id: 'pair_side', pair: true, order: 34, label: 'They\'re squabbling: step in…',
-  when: (v, T) => !!T.third && quarrelling(T),
+  when: (v, T) => !!T.third && quarreling(T),
   run: (v, T) => {
     const a = T.v, b = T.third, fill = (s) => s.replace(/\{a\}/g, a.first).replace(/\{b\}/g, b.first);
     T.choices([

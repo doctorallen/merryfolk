@@ -678,16 +678,16 @@ function createHome(d, i, surname, name) {
     return f == null ? null : { x, y: Math.round(f - lift) };
   };
   const wo = Math.round(d.rx * 16 * 0.42) + 4;
-  const towards = sh.hcx * 16 > doorX ? 1 : -1; // the bigger side of the hill
+  const toward = sh.hcx * 16 > doorX ? 1 : -1; // the bigger side of the hill
   const spots = [];
-  if (V.nwin === 1) spots.push([towards * wo, 12]);
+  if (V.nwin === 1) spots.push([toward * wo, 12]);
   else spots.push([-wo, 12], [wo, 12]);
-  if (V.nwin >= 3 && !d.grand) spots.push([towards * wo * 1.7, 11]);
+  if (V.nwin >= 3 && !d.grand) spots.push([toward * wo * 1.7, 11]);
   if (d.grand) spots.push([-wo * 1.75, 11], [wo * 1.75, 11]);
   for (const [dx, lift] of spots) { const w = win(dx, lift); if (w) home.windows.push(w); }
   // the chimney rises from the top of the hill
-  home.chimney = { x: Math.round(sh.hcx * 16 + (towards > 0 ? 0.25 : -0.25) * sh.hrx * 16), y: Math.round((sh.hcy - sh.hry * 0.55) * 16) };
-  if (V.chim2) home.chimney2 = { x: Math.round(sh.hcx * 16 - towards * sh.hrx * 16 * 0.45), y: Math.round((sh.hcy - sh.hry * 0.3) * 16) };
+  home.chimney = { x: Math.round(sh.hcx * 16 + (toward > 0 ? 0.25 : -0.25) * sh.hrx * 16), y: Math.round((sh.hcy - sh.hry * 0.55) * 16) };
+  if (V.chim2) home.chimney2 = { x: Math.round(sh.hcx * 16 - toward * sh.hrx * 16 * 0.45), y: Math.round((sh.hcy - sh.hry * 0.3) * 16) };
   if (V.roofWin) home.roofWin = { x: Math.round(sh.hcx * 16 + (vr() - 0.5) * sh.hrx * 8), y: Math.round((sh.hcy - sh.hry * 0.4) * 16) };
   return home;
 }

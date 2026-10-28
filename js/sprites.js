@@ -129,9 +129,9 @@ function folkFront(B, pose) {
   // hair
   for (let y = 0; y < 15; y++) for (let x = 0; x < FOLK_W; x++) {
     if (!inHead(x, y)) continue;
-    const fringe = y <= 4 || (y === 5 && ![6, 7, 12, 13].includes(x));
+    const bangs = y <= 4 || (y === 5 && ![6, 7, 12, 13].includes(x));
     const side = (x <= 4 || x >= 15) && y <= 8;
-    if (fringe || side) put(x, y, x >= 14 ? 'H' : 'h');
+    if (bangs || side) put(x, y, x >= 14 ? 'H' : 'h');
   }
   for (const [x, y] of [[6, 1], [7, 1], [8, 1], [5, 2], [6, 2], [7, 3]]) put(x, y, 'j');
   if (B.style === 1) {

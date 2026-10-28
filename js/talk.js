@@ -250,7 +250,7 @@ function apprenticeCrafts(v) {
   return out;
 }
 // Is the master at it right now, so an apprentice can come and watch?
-function practising(m, c) {
+function practicing(m, c) {
   const t = m.task;
   if (!t || t.phase !== 'do') return false;
   const [ty, k] = craftParts(c);
@@ -604,7 +604,7 @@ function roomTalk(h) {
 ACTIONS.lesson = {
   label: 'At a lesson', icon: 'book', sat: { bored: -0.55, industry: -0.45, lonely: -0.25 }, dur: 40, pose: 'stand', stages: AWAKE,
   label2: (v) => { const m = masterOf(v); return m && v.master ? `Learning ${craftLabel(v.master.craft)} from ${m.first}` : 'At a lesson'; },
-  avail: (v) => { const m = masterOf(v); return !!m && !m.leaving && practising(m, v.master.craft) && !needsMinder(v); },
+  avail: (v) => { const m = masterOf(v); return !!m && !m.leaving && practicing(m, v.master.craft) && !needsMinder(v); },
   extra: (v) => 0.22 + v.genes.curiosity * 0.12 + (1 - v.genes.laziness) * 0.12,
   time: (h) => (h >= 7 && h < 20 ? 1 : 0.05),
   trait: (v) => 0.8 + clamp(v.rel[v.master ? v.master.id : -1] ?? 0.1, -0.5, 1) * 0.4,
@@ -618,7 +618,7 @@ ACTIONS.lesson = {
   },
   tick: (v, task, dt) => {
     const m = masterOf(v);
-    if (!m || !v.master || !practising(m, v.master.craft)) { task.t = Math.min(task.t, 1); return; }
+    if (!m || !v.master || !practicing(m, v.master.craft)) { task.t = Math.min(task.t, 1); return; }
     // learning at the master's elbow is far quicker than on one's own
     raiseCraft(v, v.master.craft, dt * 3.2 * (0.6 + craftLevel(m, v.master.craft) / 100));
     v.bond(m, dt * 0.0008);

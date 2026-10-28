@@ -134,7 +134,7 @@ function moodTick(v, dt) {
     am(v, kind);
     if (!kind) return;
     const taste = (v.genes.food[kind] || 1) * (v.foodLike[kind] || 1);
-    if (kind === v.favouriteFood() || taste > 1.35) feel(v, 'fav_food', FOODS[kind].label);
+    if (kind === v.favoriteFood() || taste > 1.35) feel(v, 'fav_food', FOODS[kind].label);
     else if (taste < 0.75) feel(v, 'bad_food', FOODS[kind].label);
   };
   const pat = Villager.prototype.pat, tut = Villager.prototype.tut;

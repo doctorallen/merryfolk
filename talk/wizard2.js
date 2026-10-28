@@ -931,7 +931,7 @@ talkPack('wizard2', () => {
       ] },
       letters: { line: 'wiz.learn.letters', fx: { respect: 0.02 }, end: true },
       tinker: { line: 'wiz.learn.tinker', fx: { respect: 0.02 }, end: true },
-      ageing: { line: 'wiz.learn.ageing', end: true },
+      ageing: { line: 'wiz.learn.aging', end: true },
       noticed: { line: 'wiz.learn.noticed', fx: { fond: 0.03, remember: 'The wizard taught me the first spell. Noticing.', promise: { k: 'wiz.visit.lesson', t: 'You promised {name} a second lesson', days: 3 } }, end: true },
       sneeze: { line: 'wiz.learn.sneeze', fx: { joke: { k: 'wiz.learn.sneeze', t: 'The second spell is a sneeze. Very important.' } }, go: [
         { ap: 'tale', say: '*As they sneeze, you snap your fingers, and a few stars burst out.*', label: 'Make their sneeze sparkle', to: 'sparkled', fx: { run: magic('stars') } },
@@ -1001,7 +1001,7 @@ talkPack('wizard2', () => {
     child: ['The TINKER? He has a box that BEEPS! I\'m going RIGHT NOW!'],
     rift: ['Ha. So you agree. Tech and magic, cousins. I\'ll take that home.'],
   });
-  wz('wiz.learn.ageing', {
+  wz('wiz.learn.aging', {
     _: ['Ha! I\'m getting older every day. I\'ll catch you up.', 'I\'ll start aging now. Very hard.'],
     curious: ['How old do you have to be? Exactly? Is there a number?'],
     dreamy: ['Then I\'ll be patient. Wizards must be patient.'],

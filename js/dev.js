@@ -256,7 +256,7 @@ function devTools() {
   <div class="dchips">jump to <input type="number" id="dev-hour" min="0" max="23" value="12" aria-label="hour"> o'clock ${B('tohour', 'go')} · skip <input type="number" id="dev-days" min="1" max="30" value="3" aria-label="days"> days ${B('todays', 'go')} · to <select id="dev-season">${SEASONS.map((s) => `<option value="${s.toLowerCase()}"${s.toLowerCase() === World.season ? ' selected' : ''}>${s}</option>`).join('')}</select> ${B('toseason', 'go', 'runs the simulation up to the first day of that season')}</div>
   <h5>Weather</h5><div class="dchips">${B('rain', 'rain')}${B('storm', 'storm')}${B('snow', 'snow')}${B('fog', 'fog')}${B('clear', 'clear')}</div>
   <h5>Village <small>(${escapeHtml(rank)}${next ? ' → ' + escapeHtml(next.name) : ', the top'})</small></h5><div class="dchips">${B('rankup', 'rank up', 'the next village type at once, without the Moot')}${B('unlock', 'unlock everything', `top rank, every public and rift building raised (${civicLeft} left), all lore learned (${loreLeft} left)`)}grow to <input type="number" id="dev-pop" min="1" max="${MAX_POP}" value="${Math.min(MAX_POP, Game.villagers.length + 10)}" aria-label="folk"> folk ${B('grow', 'go', 'newcomers arrive up the road until the village is that size')}</div>
-  <div class="dchips">${B('traveller', 'invite a traveler')}${B('assign', 're-assign trades')}${B('plan', 'run town planning')}${B('newvalley', 'new valley…', 'the Shape your valley screen: a fresh village from a seed')}</div>
+  <div class="dchips">${B('traveler', 'invite a traveler')}${B('assign', 're-assign trades')}${B('plan', 'run town planning')}${B('newvalley', 'new valley…', 'the Shape your valley screen: a fresh village from a seed')}</div>
   ${devParties(B)}
   <h5>The wizard <small>(${escapeHtml(typeof wizardStatus === 'function' ? wizardStatus() : '')})</small></h5><div class="dchips">${B('wizard', wizard() ? 'park his wagon now' : 'the wizard comes', 'Gandalf drives up the road (or, if he is on his way, draws up at once)')}${B('wizardtale', 'a tale now', 'he tells a tale beneath the great tree at once (and comes, if he is away)')}${B('wizardshow', 'his fireworks', 'the wizard\'s show over the party field: giant rockets, the heart and rune, the dragon')}${wizard() ? B('wizardgo', 'send him off') : ''}${B('playwizard', playMode() ? 'back to the Steward' : 'play as the wizard', 'switch this village between playing as the wizard and as the Steward')}</div>
   <h5>Building</h5><div class="dchips">${Tg('insta', 'insta-build', Dev.insta, 'every project and plan finishes the moment it is opened')}${B('finishall', `finish all projects now (${Village.projects.length + plansList().length})`)}${B('openhomes', `open all home lots (${planned('home')})`)}${B('opencivic', `open all public lots (${civicLeft})`, 'every public and rift building starts, whatever the village size')}</div>
@@ -362,7 +362,7 @@ function devUnlockAll() {
 }
 function devGrow(n) {
   let added = 0;
-  while (Game.villagers.length < n) { const r = welcomeTraveller(null, true); if (!r || !r.ok) break; added++; }
+  while (Game.villagers.length < n) { const r = welcomeTraveler(null, true); if (!r || !r.ok) break; added++; }
   devLog('family', `dev: ${added} newcomers arrived, ${Game.villagers.length} folk now`);
   return added;
 }
@@ -420,7 +420,7 @@ function devAct(act) {
     case 'hidegrass': Dev.hide.grass = !Dev.hide.grass; break;
     case 'hideweather': Dev.hide.weather = !Dev.hide.weather; break;
     case 'hidelight': Dev.hide.light = !Dev.hide.light; break;
-    case 'traveller': { const r = welcomeTraveller(null); if (!r.ok) toast(r.msg, 'info'); break; }
+    case 'traveler': { const r = welcomeTraveler(null); if (!r.ok) toast(r.msg, 'info'); break; }
     case 'assign': assignJobs(true); break;
     case 'plan': planTown(); break;
     case 'rift': { const r = openRift(true); if (!r.ok) toast(r.msg, 'info'); else { centerOn(r.r.x, r.r.y - 20); Game.follow = false; } break; }
@@ -467,7 +467,7 @@ function devOverlay(octx, z, cx, cy, W, H) {
     const tx0 = Math.max(0, Math.floor(cx / 16)), ty0 = Math.max(0, Math.floor(cy / 16));
     const tx1 = Math.min(MAP_W - 1, Math.ceil((cx + W / z) / 16)), ty1 = Math.min(MAP_H - 1, Math.ceil((cy + H / z) / 16));
     for (let ty = ty0; ty <= ty1; ty++) for (let tx = tx0; tx <= tx1; tx++) {
-      const col = landColour(Dev.overlay.land, ty * MAP_W + tx);
+      const col = landColor(Dev.overlay.land, ty * MAP_W + tx);
       if (col) { octx.fillStyle = col; octx.fillRect(sx(tx * 16), sy(ty * 16), 16 * z + 0.5, 16 * z + 0.5); }
     }
   }

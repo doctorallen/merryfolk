@@ -396,7 +396,7 @@ talkPack('pastimes4', () => {
         { ap: 'jest', say: 'Milk in first, I always say. *You wait for the explosion.*', label: 'Milk in first, I always say', to: 'milk' },
         { ap: 'warm', say: 'Then that\'s how I\'ll have it, next time.', to: 'next' },
       ] },
-      biscuits: { line: 'pastime.tea.biscuits', go: [
+      biscuits: { line: 'pastime.tea.cookies', go: [
         { ap: 'ask', say: 'Do you dunk?', to: 'dunk' },
         { ap: 'warm', say: 'There\'s no better hour in the day.', to: 'hour' },
       ] },
@@ -442,7 +442,7 @@ talkPack('pastimes4', () => {
     gloomy: ['Stewed. I always forget it.'],
     child: ['With milk and sugar and a cookie IN it.'],
   });
-  L('pastime.tea.biscuits', ['A cookie. Two. Seed-cake if there\'s seed-cake.', 'Toast, if it\'s morning. Cake if it\'s four.'], {
+  L('pastime.tea.cookies', ['A cookie. Two. Seed-cake if there\'s seed-cake.', 'Toast, if it\'s morning. Cake if it\'s four.'], {
     cheerful: ['Everything! Scones, jam, cream, cake, more cake!'],
     ornery: ['A plain cookie. Fancy ones crumble.'],
     shy: ['...A cookie. Just one.'],
@@ -655,7 +655,7 @@ talkPack('pastimes4', () => {
         { ap: 'ask', say: 'What\'s the trick of it?', to: 'trick' },
         { ap: 'warm', say: 'I can smell it from here. Or I\'m imagining it.', to: 'smell' },
       ] },
-      burnt: { line: 'pastime.baking.burnt', fx: { joke: { k: 'pastime.burnt', t: 'The loaf that was mistaken for a lump of coal.' } }, go: [
+      burnt: { line: 'pastime.baking.burned', fx: { joke: { k: 'pastime.burnt', t: 'The loaf that was mistaken for a lump of coal.' } }, go: [
         { ap: 'comfort', say: 'Every baker has a black loaf in their past.', to: 'every' },
         { ap: 'jest', say: 'Did anyone eat it?', to: 'ate' },
       ] },
@@ -709,7 +709,7 @@ talkPack('pastimes4', () => {
     { if: { won: 'the best pie' }, pri: 1, text: ['Pie! I won the best pie at the fair! I\'ve the ribbon on the mantel!'] },
     { if: { favFood: 'cake' }, text: ['Seed-cake. I bake what I love. It\'s only sensible.'] },
   ]);
-  L('pastime.baking.burnt', ['Ha! Who told you? The smoke came out of the chimney black as a crow.', 'One loaf! One! I was reading. It was a very good book.'], {
+  L('pastime.baking.burned', ['Ha! Who told you? The smoke came out of the chimney black as a crow.', 'One loaf! One! I was reading. It was a very good book.'], {
     cheerful: ['Ha! It was SO black! We used it as a doorstop!'],
     ornery: ['The oven was too hot. It wasn\'t me.'],
     shy: ['...Oh no. Everyone knows?'],

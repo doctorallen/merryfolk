@@ -100,7 +100,7 @@ class Villager {
   education() { return this.edu; }
   get pron() { return PRON[this.genes.sex] || PRON.m; }
   skillMul(s) { return 0.6 + (this.skills[s] || 0) / 100 * 0.9; }
-  favouriteFood() {
+  favoriteFood() {
     let best = 'bread', bs = 0;
     for (const k of PANTRY_KINDS) { const s = (this.genes.food[k] || 1) * (this.foodLike[k] || 1); if (s > bs) { bs = s; best = k; } }
     return best;
@@ -447,7 +447,7 @@ class Villager {
       chill = SEASON_CHILL[World.season] + (Game.raining ? 0.3 : 0) + (Game.darkness > 0.4 ? 0.15 : 0) - (this.task && this.task.a.id === 'party' && World.season === 'winter' ? 0.4 : 0);
       chill *= 1.2 - g.hardiness * 0.5;
       // a warm woolen sweater helps
-      if (Village.woollens && this.isGrown()) chill *= 0.7;
+      if (Village.woolens && this.isGrown()) chill *= 0.7;
       // or something a knitter in the family made
       else if ((homeCrafts(this.home()).knitting || 0) >= 2) chill *= 0.8;
     }

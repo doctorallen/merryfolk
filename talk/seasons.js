@@ -68,7 +68,7 @@ talkPack('seasons', () => {
     F.jars = jars; F.jarsWord = jars == null ? null : jars >= 12 ? 'full' : jars >= 4 ? 'some' : 'bare';
     F.puttingBy = typeof puttingBySeason === 'function' && puttingBySeason();
     F.pantryBare = home ? pantryTotal(home) < 4 : null;
-    F.seasonFavFood = v.favouriteFood && FOODS[v.favouriteFood()] ? FOODS[v.favouriteFood()].label : null;
+    F.seasonFavFood = v.favoriteFood && FOODS[v.favoriteFood()] ? FOODS[v.favoriteFood()].label : null;
     F.feastOn = typeof feastOn === 'function' && feastOn();
     F.tomorrowDay = weekday(day + 1);
     F.restDay = isRestDay(day); F.marketDay = isMarketDay(day);
@@ -138,7 +138,7 @@ talkPack('seasons', () => {
         { ap: 'jest', say: 'I\'ll put in a word. Upstairs.', to: 'end' },
         { ap: 'ask', say: 'Is there a day like that you remember?', to: 'memory', need: { open: 1 }, soft: true },
       ] },
-      cosy: { line: 'season.weather.cosy', go: [
+      cosy: { line: 'season.weather.cozy', go: [
         { ap: 'warm', say: 'That sounds the very thing.', to: 'end', fx: { feel: 'cosy' } },
         { ap: 'jest', say: 'And a second supper, to be safe.', to: 'supper' },
         { ap: 'share', say: 'I\'d join you, if my hat would go through your door.', to: 'invite', need: { fond: 0.15 }, soft: true },
@@ -335,7 +335,7 @@ talkPack('seasons', () => {
     { if: { weather: 'fog' }, text: ['Fog I don\'t like. You hear things you can\'t see. Gives me the shivers.'] },
     { if: { rift: true }, text: ['Mind it? I still go out and stand in it. Just to feel it.'] },
   ]);
-  lines('season.weather.cosy', [
+  lines('season.weather.cozy', [
     { text: ['Stay in. Put the kettle on. Find a cookie I\'d forgotten about.', 'Sit by the window and watch everyone else get wet.'] },
     { if: { weather: 'rain' }, text: ['Fire lit, feet up, and the rain on the round window. Bliss.', 'Bake something. The smell\'s better on a wet day.'] },
     { if: { weather: 'snow' }, text: ['Snowballs, then hot cocoa, then more snowballs.', 'Stay in by the fire with my toes in a basin of hot water.'] },
@@ -785,7 +785,7 @@ talkPack('seasons', () => {
         { ap: 'warm', say: 'Good. That\'s just the thing.', to: 'end' },
         { ap: 'advise', say: 'And look in on your neighbors, while you\'re at it.', to: 'neighbours' },
       ] },
-      neighbours: { line: 'season.hazard.neighbours', fx: { respect: 0.02, drive: { lonely: -0.05 } }, end: true },
+      neighbours: { line: 'season.hazard.neighbors', fx: { respect: 0.02, drive: { lonely: -0.05 } }, end: true },
       badger: { line: 'season.hazard.badger', fx: { fond: 0.02 }, end: true },
     },
     end: { fond: 0.01 },
@@ -899,7 +899,7 @@ talkPack('seasons', () => {
     { if: { job: 'herbalist', hazard: 'blight' }, pri: 1, text: ['Get every herb I have onto that barley, and pray it\'s enough.'] },
     { if: { job: 'woodwright', hazard: 'frost' }, pri: 1, text: ['Chop till I drop. Then get up and chop some more.'] },
   ]);
-  lines('season.hazard.neighbours', [
+  lines('season.hazard.neighbors', [
     { text: ['I will. Old {friend} lives on their own. I\'ll take soup.', 'Yes. You\'re right. I\'ll knock on a few doors.'] },
     { if: { friend: (f) => !f }, text: ['I will. I don\'t know them all that well. Maybe this is the time.'] },
     { if: { temper: 'ornery' }, text: ['Neighbors. Hmph. Fine. Even that lot.'] },

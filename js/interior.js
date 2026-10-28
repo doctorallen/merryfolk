@@ -68,13 +68,13 @@ function interiorLayout(h) {
   // and the workshop are at, where the hearth is, how roomy each room is,
   // and how the furniture stands.
   const plan = {
-    parlourLeft: vr() < 0.5, pantryFirst: vr() < 0.3, bedsSplit: vr() < 0.6, bedsEnd: vr() < 0.5 ? -1 : 1, studyEnd: vr() < 0.5 ? -1 : 1,
-    hearthKitchen: !h.grand && vr() < 0.3, hallW: 56 + Math.floor(vr() * 3) * 8, parlourPad: Math.floor(vr() * 4) * 12, kitchenPad: Math.floor(vr() * 3) * 10,
+    parlorLeft: vr() < 0.5, pantryFirst: vr() < 0.3, bedsSplit: vr() < 0.6, bedsEnd: vr() < 0.5 ? -1 : 1, studyEnd: vr() < 0.5 ? -1 : 1,
+    hearthKitchen: !h.grand && vr() < 0.3, hallW: 56 + Math.floor(vr() * 3) * 8, parlorPad: Math.floor(vr() * 4) * 12, kitchenPad: Math.floor(vr() * 3) * 10,
     bedPad: Math.floor(vr() * 3) * 12, pantryW: 50 + Math.floor(vr() * 3) * 8, winFirst: Math.floor(vr() * 3),
     arr: Math.floor(vr() * 3), arrK: Math.floor(vr() * 2), arrB: Math.floor(vr() * 2), arrS: Math.floor(vr() * 2), drops: [0, 1, 2, 3, 4, 5, 6, 7].map(() => Math.floor(vr() * 3) * 3),
   };
-  const core = plan.pantryFirst ? [{ kind: 'parlour' }, { kind: 'hall' }, { kind: 'pantry' }, { kind: 'kitchen' }] : [{ kind: 'parlour' }, { kind: 'hall' }, { kind: 'kitchen' }, { kind: 'pantry' }];
-  if (!plan.parlourLeft) core.reverse();
+  const core = plan.pantryFirst ? [{ kind: 'parlor' }, { kind: 'hall' }, { kind: 'pantry' }, { kind: 'kitchen' }] : [{ kind: 'parlor' }, { kind: 'hall' }, { kind: 'kitchen' }, { kind: 'pantry' }];
+  if (!plan.parlorLeft) core.reverse();
   const left = [], right = [];
   bedrooms.forEach((b, i) => ((plan.bedsSplit ? (i % 2 ? -plan.bedsEnd : plan.bedsEnd) : plan.bedsEnd) < 0 ? left : right).push(b));
   const extras = [];
@@ -91,11 +91,11 @@ function interiorLayout(h) {
   let x = PAD;
   rooms.forEach((r, i) => {
     r.side = i < hallI ? -1 : i > hallI ? 1 : 0;
-    r.w = r.kind === 'hall' ? plan.hallW : r.kind === 'parlour' ? (h.grand ? 176 : 136) + plan.parlourPad : r.kind === 'kitchen' ? 96 + kitchenSeats(res) * 20 + 6 + plan.kitchenPad + (plan.hearthKitchen ? 14 : 0)
+    r.w = r.kind === 'hall' ? plan.hallW : r.kind === 'parlor' ? (h.grand ? 176 : 136) + plan.parlorPad : r.kind === 'kitchen' ? 96 + kitchenSeats(res) * 20 + 6 + plan.kitchenPad + (plan.hearthKitchen ? 14 : 0)
       : r.kind === 'pantry' ? plan.pantryW : r.kind === 'study' ? 90 + plan.arrS * 12 : r.kind === 'workshop' ? 56 + r.crafts.length * 22 : r.kind === 'curio' ? 84
       : Math.max(96, 30 + r.beds.reduce((s, b) => s + b.w, 0) + 14 * (r.beds.length - 1) + 26) + plan.bedPad;
     // some rooms are dug lower than others (the ones at the ends are low anyway, under the slope)
-    r.drop = (r.kind === 'hall' || r.kind === 'parlour') ? Math.min(3, plan.drops[i % 8]) : plan.drops[i % 8];
+    r.drop = (r.kind === 'hall' || r.kind === 'parlor') ? Math.min(3, plan.drops[i % 8]) : plan.drops[i % 8];
     r.x0 = x; r.x1 = x + r.w; x = r.x1 + WT;
   });
   const IW = x - WT + PAD;
@@ -116,11 +116,11 @@ function interiorLayout(h) {
   };
   // windows: as many as the hole has from outside, in the rooms that face front (which first varies by hole)
   const want = Math.max(1, h.windows.length);
-  const front = [rooms.find((r) => r.kind === 'parlour'), rooms.find((r) => r.kind === 'kitchen')], backs = rooms.filter((r) => r.kind === 'bed' || r.kind === 'nursery' || r.kind === 'study' || r.kind === 'workshop');
+  const front = [rooms.find((r) => r.kind === 'parlor'), rooms.find((r) => r.kind === 'kitchen')], backs = rooms.filter((r) => r.kind === 'bed' || r.kind === 'nursery' || r.kind === 'study' || r.kind === 'workshop');
   const order = plan.winFirst === 1 ? [front[1], front[0], ...backs] : plan.winFirst === 2 && backs.length ? [backs[0], ...front, ...backs.slice(1)] : [...front, ...backs];
   let nw = 0;
   for (const r of order) if (nw < want) { r.win = true; nw++; }
-  if (h.grand) rooms.find((r) => r.kind === 'parlour').win2 = true;
+  if (h.grand) rooms.find((r) => r.kind === 'parlor').win2 = true;
   for (const r of rooms) placeRoom(L, r);
   for (const r of rooms) {
     // a lantern in each room, clear of the windows
@@ -154,7 +154,7 @@ function placeRoom(L, r) {
     hot(cx - 17, 62, cx + 17, 98, () => `The front door${h.doorAnim > 0 ? ', swinging open' : ''}. ${Game.darkness > 0.3 ? 'Bolted for the night, more or less.' : 'Round, green-painted inside, and never locked.'}`);
     hot(r.x1 - 16, 46, r.x1 - 3, 98, () => `The hall clock says ${hud2(Game.hour)}.`);
     hot(r.x0 + 2, 50, r.x0 + 22, 90, () => `Coats on the pegs: ${L.res.filter((v) => v.isGrown()).map((v) => v.first).join(', ') || 'none'}.`);
-  } else if (r.kind === 'parlour') {
+  } else if (r.kind === 'parlor') {
     r.name = 'The parlor';
     const { plan } = L, arr = plan.arr, hearth = !plan.hearthKitchen;
     const hx = cx + [0, -22, 22][arr], chairX = arr === 0 ? [hx - 36, hx + 36] : arr === 1 ? [hx + 34, hx + 58] : [hx - 58, hx - 34];
@@ -904,7 +904,7 @@ function spotFor(v, L, taken) {
   if (v.stage === 'baby') {
     const cr = L.cradles.find((b) => b.who.includes(v.id));
     if (cr && (id === 'cradle' || id === 'sleep' || !id)) return { x: cr.x + cr.w / 2, y: WALL_B, pose: 'cradle', bed: cr };
-    return { x: (L.rooms.find((r) => r.kind === 'parlour').x0 + 30), y: 108, pose: 'crawl' };
+    return { x: (L.rooms.find((r) => r.kind === 'parlor').x0 + 30), y: 108, pose: 'crawl' };
   }
   if (id === 'sleep' || (v.isSick() && id === 'nap')) {
     const bed = L.beds.find((b) => b.kind !== 'cradle' && b.who.includes(v.id));

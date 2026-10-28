@@ -302,7 +302,7 @@ function returnFromTrip(entry) {
   Game.villagers.push(v);
   v.say('I\'m home! Put the kettle on!', 5);
   if (v.stage === 'adult' && !v.spouse && Game.villagers.length < MAX_POP - 1 && R.chance(0.4)) {
-    const r = welcomeTraveller(null, true, v.genes.sex === 'f' ? 'm' : 'f');
+    const r = welcomeTraveler(null, true, v.genes.sex === 'f' ? 'm' : 'f');
     if (r.ok) {
       const p = r.v;
       p.x = v.x + 12; p.y = v.y; p.age = clamp(v.age + R.f(-3, 3), CHILD_DAYS + 0.5, ELDER_DAYS - 2);
@@ -316,7 +316,7 @@ function returnFromTrip(entry) {
 }
 
 // A newcomer walks in along the West Road (from a code or from nowhere at all).
-function welcomeTraveller(data, quiet = false, sex = null) {
+function welcomeTraveler(data, quiet = false, sex = null) {
   if (Game.villagers.length >= MAX_POP) return { ok: false, msg: 'Thistledown is full to the rafters. Every hole is spoken for.' };
   const home = emptiestHome();
   let v;
@@ -485,7 +485,7 @@ function dailySociety() {
   // folk only come if word of a contented village gets about (steward.js)
   const live = Game.villagers.filter((v) => !v.leaving).length;
   if (live < 20 && R.chance(0.5)) {
-    const r = welcomeTraveller(null, true);
+    const r = welcomeTraveler(null, true);
     if (r.ok) chronicle(`${r.v.name()}, a traveler from over the hills, has come up the West Road looking for a quiet place to settle, and found one in ${r.v.home().name}.`, 'birth');
   }
   // friendships drift gently without tending; rivalries cool
@@ -496,8 +496,8 @@ function dailySociety() {
   // woolens for the cold months
   const cold = World.season === 'autumn' || World.season === 'winter';
   const need = Math.ceil(Game.villagers.length / 15);
-  Village.woollens = cold && (Village.stores.wool || 0) >= need;
-  if (Village.woollens) Village.use('wool', need);
+  Village.woolens = cold && (Village.stores.wool || 0) >= need;
+  if (Village.woolens) Village.use('wool', need);
   const smoked = civicBuilt('smokehouse') ? 0.5 : 1;
   if (World.season !== 'winter') for (const k in SPOIL) Village.stores[k] = Math.floor((Village.stores[k] || 0) * (1 - SPOIL[k] * (SMOKED.includes(k) ? smoked : 1)));
   for (const h of World.homes) if (h.built && World.season !== 'winter') for (const k of SMOKED) if (k in h.pantry) h.pantry[k] = Math.floor(h.pantry[k] * (1 - 0.15 * smoked));

@@ -39,7 +39,7 @@ const LEDGER = [
   { key: 'steward', label: 'Steward', subs: [['steward', 'Policies & workforce'], ['trades', 'Trades']] },
   { key: 'charter', label: 'Charter', subs: [['charter', 'Charter']] },
   { key: 'store', label: 'Store & Market', subs: [['market', 'Market'], ['stores', 'The Common Store']] },
-  { key: 'folk', label: 'Folk', subs: [['census', 'Census & Almanac'], ['remembered', 'Remembered'], ['travellers', 'Travelers']] },
+  { key: 'folk', label: 'Folk', subs: [['census', 'Census & Almanac'], ['remembered', 'Remembered'], ['travelers', 'Travelers']] },
   { key: 'rifts', label: 'Rifts', subs: [['rifts', 'The rifts']] },
 ];
 function ledgerGroup(tab) { return LEDGER.find((g) => g.subs.some((s) => s[0] === tab)) || LEDGER[0]; }

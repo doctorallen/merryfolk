@@ -56,7 +56,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!hasTrad('hospitality')) return md();
     const c = contentment();
     if (c >= 55 && c < 66 && Game.villagers.length < MAX_POP - 2 && Game.day - (Game.lastTraveller ?? -9) >= 2 && R.chance(0.25)) {
-      const r = welcomeTraveller(null, true);
+      const r = welcomeTraveler(null, true);
       if (r && r.ok !== false) { Game.lastTraveller = Game.day; chronicle(`Thistledown's famous hospitality has drawn ${r.v ? r.v.name() : 'a traveler'} up the West Road to settle.`, 'birth'); }
       return;
     }

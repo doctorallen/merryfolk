@@ -683,10 +683,10 @@ talkPack('seasons3', () => {
         { ap: 'warm', say: 'If you ever make it, I\'d be honored to taste it.', to: 'honoured' },
       ] },
       remembers: { line: 'season.food.remembers', fx: { trust: 0.03, fond: 0.02 }, end: true },
-      honoured: { line: 'season.food.honoured', fx: { fond: 0.03, hook: 'season.dish' }, end: true },
+      honoured: { line: 'season.food.honored', fx: { fond: 0.03, hook: 'season.dish' }, end: true },
       make: { line: 'season.food.make', fx: { remember: 'The wizard said I should make the old dish myself.', rv: 1 }, end: true },
       taught: { line: 'season.food.taught', end: true },
-      favour: { line: 'season.food.favour', fx: { joke: { k: 'season.favour', t: 'The wizard knows the way to a favor is through {seasonFavFood}.' } }, end: true },
+      favour: { line: 'season.food.favor', fx: { joke: { k: 'season.favour', t: 'The wizard knows the way to a favor is through {seasonFavFood}.' } }, end: true },
       wizfav: { line: 'season.food.wizfav', fx: { trust: 0.02 }, end: true },
       again: { line: 'season.food.again', end: true },
       porridge: { line: 'season.food.porridge', fx: { fond: 0.01 }, end: true },
@@ -783,7 +783,7 @@ talkPack('seasons3', () => {
     { if: { temper: 'gloomy' }, text: ['...Then I\'ll keep making it. So it remembers.'] },
     { if: { temper: 'dreamy' }, text: ['Food remembers people. I\'ll write that in the front of my recipe book.'] },
   ]);
-  lines('season.food.honoured', [
+  lines('season.food.honored', [
     { text: ['...Then I will. Soon. And you\'ll tell me if it\'s right.', 'I\'d like that. I\'ll make it for you, and maybe it\'ll come right.'] },
     { if: { temper: 'shy' }, text: ['...Really? All right. I\'ll try. For you.'] },
     { if: { temper: 'proud' }, text: ['It will be right. I\'ll see to it.'] },
@@ -799,7 +799,7 @@ talkPack('seasons3', () => {
     { if: { temper: 'proud' }, text: ['Every step. I could do it blindfold. I very nearly have.'] },
     { if: { stage: 'child' }, text: ['I\'m too little. I\'m allowed to crack the eggs. Not all of them land in the bowl.'] },
   ]);
-  lines('season.food.favour', [
+  lines('season.food.favor', [
     { text: ['Ha! You\'ve found my weak spot. Use it wisely.', 'Oh, you\'re a cunning one. It would work, mind.'] },
     { if: { temper: 'ornery' }, text: ['It\'ll take more than {seasonFavFood}. ...A lot of {seasonFavFood}, maybe.'] },
     { if: { stage: 'child' }, text: ['Bring me {seasonFavFood} and I\'ll do ANYTHING. Except bath.'] },
@@ -1321,7 +1321,7 @@ talkPack('seasons3', () => {
     { if: { temper: 'dreamy' }, text: ['Second breakfast, on the step, watching the mist come off the river.'] },
     { if: { temper: 'cheerful' }, text: ['Whichever has the most people at it!'] },
   ]);
-  lines('season.food.favour', [
+  lines('season.food.favor', [
     { if: { temper: 'witty' }, text: ['Use it sparingly. I\'m cheap, but I\'m not that cheap. Actually, I am.'] },
     { if: { temper: 'shy' }, text: ['...You\'d not need {seasonFavFood}. You could just ask.'] },
   ]);

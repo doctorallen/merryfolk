@@ -403,7 +403,7 @@ function settleHome() {
   let found = null;
   if (D.rift) {
     const rb = Game.villagers.filter((v) => v.isRiftborn() && v.isGrown());
-    for (const v of rb.slice(0, 3)) postLetter({ id: null, first: 'Neverdark' }, v, 'away');
+    for (const v of rb.slice(0, 3)) mailLetter({ id: null, first: 'Neverdark' }, v, 'away');
     const waiting = rb.filter((o) => o.arc && !o.arc.lost.found);
     if (waiting.length && R.chance(0.7)) {
       const w = wizardOf();

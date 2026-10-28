@@ -235,7 +235,7 @@ const lerpRGB = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t
 
 // Weathered boulders, lit from the top left: the nearest of a jittered grid
 // of stones, each shaded as a dome, with dark gaps where they meet.
-function rockColour(px, py, k, fh, P, winter) {
+function rockColor(px, py, k, fh, P, winter) {
   const SX = 10, SY = 8, gx = Math.floor(px / SX), gy = Math.floor(py / SY);
   let d1 = 1e9, d2 = 1e9, fx = 0, fy = 0, id = 0;
   for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) {
@@ -257,7 +257,7 @@ function rockColour(px, py, k, fh, P, winter) {
   return c;
 }
 // Steps cut into the rock: stone treads with a lit front edge and a dark riser.
-function stepColour(px, py, k) {
+function stepColor(px, py, k) {
   const r = k % 4, n = hash2(px >> 2, (py - k) * 31 + Math.floor(k / 4));
   if (r === 0) return [66, 52, 38];
   if (r === 1) return [196, 184, 152];
@@ -285,15 +285,15 @@ function cliffPixel(px, py, lv, col, ctx) {
     if (steps) {
       // the steps' own walls where they're cut through the grass
       const ex = px & 15;
-      if (!road && (ex < 2 || ex > 13)) return rockColour(px, py, k, fh, P, winter);
-      return stepColour(px, py, k);
+      if (!road && (ex < 2 || ex > 13)) return rockColor(px, py, k, fh, P, winter);
+      return stepColor(px, py, k);
     }
     // grass hangs over the lip in a ragged fringe
     const lip = 1 + Math.floor(hash2(px >> 1, 77) * 3);
     if (k <= lip) return lerpRGB(lipCol, [40, 70, 30], winter ? 0.1 : (k - 1) * 0.3 + 0.2);
     // a hard dark line where the rock meets the ground
     if (k >= fh - 1) return P.gap;
-    return rockColour(px, py, k, fh, P, winter);
+    return rockColor(px, py, k, fh, P, winter);
   }
   if (k > fh && !road) {
     // the shadow at the foot, with a few fallen stones
@@ -306,7 +306,7 @@ function cliffPixel(px, py, lv, col, ctx) {
     let rim = false;
     for (let d = 1; d <= 2 && !rim; d++) if (py - d >= 0 && level1[(py - d) * W + px] < lv) rim = true;
     for (let d = 1; d <= 3 && !rim; d++) if ((px + d < W && level1[py * W + px + d] > lv) || (px - d >= 0 && level1[py * W + px - d] > lv)) rim = true;
-    if (rim) return steps ? stepColour(px, py, py & 15) : rockColour(px, py, 3, 8, P, winter);
+    if (rim) return steps ? stepColor(px, py, py & 15) : rockColor(px, py, 3, 8, P, winter);
   }
   return null;
 }

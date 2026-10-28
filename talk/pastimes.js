@@ -112,7 +112,7 @@ talkPack('pastimes', () => {
     F.habits = hab.filter((h) => h[0] >= 1.2).slice(0, 4).map((h) => h[1]);
     F.leisure = hab.length && hab[0][0] >= 1.05 ? hab[0][1] : null;
     // food
-    const fav = typeof v.favouriteFood === 'function' ? v.favouriteFood() : null;
+    const fav = typeof v.favoriteFood === 'function' ? v.favoriteFood() : null;
     F.favFood = fav; F.favFoodWord = fav && FOODS[fav] ? FOODS[fav].label : null;
     let worst = null, ws = 9;
     for (const k of PANTRY_KINDS) { const s = ((v.genes.food || {})[k] || 1) * ((v.foodLike || {})[k] || 1); if (s < ws) { ws = s; worst = k; } }
@@ -693,7 +693,7 @@ talkPack('pastimes', () => {
       goes: { line: 'pastime.pottery.goes', fx: { promise: { k: 'pastime.wheel', t: '{Name} said you could have a go at the wheel some evening', days: 7 } }, end: true },
       hands: { line: 'pastime.pottery.hands', fx: { trust: 0.02 }, end: true },
       again: { line: 'pastime.pottery.again', end: true },
-      colour: { line: 'pastime.pottery.colour', fx: { confide: { k: 'pastime.pottery.blue', t: '{Name} has been trying for years to get a glaze the blue of a kingfisher' } }, go: [
+      colour: { line: 'pastime.pottery.color', fx: { confide: { k: 'pastime.pottery.blue', t: '{Name} has been trying for years to get a glaze the blue of a kingfisher' } }, go: [
         { ap: 'warm', say: 'You\'ll find it. I\'d bet my hat.', to: 'end', fx: { hook: 'pastime.pottery' } },
         { ap: 'share', say: 'I saw that blue once, on a dragon\'s scale. Never since.', to: 'dragon' },
       ] },
@@ -833,7 +833,7 @@ talkPack('pastimes', () => {
     gloomy: ['Eventually. It took me a month to go near the oven.'],
     proud: ['Next day. Better than ever.'],
   });
-  L('pastime.pottery.colour', ['...Blue. The blue of a kingfisher\'s back. I\'ve tried for years.', '...Kingfisher blue. I can see it. I can\'t make it.'], {
+  L('pastime.pottery.color', ['...Blue. The blue of a kingfisher\'s back. I\'ve tried for years.', '...Kingfisher blue. I can see it. I can\'t make it.'], {
     cheerful: ['Blue! The proper blue, like a kingfisher! I\'ll get it one day!'],
     ornery: ['Blue. Not gray-blue. Not green-blue. Blue. It can\'t be done with ash.'],
     shy: ['...There\'s a blue I want. I\'ve never told anyone.'],
@@ -901,7 +901,7 @@ talkPack('pastimes', () => {
         { ap: 'warm', say: 'Then I hope someone knits you one.', to: 'end', fx: { fond: 0.02 } },
       ] },
       promise: { line: 'pastime.knitting.promise', fx: { promise: { k: 'pastime.wizscarf', t: '{Name} said they\'d knit you a scarf for the road', days: 14 }, fond: 0.03 }, end: true },
-      grey: { line: 'pastime.knitting.grey', end: true },
+      grey: { line: 'pastime.knitting.gray', end: true },
       think: { line: 'pastime.knitting.think', fx: { trust: 0.02 }, go: [
         { ap: 'listen', say: '*You let the needles click, and wait.*', label: 'Let it be quiet a while', to: 'quiet', need: { open: 2 }, soft: true },
         { ap: 'warm', say: 'That sounds like a good way to spend an evening.', to: 'end' },
@@ -1041,7 +1041,7 @@ talkPack('pastimes', () => {
     shy: ['...I\'ll do it. Properly. You\'ll see.'],
     proud: ['You\'ll have the finest scarf on any road.'],
   });
-  L('pastime.knitting.grey', ['Gray to match the beard. Ha! I\'ve just the wool.', 'Gray it is. Dull, but distinguished.'], {
+  L('pastime.knitting.gray', ['Gray to match the beard. Ha! I\'ve just the wool.', 'Gray it is. Dull, but distinguished.'], {
     witty: ['Gray. To match the beard, the hat and the mood. Very wizardly.'],
     child: ['No! It should be PINK!'],
   });
@@ -1080,7 +1080,7 @@ talkPack('pastimes', () => {
         { ap: 'warm', say: 'I\'d love to see it.', to: 'see' },
         { ap: 'share', say: 'I\'ve seen that view from the road. It stays with you.', to: 'road' },
       ] },
-      colours: { line: 'pastime.painting.colours', go: [
+      colours: { line: 'pastime.painting.colors', go: [
         { ap: 'ask', say: 'Is there a color you can\'t make?', to: 'cant' },
         { ap: 'jest', say: 'So if I eat your paints, I\'ll be fine?', to: 'eat' },
       ] },
@@ -1154,7 +1154,7 @@ talkPack('pastimes', () => {
     { if: { paintLast: 'the river' }, text: ['The river. Water\'s the hardest thing. It won\'t keep still.'] },
     { if: { paintLast: 'the orchard' }, text: ['The orchard, in blossom. All that white. I used up every bit of white I had.'] },
   ]);
-  L('pastime.painting.colours', ['Berries, earth, soot. Elderberry for purple. Woad for blue, when I can get it.', 'I grind them myself. Ochre from the bank, charcoal from the fire.'], {
+  L('pastime.painting.colors', ['Berries, earth, soot. Elderberry for purple. Woad for blue, when I can get it.', 'I grind them myself. Ochre from the bank, charcoal from the fire.'], {
     cheerful: ['Everywhere! Blackberries, marigolds, beetroot! My kitchen\'s a rainbow!'],
     ornery: ['I make them. Nobody else will.'],
     shy: ['...I make them. From plants. It takes ages.'],
@@ -1369,7 +1369,7 @@ talkPack('pastimes', () => {
     { if: { season: 'winter' }, text: ['{PaintLast}, in the snow. White on white. My eyes ache.'] },
     { if: { stage: 'child' }, text: ['{PaintLast}! I did it with my fingers! And my elbow!'] },
   ]);
-  M('pastime.painting.colours', [
+  M('pastime.painting.colors', [
     { if: { register: 'fine' }, text: ['I grind my own pigments. Ochre, umber, a little lamp-black. It\'s alchemy, really.'] },
     { if: { rift: true }, text: ['I brought one tube of neon pink through the rift. I\'m saving it. For something important.'] },
   ]);

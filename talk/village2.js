@@ -27,7 +27,7 @@ talkPack('village2', () => {
   const VK = (k) => ({ if: { vValueKey: k } });
 
   // --- Facts: the news they know, a rumor, what they hold dear, a matter of the day ----
-  const RUMOURS = {
+  const RUMORS = {
     dragon: 'there\'s a dragon asleep under the far wood', ghost: 'the old mill is haunted by a miller who won\'t stop grinding', treasure: 'there\'s gold buried under the party tree',
     wishing: 'the well grants a wish if you drop in a button at midnight', giant: 'a giant walked past the North Farthing in the fog', wedding: 'there\'s to be a secret wedding before the harvest',
     bree: 'the Bree carter is really a prince in disguise', eel: 'there\'s an eel in the mill-pond as long as a cart', rift: 'the rifts are doors, and someone\'s knocking from the other side',
@@ -48,7 +48,7 @@ talkPack('village2', () => {
     pact: { what: 'a trade pact with Bree', pro: ['thrift', 'learning'], con: ['tradition'] },
   };
   const PET_MATTER = { field: 'field', fell: 'copse', dance: 'dance', quiet: 'quiet', lights: 'neon', swing: 'swing', school: 'school', pact: 'pact' };
-  const KEYS = ['vNews', 'vNewsId', 'vNewsKind', 'vNewsKnown', 'vNewsWide', 'vRumour', 'vRumourKey', 'vValue', 'vValueKey', 'vValue2', 'vValue2Key', 'vValueSay', 'vClash', 'vClashId', 'vClashValue',
+  const KEYS = ['vNews', 'vNewsId', 'vNewsKind', 'vNewsKnown', 'vNewsWide', 'vRumor', 'vRumorKey', 'vValue', 'vValueKey', 'vValue2', 'vValue2Key', 'vValueSay', 'vClash', 'vClashId', 'vClashValue',
     'vMatter', 'vMatterWhat', 'vMatterSide', 'vMatterPetition', 'vRiftNow', 'vRiftName', 'vRiftId'];
   addFacts((v, F, T) => {
     for (const k of KEYS) F[k] = null;
@@ -58,8 +58,8 @@ talkPack('village2', () => {
       P = { vid: v.id };
       const n = (typeof newsList === 'function' ? newsList() : []).find((x) => knowsNews(v, x) && Game.day - x.day <= 5 && !x.text.includes(v.first + ' '));
       P.news = n ? n.id : null;
-      const rk = Object.keys(RUMOURS).filter((k) => k !== 'rift' || Game.villagers.some((o) => o.isRiftborn()));
-      P.rumour = rk[Math.floor(hash2(v.id * 3 + 1, Math.floor(Game.day / 2)) * rk.length)];
+      const rk = Object.keys(RUMORS).filter((k) => k !== 'rift' || Game.villagers.some((o) => o.isRiftborn()));
+      P.rumor = rk[Math.floor(hash2(v.id * 3 + 1, Math.floor(Game.day / 2)) * rk.length)];
       const vals = typeof valuesOf === 'function' ? valuesOf(v) : [];
       const riftOK = Game.villagers.some((o) => o.isRiftborn());
       let mk = null, pet = false;
@@ -79,7 +79,7 @@ talkPack('village2', () => {
       const pop = Game.villagers.filter((o) => o.stage !== 'baby').length || 1;
       Object.assign(F, { vNews: n.text.replace(/[.!]$/, ''), vNewsId: n.id, vNewsKind: n.kind, vNewsKnown: (Game.wizKnows || []).includes(n.id), vNewsWide: n.knowers.length / pop > 0.6 });
     }
-    if (P.rumour) Object.assign(F, { vRumour: RUMOURS[P.rumour], vRumourKey: P.rumour });
+    if (P.rumor) Object.assign(F, { vRumor: RUMORS[P.rumor], vRumorKey: P.rumor });
     const vals = typeof valuesOf === 'function' ? valuesOf(v) : [];
     if (vals[0] && VALUES[vals[0]]) {
       Object.assign(F, { vValue: VALUES[vals[0]].label.toLowerCase(), vValueKey: vals[0], vValueSay: VALUES[vals[0]].say });
@@ -265,62 +265,62 @@ talkPack('village2', () => {
   // =================================================================================
   addThread({
     id: 'village.rumour', label: 'Any wild rumors going round?', weight: 0.8, cool: 4,
-    when: (F) => has(F.vRumour),
-    open: { jest: 'village.rumour.open' },
+    when: (F) => has(F.vRumor),
+    open: { jest: 'village.rumor.open' },
     beats: {
-      start: { line: 'village.rumour.start', go: [
+      start: { line: 'village.rumor.start', go: [
         { ap: 'tale', say: 'There was, once. It moved on to somewhere quieter.', to: 'tale' },
         { ap: 'advise', say: 'Nonsense, I\'m afraid. I\'d know.', to: 'deny' },
         { ap: 'ask', say: 'And who told you that?', to: 'who' },
       ] },
-      tale: { line: 'village.rumour.tale', fx: { news: 'The wizard says there\'s a grain of truth in what they say at the Badger: {vRumour}.' }, go: [
+      tale: { line: 'village.rumor.tale', fx: { news: 'The wizard says there\'s a grain of truth in what they say at the Badger: {vRumor}.' }, go: [
         { ap: 'jest', say: 'It left a forwarding address. In Bree.', to: 'address' },
         { ap: 'comfort', say: 'Nothing to fear. It was all very polite.', to: 'polite' },
       ] },
-      deny: { line: 'village.rumour.deny', fx: { run: (T, v) => { const vals = T.F.values || []; if (vals.includes('learning')) bondFull(v).respect = clamp((bondFull(v).respect || 0) + 0.03, -1, 1); if (['dreamy', 'child'].includes(T.F.temper)) addRegard(v, -0.01); } }, go: [
+      deny: { line: 'village.rumor.deny', fx: { run: (T, v) => { const vals = T.F.values || []; if (vals.includes('learning')) bondFull(v).respect = clamp((bondFull(v).respect || 0) + 0.03, -1, 1); if (['dreamy', 'child'].includes(T.F.temper)) addRegard(v, -0.01); } }, go: [
         { ap: 'comfort', say: 'There\'s wonder enough in this valley without it.', to: 'wonder' },
         { ap: 'jest', say: 'Though I\'d keep an eye on the badgers.', to: 'badgers' },
       ] },
-      who: { line: 'village.rumour.who', go: [
+      who: { line: 'village.rumor.who', go: [
         { ap: 'ask', say: 'And do you believe it?', to: 'believe' },
         { ap: 'advise', say: 'I\'d take it with a pinch of salt. A large pinch.', to: 'deny' },
       ] },
-      believe: { line: 'village.rumour.believe', go: [
+      believe: { line: 'village.rumor.believe', go: [
         { ap: 'tale', say: 'You\'re not wrong to wonder. Listen...', to: 'tale' },
         { ap: 'advise', say: 'Believe your own eyes. They\'re good ones.', to: 'deny' },
       ] },
-      address: { line: 'village.rumour.address', fx: { joke: { k: 'village.address', t: 'It left a forwarding address. In Bree.' } }, end: true },
-      polite: { line: 'village.rumour.polite', end: true },
-      wonder: { line: 'village.rumour.wonder', fx: { respect: 0.02 }, end: true },
-      badgers: { line: 'village.rumour.badgers', end: true },
+      address: { line: 'village.rumor.address', fx: { joke: { k: 'village.address', t: 'It left a forwarding address. In Bree.' } }, end: true },
+      polite: { line: 'village.rumor.polite', end: true },
+      wonder: { line: 'village.rumor.wonder', fx: { respect: 0.02 }, end: true },
+      badgers: { line: 'village.rumor.badgers', end: true },
     },
     end: { fond: 0.015 },
   });
-  lines('village.rumour.open', [{ text: ['Any wild rumors going round, {name}? The wilder the better.', 'Tell me the most ridiculous thing you\'ve heard this week, {name}.', 'What nonsense is the Badger talking now, {name}?'] }]);
-  say('village.rumour.start', {
-    _: ['Well, they\'re saying {vRumour}. Is it true? You\'d know.', 'You\'ll laugh. They say {vRumour}.', 'The old-timers at the Badger swear {vRumour}. Swear on their pipes.'],
-    cheerful: ['Ooh! They say {vRumour}! Isn\'t it marvelous? Is it true?'],
-    ornery: ['Nonsense, all of it. They say {vRumour}. I ask you.'],
-    shy: ['...Is it true {vRumour}? I didn\'t sleep.'],
-    curious: ['I\'ve been investigating. They say {vRumour}. I\'ve three theories.'],
-    dreamy: ['They say {vRumour}. I want it to be true so badly.'],
-    witty: ['The latest from the Badger\'s finest minds: {vRumour}.'],
-    proud: ['I don\'t hold with rumors. But they do say {vRumour}.'],
-    gloomy: ['They say {vRumour}. It\'ll be bad news, whatever it is.'],
-    child: ['Is it TRUE that {vRumour}? Somebody\'s big brother said so!', 'Someone said {vRumour}! Is it true? Is it?'],
-    rift: ['Unverified report: {vRumour}. Can you confirm?'],
+  lines('village.rumor.open', [{ text: ['Any wild rumors going round, {name}? The wilder the better.', 'Tell me the most ridiculous thing you\'ve heard this week, {name}.', 'What nonsense is the Badger talking now, {name}?'] }]);
+  say('village.rumor.start', {
+    _: ['Well, they\'re saying {vRumor}. Is it true? You\'d know.', 'You\'ll laugh. They say {vRumor}.', 'The old-timers at the Badger swear {vRumor}. Swear on their pipes.'],
+    cheerful: ['Ooh! They say {vRumor}! Isn\'t it marvelous? Is it true?'],
+    ornery: ['Nonsense, all of it. They say {vRumor}. I ask you.'],
+    shy: ['...Is it true {vRumor}? I didn\'t sleep.'],
+    curious: ['I\'ve been investigating. They say {vRumor}. I\'ve three theories.'],
+    dreamy: ['They say {vRumor}. I want it to be true so badly.'],
+    witty: ['The latest from the Badger\'s finest minds: {vRumor}.'],
+    proud: ['I don\'t hold with rumors. But they do say {vRumor}.'],
+    gloomy: ['They say {vRumor}. It\'ll be bad news, whatever it is.'],
+    child: ['Is it TRUE that {vRumor}? Somebody\'s big brother said so!', 'Someone said {vRumor}! Is it true? Is it?'],
+    rift: ['Unverified report: {vRumor}. Can you confirm?'],
   }, [
-    { if: { vRumourKey: 'dragon' }, pri: 1, text: ['There\'s a dragon under the far wood. Folk have heard it snore. Is it true?', 'They say a dragon sleeps under the far wood and the mushrooms grow warm. True?'] },
-    { if: { vRumourKey: 'ghost' }, pri: 1, text: ['The old miller\'s ghost, still grinding at midnight. I\'ve HEARD it. Is it true?'] },
-    { if: { vRumourKey: 'treasure' }, pri: 1, text: ['Gold under the party tree! Old Took\'s, they say. Should we be digging?'] },
-    { if: { vRumourKey: 'wishing' }, pri: 1, text: ['They say if you drop a button in the well at midnight, you get a wish. I\'m out of buttons.'] },
-    { if: { vRumourKey: 'eel' }, pri: 1, text: ['There\'s an eel in the mill-pond as long as a cart. It took a whole loaf off a line.'] },
-    { if: { vRumourKey: 'bree' }, pri: 1, text: ['The Bree carter. A prince in disguise! It\'s the way he holds his cheese.'] },
-    { if: { vRumourKey: 'giant' }, pri: 1, text: ['A giant! In the fog, by the North Farthing. Taller than the mill. Is it true?'] },
-    { if: { vRumourKey: 'wedding' }, pri: 1, text: ['A secret wedding before harvest. Nobody knows whose. Do you know whose?'] },
-    { if: { vRumourKey: 'rift' }, pri: 1, text: ['They say the rifts are doors, and somebody\'s knocking. Is that true, wizard? Is it?'] },
+    { if: { vRumorKey: 'dragon' }, pri: 1, text: ['There\'s a dragon under the far wood. Folk have heard it snore. Is it true?', 'They say a dragon sleeps under the far wood and the mushrooms grow warm. True?'] },
+    { if: { vRumorKey: 'ghost' }, pri: 1, text: ['The old miller\'s ghost, still grinding at midnight. I\'ve HEARD it. Is it true?'] },
+    { if: { vRumorKey: 'treasure' }, pri: 1, text: ['Gold under the party tree! Old Took\'s, they say. Should we be digging?'] },
+    { if: { vRumorKey: 'wishing' }, pri: 1, text: ['They say if you drop a button in the well at midnight, you get a wish. I\'m out of buttons.'] },
+    { if: { vRumorKey: 'eel' }, pri: 1, text: ['There\'s an eel in the mill-pond as long as a cart. It took a whole loaf off a line.'] },
+    { if: { vRumorKey: 'bree' }, pri: 1, text: ['The Bree carter. A prince in disguise! It\'s the way he holds his cheese.'] },
+    { if: { vRumorKey: 'giant' }, pri: 1, text: ['A giant! In the fog, by the North Farthing. Taller than the mill. Is it true?'] },
+    { if: { vRumorKey: 'wedding' }, pri: 1, text: ['A secret wedding before harvest. Nobody knows whose. Do you know whose?'] },
+    { if: { vRumorKey: 'rift' }, pri: 1, text: ['They say the rifts are doors, and somebody\'s knocking. Is that true, wizard? Is it?'] },
   ]);
-  say('village.rumour.tale', {
+  say('village.rumor.tale', {
     _: ['There WAS? Oh, my word. Oh, my word!', 'Moved on? Where? When? Why did nobody tell me?', 'I knew it. I KNEW it. My grandmother always said.'],
     cheerful: ['Oh, how exciting! Wait till I tell the Badger!'],
     ornery: ['Hmph. Wizards. You\'ll say anything for a gasp.'],
@@ -333,7 +333,7 @@ talkPack('village2', () => {
     child: ['REALLY? Did you SEE it? Was it big? Did it eat anyone?'],
     rift: ['Huh. So it\'s canon. Respect.'],
   });
-  say('village.rumour.deny', {
+  say('village.rumor.deny', {
     _: ['Oh. Well. I suppose you would know.', 'Nonsense? Shame. It was a good one.', 'Ha. I thought as much. Still, I\'ll miss it.'],
     cheerful: ['Oh, bother! Never mind. There\'ll be another by Trewsday.'],
     ornery: ['Told you. Told them all. Nobody listens to sense.'],
@@ -348,7 +348,7 @@ talkPack('village2', () => {
   }, [
     { if: { values: 'learning' }, text: ['Good. I like a straight answer. Too much nonsense goes round this village.'] },
   ]);
-  say('village.rumour.who', {
+  say('village.rumor.who', {
     _: ['The innkeeper\'s cousin, who had it from a dwarf.', 'Somebody\'s uncle. It\'s always somebody\'s uncle.', 'The children. They had it from the old folk, who had it from the children.'],
     cheerful: ['Oh, everyone! It\'s the best kind of rumor, the kind with no beginning.'],
     ornery: ['Some fool at the Badger. There\'s always one. There\'s usually six.'],
@@ -358,7 +358,7 @@ talkPack('village2', () => {
     child: ['My friend\'s brother\'s friend! He KNOWS things.'],
     rift: ['Source unverified. Origin: probably a pub at closing time.'],
   });
-  say('village.rumour.believe', {
+  say('village.rumor.believe', {
     _: ['Half of me does. The other half\'s too sensible.', 'I don\'t. ...I do a bit.'],
     cheerful: ['I believe everything! It\'s more fun that way!'],
     ornery: ['Not a word. Not one word.'],
@@ -370,21 +370,21 @@ talkPack('village2', () => {
     gloomy: ['If it\'s bad, I believe it.'],
     child: ['YES. Totally. Completely.'],
   });
-  say('village.rumour.address', {
+  say('village.rumor.address', {
     _: ['In Bree! Ha! Of course it did.', 'A forwarding address! Ha! I\'m telling that one at the Badger.'],
     child: ['Can we write to it?'],
     witty: ['Bree. Where all the interesting things go to be ordinary.'],
   });
-  say('village.rumour.polite', {
+  say('village.rumor.polite', {
     _: ['Polite! Well, that\'s a relief. I don\'t like a rude rumor.', 'All very polite. Like a vicar. With scales.'],
     shy: ['...Polite is good. I like polite.'],
   });
-  say('village.rumour.wonder', {
+  say('village.rumor.wonder', {
     _: ['There is, isn\'t there. You only have to look.', 'Hm. You\'re right. The heron\'s wonder enough some mornings.'],
     dreamy: ['The mist on the river at dawn. That\'s my dragon.'],
     ornery: ['Wonder. Hmph. ...The sunsets are good, I\'ll give you that.'],
   });
-  say('village.rumour.badgers', {
+  say('village.rumor.badgers', {
     _: ['The badgers! Ha! I always said they were up to something.', 'I\'ll watch them. Closely. From indoors.'],
     child: ['I KNEW the badgers were bad! I mean, I didn\'t. But now I do.'],
   });
@@ -976,41 +976,41 @@ talkPack('village2', () => {
     ornery: ['By teatime? By elevenses. This village.'],
   });
 
-  lines('village.rumour.open', [{ if: { hour: 'evening' }, text: ['Heard anything wild at the Badger tonight, {name}?'] }, { if: { stage: 'child' }, text: ['Heard any scary stories lately, {name}?'] }]);
-  say('village.rumour.start', {
-    _: ['They\'re saying {vRumour}. My aunt saw it. My aunt sees a lot of things.'],
-    elder: ['When I was young they said {vRumour}. Now they\'re saying it again.'],
+  lines('village.rumor.open', [{ if: { hour: 'evening' }, text: ['Heard anything wild at the Badger tonight, {name}?'] }, { if: { stage: 'child' }, text: ['Heard any scary stories lately, {name}?'] }]);
+  say('village.rumor.start', {
+    _: ['They\'re saying {vRumor}. My aunt saw it. My aunt sees a lot of things.'],
+    elder: ['When I was young they said {vRumor}. Now they\'re saying it again.'],
   });
-  say('village.rumour.tale', {
+  say('village.rumor.tale', {
     _: ['I\'m telling everyone. You can\'t stop me. You started it.'],
     elder: ['My grandmother always said so. I owe her an apology.'],
   });
-  say('village.rumour.deny', {
+  say('village.rumor.deny', {
     _: ['Ah well. There\'ll be another rumor along by Trewsday.'],
     elder: ['Nonsense, eh? Well. It was nonsense when I was young, too.'],
   });
-  say('village.rumour.who', {
+  say('village.rumor.who', {
     dreamy: ['It came on the wind. Rumors do.'],
     proud: ['I don\'t name my sources. I have standards.'],
     gloomy: ['Somebody who wanted to frighten folk. It worked.'],
   });
-  say('village.rumour.believe', {
+  say('village.rumor.believe', {
     rift: ['I\'ve seen the sky open. I\'ll believe almost anything now.'],
     elder: ['At my age you stop believing and start remembering.'],
   });
-  say('village.rumour.address', {
+  say('village.rumor.address', {
     cheerful: ['Ha! I\'ll send it a card!'],
     ornery: ['Bree. Of course. Everything odd ends up in Bree.'],
   });
-  say('village.rumour.polite', {
+  say('village.rumor.polite', {
     child: ['Polite like saying please? Did it say please?'],
     witty: ['A polite one. Better manners than the geese.'],
   });
-  say('village.rumour.wonder', {
+  say('village.rumor.wonder', {
     cheerful: ['Oh, there is! The swallows came back this week. That\'s wonder.'],
     rift: ['There is. Rain is wonder enough, honestly. We didn\'t have rain.'],
   });
-  say('village.rumour.badgers', {
+  say('village.rumor.badgers', {
     ornery: ['The badgers know what they did.'],
     witty: ['The badgers have been suspiciously quiet. That\'s what they want you to think.'],
   });

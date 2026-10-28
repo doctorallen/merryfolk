@@ -16,7 +16,7 @@ const LETTER_LINES = {
   kin: ['Just a note to say we\'re all well here.', 'The little ones ask after you every day.', 'Mother sends her love, and a pie (it may be squashed).'],
 };
 function mailbag() { return Game.mailbag || (Game.mailbag = []); }
-function postLetter(from, to, kind, x = '') {
+function mailLetter(from, to, kind, x = '') {
   if (!to || to.leaving) return;
   const text = R.pick(LETTER_LINES[kind] || LETTER_LINES.friend).replace('{x}', x);
   mailbag().push({ from: from.id ?? null, fromName: from.first, to: to.id, home: to.homeId, kind, text, day: Game.day, t: Game.time });
@@ -59,7 +59,7 @@ ACTIONS.write_letter = {
   done: (v, task) => {
     const { to, kind, x } = task.data;
     if (kind === 'thanks' && v.owesThanks) v.owesThanks.shift();
-    postLetter(v, to, kind, x);
+    mailLetter(v, to, kind, x);
   },
 };
 ACTION_NAMES.write_letter = 'Writing letters';
@@ -88,11 +88,11 @@ Object.assign(ACTIONS.work_post, {
     return what;
   };
 }
-function postDaily() {
+function mailDaily() {
   // letters home from the road
   for (const a of Game.away) {
     const kin = Game.villagers.filter((o) => (a.data.parents && a.data.parents.includes(o.id)) || o.parents.includes(a.data.id) || a.data.spouse === o.id || (o.rel[a.data.id] || 0) > 0.5);
-    if (kin.length && R.chance(0.5)) postLetter({ id: a.data.id, first: a.data.first }, R.pick(kin), 'away');
+    if (kin.length && R.chance(0.5)) mailLetter({ id: a.data.id, first: a.data.first }, R.pick(kin), 'away');
   }
   // with nobody on the round, a neighbor passes letters on after a day
   if (!Game.villagers.some((v) => v.job === 'postie' && !v.leaving)) {
@@ -103,6 +103,6 @@ function postDaily() {
   for (const l of mailbag()) { const r = Game.villagers.find((o) => o.id === l.to); if (r) l.home = r.homeId; }
 }
 window.addEventListener('DOMContentLoaded', () => {
-  addHook('onHour', (h) => { if (h === 8) postDaily(); });
+  addHook('onHour', (h) => { if (h === 8) mailDaily(); });
   addHook('newVillage', () => { Game.mailbag = []; });
 });

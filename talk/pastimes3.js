@@ -898,7 +898,7 @@ talkPack('pastimes3', () => {
       taught: { line: 'pastime.mushrooms.taught', end: true },
       safe: { line: 'pastime.mushrooms.safe', fx: { trust: 0.04, promise: { k: 'pastime.patch', t: 'You promised never to tell where {name}\'s mushrooms grow', days: 60 } }, end: true },
       dawn: { line: 'pastime.mushrooms.dawn', end: true },
-      colours: { line: 'pastime.mushrooms.colours', end: true },
+      colours: { line: 'pastime.mushrooms.colors', end: true },
       invite: { line: 'pastime.mushrooms.invite', fx: { fond: 0.03, promise: { k: 'pastime.mushsupper', t: '{Name} has asked you to a mushroom supper', days: 7 } }, end: true },
     },
     end: { fond: 0.02 },
@@ -986,7 +986,7 @@ talkPack('pastimes3', () => {
     ornery: ['You\'d better not.'],
   });
   L('pastime.mushrooms.dawn', ['You\'d find nothing. I\'d have them all by then.', 'Ha! I\'d know. The mushrooms would tell me.'], {});
-  L('pastime.mushrooms.colours', ['Colors? I saw the color of Tuesday.', 'Ha! I saw sounds. And the sounds were rude.'], {});
+  L('pastime.mushrooms.colors', ['Colors? I saw the color of Tuesday.', 'Ha! I saw sounds. And the sounds were rude.'], {});
   L('pastime.mushrooms.invite', ['Then come tomorrow. I\'ll do the cream ones.', 'Supper, then. Mushrooms, butter, and a wizard. Lovely.'], {
     shy: ['...Really? ...Tomorrow, then.'],
     cheerful: ['Yes! I\'ll do every kind!'],

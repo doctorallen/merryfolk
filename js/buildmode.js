@@ -276,7 +276,7 @@ function applyPlanWhole(p, quiet) {
     case 'statue': case 'fountain': {
       const st = add(p.tool === 'statue' ? makeStatue(p.seed) : makeFountain(), x * 16 + 8, y * 16 + 14, { snow: true });
       st.decor = p.tool; blk(x, y);
-      if (p.tool === 'statue' && !quiet) { const who = R.pick(['Bandobras "Bullroarer" Took', 'Old Gerontius Took', 'Mungo Fernsby the tinker', 'Marmadas Brockhouse, first of the brewers', 'Lily Cotton, who planted the party tree']); st.honours = who; (Game.statues || (Game.statues = {}))[x + ',' + y] = who; }
+      if (p.tool === 'statue' && !quiet) { const who = R.pick(['Bandobras "Bullroarer" Took', 'Old Gerontius Took', 'Mungo Fernsby the tinker', 'Marmadas Brockhouse, first of the brewers', 'Lily Cotton, who planted the party tree']); st.honors = who; (Game.statues || (Game.statues = {}))[x + ',' + y] = who; }
       return p.tool === 'statue' ? 'statue' : 'fountain';
     }
     case 'hedge': {

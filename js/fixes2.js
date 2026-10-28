@@ -104,7 +104,7 @@ function nextPublicWork() {
 
 // --- Day laborers bring in the harvest; a drought withers ripe crops away from water ---
 {
-  const lab = ORDERS.find((o) => o.id === 'labour');
+  const lab = ORDERS.find((o) => o.id === 'labor');
   if (lab) {
     lab.desc = 'Hands from over the hills bring in every ripe crop at once, and hoe the rest along.';
     lab.fn = () => {

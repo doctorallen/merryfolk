@@ -298,7 +298,7 @@ function finale(k) {
 function hearthlinkDaily() {
   if (story().finale !== 'hearthlink') return;
   const rb = riftBorn().filter((v) => v.isGrown());
-  if (rb.length && R.chance(0.5)) postLetter({ id: null, first: 'Neverdark' }, R.pick(rb), 'away');
+  if (rb.length && R.chance(0.5)) mailLetter({ id: null, first: 'Neverdark' }, R.pick(rb), 'away');
 }
 
 // --- Stages ---------------------------------------------------------------------------------------

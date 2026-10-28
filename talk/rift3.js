@@ -17,7 +17,7 @@ talkPack('rift3', () => {
   const both = (...fns) => (T, v) => { for (const f of fns) f(T, v); };
   // the wizard arranges a supper: the rift-born neighbor is asked round
   const askToSupper = (T, v) => {
-    const n = T.F.riftNeighbour, o = n && Game.villagers.find((x) => x.first === n && x.isRiftborn() && x.isGrown());
+    const n = T.F.riftNeighbor, o = n && Game.villagers.find((x) => x.first === n && x.isRiftborn() && x.isGrown());
     if (!o || v.homeId < 0 || !ACTIONS.supper_guest || o.queue.some((q) => q.a.id === 'supper_guest')) return;
     o.queue.push({ a: ACTIONS.supper_guest, extra: { home: v.home(), host: v } });
   };
@@ -38,7 +38,7 @@ talkPack('rift3', () => {
       ] },
       fear: { line: 'rift.hill.folk.fear', go: [
         { ap: 'listen', say: '*You let them say it all.*', label: 'Let them say it all', to: 'vent' },
-        { ap: 'advise', say: 'Go and say good morning to {riftNeighbour}. Just that.', to: 'hello', need: { if: { riftNeighbour: (x) => !!x } } },
+        { ap: 'advise', say: 'Go and say good morning to {riftNeighbor}. Just that.', to: 'hello', need: { if: { riftNeighbor: (x) => !!x } } },
         { ap: 'tale', say: 'I think they\'re children sent somewhere safe.', to: 'children', need: { if: { riftClues: { min: 2 } } }, soft: true },
       ] },
       like: { line: 'rift.hill.folk.like', go: [
@@ -50,7 +50,7 @@ talkPack('rift3', () => {
         { ap: 'ask', say: 'Do you ever worry {riftFriend} might go home?', to: 'worry', need: { open: 1 }, soft: true },
       ] },
       notspoken: { line: 'rift.hill.folk.notspoken', go: [
-        { ap: 'advise', say: 'Go and say good morning to {riftNeighbour}. Just that.', to: 'hello', need: { if: { riftNeighbour: (x) => !!x } } },
+        { ap: 'advise', say: 'Go and say good morning to {riftNeighbor}. Just that.', to: 'hello', need: { if: { riftNeighbor: (x) => !!x } } },
         { ap: 'ask', say: 'What would you say to one, if you did?', to: 'whatsay' },
       ] },
       feet: { line: 'rift.hill.folk.feet', fx: { fond: 0.01 }, go: [
@@ -59,9 +59,9 @@ talkPack('rift3', () => {
       ] },
       vent: { line: 'rift.hill.folk.vent', fx: { trust: 0.03, flag: 'vented' }, go: [
         { ap: 'comfort', say: 'Change is frightening. It can still be kind.', to: 'kind' },
-        { ap: 'advise', say: 'Go and say good morning to {riftNeighbour}. Just that.', to: 'hello', need: { if: { riftNeighbour: (x) => !!x } } },
+        { ap: 'advise', say: 'Go and say good morning to {riftNeighbor}. Just that.', to: 'hello', need: { if: { riftNeighbor: (x) => !!x } } },
       ] },
-      hello: { line: 'rift.hill.folk.hello', fx: { respect: 0.03, run: both(softenSelf(0.12), natterWith('riftNeighbour')) }, end: true },
+      hello: { line: 'rift.hill.folk.hello', fx: { respect: 0.03, run: both(softenSelf(0.12), natterWith('riftNeighbor')) }, end: true },
       children: { line: 'rift.hill.folk.children', fx: { trust: 0.02, run: both(softenSelf(0.1), heardIt(0.06)) }, end: true },
       glad: { line: 'rift.hill.folk.glad', fx: { fond: 0.02 }, end: true },
       others: { line: 'rift.hill.folk.others', end: true },
@@ -74,7 +74,7 @@ talkPack('rift3', () => {
         { ap: 'advise', say: 'Have you told {riftFriend} that?', to: 'tellthem' },
       ] },
       whatsay: { line: 'rift.hill.folk.whatsay', go: [
-        { ap: 'warm', say: 'That would do very nicely. Go and say it.', to: 'hello', need: { if: { riftNeighbour: (x) => !!x } } },
+        { ap: 'warm', say: 'That would do very nicely. Go and say it.', to: 'hello', need: { if: { riftNeighbor: (x) => !!x } } },
         { ap: 'jest', say: 'Start with the weather. It works on everyone.', to: 'weather' },
       ] },
       weather: { line: 'rift.hill.folk.weather', fx: { run: softenSelf(0.06) }, end: true },
@@ -134,7 +134,7 @@ talkPack('rift3', () => {
     { if: { temper: 'shy' }, text: ['No. I wouldn\'t know what to say. What do you say to someone from another world?'] },
     { if: { temper: 'proud' }, text: ['It\'s for them to come to me. I\'ve lived here sixty years.'] },
     { if: { temper: 'ornery' }, text: ['No, and I don\'t intend to. ...Unless they come to me. Politely.'] },
-    { if: { riftNeighbour: (x) => !!x }, text: ['There\'s {riftNeighbour}, down the lane. I\'ve never said more than good morning. Not even that, lately.'] },
+    { if: { riftNeighbor: (x) => !!x }, text: ['There\'s {riftNeighbor}, down the lane. I\'ve never said more than good morning. Not even that, lately.'] },
   ]);
   lines('rift.hill.folk.feet', [
     { text: ['Our feet? What\'s wrong with our feet? ...Oh, they\'re shocked by the hair. Ha!', 'Cheek! Our feet are perfectly respectable. ...They have very odd boots, mind.'] },
@@ -149,7 +149,7 @@ talkPack('rift3', () => {
   ]);
   lines('rift.hill.folk.hello', [
     { text: ['Good morning. Just that. ...I suppose I can manage good morning.', 'Hm. All right. Good morning. Not a word more.'] },
-    { if: { riftNeighbour: (x) => !!x }, pri: 1, text: ['{RiftNeighbour}. All right. Good morning to {riftNeighbour}. I\'ll take a scone, in case.'] },
+    { if: { riftNeighbor: (x) => !!x }, pri: 1, text: ['{RiftNeighbor}. All right. Good morning to {riftNeighbor}. I\'ll take a scone, in case.'] },
     { if: { temper: 'ornery' }, text: ['Fine. Good morning. If they say anything back, I\'m blaming you.'] },
     { if: { temper: 'shy' }, text: ['...Will you stand nearby? Not close. Nearby.'] },
   ]);
@@ -269,10 +269,10 @@ talkPack('rift3', () => {
         { ap: 'tale', say: 'Do you know where they come from?', to: 'where' },
       ] },
       best: { line: 'rift.hill.young.best', go: [
-        { ap: 'advise', say: 'Ask {riftNeighbour} to show you a gadget. Politely.', to: 'go', need: { if: { riftNeighbour: (x) => !!x } } },
+        { ap: 'advise', say: 'Ask {riftNeighbor} to show you a gadget. Politely.', to: 'go', need: { if: { riftNeighbor: (x) => !!x } } },
         { ap: 'ask', say: 'And what do you like best about the hills?', to: 'hillbest' },
       ] },
-      mum: { line: 'rift.hill.young.mum', go: [
+      mum: { line: 'rift.hill.young.mom', go: [
         { ap: 'advise', say: 'Your mom\'s right about staring. Ask instead.', to: 'askinstead' },
         { ap: 'warm', say: 'Your mom and the rift-folk will be friends one day.', to: 'both' },
       ] },
@@ -289,11 +289,11 @@ talkPack('rift3', () => {
   });
   lines('rift.hill.young.open', [
     { text: ['Have you met the rift-folk, {name}?', 'What do you think of the folk from the sky, {name}?'] },
-    { if: { riftNeighbour: (x) => !!x }, text: ['Have you said hello to {riftNeighbour} yet, {name}?'] },
+    { if: { riftNeighbor: (x) => !!x }, text: ['Have you said hello to {riftNeighbor} yet, {name}?'] },
   ]);
   lines('rift.hill.young.start', [
     { text: ['They\'ve got glowy eyes! Some of them! And blue hair! I want blue hair!', 'I\'ve SEEN them. Up close. Nearly up close. Behind a hedge.'] },
-    { if: { riftNeighbour: (x) => !!x }, text: ['{RiftNeighbour} let me hold a blinky thing! It went beep! I nearly dropped it!'] },
+    { if: { riftNeighbor: (x) => !!x }, text: ['{RiftNeighbor} let me hold a blinky thing! It went beep! I nearly dropped it!'] },
     { if: { riftTier: { min: 1 } }, text: ['I\'m practically one. I say "ping" and I\'ve got a strip of light on my sweater. Gran hates it.'] },
     { if: { band: 'youth' }, text: ['Yeah. They\'re all right. Better than all right. They don\'t treat you like a baby.'] },
     { if: { temper: 'gloomy' }, text: ['They\'re scary. One looked at me. Its eye went GREEN.'] },
@@ -305,19 +305,19 @@ talkPack('rift3', () => {
     { if: { band: 'youth' }, text: ['They talk to you like you\'re grown. And they know how things work. Real things.'] },
     { if: { riftRelay: true }, text: ['The Relay! You can write things on it and everyone sees! I wrote "hello" and forty people said "ping"!'] },
   ]);
-  lines('rift.hill.young.mum', [
+  lines('rift.hill.young.mom', [
     { text: ['Mom says don\'t stare. I don\'t stare. I look a lot. That\'s different.', 'Mom says they\'re nice but I\'m not to go in their camp. I\'ve been in their camp twice.'] },
     { if: { riftWary: 'much' }, text: ['Mom doesn\'t like them. She says they\'re "not our sort". What\'s our sort?'] },
     { if: { riftWary: 'none' }, text: ['Mom had one round for supper! He ate SIX potatoes. Mom was so pleased.'] },
   ]);
   lines('rift.hill.young.where', [
     { text: ['Mom says it\'s bad weather. But the rift-folk say it\'s a door. A door in the SKY.', 'From a city behind the sky. My friend says. Gran says that\'s nonsense and they\'re from Bree.'] },
-    { if: { riftNeighbour: (x) => !!x }, text: ['{RiftNeighbour} says it\'s a train. A train in the sky! Dad says it\'s a storm. Which is it?'] },
+    { if: { riftNeighbor: (x) => !!x }, text: ['{RiftNeighbor} says it\'s a train. A train in the sky! Dad says it\'s a storm. Which is it?'] },
     { if: { temper: 'curious' }, text: ['I think it\'s a hole in the sky and on the other side there\'s ANOTHER sky. With other hobbits. Upside down.'] },
   ]);
   lines('rift.hill.young.go', [
     { text: ['Can I? Now? I\'m going NOW. Politely! I\'ll say please twice!', 'Okay! I\'ll ask! If they say no I\'ll ask again tomorrow.'] },
-    { if: { riftNeighbour: (x) => !!x }, pri: 1, text: ['{RiftNeighbour}! I\'m going to find {riftNeighbour}! Bye, wizard!'] },
+    { if: { riftNeighbor: (x) => !!x }, pri: 1, text: ['{RiftNeighbor}! I\'m going to find {riftNeighbor}! Bye, wizard!'] },
   ]);
   lines('rift.hill.young.hillbest', [
     { text: ['Conkers. And the pond. And Gran\'s stories about the old days. They\'re long but they\'re good.', 'Second breakfast! The rift-folk didn\'t even HAVE second breakfast. We had to teach them.'] },
@@ -325,7 +325,7 @@ talkPack('rift3', () => {
   lines('rift.hill.young.askinstead', [{ text: ['Ask? Like, with words? Okay. I can do words.', 'Ask instead of stare. Okay. I\'ll ask what their eyes are for.'] }]);
   lines('rift.hill.young.both', [
     { text: ['Both? ...That\'s cheating. Wizards can\'t say both.', 'A bit right each! I\'m telling everyone! MOM! THE WIZARD SAYS YOU\'RE A BIT RIGHT!'] },
-    { if: { riftNeighbour: (x) => !!x }, text: ['{RiftNeighbour}! The wizard says you\'re a bit right! And so\'s my dad! Bye!'] },
+    { if: { riftNeighbor: (x) => !!x }, text: ['{RiftNeighbor}! The wizard says you\'re a bit right! And so\'s my dad! Bye!'] },
   ]);
 
   // --- The children's questions -------------------------------------------------------
@@ -369,12 +369,12 @@ talkPack('rift3', () => {
   ]);
   lines('rift.hill.kidask.think', [
     { text: ['Mom says it\'s bad weather. But the rift-folk say it\'s a door. A door in the sky.', 'Gran says it\'s a punishment for not eating greens. I think it\'s a train. A sky train!'] },
-    { if: { riftNeighbour: (x) => !!x }, pri: 1, text: ['Mom says it\'s bad weather. But {riftNeighbour} says it\'s a train. A train in the SKY.'] },
+    { if: { riftNeighbor: (x) => !!x }, pri: 1, text: ['Mom says it\'s bad weather. But {riftNeighbor} says it\'s a train. A train in the SKY.'] },
     { if: { temper: 'curious' }, text: ['I think the sky\'s like a curtain. And somebody on the other side is trying to open it but they can\'t find the middle.'] },
   ]);
   lines('rift.hill.kidask.both', [
     { text: ['Both! ...That\'s cheating. *runs off* MOM! THE WIZARD SAYS YOU\'RE A BIT RIGHT!', 'Both a bit right! I\'m going to tell everyone! Bye!'] },
-    { if: { riftNeighbour: (x) => !!x }, pri: 1, text: ['Both! *runs off* {RiftNeighbour}! THE WIZARD SAYS YOU\'RE A BIT RIGHT!'] },
+    { if: { riftNeighbor: (x) => !!x }, pri: 1, text: ['Both! *runs off* {RiftNeighbor}! THE WIZARD SAYS YOU\'RE A BIT RIGHT!'] },
   ]);
   lines('rift.hill.kidask.riftside', [{ text: ['The rift-folk! I\'ll ask them! I\'ll ask them EVERYTHING.', 'From the other side! I\'m going to go and listen. Really hard.'] }]);
   lines('rift.hill.kidask.hillside', [{ text: ['Mom\'s been here longest. That\'s true. She\'s been here FOREVER.', 'Okay. Mom. But I\'m still going to look at the sky.'] }]);
@@ -389,7 +389,7 @@ talkPack('rift3', () => {
       start: { line: 'rift.hill.supper.start', go: [
         { ap: 'ask', say: 'What did you give them?', to: 'menu', need: { if: { riftSupper: true } } },
         { ap: 'ask', say: 'And what did they make of it all?', to: 'reaction', need: { when: (F) => F.riftSupper || F.riftMixed } },
-        { ap: 'advise', say: 'You should ask {riftNeighbour} round. One supper.', to: 'invite', need: { if: { riftNeighbour: (x) => !!x } } },
+        { ap: 'advise', say: 'You should ask {riftNeighbor} round. One supper.', to: 'invite', need: { if: { riftNeighbor: (x) => !!x } } },
         { ap: 'jest', say: 'Afraid they\'ll eat you out of house and hole?', to: 'eat' },
       ] },
       menu: { line: 'rift.hill.supper.menu', go: [
@@ -401,7 +401,7 @@ talkPack('rift3', () => {
         { ap: 'warm', say: 'A full table is the best kind.', to: 'table' },
       ] },
       eat: { line: 'rift.hill.supper.eat', go: [
-        { ap: 'advise', say: 'One supper. You\'ll not regret it.', to: 'invite', need: { if: { riftNeighbour: (x) => !!x } } },
+        { ap: 'advise', say: 'One supper. You\'ll not regret it.', to: 'invite', need: { if: { riftNeighbor: (x) => !!x } } },
         { ap: 'warm', say: 'A full table\'s the best kind. And they\'d help with the washing up.', to: 'table' },
       ] },
       invite: { line: 'rift.hill.supper.invite', fx: { respect: 0.03, run: askToSupper }, end: true },
@@ -439,7 +439,7 @@ talkPack('rift3', () => {
   ]);
   lines('rift.hill.supper.invite', [
     { text: ['One supper. All right. I\'ll do the good jam.', 'Go on, then. I\'ll ask. If it goes badly I\'m blaming you.'] },
-    { if: { riftNeighbour: (x) => !!x }, pri: 1, text: ['{RiftNeighbour}? All right. I\'ll send word. Tonight, if the pie\'s ready.'] },
+    { if: { riftNeighbor: (x) => !!x }, pri: 1, text: ['{RiftNeighbor}? All right. I\'ll send word. Tonight, if the pie\'s ready.'] },
     { if: { temper: 'shy' }, text: ['...You\'ll tell me what to say? No? ...All right. I\'ll ask about the weather.'] },
   ]);
   lines('rift.hill.supper.scones', [{ text: ['Survived and asked for more. Then hid two in a pocket. Like a proper hobbit.', 'One chipped a tooth. Still finished it. I respect that.'] }]);
@@ -851,7 +851,7 @@ talkPack('rift3', () => {
     { if: { band: 'school' }, text: ['They know how things work inside. I want to know how things work inside.', 'They don\'t tell you off for asking questions. They LIKE questions.'] },
     { if: { temper: 'child', mood: ['low', 'miserable'] }, text: ['They don\'t laugh at me. Some kids laugh at me. They don\'t.'] },
   ]);
-  lines('rift.hill.young.mum', [
+  lines('rift.hill.young.mom', [
     { if: { band: 'young' }, text: ['Mom holds my hand tight when they walk past. Too tight.', 'Mom says be polite! I\'m always polite! Mostly!'] },
     { if: { band: 'school' }, text: ['Mom says they\'re "very interesting" in a voice that means no.', 'Mom doesn\'t mind. Dad minds. Dad minds everything.'] },
     { if: { band: 'youth' }, text: ['Mom minds. I\'m nearly grown. I can talk to who I like.', 'Mom worries I\'ll go rift. Maybe I will.'] },
