@@ -6,12 +6,18 @@
 // the runner records what a village's life comes to: meals eaten and missed,
 // hours worked and the jobs done, goods made and used and the Store's levels,
 // weddings, births and departures, moods over time, breaks, friendships and
-// falling-outs, illness, skills, wishes, and where everyone's time went.
+// falling-outs, illness, skills, wishes, where everyone's time went, and what
+// passed between them: natters begun and the lines said in them, natters
+// walked off from, long and good ones, squabbles, table talk and gatherings,
+// and with the natters on Bree, the grudges, feuds, making up, natters turned
+// squabbles, patience kept and someone stepping in.
 //
 //   node test/season.js                     prints the numbers, writes test/out/season.json
 //   node test/season.js --record before     ...and keeps them as test/season-before.json
 //   node test/season.js --compare a b       a table of two kept runs (names or paths)
 //   --days N, --seeds 1,2,3                 a longer run, other seeds
+//   --no-wizard                             the wizard kept away (his visits, a crowd round him
+//                                           for a tale, move friendships a lot from run to run)
 //
 // It isn't part of npm test (a season takes a while); run it after a change
 // to how folk behave and compare.
@@ -25,9 +31,10 @@ const arg = (name, dflt) => { const i = process.argv.indexOf('--' + name); retur
 // In the page: watch the village (wrapping what it does from outside, so the
 // game's own code is untouched), then run it a day at a time.
 // ---------------------------------------------------------------------------
-function installProbe(seed) {
+function installProbe({ seed, wizard }) {
   Math.random = mulberry32(seed); // every R.* draw goes through Math.random
   startGame(true); // a fresh village in the original valley
+  if (!wizard) WIZARD.chance = 0;
   Game.generating = true; // the page's own frames neither run the village nor draw between our steps
   const P = window.__probe = {
     seed, t0: Game.time, day0: Game.day, ms: 0,
@@ -65,6 +72,29 @@ function installProbe(seed) {
   grantWish = function () { P.wishes++; return gw.apply(this, arguments); };
   const ap = archivePerson;
   archivePerson = function (v, reason) { P.departed[reason] = (P.departed[reason] || 0) + 1; return ap.apply(this, arguments); };
+  // natters: each one begun (the task of whoever walked up), the lines said in
+  // them, and the talk round tables and at gatherings, line by line
+  P.natters = 0; P.natterLines = 0; P.groupTalks = 0; P.groupLines = 0; P.natterSeen = new WeakSet();
+  const ltl = logTalkLine;
+  logTalkLine = function () { P.natterLines++; return ltl.apply(this, arguments); };
+  const tgt = talkGroupThread;
+  talkGroupThread = function () { P.groupTalks++; return tgt.apply(this, arguments); };
+  const lgl = logGroupLine;
+  logGroupLine = function (th, who, text) { if (text && th && talksList().includes(th)) P.groupLines++; return lgl.apply(this, arguments); };
+  // with the natters on Bree: what passed between them
+  P.bree = null;
+  if (typeof Shell !== 'undefined' && Shell.w && Shell.w.bree && Shell.w.bree.kinds.size) {
+    const B = P.bree = { kinds: {}, ends: {}, outcomes: {}, escalated: 0, calmed: 0, steppedIn: 0, grudges: 0, mended: 0, feuds: 0, witnessed: 0 };
+    const w = Shell.w, inc = (o, k) => { o[k] = (o[k] || 0) + 1; };
+    w.on('bree:start', (e) => inc(B.kinds, e.kind));
+    w.on('bree:end', (e) => { inc(B.ends, e.why); inc(B.outcomes[e.kind] || (B.outcomes[e.kind] = {}), e.outcome); });
+    w.on('bree:escalated', () => B.escalated++);
+    w.on('bree:turn', (t) => { if (t.step === 'calm') B.calmed++; else if (t.step === 'step_in') B.steppedIn++; });
+    w.on('bree:grudge', () => B.grudges++);
+    w.on('bree:mended', () => B.mended++);
+    w.on('bree:feud', (e) => { if (e.strength > 0) B.feuds++; });
+    w.on('bree:witnessed', () => B.witnessed++);
+  }
   const sa = startAdventure;
   startAdventure = function (v, k) { if (k === 'trip') P.trips++; return sa.apply(this, arguments); };
   const snap = () => ({
@@ -112,6 +142,7 @@ function runDay() {
         const cat = !t ? 'idle' : v.leaving ? 'away' : t.phase === 'go' ? 'travel' : P.kind(t.a);
         P.cat[cat] = (P.cat[cat] || 0) + 1;
         if (t) { const id = t.a.id + (t.phase === 'go' ? ':go' : ''); P.mins[id] = (P.mins[id] || 0) + 1; }
+        if (t && t.a.id === 'chat' && t.phase === 'do' && t.data && t.data.leader && !P.natterSeen.has(t)) { P.natterSeen.add(t); P.natters++; }
         const asleep = t && t.a.id === 'sleep' && t.phase === 'do';
         if (!asleep) { P.awake++; if (v.drives.hunger >= hungerT) P.hungry++; }
         P.alive++;
@@ -221,6 +252,12 @@ function report() {
     needs,
     breaks: { sulks: P.sulks, tantrums: P.tantrums, total: sum(P.sulks) + P.tantrums, inspired: B('inspired') },
     bonds: { friendsStart: s0.pairs.friends.length, friendsEnd: s1.pairs.friends.length, formed, foesStart: s0.pairs.foes.length, foesEnd: s1.pairs.foes.length, fellOut, rivals: s1.rivals, quarrels: B('quarrel'), goodChats: B('good_chat') },
+    talk: {
+      natters: P.natters, natterLines: P.natterLines, linesPerNatter: r2(P.natterLines / Math.max(1, P.natters)),
+      walkedOff: B('snubbed'), longNatters: B('long_chat'), goodNatters: B('good_chat'), quarrels: B('quarrel'),
+      groupTalks: P.groupTalks, groupLines: P.groupLines, tableTalk: B('table_talk'), sawRow: B('saw_row'), madeUp: B('made_up'),
+    },
+    bree: P.bree ? { ...P.bree, grudgesHeld: Game.villagers.reduce((t, v) => t + (Shell.w.bree.grudges(v._pid) || []).length, 0), feudsNow: Shell.w.bree.feuds().length } : undefined,
     illness: { colds: P.colds, other: P.ills, poisoned: P.poisoned, sickShare: r2(P.sick / Math.max(1, P.alive)) },
     skills: { gained: Math.round(gained), perVillager: r2(gained / Math.max(1, both.length)), levelUps },
     wishes: { granted: P.wishes, dreams: s1.dreams - s0.dreams },
@@ -252,7 +289,11 @@ const KEY = [
   ['food made', 'goods.foodMade'], ['food eaten', 'goods.foodUsed'], ['food in the Store at the end', 'stores.series.food.end'], ['lowest food in the Store', 'stores.series.food.min'],
   ['grain at the end', 'stores.series.grain.end'], ['ale at the end', 'stores.series.ale.end'], ['timber at the end', 'stores.series.wood.end'], ['coin at the end', 'stores.coin.end'],
   ['weddings', 'life.weddings'], ['births', 'life.births'], ['mood, mean', 'mood.mean'], ['mood, lowest tenth', 'mood.p10'], ['mood, highest tenth', 'mood.p90'],
-  ['breaks', 'breaks.total'], ['friendships formed', 'bonds.formed'], ['falling-outs', 'bonds.fellOut'], ['quarrels', 'bonds.quarrels'], ['colds caught', 'illness.colds'], ['time sick', 'illness.sickShare'],
+  ['breaks', 'breaks.total'], ['friendships formed', 'bonds.formed'], ['falling-outs', 'bonds.fellOut'], ['quarrels', 'bonds.quarrels'], ['good natters', 'bonds.goodChats'], ['colds caught', 'illness.colds'], ['time sick', 'illness.sickShare'],
+  ['natters begun', 'talk.natters'], ['lines said in natters', 'talk.natterLines'], ['lines a natter', 'talk.linesPerNatter'], ['natters someone walked off from', 'talk.walkedOff'], ['long natters (each one\'s)', 'talk.longNatters'],
+  ['table talks and gatherings', 'talk.groupTalks'], ['lines said round them', 'talk.groupLines'], ['good company at table (felt)', 'talk.tableTalk'],
+  ['saw a squabble', 'talk.sawRow'], ['made it up', 'talk.madeUp'], ['grudges formed or deepened', 'bree.grudges'], ['grudges held at the end', 'bree.grudgesHeld'], ['feuds', 'bree.feuds'],
+  ['natters turned squabbles', 'bree.escalated'], ['kept their patience', 'bree.calmed'], ['stepped in', 'bree.steppedIn'],
   ['skill points gained per villager', 'skills.perVillager'], ['skill levels gained', 'skills.levelUps'], ['wishes granted', 'wishes.granted'],
   ['time asleep', 'timeUse.sleep'], ['time working', 'timeUse.work'], ['time eating', 'timeUse.eat'], ['time with others', 'timeUse.social'], ['time at leisure', 'timeUse.leisure'], ['time walking', 'timeUse.travel'], ['time idle', 'timeUse.idle'],
   ['milliseconds per day simulated', 'msPerDay'],
@@ -281,7 +322,7 @@ async function main() {
   try {
     for (const seed of seeds) {
       const { page, errors } = await openGame(kit);
-      const start = await page.evaluate(installProbe, seed);
+      const start = await page.evaluate(installProbe, { seed, wizard: !process.argv.includes('--no-wizard') });
       const n = days || (await page.evaluate(() => SEASON_DAYS));
       for (let d = 0; d < n; d++) {
         const r = await page.evaluate(runDay);

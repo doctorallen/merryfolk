@@ -1,0 +1,3515 @@
+{
+ "days": 6,
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6
+ ],
+ "built": "2026-10-28",
+ "runs": [
+  {
+   "seed": 1,
+   "days": 6,
+   "msPerDay": 4579,
+   "folk": {
+    "start": 26,
+    "end": 31,
+    "stagesStart": {
+     "adult": 17,
+     "child": 7,
+     "baby": 1,
+     "elder": 1
+    },
+    "stagesEnd": {
+     "adult": 25,
+     "elder": 3,
+     "child": 2,
+     "baby": 1
+    }
+   },
+   "meals": {
+    "perVillagerDay": 2.53,
+    "villagerDays": 154,
+    "underTwoShare": 0.09,
+    "noneShare": 0.01,
+    "hungryShare": 0.02,
+    "byKind": {
+     "eat_home": 216,
+     "eat_inn": 192
+    }
+   },
+   "work": {
+    "workersPerDay": 22.05,
+    "hoursPerWorkerDay": 2.14,
+    "commutePerWorkerDay": 4.89,
+    "byJob": {
+     "mailcarrier": {
+      "workers": 1,
+      "hoursPerDay": 1.09,
+      "commutePerDay": 8.06
+     },
+     "woodwright": {
+      "workers": 2.45,
+      "hoursPerDay": 2.9,
+      "commutePerDay": 4.3
+     },
+     "brewer": {
+      "workers": 1.13,
+      "hoursPerDay": 1.93,
+      "commutePerDay": 4.66
+     },
+     "baker": {
+      "workers": 1.78,
+      "hoursPerDay": 2.35,
+      "commutePerDay": 3.25
+     },
+     "miller": {
+      "workers": 1.11,
+      "hoursPerDay": 1.21,
+      "commutePerDay": 5.45
+     },
+     "orchardist": {
+      "workers": 1,
+      "hoursPerDay": 1.82,
+      "commutePerDay": 7.47
+     },
+     "farmer": {
+      "workers": 4.39,
+      "hoursPerDay": 2.48,
+      "commutePerDay": 5.05
+     },
+     "lamplighter": {
+      "workers": 2,
+      "hoursPerDay": 0.64,
+      "commutePerDay": 3.85
+     },
+     "grower": {
+      "workers": 1,
+      "hoursPerDay": 1.29,
+      "commutePerDay": 7.96
+     },
+     "fisher": {
+      "workers": 2.56,
+      "hoursPerDay": 2.91,
+      "commutePerDay": 3.67
+     },
+     "innkeeper": {
+      "workers": 1.56,
+      "hoursPerDay": 3,
+      "commutePerDay": 5.58
+     },
+     "herbalist": {
+      "workers": 1,
+      "hoursPerDay": 1.83,
+      "commutePerDay": 4.1
+     },
+     "storyteller": {
+      "workers": 0.52,
+      "hoursPerDay": 1.94,
+      "commutePerDay": 1.51
+     },
+     "herder": {
+      "workers": 0.56,
+      "hoursPerDay": 2.1,
+      "commutePerDay": 7.1
+     }
+    },
+    "done": {
+     "innkeeper_serve": 357,
+     "deliver": 190,
+     "work_lamps": 164,
+     "innkeeper_fetch": 88,
+     "work_fish": 54,
+     "fisher_gut": 52,
+     "fisher_bait": 51,
+     "mailcarrier_round": 43,
+     "innkeeper_bring": 42,
+     "work_farm": 39,
+     "farmer_weed": 37,
+     "farmer_rest": 36,
+     "baker_knead": 29,
+     "baker_cool": 29,
+     "work_bake": 26,
+     "build": 26,
+     "baker_tostore": 22,
+     "innkeeper_cook": 19,
+     "innkeeper_sweep": 18,
+     "work_allot": 18,
+     "baker_sweep": 17,
+     "mailcarrier_collect": 16,
+     "farmer_fetchwater": 16,
+     "farmer_water": 16,
+     "farmer_fence": 14,
+     "work_orchard": 14,
+     "orchardist_prune": 13,
+     "orchardist_hives": 13,
+     "work_brew": 13,
+     "mailcarrier_sort": 12,
+     "brewer_malt": 12,
+     "brewer_mash": 12,
+     "work_herb": 12,
+     "work_wood": 12,
+     "woodwright_lop": 12,
+     "work_leaf": 11,
+     "work_mill": 11,
+     "herbalist_dry": 11,
+     "brewer_tap": 11,
+     "herbalist_grind": 11,
+     "innkeeper_clear": 11,
+     "miller_bag": 10,
+     "herbalist_beds": 10,
+     "grower_hang": 10,
+     "innkeeper_fire": 10,
+     "brewer_barley": 8,
+     "brewer_barrel": 8,
+     "work_story": 7,
+     "woodwright_stack": 6,
+     "woodwright_saw": 6,
+     "miller_sacks": 6,
+     "herder_bedding": 6,
+     "herder_brush": 6,
+     "grower_hoe": 5,
+     "innkeeper_keg": 5,
+     "work_herd": 5,
+     "herder_water": 5,
+     "herder_muck": 5,
+     "farmer_eggs": 4,
+     "miller_tobakery": 4,
+     "herder_feed": 4,
+     "herder_fetchwater": 4,
+     "work_mail": 3,
+     "innkeeper_regulars": 2,
+     "baker_flour": 2,
+     "nurse": 1
+    },
+    "doneTotal": 1752
+   },
+   "timeUse": {
+    "travel": 0.42,
+    "sleep": 0.22,
+    "leisure": 0.12,
+    "eat": 0.11,
+    "work": 0.07,
+    "idle": 0.03,
+    "social": 0.03,
+    "school": 0,
+    "away": 0
+   },
+   "hoursPerDay": {
+    "sleep": 5.27,
+    "eat_inn": 1.68,
+    "eat_inn:go": 0.98,
+    "eat_home": 0.9,
+    "sleep:go": 0.9,
+    "ale": 0.86,
+    "deliver:go": 0.76,
+    "eat_home:go": 0.67,
+    "party:go": 0.56,
+    "tea:go": 0.54,
+    "ale:go": 0.4,
+    "tea": 0.39,
+    "party": 0.36,
+    "work_lamps:go": 0.28,
+    "chat:go": 0.24,
+    "well:go": 0.23,
+    "putter": 0.22,
+    "chat": 0.21,
+    "work_fish": 0.2,
+    "build": 0.19,
+    "mailcarrier_round:go": 0.18,
+    "build:go": 0.18,
+    "gather:go": 0.18,
+    "innkeeper_serve:go": 0.17,
+    "hobby_collecting:go": 0.17,
+    "market:go": 0.17,
+    "work_fish:go": 0.16,
+    "tag_along": 0.15,
+    "farmer_rest:go": 0.15,
+    "sleep_rough": 0.14
+   },
+   "goods": {
+    "foodMade": 594,
+    "foodUsed": 421,
+    "made": {
+     "grain": 539,
+     "flour": 143,
+     "bread": 124,
+     "ale": 98,
+     "egg": 76,
+     "veg": 74,
+     "leaf": 64,
+     "wood": 49,
+     "stew": 49,
+     "fish": 43,
+     "apple": 28,
+     "pie": 18,
+     "herbs": 16,
+     "cake": 15,
+     "scrap": 10,
+     "honey": 7,
+     "remedy": 6,
+     "cheese": 4,
+     "wool": 1
+    },
+    "used": {
+     "grain": 158,
+     "flour": 120,
+     "ale": 65,
+     "wood": 59,
+     "veg": 53,
+     "bread": 39,
+     "fish": 29,
+     "stew": 23,
+     "apple": 16,
+     "herbs": 12,
+     "leaf": 9,
+     "honey": 6,
+     "cake": 5,
+     "pie": 4,
+     "mush": 2,
+     "remedy": 1
+    },
+    "madeAtHome": {
+     "bread": 94,
+     "veg": 53,
+     "mush": 16
+    },
+    "usedAtHome": {
+     "bread": 99,
+     "veg": 78,
+     "egg": 32,
+     "mush": 13,
+     "pie": 12,
+     "fish": 9,
+     "cheese": 5,
+     "cake": 2
+    }
+   },
+   "stores": {
+    "series": {
+     "food": {
+      "start": 90,
+      "min": 45,
+      "max": 132,
+      "end": 45
+     },
+     "grain": {
+      "start": 24,
+      "min": 12,
+      "max": 320,
+      "end": 320
+     },
+     "flour": {
+      "start": 8,
+      "min": 0,
+      "max": 20,
+      "end": 11
+     },
+     "bread": {
+      "start": 24,
+      "min": 0,
+      "max": 66,
+      "end": 0
+     },
+     "ale": {
+      "start": 30,
+      "min": 17,
+      "max": 37,
+      "end": 17
+     },
+     "wood": {
+      "start": 36,
+      "min": 19,
+      "max": 44,
+      "end": 26
+     }
+    },
+    "foodHourly": {
+     "min": 45,
+     "max": 132
+    },
+    "end": {
+     "grain": 320,
+     "flour": 9,
+     "bread": 0,
+     "pie": 0,
+     "cake": 0,
+     "veg": 0,
+     "fish": 0,
+     "mush": 0,
+     "apple": 14,
+     "egg": 31,
+     "honey": 6,
+     "stew": 0,
+     "ale": 17,
+     "leaf": 60,
+     "wood": 26,
+     "herbs": 8,
+     "remedy": 8,
+     "cheese": 0,
+     "wool": 11,
+     "scrap": 10
+    },
+    "coin": {
+     "start": 20,
+     "end": 37
+    }
+   },
+   "life": {
+    "weddings": 0,
+    "births": 3,
+    "departed": {
+     "adventure": 1
+    },
+    "trips": 2,
+    "couplesEnd": 6.5,
+    "sweetheartsEnd": 15
+   },
+   "mood": {
+    "mean": 0.62,
+    "p10": 0.37,
+    "p50": 0.62,
+    "p90": 0.89,
+    "buckets": {
+     "put out (<0.2)": 0.01,
+     "grumbly (0.2-0.4)": 0.12,
+     "middling (0.4-0.6)": 0.33,
+     "content (0.6-0.8)": 0.35,
+     "merry (>0.8)": 0.19
+    },
+    "byDay": [
+     0.66,
+     0.69,
+     0.63,
+     0.64,
+     0.58,
+     0.53
+    ],
+    "contentment": [
+     82,
+     81,
+     78,
+     75,
+     65,
+     68
+    ]
+   },
+   "needs": {
+    "hunger": 0.42,
+    "thirst": 0.41,
+    "tired": 0.38,
+    "lonely": 0.3,
+    "bored": 0.09,
+    "craving": 0.49,
+    "cold": 0.06,
+    "ache": 0,
+    "industry": 0.16,
+    "comfort": 0.45,
+    "crowded": 0.02,
+    "unease": 0.12
+   },
+   "breaks": {
+    "sulks": {},
+    "tantrums": 0,
+    "total": 0,
+    "inspired": 4
+   },
+   "bonds": {
+    "friendsStart": 25,
+    "friendsEnd": 67,
+    "formed": 44,
+    "foesStart": 0,
+    "foesEnd": 0,
+    "fellOut": 0,
+    "rivals": 4,
+    "quarrels": 0,
+    "goodChats": 16
+   },
+   "talk": {
+    "natters": 44,
+    "natterLines": 243,
+    "linesPerNatter": 5.52,
+    "walkedOff": 2,
+    "longNatters": 30,
+    "goodNatters": 16,
+    "quarrels": 0,
+    "groupTalks": 75,
+    "groupLines": 546,
+    "tableTalk": 415,
+    "sawRow": 0,
+    "madeUp": 0
+   },
+   "illness": {
+    "colds": 0,
+    "other": {
+     "sprain": 3
+    },
+    "poisoned": 1,
+    "sickShare": 0
+   },
+   "skills": {
+    "gained": 174,
+    "perVillager": 7.26,
+    "levelUps": 3
+   },
+   "wishes": {
+    "granted": 55,
+    "dreams": 1
+   },
+   "feelings": {
+    "festival": 5299,
+    "sunshine": 2106,
+    "soaked": 868,
+    "unsettled": 575,
+    "gossip": 508,
+    "table_talk": 415,
+    "well_slept": 132,
+    "liked": 88,
+    "cozy": 84,
+    "pet": 81,
+    "party": 66,
+    "fav_food": 61,
+    "wish": 55,
+    "singsong": 46,
+    "present": 36,
+    "gave_gift": 34,
+    "long_chat": 30,
+    "wish_lost": 28,
+    "heartened": 24,
+    "bad_food": 22,
+    "good_chat": 16,
+    "parched": 16,
+    "birthday": 12,
+    "weathered": 12,
+    "gathered": 11,
+    "uneasy": 11,
+    "new_pet": 10,
+    "made_piece": 10,
+    "new_baby": 9,
+    "market": 5,
+    "vexed": 5,
+    "special": 4,
+    "inspired": 4,
+    "disliked": 4,
+    "turned": 4,
+    "got_letter": 3,
+    "sprained": 3,
+    "slept_rough": 3,
+    "missed": 3,
+    "dyn_close": 2,
+    "won": 2,
+    "snubbed": 2,
+    "supper": 2,
+    "crowned": 1,
+    "bad_tip": 1,
+    "dream": 1
+   }
+  },
+  {
+   "seed": 2,
+   "days": 6,
+   "msPerDay": 5220,
+   "folk": {
+    "start": 26,
+    "end": 32,
+    "stagesStart": {
+     "adult": 15,
+     "child": 7,
+     "baby": 1,
+     "elder": 3
+    },
+    "stagesEnd": {
+     "elder": 5,
+     "adult": 24,
+     "child": 2,
+     "baby": 1
+    }
+   },
+   "meals": {
+    "perVillagerDay": 2.48,
+    "villagerDays": 168,
+    "underTwoShare": 0.13,
+    "noneShare": 0.02,
+    "hungryShare": 0.02,
+    "byKind": {
+     "eat_home": 242,
+     "eat_inn": 177
+    }
+   },
+   "work": {
+    "workersPerDay": 22.05,
+    "hoursPerWorkerDay": 1.83,
+    "commutePerWorkerDay": 4.94,
+    "byJob": {
+     "farmer": {
+      "workers": 4.02,
+      "hoursPerDay": 2.24,
+      "commutePerDay": 5.37
+     },
+     "brewer": {
+      "workers": 1,
+      "hoursPerDay": 2,
+      "commutePerDay": 6.04
+     },
+     "mailcarrier": {
+      "workers": 1,
+      "hoursPerDay": 0.93,
+      "commutePerDay": 6.51
+     },
+     "miller": {
+      "workers": 1.22,
+      "hoursPerDay": 1.12,
+      "commutePerDay": 6.16
+     },
+     "innkeeper": {
+      "workers": 1.83,
+      "hoursPerDay": 3.11,
+      "commutePerDay": 5.61
+     },
+     "herbalist": {
+      "workers": 1,
+      "hoursPerDay": 1.83,
+      "commutePerDay": 5.06
+     },
+     "baker": {
+      "workers": 2.39,
+      "hoursPerDay": 1.58,
+      "commutePerDay": 3.02
+     },
+     "lamplighter": {
+      "workers": 1.78,
+      "hoursPerDay": 0.7,
+      "commutePerDay": 5.17
+     },
+     "orchardist": {
+      "workers": 1,
+      "hoursPerDay": 1.66,
+      "commutePerDay": 5.91
+     },
+     "storyteller": {
+      "workers": 1,
+      "hoursPerDay": 2,
+      "commutePerDay": 1.41
+     },
+     "woodwright": {
+      "workers": 2.39,
+      "hoursPerDay": 2.02,
+      "commutePerDay": 4.02
+     },
+     "herder": {
+      "workers": 1,
+      "hoursPerDay": 2.44,
+      "commutePerDay": 8.11
+     },
+     "fisher": {
+      "workers": 1.17,
+      "hoursPerDay": 2.25,
+      "commutePerDay": 3.06
+     },
+     "grower": {
+      "workers": 0.72,
+      "hoursPerDay": 1.43,
+      "commutePerDay": 9.26
+     },
+     "tinker": {
+      "workers": 0.3,
+      "hoursPerDay": 0,
+      "commutePerDay": 0
+     },
+     "nanny": {
+      "workers": 0.22,
+      "hoursPerDay": 0.02,
+      "commutePerDay": 0.48
+     }
+    },
+    "done": {
+     "innkeeper_serve": 372,
+     "deliver": 163,
+     "work_lamps": 162,
+     "innkeeper_fetch": 117,
+     "innkeeper_bring": 73,
+     "work_farm": 36,
+     "mailcarrier_round": 34,
+     "farmer_rest": 33,
+     "farmer_weed": 32,
+     "baker_knead": 28,
+     "innkeeper_cook": 27,
+     "farmer_fetchwater": 26,
+     "farmer_water": 26,
+     "work_bake": 24,
+     "baker_cool": 23,
+     "farmer_fence": 19,
+     "innkeeper_clear": 19,
+     "build": 19,
+     "work_fish": 18,
+     "fisher_gut": 18,
+     "fisher_bait": 18,
+     "baker_sweep": 17,
+     "innkeeper_sweep": 15,
+     "work_herd": 14,
+     "mailcarrier_collect": 13,
+     "baker_tostore": 12,
+     "work_brew": 12,
+     "herder_brush": 12,
+     "innkeeper_keg": 12,
+     "orchardist_prune": 11,
+     "work_orchard": 11,
+     "brewer_tap": 11,
+     "woodwright_lop": 11,
+     "orchardist_hives": 11,
+     "work_herb": 11,
+     "herbalist_dry": 11,
+     "herbalist_grind": 11,
+     "herder_feed": 10,
+     "work_mill": 10,
+     "miller_bag": 10,
+     "brewer_barrel": 10,
+     "work_wood": 10,
+     "brewer_malt": 10,
+     "herder_fetchwater": 9,
+     "herder_water": 9,
+     "mailcarrier_sort": 9,
+     "brewer_mash": 9,
+     "herder_muck": 9,
+     "miller_tobakery": 9,
+     "woodwright_saw": 9,
+     "herbalist_beds": 9,
+     "miller_sacks": 9,
+     "innkeeper_wash": 9,
+     "brewer_barley": 8,
+     "work_story": 8,
+     "work_leaf": 8,
+     "baker_flour": 7,
+     "farmer_eggs": 7,
+     "work_allot": 7,
+     "work_mail": 7,
+     "grower_hang": 7,
+     "grower_hoe": 7,
+     "herder_bedding": 6,
+     "woodwright_stack": 5,
+     "innkeeper_fire": 4,
+     "innkeeper_regulars": 2,
+     "nurse": 1
+    },
+    "doneTotal": 1716
+   },
+   "timeUse": {
+    "travel": 0.42,
+    "sleep": 0.23,
+    "leisure": 0.12,
+    "eat": 0.1,
+    "work": 0.06,
+    "social": 0.04,
+    "idle": 0.03,
+    "school": 0,
+    "away": 0
+   },
+   "hoursPerDay": {
+    "sleep": 5.49,
+    "eat_inn": 1.54,
+    "eat_home": 0.98,
+    "sleep:go": 0.86,
+    "eat_home:go": 0.85,
+    "eat_inn:go": 0.79,
+    "deliver:go": 0.69,
+    "ale": 0.69,
+    "party": 0.55,
+    "party:go": 0.55,
+    "tea:go": 0.45,
+    "ale:go": 0.39,
+    "tea": 0.36,
+    "chat:go": 0.33,
+    "work_lamps:go": 0.32,
+    "chat": 0.3,
+    "well:go": 0.24,
+    "farmer_water:go": 0.21,
+    "tag_along": 0.2,
+    "sleep_rough": 0.2,
+    "putter": 0.19,
+    "innkeeper_serve:go": 0.19,
+    "gather:go": 0.19,
+    "market:go": 0.16,
+    "smoke": 0.15,
+    "mailcarrier_round:go": 0.13,
+    "smoke:go": 0.13,
+    "build:go": 0.13,
+    "work_wood:go": 0.12,
+    "bake_home": 0.11
+   },
+   "goods": {
+    "foodMade": 519,
+    "foodUsed": 445,
+    "made": {
+     "grain": 550,
+     "flour": 130,
+     "ale": 108,
+     "bread": 98,
+     "egg": 74,
+     "leaf": 46,
+     "wood": 40,
+     "stew": 40,
+     "veg": 35,
+     "herbs": 28,
+     "pie": 22,
+     "apple": 21,
+     "fish": 18,
+     "cheese": 15,
+     "scrap": 14,
+     "cake": 14,
+     "wool": 9,
+     "honey": 6,
+     "remedy": 1
+    },
+    "used": {
+     "grain": 144,
+     "flour": 118,
+     "bread": 65,
+     "ale": 63,
+     "veg": 40,
+     "wood": 39,
+     "apple": 18,
+     "fish": 17,
+     "stew": 16,
+     "pie": 11,
+     "leaf": 8,
+     "honey": 4,
+     "herbs": 2,
+     "wool": 1,
+     "remedy": 1
+    },
+    "madeAtHome": {
+     "bread": 92,
+     "veg": 70,
+     "mush": 20
+    },
+    "usedAtHome": {
+     "bread": 95,
+     "veg": 94,
+     "egg": 33,
+     "mush": 18,
+     "cake": 13,
+     "cheese": 12,
+     "pie": 7,
+     "fish": 5,
+     "apple": 1
+    }
+   },
+   "stores": {
+    "series": {
+     "food": {
+      "start": 90,
+      "min": 17,
+      "max": 90,
+      "end": 32
+     },
+     "grain": {
+      "start": 24,
+      "min": 8,
+      "max": 320,
+      "end": 320
+     },
+     "flour": {
+      "start": 8,
+      "min": 0,
+      "max": 22,
+      "end": 0
+     },
+     "bread": {
+      "start": 24,
+      "min": 0,
+      "max": 24,
+      "end": 0
+     },
+     "ale": {
+      "start": 30,
+      "min": 27,
+      "max": 46,
+      "end": 27
+     },
+     "wood": {
+      "start": 36,
+      "min": 33,
+      "max": 51,
+      "end": 37
+     }
+    },
+    "foodHourly": {
+     "min": 17,
+     "max": 90
+    },
+    "end": {
+     "grain": 320,
+     "flour": 0,
+     "bread": 0,
+     "pie": 0,
+     "cake": 0,
+     "veg": 0,
+     "fish": 0,
+     "mush": 0,
+     "apple": 2,
+     "egg": 28,
+     "honey": 7,
+     "stew": 0,
+     "ale": 27,
+     "leaf": 54,
+     "wood": 37,
+     "herbs": 30,
+     "remedy": 3,
+     "cheese": 2,
+     "wool": 18,
+     "scrap": 14
+    },
+    "coin": {
+     "start": 20,
+     "end": 72
+    }
+   },
+   "life": {
+    "weddings": 1,
+    "births": 3,
+    "departed": {},
+    "trips": 2,
+    "couplesEnd": 8,
+    "sweetheartsEnd": 20
+   },
+   "mood": {
+    "mean": 0.62,
+    "p10": 0.34,
+    "p50": 0.63,
+    "p90": 0.87,
+    "buckets": {
+     "put out (<0.2)": 0.02,
+     "grumbly (0.2-0.4)": 0.13,
+     "middling (0.4-0.6)": 0.28,
+     "content (0.6-0.8)": 0.38,
+     "merry (>0.8)": 0.18
+    },
+    "byDay": [
+     0.63,
+     0.67,
+     0.63,
+     0.63,
+     0.59,
+     0.55
+    ],
+    "contentment": [
+     81,
+     79,
+     73,
+     76,
+     65,
+     69
+    ]
+   },
+   "needs": {
+    "hunger": 0.43,
+    "thirst": 0.42,
+    "tired": 0.38,
+    "lonely": 0.29,
+    "bored": 0.11,
+    "craving": 0.46,
+    "cold": 0.06,
+    "ache": 0,
+    "industry": 0.17,
+    "comfort": 0.45,
+    "crowded": 0.01,
+    "unease": 0.14
+   },
+   "breaks": {
+    "sulks": {},
+    "tantrums": 0,
+    "total": 0,
+    "inspired": 1
+   },
+   "bonds": {
+    "friendsStart": 25,
+    "friendsEnd": 68,
+    "formed": 43,
+    "foesStart": 0,
+    "foesEnd": 0,
+    "fellOut": 0,
+    "rivals": 4,
+    "quarrels": 0,
+    "goodChats": 29
+   },
+   "talk": {
+    "natters": 53,
+    "natterLines": 338,
+    "linesPerNatter": 6.38,
+    "walkedOff": 1,
+    "longNatters": 46,
+    "goodNatters": 29,
+    "quarrels": 0,
+    "groupTalks": 75,
+    "groupLines": 530,
+    "tableTalk": 448,
+    "sawRow": 0,
+    "madeUp": 0
+   },
+   "illness": {
+    "colds": 0,
+    "other": {
+     "sprain": 2
+    },
+    "poisoned": 2,
+    "sickShare": 0
+   },
+   "skills": {
+    "gained": 191,
+    "perVillager": 7.33,
+    "levelUps": 6
+   },
+   "wishes": {
+    "granted": 54,
+    "dreams": 1
+   },
+   "feelings": {
+    "festival": 5376,
+    "sunshine": 2125,
+    "soaked": 847,
+    "unsettled": 784,
+    "gossip": 541,
+    "table_talk": 448,
+    "well_slept": 144,
+    "party": 94,
+    "liked": 84,
+    "cozy": 82,
+    "wish": 54,
+    "present": 50,
+    "gave_gift": 48,
+    "long_chat": 46,
+    "fav_food": 44,
+    "bad_food": 41,
+    "pet": 38,
+    "good_chat": 29,
+    "singsong": 28,
+    "wish_lost": 27,
+    "vexed": 22,
+    "heartened": 21,
+    "parched": 17,
+    "weathered": 17,
+    "uneasy": 14,
+    "gathered": 13,
+    "birthday": 13,
+    "made_piece": 11,
+    "new_pet": 10,
+    "bday_guest": 10,
+    "got_letter": 9,
+    "new_baby": 8,
+    "dyn_close": 6,
+    "supper": 6,
+    "slept_rough": 5,
+    "market": 5,
+    "disliked": 4,
+    "saw_wed": 4,
+    "dyn_jokers": 2,
+    "special": 2,
+    "sprained": 2,
+    "wedding": 2,
+    "turned": 2,
+    "good_tip": 1,
+    "snubbed": 1,
+    "crowned": 1,
+    "flowers": 1,
+    "inspired": 1,
+    "won": 1,
+    "dream": 1,
+    "leaving_thoughts": 1
+   }
+  },
+  {
+   "seed": 3,
+   "days": 6,
+   "msPerDay": 3893,
+   "folk": {
+    "start": 26,
+    "end": 32,
+    "stagesStart": {
+     "adult": 15,
+     "child": 7,
+     "baby": 1,
+     "elder": 3
+    },
+    "stagesEnd": {
+     "adult": 25,
+     "elder": 4,
+     "child": 2,
+     "baby": 1
+    }
+   },
+   "meals": {
+    "perVillagerDay": 2.6,
+    "villagerDays": 168,
+    "underTwoShare": 0.11,
+    "noneShare": 0.01,
+    "hungryShare": 0.02,
+    "byKind": {
+     "eat_home": 248,
+     "eat_inn": 191
+    }
+   },
+   "work": {
+    "workersPerDay": 22.13,
+    "hoursPerWorkerDay": 1.79,
+    "commutePerWorkerDay": 4.75,
+    "byJob": {
+     "miller": {
+      "workers": 1.22,
+      "hoursPerDay": 1.54,
+      "commutePerDay": 6.69
+     },
+     "farmer": {
+      "workers": 4.56,
+      "hoursPerDay": 1.86,
+      "commutePerDay": 5.19
+     },
+     "fisher": {
+      "workers": 2,
+      "hoursPerDay": 2.75,
+      "commutePerDay": 3.79
+     },
+     "brewer": {
+      "workers": 1,
+      "hoursPerDay": 1.84,
+      "commutePerDay": 5.31
+     },
+     "lamplighter": {
+      "workers": 2,
+      "hoursPerDay": 0.68,
+      "commutePerDay": 4.45
+     },
+     "baker": {
+      "workers": 2,
+      "hoursPerDay": 1.4,
+      "commutePerDay": 3.2
+     },
+     "mailcarrier": {
+      "workers": 1,
+      "hoursPerDay": 0.99,
+      "commutePerDay": 6.77
+     },
+     "woodwright": {
+      "workers": 3.34,
+      "hoursPerDay": 2.21,
+      "commutePerDay": 4.63
+     },
+     "storyteller": {
+      "workers": 1,
+      "hoursPerDay": 2.27,
+      "commutePerDay": 1.1
+     },
+     "herbalist": {
+      "workers": 1,
+      "hoursPerDay": 1.54,
+      "commutePerDay": 2.43
+     },
+     "orchardist": {
+      "workers": 1,
+      "hoursPerDay": 1.38,
+      "commutePerDay": 6.05
+     },
+     "innkeeper": {
+      "workers": 1,
+      "hoursPerDay": 3.29,
+      "commutePerDay": 7.25
+     },
+     "grower": {
+      "workers": 0.72,
+      "hoursPerDay": 0.89,
+      "commutePerDay": 7.91
+     },
+     "tinker": {
+      "workers": 0.28,
+      "hoursPerDay": 0.67,
+      "commutePerDay": 0.76
+     }
+    },
+    "done": {
+     "innkeeper_serve": 273,
+     "work_lamps": 173,
+     "deliver": 157,
+     "innkeeper_fetch": 72,
+     "work_fish": 41,
+     "mailcarrier_round": 41,
+     "fisher_gut": 40,
+     "fisher_bait": 40,
+     "innkeeper_bring": 37,
+     "farmer_weed": 35,
+     "work_farm": 35,
+     "farmer_rest": 30,
+     "build": 29,
+     "baker_knead": 20,
+     "work_bake": 19,
+     "baker_cool": 18,
+     "work_mill": 16,
+     "miller_bag": 16,
+     "woodwright_lop": 16,
+     "farmer_fetchwater": 15,
+     "work_wood": 15,
+     "farmer_water": 15,
+     "farmer_fence": 15,
+     "mailcarrier_collect": 14,
+     "woodwright_stack": 13,
+     "innkeeper_cook": 13,
+     "mailcarrier_sort": 12,
+     "work_brew": 12,
+     "herbalist_dry": 11,
+     "brewer_mash": 10,
+     "work_herb": 10,
+     "orchardist_prune": 10,
+     "work_orchard": 10,
+     "woodwright_saw": 10,
+     "baker_flour": 10,
+     "work_story": 10,
+     "miller_sacks": 10,
+     "brewer_malt": 10,
+     "herbalist_beds": 9,
+     "brewer_barley": 9,
+     "orchardist_hives": 9,
+     "brewer_tap": 9,
+     "miller_tobakery": 9,
+     "baker_tostore": 8,
+     "work_allot": 8,
+     "innkeeper_sweep": 7,
+     "innkeeper_clear": 7,
+     "baker_sweep": 7,
+     "herbalist_grind": 6,
+     "brewer_barrel": 5,
+     "innkeeper_fire": 4,
+     "innkeeper_keg": 4,
+     "innkeeper_regulars": 4,
+     "work_leaf": 4,
+     "grower_hang": 4,
+     "grower_hoe": 4,
+     "innkeeper_wash": 3,
+     "work_mail": 2,
+     "farmer_eggs": 2
+    },
+    "doneTotal": 1457
+   },
+   "timeUse": {
+    "travel": 0.42,
+    "sleep": 0.24,
+    "leisure": 0.12,
+    "eat": 0.11,
+    "work": 0.06,
+    "social": 0.03,
+    "idle": 0.02,
+    "school": 0
+   },
+   "hoursPerDay": {
+    "sleep": 5.54,
+    "eat_inn": 1.55,
+    "eat_home": 1.03,
+    "eat_home:go": 0.96,
+    "eat_inn:go": 0.87,
+    "sleep:go": 0.78,
+    "deliver:go": 0.69,
+    "ale": 0.63,
+    "tea:go": 0.62,
+    "party:go": 0.54,
+    "tea": 0.43,
+    "party": 0.4,
+    "ale:go": 0.37,
+    "work_lamps:go": 0.31,
+    "chat:go": 0.26,
+    "build:go": 0.25,
+    "chat": 0.25,
+    "putter": 0.22,
+    "well:go": 0.2,
+    "bake_home": 0.19,
+    "smoke": 0.19,
+    "farmer_weed:go": 0.19,
+    "smoke:go": 0.18,
+    "build": 0.18,
+    "market:go": 0.18,
+    "lodge": 0.16,
+    "mailcarrier_round:go": 0.16,
+    "work_wood:go": 0.16,
+    "work_fish:go": 0.16,
+    "tag_along": 0.15
+   },
+   "goods": {
+    "foodMade": 579,
+    "foodUsed": 443,
+    "made": {
+     "grain": 601,
+     "flour": 206,
+     "bread": 125,
+     "ale": 108,
+     "egg": 78,
+     "wood": 68,
+     "veg": 33,
+     "fish": 29,
+     "stew": 27,
+     "leaf": 22,
+     "cake": 18,
+     "herbs": 14,
+     "pie": 12,
+     "apple": 8,
+     "scrap": 8,
+     "honey": 6,
+     "remedy": 5
+    },
+    "used": {
+     "grain": 216,
+     "flour": 169,
+     "ale": 53,
+     "wood": 50,
+     "bread": 45,
+     "veg": 29,
+     "fish": 28,
+     "leaf": 14,
+     "stew": 11,
+     "herbs": 10,
+     "cake": 10,
+     "pie": 9,
+     "apple": 8,
+     "honey": 6,
+     "wool": 5
+    },
+    "madeAtHome": {
+     "bread": 175,
+     "veg": 54,
+     "mush": 20
+    },
+    "usedAtHome": {
+     "bread": 152,
+     "veg": 81,
+     "egg": 30,
+     "mush": 18,
+     "cheese": 6,
+     "apple": 5,
+     "pie": 4,
+     "fish": 4,
+     "cake": 3
+    }
+   },
+   "stores": {
+    "series": {
+     "food": {
+      "start": 90,
+      "min": 15,
+      "max": 100,
+      "end": 34
+     },
+     "grain": {
+      "start": 24,
+      "min": 10,
+      "max": 320,
+      "end": 316
+     },
+     "flour": {
+      "start": 8,
+      "min": 0,
+      "max": 39,
+      "end": 13
+     },
+     "bread": {
+      "start": 24,
+      "min": 0,
+      "max": 32,
+      "end": 0
+     },
+     "ale": {
+      "start": 30,
+      "min": 30,
+      "max": 51,
+      "end": 37
+     },
+     "wood": {
+      "start": 36,
+      "min": 36,
+      "max": 54,
+      "end": 54
+     }
+    },
+    "foodHourly": {
+     "min": 15,
+     "max": 100
+    },
+    "end": {
+     "grain": 316,
+     "flour": 13,
+     "bread": 0,
+     "pie": 0,
+     "cake": 0,
+     "veg": 0,
+     "fish": 0,
+     "mush": 0,
+     "apple": 0,
+     "egg": 34,
+     "honey": 5,
+     "stew": 0,
+     "ale": 37,
+     "leaf": 24,
+     "wood": 54,
+     "herbs": 8,
+     "remedy": 8,
+     "cheese": 0,
+     "wool": 5,
+     "scrap": 8
+    },
+    "coin": {
+     "start": 20,
+     "end": 31
+    }
+   },
+   "life": {
+    "weddings": 0,
+    "births": 3,
+    "departed": {},
+    "trips": 0,
+    "couplesEnd": 7,
+    "sweetheartsEnd": 18
+   },
+   "mood": {
+    "mean": 0.62,
+    "p10": 0.36,
+    "p50": 0.63,
+    "p90": 0.86,
+    "buckets": {
+     "put out (<0.2)": 0.02,
+     "grumbly (0.2-0.4)": 0.12,
+     "middling (0.4-0.6)": 0.3,
+     "content (0.6-0.8)": 0.39,
+     "merry (>0.8)": 0.17
+    },
+    "byDay": [
+     0.63,
+     0.64,
+     0.63,
+     0.63,
+     0.6,
+     0.6
+    ],
+    "contentment": [
+     78,
+     76,
+     74,
+     73,
+     69,
+     73
+    ]
+   },
+   "needs": {
+    "hunger": 0.4,
+    "thirst": 0.43,
+    "tired": 0.37,
+    "lonely": 0.29,
+    "bored": 0.1,
+    "craving": 0.47,
+    "cold": 0.06,
+    "ache": 0,
+    "industry": 0.16,
+    "comfort": 0.45,
+    "crowded": 0.02,
+    "unease": 0.14
+   },
+   "breaks": {
+    "sulks": {},
+    "tantrums": 0,
+    "total": 0,
+    "inspired": 3
+   },
+   "bonds": {
+    "friendsStart": 25,
+    "friendsEnd": 73,
+    "formed": 48,
+    "foesStart": 0,
+    "foesEnd": 0,
+    "fellOut": 0,
+    "rivals": 8,
+    "quarrels": 6,
+    "goodChats": 32
+   },
+   "talk": {
+    "natters": 46,
+    "natterLines": 289,
+    "linesPerNatter": 6.28,
+    "walkedOff": 2,
+    "longNatters": 50,
+    "goodNatters": 32,
+    "quarrels": 6,
+    "groupTalks": 66,
+    "groupLines": 481,
+    "tableTalk": 322,
+    "sawRow": 0,
+    "madeUp": 0
+   },
+   "illness": {
+    "colds": 0,
+    "other": {
+     "sprain": 1
+    },
+    "poisoned": 1,
+    "sickShare": 0
+   },
+   "skills": {
+    "gained": 173,
+    "perVillager": 6.65,
+    "levelUps": 5
+   },
+   "wishes": {
+    "granted": 55,
+    "dreams": 0
+   },
+   "feelings": {
+    "festival": 5401,
+    "sunshine": 1675,
+    "soaked": 792,
+    "unsettled": 770,
+    "gossip": 373,
+    "table_talk": 322,
+    "well_slept": 153,
+    "cozy": 126,
+    "fav_food": 75,
+    "party": 65,
+    "liked": 60,
+    "wish": 55,
+    "present": 53,
+    "gave_gift": 51,
+    "long_chat": 50,
+    "singsong": 39,
+    "good_chat": 32,
+    "holiday": 30,
+    "vexed": 27,
+    "wish_lost": 24,
+    "pet": 23,
+    "parched": 19,
+    "bad_food": 15,
+    "gathered": 14,
+    "weathered": 14,
+    "birthday": 13,
+    "made_piece": 11,
+    "bday_guest": 9,
+    "disliked": 8,
+    "new_baby": 8,
+    "slept_rough": 8,
+    "uneasy": 7,
+    "new_pet": 7,
+    "market": 6,
+    "quarrel": 6,
+    "special": 4,
+    "turned": 4,
+    "inspired": 3,
+    "won": 3,
+    "heartened": 3,
+    "got_letter": 2,
+    "snubbed": 2,
+    "leaving_thoughts": 2,
+    "stayed": 2,
+    "bad_tip": 1,
+    "skill_up": 1,
+    "crowned": 1,
+    "sprained": 1
+   }
+  },
+  {
+   "seed": 4,
+   "days": 6,
+   "msPerDay": 3564,
+   "folk": {
+    "start": 26,
+    "end": 34,
+    "stagesStart": {
+     "adult": 15,
+     "child": 7,
+     "baby": 1,
+     "elder": 3
+    },
+    "stagesEnd": {
+     "adult": 27,
+     "elder": 3,
+     "child": 3,
+     "baby": 1
+    }
+   },
+   "meals": {
+    "perVillagerDay": 2.5,
+    "villagerDays": 163,
+    "underTwoShare": 0.13,
+    "noneShare": 0.01,
+    "hungryShare": 0.02,
+    "byKind": {
+     "eat_home": 236,
+     "eat_inn": 179
+    }
+   },
+   "work": {
+    "workersPerDay": 21.91,
+    "hoursPerWorkerDay": 1.98,
+    "commutePerWorkerDay": 4.78,
+    "byJob": {
+     "fisher": {
+      "workers": 2.56,
+      "hoursPerDay": 2.82,
+      "commutePerDay": 3.46
+     },
+     "baker": {
+      "workers": 2,
+      "hoursPerDay": 2.16,
+      "commutePerDay": 4.09
+     },
+     "lamplighter": {
+      "workers": 2,
+      "hoursPerDay": 0.64,
+      "commutePerDay": 4.11
+     },
+     "woodwright": {
+      "workers": 3.17,
+      "hoursPerDay": 2.45,
+      "commutePerDay": 5.03
+     },
+     "farmer": {
+      "workers": 3.62,
+      "hoursPerDay": 2.32,
+      "commutePerDay": 5.07
+     },
+     "miller": {
+      "workers": 1.39,
+      "hoursPerDay": 1.28,
+      "commutePerDay": 7.34
+     },
+     "brewer": {
+      "workers": 1,
+      "hoursPerDay": 1.83,
+      "commutePerDay": 3.56
+     },
+     "orchardist": {
+      "workers": 1,
+      "hoursPerDay": 1.21,
+      "commutePerDay": 3.58
+     },
+     "herbalist": {
+      "workers": 1,
+      "hoursPerDay": 1.38,
+      "commutePerDay": 4.71
+     },
+     "mailcarrier": {
+      "workers": 1,
+      "hoursPerDay": 0.77,
+      "commutePerDay": 5.54
+     },
+     "herder": {
+      "workers": 1,
+      "hoursPerDay": 2.54,
+      "commutePerDay": 7.68
+     },
+     "innkeeper": {
+      "workers": 1.17,
+      "hoursPerDay": 3.12,
+      "commutePerDay": 6.79
+     },
+     "storyteller": {
+      "workers": 1,
+      "hoursPerDay": 1.23,
+      "commutePerDay": 1.85
+     }
+    },
+    "done": {
+     "innkeeper_serve": 291,
+     "deliver": 183,
+     "work_lamps": 169,
+     "innkeeper_fetch": 82,
+     "work_fish": 53,
+     "fisher_gut": 52,
+     "fisher_bait": 51,
+     "farmer_weed": 33,
+     "work_farm": 33,
+     "innkeeper_bring": 31,
+     "mailcarrier_round": 30,
+     "baker_knead": 29,
+     "work_bake": 29,
+     "baker_cool": 29,
+     "farmer_rest": 28,
+     "build": 26,
+     "baker_tostore": 23,
+     "woodwright_lop": 15,
+     "farmer_fence": 15,
+     "work_herd": 14,
+     "work_mill": 14,
+     "miller_bag": 14,
+     "work_wood": 14,
+     "herder_brush": 13,
+     "innkeeper_cook": 13,
+     "work_allot": 12,
+     "miller_sacks": 12,
+     "brewer_mash": 11,
+     "work_brew": 11,
+     "miller_tobakery": 11,
+     "woodwright_saw": 11,
+     "mailcarrier_collect": 10,
+     "woodwright_stack": 10,
+     "herder_muck": 10,
+     "work_herb": 10,
+     "baker_flour": 10,
+     "brewer_tap": 10,
+     "herder_feed": 9,
+     "brewer_malt": 9,
+     "innkeeper_sweep": 9,
+     "innkeeper_clear": 9,
+     "herder_bedding": 9,
+     "orchardist_prune": 9,
+     "work_orchard": 9,
+     "orchardist_hives": 9,
+     "farmer_fetchwater": 9,
+     "farmer_water": 9,
+     "mailcarrier_sort": 8,
+     "innkeeper_fire": 8,
+     "innkeeper_keg": 8,
+     "herbalist_dry": 7,
+     "brewer_barrel": 7,
+     "baker_sweep": 6,
+     "brewer_barley": 5,
+     "work_story": 5,
+     "herbalist_beds": 4,
+     "herder_water": 4,
+     "herbalist_grind": 3,
+     "work_mail": 3,
+     "herder_fetchwater": 3,
+     "nurse": 3,
+     "innkeeper_wash": 1,
+     "farmer_eggs": 1,
+     "innkeeper_regulars": 1
+    },
+    "doneTotal": 1579
+   },
+   "timeUse": {
+    "travel": 0.41,
+    "sleep": 0.25,
+    "leisure": 0.11,
+    "eat": 0.11,
+    "work": 0.07,
+    "social": 0.03,
+    "idle": 0.02,
+    "school": 0,
+    "away": 0
+   },
+   "hoursPerDay": {
+    "sleep": 5.89,
+    "eat_inn": 1.55,
+    "eat_home": 0.99,
+    "sleep:go": 0.9,
+    "eat_home:go": 0.85,
+    "eat_inn:go": 0.84,
+    "deliver:go": 0.78,
+    "ale": 0.59,
+    "tea:go": 0.56,
+    "party:go": 0.49,
+    "party": 0.45,
+    "ale:go": 0.41,
+    "tea": 0.38,
+    "well:go": 0.3,
+    "work_lamps:go": 0.3,
+    "chat": 0.28,
+    "tag_along": 0.28,
+    "chat:go": 0.27,
+    "build:go": 0.23,
+    "work_wood:go": 0.22,
+    "work_fish": 0.19,
+    "build": 0.19,
+    "work_fish:go": 0.17,
+    "gather:go": 0.15,
+    "farmer_weed:go": 0.15,
+    "innkeeper_serve:go": 0.15,
+    "sleep_rough": 0.14,
+    "smoke": 0.13,
+    "smoke:go": 0.13,
+    "market:go": 0.13
+   },
+   "goods": {
+    "foodMade": 622,
+    "foodUsed": 414,
+    "made": {
+     "grain": 614,
+     "flour": 181,
+     "bread": 177,
+     "ale": 90,
+     "veg": 67,
+     "egg": 64,
+     "wood": 44,
+     "cake": 37,
+     "fish": 36,
+     "stew": 29,
+     "pie": 28,
+     "apple": 16,
+     "wool": 12,
+     "cheese": 12,
+     "scrap": 12,
+     "herbs": 10,
+     "honey": 9,
+     "remedy": 3
+    },
+    "used": {
+     "grain": 190,
+     "flour": 125,
+     "ale": 44,
+     "wood": 42,
+     "veg": 37,
+     "bread": 36,
+     "fish": 22,
+     "cake": 18,
+     "stew": 15,
+     "apple": 14,
+     "leaf": 11,
+     "honey": 8,
+     "herbs": 6,
+     "pie": 6,
+     "wool": 3,
+     "remedy": 3,
+     "mush": 2
+    },
+    "madeAtHome": {
+     "veg": 73,
+     "bread": 70,
+     "mush": 13
+    },
+    "usedAtHome": {
+     "veg": 122,
+     "bread": 67,
+     "egg": 19,
+     "pie": 15,
+     "fish": 14,
+     "cheese": 12,
+     "mush": 10,
+     "cake": 4,
+     "apple": 1
+    }
+   },
+   "stores": {
+    "series": {
+     "food": {
+      "start": 90,
+      "min": 60,
+      "max": 130,
+      "end": 70
+     },
+     "grain": {
+      "start": 24,
+      "min": 10,
+      "max": 320,
+      "end": 320
+     },
+     "flour": {
+      "start": 8,
+      "min": 0,
+      "max": 44,
+      "end": 36
+     },
+     "bread": {
+      "start": 24,
+      "min": 21,
+      "max": 76,
+      "end": 32
+     },
+     "ale": {
+      "start": 30,
+      "min": 30,
+      "max": 44,
+      "end": 32
+     },
+     "wood": {
+      "start": 36,
+      "min": 24,
+      "max": 44,
+      "end": 38
+     }
+    },
+    "foodHourly": {
+     "min": 60,
+     "max": 130
+    },
+    "end": {
+     "grain": 320,
+     "flour": 36,
+     "bread": 32,
+     "pie": 4,
+     "cake": 6,
+     "veg": 3,
+     "fish": 0,
+     "mush": 0,
+     "apple": 3,
+     "egg": 20,
+     "honey": 8,
+     "stew": 0,
+     "ale": 32,
+     "leaf": 5,
+     "wood": 38,
+     "herbs": 8,
+     "remedy": 3,
+     "cheese": 2,
+     "wool": 19,
+     "scrap": 12
+    },
+    "coin": {
+     "start": 20,
+     "end": 50
+    }
+   },
+   "life": {
+    "weddings": 1,
+    "births": 4,
+    "departed": {},
+    "trips": 1,
+    "couplesEnd": 8,
+    "sweetheartsEnd": 16
+   },
+   "mood": {
+    "mean": 0.62,
+    "p10": 0.34,
+    "p50": 0.63,
+    "p90": 0.88,
+    "buckets": {
+     "put out (<0.2)": 0.03,
+     "grumbly (0.2-0.4)": 0.13,
+     "middling (0.4-0.6)": 0.28,
+     "content (0.6-0.8)": 0.36,
+     "merry (>0.8)": 0.2
+    },
+    "byDay": [
+     0.63,
+     0.67,
+     0.63,
+     0.6,
+     0.62,
+     0.56
+    ],
+    "contentment": [
+     74,
+     77,
+     68,
+     71,
+     68,
+     71
+    ]
+   },
+   "needs": {
+    "hunger": 0.41,
+    "thirst": 0.42,
+    "tired": 0.38,
+    "lonely": 0.29,
+    "bored": 0.13,
+    "craving": 0.45,
+    "cold": 0.06,
+    "ache": 0.01,
+    "industry": 0.13,
+    "comfort": 0.42,
+    "crowded": 0.02,
+    "unease": 0.15
+   },
+   "breaks": {
+    "sulks": {
+     "binge": 1
+    },
+    "tantrums": 0,
+    "total": 1,
+    "inspired": 5
+   },
+   "bonds": {
+    "friendsStart": 25,
+    "friendsEnd": 67,
+    "formed": 42,
+    "foesStart": 0,
+    "foesEnd": 0,
+    "fellOut": 0,
+    "rivals": 18,
+    "quarrels": 2,
+    "goodChats": 32
+   },
+   "talk": {
+    "natters": 53,
+    "natterLines": 327,
+    "linesPerNatter": 6.17,
+    "walkedOff": 5,
+    "longNatters": 46,
+    "goodNatters": 32,
+    "quarrels": 2,
+    "groupTalks": 47,
+    "groupLines": 325,
+    "tableTalk": 199,
+    "sawRow": 0,
+    "madeUp": 0
+   },
+   "illness": {
+    "colds": 4,
+    "other": {
+     "sprain": 5
+    },
+    "poisoned": 3,
+    "sickShare": 0.01
+   },
+   "skills": {
+    "gained": 191,
+    "perVillager": 7.36,
+    "levelUps": 7
+   },
+   "wishes": {
+    "granted": 41,
+    "dreams": 2
+   },
+   "feelings": {
+    "festival": 5202,
+    "sunshine": 2356,
+    "unsettled": 771,
+    "gossip": 409,
+    "table_talk": 199,
+    "soaked": 193,
+    "well_slept": 155,
+    "cozy": 89,
+    "liked": 78,
+    "party": 70,
+    "fav_food": 48,
+    "pet": 46,
+    "long_chat": 46,
+    "wish": 41,
+    "present": 38,
+    "gave_gift": 36,
+    "good_chat": 32,
+    "wish_lost": 24,
+    "bad_food": 19,
+    "heartened": 17,
+    "gathered": 14,
+    "parched": 14,
+    "birthday": 13,
+    "new_baby": 13,
+    "weathered": 13,
+    "made_piece": 12,
+    "uneasy": 11,
+    "singsong": 8,
+    "special": 7,
+    "sprained": 5,
+    "inspired": 5,
+    "slept_rough": 5,
+    "snubbed": 5,
+    "won": 4,
+    "got_letter": 3,
+    "new_pet": 3,
+    "market": 3,
+    "bday_guest": 3,
+    "disliked": 2,
+    "leaving_thoughts": 2,
+    "turned": 2,
+    "dream": 2,
+    "quarrel": 2,
+    "wedding": 2,
+    "crowned": 1,
+    "apprenticed": 1,
+    "stayed": 1,
+    "saw_wed": 1,
+    "binge": 1
+   }
+  },
+  {
+   "seed": 5,
+   "days": 6,
+   "msPerDay": 4399,
+   "folk": {
+    "start": 26,
+    "end": 32,
+    "stagesStart": {
+     "adult": 15,
+     "child": 7,
+     "baby": 1,
+     "elder": 3
+    },
+    "stagesEnd": {
+     "adult": 27,
+     "elder": 2,
+     "child": 3
+    }
+   },
+   "meals": {
+    "perVillagerDay": 2.67,
+    "villagerDays": 153,
+    "underTwoShare": 0.12,
+    "noneShare": 0.01,
+    "hungryShare": 0.04,
+    "byKind": {
+     "eat_home": 271,
+     "eat_inn": 161
+    }
+   },
+   "work": {
+    "workersPerDay": 21.14,
+    "hoursPerWorkerDay": 2.06,
+    "commutePerWorkerDay": 5.03,
+    "byJob": {
+     "lamplighter": {
+      "workers": 1.94,
+      "hoursPerDay": 0.68,
+      "commutePerDay": 4.41
+     },
+     "fisher": {
+      "workers": 2.22,
+      "hoursPerDay": 2.76,
+      "commutePerDay": 2.98
+     },
+     "farmer": {
+      "workers": 3.79,
+      "hoursPerDay": 2.44,
+      "commutePerDay": 5.13
+     },
+     "grower": {
+      "workers": 1,
+      "hoursPerDay": 1.21,
+      "commutePerDay": 8.65
+     },
+     "orchardist": {
+      "workers": 1,
+      "hoursPerDay": 2.06,
+      "commutePerDay": 7.27
+     },
+     "mailcarrier": {
+      "workers": 1,
+      "hoursPerDay": 0.95,
+      "commutePerDay": 6.68
+     },
+     "innkeeper": {
+      "workers": 1,
+      "hoursPerDay": 4.35,
+      "commutePerDay": 6.22
+     },
+     "herder": {
+      "workers": 1,
+      "hoursPerDay": 1.52,
+      "commutePerDay": 5.93
+     },
+     "baker": {
+      "workers": 1.89,
+      "hoursPerDay": 1.88,
+      "commutePerDay": 4.44
+     },
+     "brewer": {
+      "workers": 1.39,
+      "hoursPerDay": 1.91,
+      "commutePerDay": 4.39
+     },
+     "miller": {
+      "workers": 1.56,
+      "hoursPerDay": 1.42,
+      "commutePerDay": 7.43
+     },
+     "herbalist": {
+      "workers": 1,
+      "hoursPerDay": 1.19,
+      "commutePerDay": 3.69
+     },
+     "storyteller": {
+      "workers": 1,
+      "hoursPerDay": 2.28,
+      "commutePerDay": 0.98
+     },
+     "woodwright": {
+      "workers": 1.28,
+      "hoursPerDay": 3.72,
+      "commutePerDay": 4.87
+     },
+     "nanny": {
+      "workers": 0.06,
+      "hoursPerDay": 0,
+      "commutePerDay": 0
+     }
+    },
+    "done": {
+     "innkeeper_serve": 231,
+     "deliver": 187,
+     "work_lamps": 174,
+     "innkeeper_fetch": 86,
+     "innkeeper_bring": 57,
+     "work_fish": 45,
+     "fisher_gut": 45,
+     "fisher_bait": 45,
+     "farmer_weed": 43,
+     "work_farm": 43,
+     "mailcarrier_round": 38,
+     "farmer_rest": 31,
+     "baker_knead": 26,
+     "work_bake": 24,
+     "innkeeper_cook": 22,
+     "farmer_fence": 20,
+     "innkeeper_sweep": 20,
+     "build": 20,
+     "baker_cool": 18,
+     "work_brew": 17,
+     "work_mill": 17,
+     "miller_bag": 17,
+     "orchardist_prune": 16,
+     "brewer_mash": 15,
+     "work_orchard": 15,
+     "orchardist_hives": 15,
+     "brewer_malt": 14,
+     "mailcarrier_collect": 14,
+     "miller_sacks": 13,
+     "brewer_tap": 13,
+     "mailcarrier_sort": 12,
+     "brewer_barrel": 12,
+     "work_story": 12,
+     "miller_tobakery": 11,
+     "baker_tostore": 11,
+     "baker_sweep": 11,
+     "baker_flour": 11,
+     "work_leaf": 9,
+     "brewer_barley": 9,
+     "innkeeper_fire": 9,
+     "work_herb": 8,
+     "herbalist_dry": 8,
+     "work_allot": 8,
+     "innkeeper_clear": 8,
+     "innkeeper_keg": 8,
+     "herder_bedding": 7,
+     "work_herd": 7,
+     "farmer_fetchwater": 6,
+     "farmer_water": 6,
+     "grower_hang": 6,
+     "grower_hoe": 6,
+     "herder_feed": 6,
+     "herder_brush": 6,
+     "herder_fetchwater": 6,
+     "herder_water": 6,
+     "herder_muck": 6,
+     "work_wood": 6,
+     "woodwright_lop": 6,
+     "herbalist_grind": 4,
+     "herbalist_beds": 4,
+     "innkeeper_regulars": 4,
+     "woodwright_saw": 3,
+     "woodwright_stack": 3,
+     "innkeeper_wash": 2,
+     "work_mail": 2,
+     "nurse": 2,
+     "farmer_eggs": 2
+    },
+    "doneTotal": 1594
+   },
+   "timeUse": {
+    "travel": 0.41,
+    "sleep": 0.23,
+    "leisure": 0.12,
+    "eat": 0.1,
+    "work": 0.07,
+    "idle": 0.03,
+    "social": 0.03,
+    "school": 0,
+    "away": 0
+   },
+   "hoursPerDay": {
+    "sleep": 5.49,
+    "eat_inn": 1.37,
+    "eat_home": 1.14,
+    "eat_home:go": 0.87,
+    "deliver:go": 0.85,
+    "sleep:go": 0.71,
+    "eat_inn:go": 0.7,
+    "ale": 0.64,
+    "party:go": 0.63,
+    "tea:go": 0.53,
+    "party": 0.51,
+    "tea": 0.4,
+    "ale:go": 0.38,
+    "work_lamps:go": 0.31,
+    "putter": 0.29,
+    "farmer_weed:go": 0.21,
+    "tag_along": 0.21,
+    "gather:go": 0.21,
+    "chat:go": 0.21,
+    "chat": 0.2,
+    "well:go": 0.19,
+    "lodge": 0.18,
+    "smoke:go": 0.18,
+    "bake_home": 0.18,
+    "work_fish": 0.17,
+    "smoke": 0.16,
+    "market:go": 0.14,
+    "build": 0.14,
+    "work_farm": 0.14,
+    "baker_knead:go": 0.13
+   },
+   "goods": {
+    "foodMade": 572,
+    "foodUsed": 456,
+    "made": {
+     "grain": 834,
+     "flour": 221,
+     "ale": 141,
+     "bread": 105,
+     "egg": 92,
+     "leaf": 60,
+     "stew": 45,
+     "veg": 39,
+     "fish": 26,
+     "apple": 26,
+     "wood": 24,
+     "scrap": 20,
+     "pie": 18,
+     "cake": 14,
+     "honey": 8,
+     "herbs": 8,
+     "wool": 8,
+     "remedy": 5,
+     "cheese": 3
+    },
+    "used": {
+     "grain": 238,
+     "flour": 171,
+     "ale": 57,
+     "bread": 45,
+     "wood": 39,
+     "veg": 38,
+     "fish": 26,
+     "apple": 18,
+     "stew": 16,
+     "leaf": 15,
+     "herbs": 10,
+     "pie": 8,
+     "honey": 7,
+     "cake": 6,
+     "remedy": 2,
+     "wool": 2,
+     "mush": 1
+    },
+    "madeAtHome": {
+     "bread": 139,
+     "veg": 45,
+     "mush": 20
+    },
+    "usedAtHome": {
+     "bread": 149,
+     "veg": 76,
+     "egg": 29,
+     "mush": 16,
+     "pie": 7,
+     "cheese": 7,
+     "fish": 5,
+     "apple": 5,
+     "cake": 4
+    }
+   },
+   "stores": {
+    "series": {
+     "food": {
+      "start": 90,
+      "min": 23,
+      "max": 90,
+      "end": 35
+     },
+     "grain": {
+      "start": 24,
+      "min": 9,
+      "max": 320,
+      "end": 320
+     },
+     "flour": {
+      "start": 8,
+      "min": 0,
+      "max": 45,
+      "end": 28
+     },
+     "bread": {
+      "start": 24,
+      "min": 0,
+      "max": 24,
+      "end": 2
+     },
+     "ale": {
+      "start": 30,
+      "min": 30,
+      "max": 65,
+      "end": 50
+     },
+     "wood": {
+      "start": 36,
+      "min": 17,
+      "max": 36,
+      "end": 21
+     }
+    },
+    "foodHourly": {
+     "min": 23,
+     "max": 90
+    },
+    "end": {
+     "grain": 320,
+     "flour": 24,
+     "bread": 2,
+     "pie": 0,
+     "cake": 0,
+     "veg": 0,
+     "fish": 0,
+     "mush": 0,
+     "apple": 5,
+     "egg": 28,
+     "honey": 8,
+     "stew": 0,
+     "ale": 50,
+     "leaf": 60,
+     "wood": 21,
+     "herbs": 2,
+     "remedy": 6,
+     "cheese": 0,
+     "wool": 16,
+     "scrap": 20
+    },
+    "coin": {
+     "start": 20,
+     "end": 40
+    }
+   },
+   "life": {
+    "weddings": 0,
+    "births": 3,
+    "departed": {
+     "adventure": 1
+    },
+    "trips": 1,
+    "couplesEnd": 5.5,
+    "sweetheartsEnd": 15
+   },
+   "mood": {
+    "mean": 0.63,
+    "p10": 0.38,
+    "p50": 0.64,
+    "p90": 0.88,
+    "buckets": {
+     "put out (<0.2)": 0.02,
+     "grumbly (0.2-0.4)": 0.1,
+     "middling (0.4-0.6)": 0.31,
+     "content (0.6-0.8)": 0.39,
+     "merry (>0.8)": 0.19
+    },
+    "byDay": [
+     0.64,
+     0.67,
+     0.65,
+     0.61,
+     0.62,
+     0.61
+    ],
+    "contentment": [
+     78,
+     77,
+     75,
+     71,
+     75,
+     72
+    ]
+   },
+   "needs": {
+    "hunger": 0.42,
+    "thirst": 0.42,
+    "tired": 0.38,
+    "lonely": 0.28,
+    "bored": 0.08,
+    "craving": 0.46,
+    "cold": 0.07,
+    "ache": 0,
+    "industry": 0.16,
+    "comfort": 0.47,
+    "crowded": 0.01,
+    "unease": 0.01
+   },
+   "breaks": {
+    "sulks": {},
+    "tantrums": 0,
+    "total": 0,
+    "inspired": 2
+   },
+   "bonds": {
+    "friendsStart": 25,
+    "friendsEnd": 62,
+    "formed": 40,
+    "foesStart": 0,
+    "foesEnd": 0,
+    "fellOut": 0,
+    "rivals": 8,
+    "quarrels": 0,
+    "goodChats": 23
+   },
+   "talk": {
+    "natters": 36,
+    "natterLines": 225,
+    "linesPerNatter": 6.25,
+    "walkedOff": 0,
+    "longNatters": 32,
+    "goodNatters": 23,
+    "quarrels": 0,
+    "groupTalks": 76,
+    "groupLines": 642,
+    "tableTalk": 545,
+    "sawRow": 0,
+    "madeUp": 0
+   },
+   "illness": {
+    "colds": 1,
+    "other": {
+     "sprain": 1
+    },
+    "poisoned": 1,
+    "sickShare": 0
+   },
+   "skills": {
+    "gained": 176,
+    "perVillager": 7.33,
+    "levelUps": 3
+   },
+   "wishes": {
+    "granted": 39,
+    "dreams": 0
+   },
+   "feelings": {
+    "festival": 5208,
+    "soaked": 2432,
+    "sunshine": 1454,
+    "table_talk": 545,
+    "gossip": 466,
+    "well_slept": 143,
+    "singsong": 132,
+    "party": 83,
+    "fav_food": 73,
+    "cozy": 64,
+    "liked": 61,
+    "present": 48,
+    "gave_gift": 48,
+    "wish": 39,
+    "wish_lost": 33,
+    "long_chat": 32,
+    "pet": 27,
+    "holiday": 27,
+    "good_chat": 23,
+    "vexed": 23,
+    "bad_food": 20,
+    "birthday": 13,
+    "uneasy": 12,
+    "gathered": 11,
+    "new_pet": 10,
+    "disliked": 10,
+    "made_piece": 10,
+    "bday_guest": 10,
+    "new_baby": 9,
+    "special": 4,
+    "slept_rough": 4,
+    "supper": 4,
+    "got_letter": 2,
+    "dyn_rivals": 2,
+    "inspired": 2,
+    "reunion": 2,
+    "won": 2,
+    "missed": 2,
+    "heartened": 2,
+    "turned": 2,
+    "crowned": 1,
+    "skill_up": 1,
+    "market": 1,
+    "sprained": 1
+   }
+  },
+  {
+   "seed": 6,
+   "days": 6,
+   "msPerDay": 5014,
+   "folk": {
+    "start": 26,
+    "end": 33,
+    "stagesStart": {
+     "adult": 15,
+     "child": 7,
+     "baby": 1,
+     "elder": 3
+    },
+    "stagesEnd": {
+     "adult": 27,
+     "elder": 2,
+     "child": 4
+    }
+   },
+   "meals": {
+    "perVillagerDay": 2.56,
+    "villagerDays": 158,
+    "underTwoShare": 0.13,
+    "noneShare": 0.01,
+    "hungryShare": 0.02,
+    "byKind": {
+     "eat_home": 253,
+     "eat_inn": 163
+    }
+   },
+   "work": {
+    "workersPerDay": 21.39,
+    "hoursPerWorkerDay": 2.12,
+    "commutePerWorkerDay": 4.69,
+    "byJob": {
+     "woodwright": {
+      "workers": 3.17,
+      "hoursPerDay": 2.78,
+      "commutePerDay": 4.53
+     },
+     "farmer": {
+      "workers": 3.53,
+      "hoursPerDay": 2.8,
+      "commutePerDay": 5.03
+     },
+     "storyteller": {
+      "workers": 0.96,
+      "hoursPerDay": 2.81,
+      "commutePerDay": 1.31
+     },
+     "fisher": {
+      "workers": 2.04,
+      "hoursPerDay": 3.22,
+      "commutePerDay": 3.52
+     },
+     "herder": {
+      "workers": 1,
+      "hoursPerDay": 1.76,
+      "commutePerDay": 7.92
+     },
+     "innkeeper": {
+      "workers": 1,
+      "hoursPerDay": 2.64,
+      "commutePerDay": 5.59
+     },
+     "herbalist": {
+      "workers": 1,
+      "hoursPerDay": 1.5,
+      "commutePerDay": 4.33
+     },
+     "orchardist": {
+      "workers": 1,
+      "hoursPerDay": 1.51,
+      "commutePerDay": 5.22
+     },
+     "baker": {
+      "workers": 2,
+      "hoursPerDay": 2.01,
+      "commutePerDay": 3.52
+     },
+     "lamplighter": {
+      "workers": 1.93,
+      "hoursPerDay": 0.65,
+      "commutePerDay": 5.04
+     },
+     "miller": {
+      "workers": 1.26,
+      "hoursPerDay": 1.52,
+      "commutePerDay": 6.37
+     },
+     "mailcarrier": {
+      "workers": 1,
+      "hoursPerDay": 0.87,
+      "commutePerDay": 6.53
+     },
+     "brewer": {
+      "workers": 1,
+      "hoursPerDay": 1.67,
+      "commutePerDay": 4.74
+     },
+     "tinker": {
+      "workers": 0.26,
+      "hoursPerDay": 0.83,
+      "commutePerDay": 1.31
+     },
+     "nanny": {
+      "workers": 0.22,
+      "hoursPerDay": 0.17,
+      "commutePerDay": 1.4
+     }
+    },
+    "done": {
+     "innkeeper_serve": 190,
+     "deliver": 177,
+     "work_lamps": 175,
+     "innkeeper_fetch": 63,
+     "work_fish": 49,
+     "fisher_gut": 48,
+     "fisher_bait": 46,
+     "mailcarrier_round": 36,
+     "innkeeper_bring": 35,
+     "work_farm": 34,
+     "build": 34,
+     "farmer_weed": 31,
+     "baker_knead": 27,
+     "work_bake": 27,
+     "baker_cool": 27,
+     "farmer_rest": 27,
+     "baker_tostore": 19,
+     "farmer_fence": 19,
+     "work_allot": 17,
+     "work_mill": 16,
+     "miller_bag": 16,
+     "work_wood": 16,
+     "woodwright_lop": 16,
+     "work_story": 15,
+     "woodwright_saw": 13,
+     "farmer_fetchwater": 13,
+     "mailcarrier_collect": 12,
+     "farmer_water": 12,
+     "miller_tobakery": 12,
+     "mailcarrier_sort": 11,
+     "orchardist_prune": 11,
+     "innkeeper_cook": 11,
+     "work_orchard": 11,
+     "orchardist_hives": 11,
+     "work_herb": 10,
+     "herbalist_dry": 10,
+     "work_brew": 10,
+     "woodwright_stack": 10,
+     "brewer_malt": 9,
+     "herder_feed": 9,
+     "miller_sacks": 9,
+     "herder_brush": 9,
+     "brewer_mash": 9,
+     "herder_muck": 8,
+     "baker_sweep": 8,
+     "herbalist_grind": 7,
+     "work_herd": 7,
+     "herder_bedding": 7,
+     "brewer_tap": 7,
+     "brewer_barrel": 6,
+     "innkeeper_clear": 6,
+     "baker_flour": 5,
+     "herder_fetchwater": 5,
+     "farmer_eggs": 5,
+     "herder_water": 5,
+     "innkeeper_sweep": 5,
+     "brewer_barley": 4,
+     "nurse": 4,
+     "herbalist_beds": 3,
+     "innkeeper_fire": 2,
+     "innkeeper_keg": 2,
+     "innkeeper_regulars": 2,
+     "work_mail": 2,
+     "innkeeper_wash": 1
+    },
+    "doneTotal": 1463
+   },
+   "timeUse": {
+    "travel": 0.41,
+    "sleep": 0.23,
+    "leisure": 0.12,
+    "eat": 0.1,
+    "work": 0.07,
+    "social": 0.03,
+    "idle": 0.02,
+    "school": 0,
+    "away": 0
+   },
+   "hoursPerDay": {
+    "sleep": 5.55,
+    "eat_inn": 1.36,
+    "eat_home": 1.06,
+    "eat_home:go": 0.89,
+    "sleep:go": 0.78,
+    "eat_inn:go": 0.76,
+    "deliver:go": 0.72,
+    "ale": 0.63,
+    "tea:go": 0.58,
+    "party:go": 0.54,
+    "party": 0.44,
+    "tea": 0.41,
+    "work_lamps:go": 0.39,
+    "ale:go": 0.39,
+    "tag_along": 0.38,
+    "build:go": 0.26,
+    "gather:go": 0.23,
+    "build": 0.23,
+    "chat": 0.22,
+    "putter": 0.22,
+    "bake_home": 0.2,
+    "well:go": 0.2,
+    "work_fish": 0.18,
+    "market:go": 0.18,
+    "chat:go": 0.16,
+    "gather": 0.15,
+    "sleep_rough": 0.15,
+    "work_wood:go": 0.15,
+    "work_fish:go": 0.15,
+    "mailcarrier_round:go": 0.14
+   },
+   "goods": {
+    "foodMade": 633,
+    "foodUsed": 414,
+    "made": {
+     "grain": 576,
+     "flour": 208,
+     "bread": 146,
+     "ale": 101,
+     "veg": 73,
+     "egg": 72,
+     "wood": 67,
+     "stew": 33,
+     "fish": 29,
+     "pie": 23,
+     "cake": 19,
+     "apple": 15,
+     "scrap": 14,
+     "wool": 12,
+     "cheese": 9,
+     "honey": 8,
+     "herbs": 7,
+     "remedy": 5
+    },
+    "used": {
+     "grain": 212,
+     "flour": 164,
+     "wood": 74,
+     "ale": 53,
+     "veg": 40,
+     "fish": 24,
+     "bread": 19,
+     "apple": 18,
+     "stew": 15,
+     "cake": 12,
+     "leaf": 10,
+     "herbs": 10,
+     "pie": 9,
+     "honey": 6,
+     "remedy": 4
+    },
+    "madeAtHome": {
+     "bread": 168,
+     "veg": 30,
+     "mush": 16
+    },
+    "usedAtHome": {
+     "bread": 149,
+     "veg": 90,
+     "mush": 13,
+     "cheese": 9,
+     "pie": 5,
+     "fish": 5,
+     "egg": 4,
+     "cake": 2
+    }
+   },
+   "stores": {
+    "series": {
+     "food": {
+      "start": 90,
+      "min": 61,
+      "max": 120,
+      "end": 61
+     },
+     "grain": {
+      "start": 24,
+      "min": 10,
+      "max": 320,
+      "end": 320
+     },
+     "flour": {
+      "start": 8,
+      "min": 0,
+      "max": 40,
+      "end": 20
+     },
+     "bread": {
+      "start": 24,
+      "min": 20,
+      "max": 46,
+      "end": 31
+     },
+     "ale": {
+      "start": 30,
+      "min": 30,
+      "max": 48,
+      "end": 32
+     },
+     "wood": {
+      "start": 36,
+      "min": 18,
+      "max": 49,
+      "end": 29
+     }
+    },
+    "foodHourly": {
+     "min": 61,
+     "max": 120
+    },
+    "end": {
+     "grain": 320,
+     "flour": 20,
+     "bread": 31,
+     "pie": 0,
+     "cake": 0,
+     "veg": 1,
+     "fish": 0,
+     "mush": 0,
+     "apple": 0,
+     "egg": 29,
+     "honey": 5,
+     "stew": 0,
+     "ale": 32,
+     "leaf": 6,
+     "wood": 29,
+     "herbs": 1,
+     "remedy": 4,
+     "cheese": 0,
+     "wool": 22,
+     "scrap": 14
+    },
+    "coin": {
+     "start": 20,
+     "end": 31
+    }
+   },
+   "life": {
+    "weddings": 0,
+    "births": 4,
+    "departed": {
+     "adventure": 1
+    },
+    "trips": 1,
+    "couplesEnd": 6,
+    "sweetheartsEnd": 14
+   },
+   "mood": {
+    "mean": 0.63,
+    "p10": 0.37,
+    "p50": 0.63,
+    "p90": 0.89,
+    "buckets": {
+     "put out (<0.2)": 0.02,
+     "grumbly (0.2-0.4)": 0.11,
+     "middling (0.4-0.6)": 0.31,
+     "content (0.6-0.8)": 0.35,
+     "merry (>0.8)": 0.2
+    },
+    "byDay": [
+     0.64,
+     0.65,
+     0.62,
+     0.64,
+     0.62,
+     0.59
+    ],
+    "contentment": [
+     80,
+     77,
+     78,
+     74,
+     70,
+     74
+    ]
+   },
+   "needs": {
+    "hunger": 0.41,
+    "thirst": 0.43,
+    "tired": 0.38,
+    "lonely": 0.27,
+    "bored": 0.11,
+    "craving": 0.46,
+    "cold": 0.06,
+    "ache": 0,
+    "industry": 0.16,
+    "comfort": 0.43,
+    "crowded": 0.02,
+    "unease": 0.11
+   },
+   "breaks": {
+    "sulks": {
+     "sharp": 2
+    },
+    "tantrums": 0,
+    "total": 2,
+    "inspired": 3
+   },
+   "bonds": {
+    "friendsStart": 25,
+    "friendsEnd": 70,
+    "formed": 46,
+    "foesStart": 0,
+    "foesEnd": 0,
+    "fellOut": 0,
+    "rivals": 6,
+    "quarrels": 0,
+    "goodChats": 26
+   },
+   "talk": {
+    "natters": 42,
+    "natterLines": 253,
+    "linesPerNatter": 6.02,
+    "walkedOff": 1,
+    "longNatters": 32,
+    "goodNatters": 26,
+    "quarrels": 0,
+    "groupTalks": 73,
+    "groupLines": 511,
+    "tableTalk": 396,
+    "sawRow": 0,
+    "madeUp": 0
+   },
+   "illness": {
+    "colds": 3,
+    "other": {},
+    "poisoned": 0,
+    "sickShare": 0.01
+   },
+   "skills": {
+    "gained": 219,
+    "perVillager": 8.75,
+    "levelUps": 4
+   },
+   "wishes": {
+    "granted": 47,
+    "dreams": 2
+   },
+   "feelings": {
+    "festival": 5176,
+    "sunshine": 1910,
+    "soaked": 896,
+    "gossip": 454,
+    "unsettled": 453,
+    "table_talk": 396,
+    "cozy": 147,
+    "well_slept": 147,
+    "fav_food": 86,
+    "liked": 82,
+    "party": 77,
+    "pet": 48,
+    "wish": 47,
+    "present": 38,
+    "gave_gift": 36,
+    "bad_food": 35,
+    "long_chat": 32,
+    "wish_lost": 32,
+    "singsong": 30,
+    "good_chat": 26,
+    "heartened": 19,
+    "gathered": 18,
+    "parched": 17,
+    "new_baby": 15,
+    "weathered": 14,
+    "made_piece": 13,
+    "birthday": 13,
+    "uneasy": 11,
+    "vexed": 8,
+    "new_pet": 6,
+    "dyn_jokers": 4,
+    "disliked": 4,
+    "inspired": 3,
+    "slept_rough": 3,
+    "market": 3,
+    "special": 3,
+    "sulk_over": 2,
+    "got_letter": 2,
+    "dream": 2,
+    "apprenticed": 2,
+    "turned": 2,
+    "crowned": 1,
+    "leaving_thoughts": 1,
+    "stayed": 1,
+    "missed": 1,
+    "won": 1,
+    "taught": 1,
+    "snubbed": 1,
+    "bad_tip": 1
+   }
+  }
+ ],
+ "mean": {
+  "days": 6,
+  "msPerDay": 4444.83,
+  "folk": {
+   "start": 26,
+   "end": 32.33,
+   "stagesStart": {
+    "adult": 15.33,
+    "child": 7,
+    "baby": 1,
+    "elder": 2.67
+   },
+   "stagesEnd": {
+    "adult": 25.83,
+    "elder": 3.17,
+    "child": 2.67,
+    "baby": 0.67
+   }
+  },
+  "meals": {
+   "perVillagerDay": 2.56,
+   "villagerDays": 160.67,
+   "underTwoShare": 0.12,
+   "noneShare": 0.01,
+   "hungryShare": 0.02,
+   "byKind": {
+    "eat_home": 244.33,
+    "eat_inn": 177.17
+   }
+  },
+  "work": {
+   "workersPerDay": 21.78,
+   "hoursPerWorkerDay": 1.99,
+   "commutePerWorkerDay": 4.85,
+   "byJob": {
+    "mailcarrier": {
+     "workers": 1,
+     "hoursPerDay": 0.93,
+     "commutePerDay": 6.68
+    },
+    "woodwright": {
+     "workers": 2.63,
+     "hoursPerDay": 2.68,
+     "commutePerDay": 4.56
+    },
+    "brewer": {
+     "workers": 1.09,
+     "hoursPerDay": 1.86,
+     "commutePerDay": 4.78
+    },
+    "baker": {
+     "workers": 2.01,
+     "hoursPerDay": 1.9,
+     "commutePerDay": 3.59
+    },
+    "miller": {
+     "workers": 1.29,
+     "hoursPerDay": 1.35,
+     "commutePerDay": 6.57
+    },
+    "orchardist": {
+     "workers": 1,
+     "hoursPerDay": 1.61,
+     "commutePerDay": 5.92
+    },
+    "farmer": {
+     "workers": 3.99,
+     "hoursPerDay": 2.36,
+     "commutePerDay": 5.14
+    },
+    "lamplighter": {
+     "workers": 1.94,
+     "hoursPerDay": 0.67,
+     "commutePerDay": 4.51
+    },
+    "fisher": {
+     "workers": 2.09,
+     "hoursPerDay": 2.79,
+     "commutePerDay": 3.41
+    },
+    "innkeeper": {
+     "workers": 1.26,
+     "hoursPerDay": 3.25,
+     "commutePerDay": 6.17
+    },
+    "herbalist": {
+     "workers": 1,
+     "hoursPerDay": 1.55,
+     "commutePerDay": 4.05
+    },
+    "storyteller": {
+     "workers": 0.91,
+     "hoursPerDay": 2.09,
+     "commutePerDay": 1.36
+    }
+   },
+   "done": {
+    "innkeeper_serve": 285.67,
+    "deliver": 176.17,
+    "work_lamps": 169.5,
+    "innkeeper_fetch": 84.67,
+    "work_fish": 43.33,
+    "fisher_gut": 42.5,
+    "fisher_bait": 41.83,
+    "mailcarrier_round": 37,
+    "innkeeper_bring": 45.83,
+    "work_farm": 36.67,
+    "farmer_weed": 35.17,
+    "farmer_rest": 30.83,
+    "baker_knead": 26.5,
+    "baker_cool": 24,
+    "work_bake": 24.83,
+    "build": 25.67,
+    "baker_tostore": 15.83,
+    "innkeeper_cook": 17.5,
+    "innkeeper_sweep": 12.33,
+    "work_allot": 11.67,
+    "baker_sweep": 11,
+    "mailcarrier_collect": 13.17,
+    "farmer_fetchwater": 14.17,
+    "farmer_water": 14,
+    "farmer_fence": 17,
+    "work_orchard": 11.67,
+    "orchardist_prune": 11.67,
+    "orchardist_hives": 11.33,
+    "work_brew": 12.5,
+    "mailcarrier_sort": 10.67,
+    "brewer_malt": 10.67,
+    "brewer_mash": 11,
+    "work_herb": 10.17,
+    "work_wood": 12.17,
+    "woodwright_lop": 12.67,
+    "work_leaf": 5.33,
+    "work_mill": 14,
+    "herbalist_dry": 9.67,
+    "brewer_tap": 10.17,
+    "herbalist_grind": 7,
+    "innkeeper_clear": 10,
+    "miller_bag": 13.83,
+    "herbalist_beds": 6.5,
+    "grower_hang": 4.5,
+    "innkeeper_fire": 6.17,
+    "brewer_barley": 7.17,
+    "brewer_barrel": 8,
+    "work_story": 9.5,
+    "woodwright_stack": 7.83,
+    "woodwright_saw": 8.67,
+    "miller_sacks": 9.83,
+    "herder_bedding": 5.83,
+    "herder_brush": 7.67,
+    "grower_hoe": 3.67,
+    "innkeeper_keg": 6.5,
+    "work_herd": 7.83,
+    "herder_water": 4.83,
+    "herder_muck": 6.33,
+    "farmer_eggs": 3.5,
+    "miller_tobakery": 9.33,
+    "herder_feed": 6.33,
+    "herder_fetchwater": 4.5,
+    "work_mail": 3.17,
+    "innkeeper_regulars": 2.5,
+    "baker_flour": 7.5,
+    "nurse": 1.83,
+    "innkeeper_wash": 2.67
+   },
+   "doneTotal": 1593.5
+  },
+  "timeUse": {
+   "travel": 0.42,
+   "sleep": 0.23,
+   "leisure": 0.12,
+   "eat": 0.11,
+   "work": 0.07,
+   "idle": 0.03,
+   "social": 0.03,
+   "school": 0,
+   "away": 0
+  },
+  "hoursPerDay": {
+   "sleep": 5.54,
+   "eat_inn": 1.51,
+   "eat_inn:go": 0.82,
+   "eat_home": 1.02,
+   "sleep:go": 0.82,
+   "ale": 0.67,
+   "deliver:go": 0.75,
+   "eat_home:go": 0.85,
+   "party:go": 0.55,
+   "tea:go": 0.55,
+   "ale:go": 0.39,
+   "tea": 0.4,
+   "party": 0.45,
+   "work_lamps:go": 0.32,
+   "chat:go": 0.25,
+   "well:go": 0.23,
+   "putter": 0.19,
+   "chat": 0.24,
+   "work_fish": 0.12,
+   "build": 0.16,
+   "mailcarrier_round:go": 0.1,
+   "build:go": 0.18,
+   "gather:go": 0.16,
+   "innkeeper_serve:go": 0.09,
+   "hobby_collecting:go": 0.03,
+   "market:go": 0.16,
+   "work_fish:go": 0.11,
+   "tag_along": 0.23,
+   "farmer_rest:go": 0.03,
+   "sleep_rough": 0.11,
+   "farmer_water:go": 0.03,
+   "smoke": 0.11,
+   "smoke:go": 0.1,
+   "work_wood:go": 0.11,
+   "bake_home": 0.11,
+   "farmer_weed:go": 0.09,
+   "lodge": 0.06,
+   "work_farm": 0.02,
+   "baker_knead:go": 0.02,
+   "gather": 0.03
+  },
+  "goods": {
+   "foodMade": 586.5,
+   "foodUsed": 432.17,
+   "made": {
+    "grain": 619,
+    "flour": 181.5,
+    "bread": 129.17,
+    "ale": 107.67,
+    "egg": 76,
+    "veg": 53.5,
+    "leaf": 32,
+    "wood": 48.67,
+    "stew": 37.17,
+    "fish": 30.17,
+    "apple": 19,
+    "pie": 20.17,
+    "herbs": 13.83,
+    "cake": 19.5,
+    "scrap": 13,
+    "honey": 7.33,
+    "remedy": 4.17,
+    "cheese": 7.17,
+    "wool": 7
+   },
+   "used": {
+    "grain": 193,
+    "flour": 144.5,
+    "ale": 55.83,
+    "wood": 50.5,
+    "veg": 39.5,
+    "bread": 41.5,
+    "fish": 24.33,
+    "stew": 16,
+    "apple": 15.33,
+    "herbs": 8.33,
+    "leaf": 11.17,
+    "honey": 6.17,
+    "cake": 8.5,
+    "pie": 7.83,
+    "mush": 0.83,
+    "remedy": 1.83,
+    "wool": 1.83
+   },
+   "madeAtHome": {
+    "bread": 123,
+    "veg": 54.17,
+    "mush": 17.5
+   },
+   "usedAtHome": {
+    "bread": 118.5,
+    "veg": 90.17,
+    "egg": 24.5,
+    "mush": 14.67,
+    "pie": 8.33,
+    "fish": 7,
+    "cheese": 8.5,
+    "cake": 4.67,
+    "apple": 2
+   }
+  },
+  "stores": {
+   "series": {
+    "food": {
+     "start": 90,
+     "min": 36.83,
+     "max": 110.33,
+     "end": 46.17
+    },
+    "grain": {
+     "start": 24,
+     "min": 9.83,
+     "max": 320,
+     "end": 319.33
+    },
+    "flour": {
+     "start": 8,
+     "min": 0,
+     "max": 35,
+     "end": 18
+    },
+    "bread": {
+     "start": 24,
+     "min": 6.83,
+     "max": 44.67,
+     "end": 10.83
+    },
+    "ale": {
+     "start": 30,
+     "min": 27.33,
+     "max": 48.5,
+     "end": 32.5
+    },
+    "wood": {
+     "start": 36,
+     "min": 24.5,
+     "max": 46.33,
+     "end": 34.17
+    }
+   },
+   "foodHourly": {
+    "min": 36.83,
+    "max": 110.33
+   },
+   "end": {
+    "grain": 319.33,
+    "flour": 17,
+    "bread": 10.83,
+    "pie": 0.67,
+    "cake": 1,
+    "veg": 0.67,
+    "fish": 0,
+    "mush": 0,
+    "apple": 4,
+    "egg": 28.33,
+    "honey": 6.5,
+    "stew": 0,
+    "ale": 32.5,
+    "leaf": 34.83,
+    "wood": 34.17,
+    "herbs": 9.5,
+    "remedy": 5.33,
+    "cheese": 0.67,
+    "wool": 15.17,
+    "scrap": 13
+   },
+   "coin": {
+    "start": 20,
+    "end": 43.5
+   }
+  },
+  "life": {
+   "weddings": 0.33,
+   "births": 3.33,
+   "departed": {
+    "adventure": 0.5
+   },
+   "trips": 1.17,
+   "couplesEnd": 6.83,
+   "sweetheartsEnd": 16.33
+  },
+  "mood": {
+   "mean": 0.62,
+   "p10": 0.36,
+   "p50": 0.63,
+   "p90": 0.88,
+   "buckets": {
+    "put out (<0.2)": 0.02,
+    "grumbly (0.2-0.4)": 0.12,
+    "middling (0.4-0.6)": 0.3,
+    "content (0.6-0.8)": 0.37,
+    "merry (>0.8)": 0.19
+   }
+  },
+  "needs": {
+   "hunger": 0.42,
+   "thirst": 0.42,
+   "tired": 0.38,
+   "lonely": 0.29,
+   "bored": 0.1,
+   "craving": 0.47,
+   "cold": 0.06,
+   "ache": 0,
+   "industry": 0.16,
+   "comfort": 0.45,
+   "crowded": 0.02,
+   "unease": 0.11
+  },
+  "breaks": {
+   "sulks": {
+    "binge": 0.17,
+    "sharp": 0.33
+   },
+   "tantrums": 0,
+   "total": 0.5,
+   "inspired": 3
+  },
+  "bonds": {
+   "friendsStart": 25,
+   "friendsEnd": 67.83,
+   "formed": 43.83,
+   "foesStart": 0,
+   "foesEnd": 0,
+   "fellOut": 0,
+   "rivals": 8,
+   "quarrels": 1.33,
+   "goodChats": 26.33
+  },
+  "talk": {
+   "natters": 45.67,
+   "natterLines": 279.17,
+   "linesPerNatter": 6.1,
+   "walkedOff": 1.83,
+   "longNatters": 39.33,
+   "goodNatters": 26.33,
+   "quarrels": 1.33,
+   "groupTalks": 68.67,
+   "groupLines": 505.83,
+   "tableTalk": 387.5,
+   "sawRow": 0,
+   "madeUp": 0
+  },
+  "illness": {
+   "colds": 1.33,
+   "other": {
+    "sprain": 2
+   },
+   "poisoned": 1.33,
+   "sickShare": 0
+  },
+  "skills": {
+   "gained": 187.33,
+   "perVillager": 7.45,
+   "levelUps": 4.67
+  },
+  "wishes": {
+   "granted": 48.5,
+   "dreams": 1
+  },
+  "feelings": {
+   "festival": 5277,
+   "sunshine": 1937.67,
+   "soaked": 1004.67,
+   "unsettled": 558.83,
+   "gossip": 458.5,
+   "table_talk": 387.5,
+   "well_slept": 145.67,
+   "liked": 75.5,
+   "cozy": 98.67,
+   "pet": 43.83,
+   "party": 75.83,
+   "fav_food": 64.5,
+   "wish": 48.5,
+   "singsong": 47.17,
+   "present": 43.83,
+   "gave_gift": 42.17,
+   "long_chat": 39.33,
+   "wish_lost": 28,
+   "heartened": 14.33,
+   "bad_food": 25.33,
+   "good_chat": 26.33,
+   "parched": 13.83,
+   "birthday": 12.83,
+   "weathered": 11.67,
+   "gathered": 13.5,
+   "uneasy": 11,
+   "new_pet": 7.67,
+   "made_piece": 11.17,
+   "new_baby": 10.33,
+   "market": 3.83,
+   "vexed": 14.17,
+   "special": 4,
+   "inspired": 3,
+   "disliked": 5.33,
+   "turned": 2.67,
+   "got_letter": 3.5,
+   "sprained": 2,
+   "slept_rough": 4.67,
+   "missed": 1,
+   "dyn_close": 1.33,
+   "won": 2.17,
+   "snubbed": 1.83,
+   "supper": 2,
+   "crowned": 1,
+   "bad_tip": 0.5,
+   "dream": 1,
+   "bday_guest": 5.33,
+   "saw_wed": 0.83,
+   "dyn_jokers": 1,
+   "wedding": 0.67,
+   "good_tip": 0.17,
+   "flowers": 0.17,
+   "leaving_thoughts": 1,
+   "holiday": 9.5,
+   "quarrel": 1.33,
+   "stayed": 0.67,
+   "skill_up": 0.33,
+   "apprenticed": 0.5,
+   "binge": 0.17,
+   "dyn_rivals": 0.33,
+   "reunion": 0.33,
+   "sulk_over": 0.33,
+   "taught": 0.17
+  }
+ }
+}
