@@ -890,6 +890,10 @@ const Shell = {
       const d = p.doing;
       if (!d || d.kind !== 'act' || !ACTIONS[d.action]) break;
       if (d.seq === v._tyDone) { this.tell(v, 'mf.stop', [id, 0]); continue; } // (one already done with: think again)
+      // (what was open to them when Tyrell chose may have closed since: a
+      // hazard over, the party ended, the last of the ale drunk)
+      const a = ACTIONS[d.action];
+      if (a.avail && !a.avail(v, h)) { this.tell(v, 'report', [id, 'failed', 'not possible now']); continue; }
       this.picking = { v, seq: d.seq, id: d.action };
       let ok = false;
       try { ok = v.begin(ACTIONS[d.action], h, this.stepExtra(p, d.action)); } finally { this.picking = null; }
