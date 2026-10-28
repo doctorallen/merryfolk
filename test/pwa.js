@@ -13,6 +13,8 @@ const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/cs
 // what the server deploys: the worker's stamp, the build version.json names
 // (null: the page's own), and whether the network is there at all
 const deploy = { sw: 'a1', build: null, offline: false };
+// (what the page asked for and when, for a failure's report)
+const asked = [], t0 = Date.now();
 const PAGE_BUILD = fs.readFileSync(path.join(ROOT, 'js/version.js'), 'utf8').match(/BUILD_INFO = '([^']*)'/)[1];
 
 function serve() {
@@ -20,6 +22,7 @@ function serve() {
     const s = http.createServer((req, res) => {
       if (deploy.offline) { req.socket.destroy(); return; }
       const url = decodeURIComponent(req.url.split('?')[0]);
+      if (url === '/sw.js' || url === '/version.json') asked.push(`${((Date.now() - t0) / 1000).toFixed(1)}s ${url} ${url === '/sw.js' ? deploy.sw : deploy.build || 'page'}`);
       if (url === '/favicon.ico') { res.writeHead(204); res.end(); return; }
       if (url === '/version.json') { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify({ build: deploy.build || PAGE_BUILD })); return; }
       const p = path.join(ROOT, url.replace(/\/$/, '/index.html'));
@@ -40,6 +43,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const page = await kit.page({ width: 1280, height: 800 });
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
+  const said = []; page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') said.push(m.text().slice(0, 160)); });
   const ready = () => waitFor(page, READY, { timeout: 60000 });
   const mark = () => page.evaluate(() => { window.__same = 1; });
   const same = () => page.evaluate(() => window.__same === 1).catch(() => false);
@@ -65,7 +69,15 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     // a new build: saved and loaded onto
     await mark();
     await bump('a3', 'v999.1 · test');
-    if (!(await reloaded(15000))) failures.push('a new deploy did not load');
+    if (!(await reloaded(15000))) {
+      // what the worker and the page were doing (CI's logs can't be read from where this is fixed)
+      const st = await page.evaluate(async () => {
+        const a = Pwa.app, reg = await navigator.serviceWorker.getRegistration();
+        const w = (x) => (x ? x.state + ' ' + new URL(x.scriptURL).pathname : null);
+        return { newer: a.newer, reloading: a.reloading, live: a.live, reg: !!a.reg, active: w(reg && reg.active), waiting: w(reg && reg.waiting), installing: w(reg && reg.installing), controller: w(navigator.serviceWorker.controller), build: BUILD_INFO };
+      }).catch((e) => ({ error: String(e) }));
+      failures.push('a new deploy did not load: ' + JSON.stringify(st) + ' asked: ' + asked.slice(-12).join(', ') + (said.length ? ' console: ' + said.slice(-4).join(' | ') : ''));
+    }
 
     // offline: the game still opens
     deploy.offline = true;
