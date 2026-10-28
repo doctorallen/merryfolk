@@ -558,7 +558,7 @@ It's made for a phone first. Held upright, the world fills the top of the screen
 
 Every commit is stamped with a version made of the day of the year and the number of builds that day (v285.1, v285.2, … then v286.1) by `.githooks/pre-commit`, which writes `js/version.js`; the game shows it in the bottom-right corner. After cloning, run `git config core.hooksPath .githooks` once to turn the hook on.
 
-`npm test` runs the checks CI runs before deploying (`test/`): a syntax and type check, the world-generation golden hashes, a two-day smoke run on desktop and phone with a save round-trip, and the valley layout's reachability. It needs Node and the installed Chrome (`CHROME` points at the binary if it isn't in the usual place).
+`npm test` runs the checks CI runs before deploying (`test/`): a syntax and type check, the world-generation golden hashes, the villagers' sprites and the painted pictures (ground, scenery, light and interiors) pinned by hash, a two-day smoke run on desktop and phone with a save round-trip, the valley layout's reachability, a wizard's visit, and the talk packs' lint and fuzz. It needs Node and the installed Chrome (`CHROME` points at the binary if it isn't in the usual place).
 
 
 Every push to `main` runs `.github/workflows/pages.yml`. It checks the JavaScript syntax and that every script in `index.html` exists, then publishes `index.html`, `css/`, `js/` and the talk packs in `talk/` to GitHub Pages. Pull requests run the checks without deploying.

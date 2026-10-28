@@ -6,15 +6,9 @@
 // `node test/golden.js --update` and commit the new file with it.
 const fs = require('fs');
 const path = require('path');
-const { launch, openGame, finish } = require('./lib');
+const { launch, openGame, finish, WORLDS } = require('./lib');
 
 const FILE = path.join(__dirname, 'golden.json');
-const WORLDS = [
-  { name: 'classic-1337', cfg: { seed: 1337, hills: 'hilly', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some' } },
-  { name: 'classic-42', cfg: { seed: 42, hills: 'hilly', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some' } },
-  { name: 'classic-9001', cfg: { seed: 9001, hills: 'hilly', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some' } },
-  { name: 'valley-42', cfg: { seed: 42, layout: 'valley' } },
-];
 
 // Runs in the page: builds the world and mixes every placed thing into one number.
 function hashWorld(cfg) {

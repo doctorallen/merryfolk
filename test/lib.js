@@ -26,6 +26,16 @@ async function openGame(kit, { width = 1280, height = 800, mobile = false } = {}
 
 function outDir() { require('fs').mkdirSync(OUT, { recursive: true }); return OUT; }
 
+// The worlds the golden tests build: three classic seeds as the original
+// valley was made, and a planned valley (expanded with defaultGen in the page).
+const CLASSIC = { hills: 'hilly', river: 'winding', woods: 'fair', wet: 'fair', hedges: 'some', flowers: 'plenty', rocks: 'some' };
+const WORLDS = [
+  { name: 'classic-1337', cfg: { seed: 1337, ...CLASSIC } },
+  { name: 'classic-42', cfg: { seed: 42, ...CLASSIC } },
+  { name: 'classic-9001', cfg: { seed: 9001, ...CLASSIC } },
+  { name: 'valley-42', cfg: { seed: 42, layout: 'valley' } },
+];
+
 const finish = tk.finish;
 
-module.exports = { ROOT, OUT, chromePath, launch, openGame, outDir, finish, waitFor, READY };
+module.exports = { ROOT, OUT, chromePath, launch, openGame, outDir, finish, waitFor, READY, WORLDS };
