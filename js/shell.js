@@ -15,6 +15,14 @@
 // game's (MIND_MODULE: consider and block), and Palantír keeps each choice
 // with every option weighed, for the dev drawer's Brain tab.
 //
+// Families are Tyrell's too: each villager's genome is Delos's (genetics.js's
+// genes, carried as alleles and blended values: mindGenome), so a baby is
+// made in Tyrell from both parents (Shell.born), and Cradle keeps who is whose
+// child, the couples, the ages and who has left. Their skills are Tyrell's
+// skills, learned at their talent's pace (the genome's aptitudes) and their
+// schooling's (mindSkills); practice the game gives is told in, a quarter
+// hour of it at a time.
+//
 // What stays in the game: space. Tyrell has no coordinates, so the game
 // walks villagers to the bench, field or doorway an action needs, works out
 // who is near whom, and runs what an action does to the valley (a harvest, a
@@ -52,24 +60,116 @@ const MIND_SLEEP = { sleep: 2, lodge: 2, sleep_rough: 1.2 };
 const MIND_CONFIG = { logSize: 200, decisions: 6, habitFast: 0.1, habitSlow: 0.05, habitMin: 0.35, habitMax: 2.2, travelScale: 1e9, backoff: 30, idle: 10 };
 // The multipliers score() gives that Tyrell works out for itself.
 const MIND_OWN = new Set(['habit', 'instinct', 'did it last']);
+// Cradle's settings: a Merryfolk year is a day, and its stages; the game
+// keeps the rest of a life (it ages folk at its own pace, matches its own
+// couples, has its own babies and sees its elders off on adventures), so
+// Cradle neither pairs, nor has children, nor lets anyone die of its own
+// accord. Fellowship keeps the couples and the families' sentiments; the
+// game works out who meets whom (Tyrell has no places for them to meet in).
+const MIND_MODULES = {
+  cradle: { year: 1440, stages: [['baby', 0], ['child', BABY_DAYS], ['adult', CHILD_DAYS], ['elder', ELDER_DAYS]], lifespan: [1e9, 1e9], fertile: [1e9, 1e9], fertility: 0, autoPair: null },
+  fellowship: { meetGain: 0, imitation: 0 },
+};
 
 // The drives and habits of a villager, as the game reads and writes them:
 // with Tyrell, its needs and habits; before they join it, their own.
 function mindDrives(v, init) {
-  v._d = { ...init };
+  v._md = { ...init };
   v._nb = null; v._nc = null; v._pid = 'v' + v.id;
   const o = {};
   for (const d of DRIVES) Object.defineProperty(o, d, { enumerable: true, get: () => Shell.need(v, d), set: (x) => Shell.setNeed(v, d, x) });
   return o;
 }
 function mindHabits(v, init) {
-  v._h = { ...init };
+  v._mh = { ...init };
   const o = {};
   for (const k in ACTIONS) Object.defineProperty(o, k, { enumerable: true, get: () => Shell.habit(v, k), set: (x) => Shell.setHabit(v, k, x) });
   return o;
 }
+// A villager's skills as the game reads and writes them (points, 0 to 100).
+function mindSkillView(v, init) {
+  v._ms = { ...init };
+  v._tr = null;
+  const o = {};
+  for (const s of SKILLS) Object.defineProperty(o, s, { enumerable: true, get: () => Shell.skill(v, s), set: (x) => Shell.setSkill(v, s, x) });
+  return o;
+}
+// When Cradle has someone born: the game's age is what they were at the last
+// midnight (they grow a year, a day, each midnight), so Cradle's age runs
+// from it through the day and they agree at every midnight.
+function mindBorn(now, age) { return Math.round((Math.floor(now / 1440) - age) * 1440 * 100) / 100; }
+// Where a villager is, to Tyrell: a place of their own (the game keeps where
+// they really are), so what they do is done "here", and nobody meets anybody
+// in the minds (the game works out who's near whom).
+const mindPlace = (id) => 'at_v' + id;
 // Is this villager's mind Tyrell's just now?
 function minded(v) { return Shell.on && v._mw === Shell.gen && !v.leaving; }
+
+// The genome as Delos carries it: genetics.js's genes (looks with alleles, a
+// sex, thirteen traits, talents for the nine skills, inborn tastes for every
+// action and for each food), so that children are made in Tyrell from both
+// parents, as genetics.js made them: looks one parent's or the other's, eye
+// color, freckles and curls by dominance (so they skip a generation), the
+// traits mostly one parent's with a share of both and a little of their own,
+// and the odd mutation (a hair color, a trait jumping, a natural gift).
+function mindGenome(w) {
+  const d = w.delos, idx = (list) => list.map((_, i) => String(i));
+  d.gene({ id: 'sex', alleles: ['f', 'm'], copies: 1 });
+  d.gene({ id: 'eyes', alleles: EYE_ALLELES.slice(), weights: [5, 2, 1.5, 2.5], mutate: 0.04 });
+  d.gene({ id: 'freckles', alleles: ['0', '1'], weights: [3, 1], mutate: 0.03 }); // (freckled only with two copies)
+  d.gene({ id: 'curls', alleles: ['0', '1'], weights: [7, 3] });
+  d.gene({ id: 'chrome', alleles: ['1', '0'], weights: [0, 1] }); // (one copy shows: rift-blood)
+  d.gene({ id: 'hair', alleles: HAIR_COLS.slice(), copies: 1, mutate: 0.06 });
+  d.gene({ id: 'vest', alleles: VEST_COLS.slice(), copies: 1, mutate: 0.4 });
+  d.gene({ id: 'shirt', alleles: SHIRT_COLS.slice(), copies: 1, mutate: 1 }); // (whatever comes to hand)
+  d.gene({ id: 'legs', alleles: LEG_COLS.slice(), copies: 1 });
+  d.gene({ id: 'style', alleles: ['0', '1', '2'], copies: 1 });
+  d.gene({ id: 'garment', alleles: ['0', '1'], weights: [0.55, 0.45], copies: 1 });
+  d.gene({ id: 'neon', alleles: idx(NEON_COLS), copies: 1 });
+  d.look({ id: 'skin', founders: [0, SKIN_TONES.length - 1], bounds: [0, SKIN_TONES.length - 1], cross: 0, noise: 0.7, round: true });
+  d.look({ id: 'rift', founders: [0, 0], bounds: [0, 1], cross: 0, noise: 0 });
+  for (const f in FOODS) d.look({ id: 'food_' + f, founders: [0.7, 1.3], bounds: [0.5, 1.5], cross: 1, noise: 0.1 });
+  for (const t of TRAITS) d.trait({ id: t, founders: [0.1, 0.95], bounds: [0.03, 1], cross: 0.65, noise: 0.1 });
+  for (const s of SKILLS) d.talent({ id: s, founders: s === 'tinkering' ? [0.05, 0.45] : [0.15, 1], bounds: [0.05, 1], cross: 0.7, noise: 0.08, express: (a) => Math.round((0.4 + a * 1.2) * 1e4) / 1e4 });
+  for (const k in ACTIONS) d.instinct({ id: k, founders: [0.8, 1.25], bounds: [0.6, 1.4], cross: 0, noise: 0.1 });
+}
+// The game's genes as a Delos genome, and back.
+function genomeOfGenes(g) {
+  const two = (p) => (Array.isArray(p) ? p : [0, 0]).map(String);
+  const looks = { skin: g.skin, rift: g.rift || 0 };
+  for (const f in FOODS) looks['food_' + f] = g.food[f] ?? 1;
+  return {
+    genes: { sex: [g.sex || 'm'], eyes: (g.eyes || ['B', 'B']).slice(), freckles: two(g.freckles), curls: two(g.curls), chrome: two(g.chrome), hair: [g.hair], vest: [g.vest], shirt: [g.shirt], legs: [g.legs], style: [String(g.style)], garment: [String(g.garment)], neon: [String(g.neon)] },
+    traits: Object.fromEntries(TRAITS.map((t) => [t, g[t]])), talents: { ...g.apt }, instincts: { ...g.taste }, looks,
+  };
+}
+function genesOfGenome(G, mutations = []) {
+  const one = (k) => (G.genes[k] ? G.genes[k][0] : undefined);
+  const g = {
+    sex: one('sex'), skin: G.looks.skin, hair: one('hair'), vest: one('vest'), shirt: one('shirt'), legs: one('legs'), style: +one('style') || 0, garment: +one('garment') || 0,
+    eyes: G.genes.eyes.slice(), freckles: G.genes.freckles.map(Number), curls: G.genes.curls.map(Number), chrome: G.genes.chrome.map(Number), rift: G.looks.rift || 0, neon: +one('neon') || 0,
+    taste: { ...G.instincts }, food: {}, apt: { ...G.talents }, mutations,
+  };
+  for (const t of TRAITS) g[t] = G.traits[t];
+  for (const f in FOODS) g.food[f] = G.looks['food_' + f] ?? 1;
+  return g;
+}
+// What a mutation in a newborn is called (the ones genetics.js named).
+function mutationWords(m) {
+  if (m.kind === 'gene' && m.what === 'hair') return 'an unexpected hair color';
+  if (m.kind === 'trait' && TRAIT_INFO[m.what]) return `${m.by > 0 ? 'unusually high' : 'unusually low'} ${TRAIT_INFO[m.what][0].toLowerCase()}`;
+  if (m.kind === 'talent' && SKILL_LABEL[m.what]) return `a natural gift for ${SKILL_LABEL[m.what].toLowerCase()}`;
+  return null;
+}
+
+// Skills as Tyrell keeps them: a level 0 to 1 (a hundred points in the game),
+// learned at Merryfolk's pace: three-quarters of a point an hour at a talent
+// of 1, scaled by their schooling (eduSkillMul) and by how much room is left
+// below 110 points; skilled at 50, expert at 75, a master at 100.
+function mindSkills(w) {
+  const schooling = { name: 'schooling', input: (ctx) => { const v = Shell.byPid.get(ctx.person.id); return v ? eduSkillMul(v) : 1; }, range: [0, 10], out: [0, 10] };
+  for (const s of SKILLS) w.skill({ id: s, label: SKILL_LABEL[s], max: 1.1, rate: 0.0072, diminish: 1, levels: [[0.5, 'skilled'], [0.75, 'expert'], [1, 'master']], learn: [schooling] });
+}
 
 // How fast each need rises for a villager this hour, against MIND_RISE (the
 // old per-step rates of villager.js, by the hour: Tyrell keeps them steady
@@ -138,7 +238,7 @@ const MIND_MODULE = {
 };
 
 const Shell = {
-  w: null, on: false, gen: 0, pver: {}, byPid: new Map(), ends: {}, picking: null, quiet: null, _jk: null, _jv: null,
+  w: null, on: false, gen: 0, pver: {}, byPid: new Map(), ends: {}, picking: null, quiet: null, muts: {}, _jk: null, _jv: null,
   pid: (v) => 'v' + v.id,
   // their person in the running world, if they're about
   live(v) {
@@ -153,15 +253,28 @@ const Shell = {
     this.stop();
     if (!Game.mindSeed) Game.mindSeed = 'mf-' + Tyrell.hash(String(World.seed), ...Game.villagers.slice(0, 12).map((v) => v.first + v.id));
     const w = (this.w = Tyrell.create({
-      seed: Game.mindSeed, start: Game.time, modules: [], esper: { on: false },
+      seed: Game.mindSeed, start: Game.time, modules: ['fellowship', 'cradle', 'delos'], moduleConfig: MIND_MODULES, esper: { on: false },
       config: Object.assign({}, MIND_CONFIG, typeof Dev !== 'undefined' && Dev.on ? { logSize: 2000, decisions: 12 } : {}),
       extra: [MIND_MODULE], shell: { travel: () => 0 },
     }));
     for (const d of DRIVES) w.need(Object.assign({ id: d, rise: MIND_RISE[d] || 0, start: 0.2, label: DRIVE_LABEL[d] }, MIND_VITAL.has(d) ? {} : { urgent: 1.1 }));
-    w.place({ id: 'valley' });
     for (const k in ACTIONS) w.action(mindAction(ACTIONS[k]));
+    for (const v of Game.villagers) w.place({ id: mindPlace(v.id) });
     w.action({ id: 'mf_busy', label: 'busy', minutes: 1e6, rank: -1, fill: false });
+    mindGenome(w);
+    mindSkills(w);
     this.inputs(w);
+    // a newborn's mutations, as Delos makes them (Shell.born names them)
+    w.on('mutated', (e) => { if (this.muts[e.id]) this.muts[e.id].push(e); });
+    // a named level of a skill reached: remembered, felt, and the big ones told
+    w.on('skill', (e) => {
+      const v = this.byPid.get(e.id);
+      if (!v || !v.isGrown()) return;
+      const label = SKILL_LABEL[e.skill].toLowerCase();
+      v.remember(`Became ${e.level === 'expert' ? 'an' : 'a'} ${e.level} hand at ${label}.`, 1);
+      feel(v, 'skill_up', label);
+      if (e.level !== 'skilled') chronicle(`${v.name()} has become ${e.level === 'master' ? 'a master' : 'an expert'} at ${label}.`, 'learn');
+    });
     if (Game.minds && Game.minds.s) {
       try { w.load(Game.minds); } catch (e) { if (typeof noteError === 'function') noteError(e, 'loading the minds'); }
     }
@@ -224,10 +337,29 @@ const Shell = {
     w.defineInput('mf.back', (id, levels) => {
       const p = w.s.people[id];
       if (!p || p.status === 'active') return;
-      p.status = 'active'; delete p.away; p.place = 'valley'; p.doing = null;
+      p.status = 'active'; delete p.away; p.place = mindPlace(id.slice(1)); p.doing = null;
       for (const k in levels) w.mind.setLevel(p, k, levels[k]);
       w.clock.think(p);
     });
+    // Who someone's parents and partner are, from the game (the founding
+    // families, travelers who came as a couple, an older save): Cradle's and
+    // Fellowship's record of them, without a wedding or a birth.
+    w.defineInput('mf.kin', (id, parents, partner) => {
+      if (!w.s.people[id]) return;
+      if (parents.length && !w.cradle.st.parents[id]) w.cradle.st.parents[id] = parents.slice();
+      if (partner && w.s.people[partner] && w.fellowship.partner(id) !== partner) {
+        w.fellowship.applyPartners(id, partner);
+        w.fellowship.applySentiment(id, partner, 'my partner', 0.3);
+        w.fellowship.applySentiment(partner, id, 'my partner', 0.3);
+      }
+    });
+    // a place of their own, for someone from minds saved when they shared one
+    w.defineInput('mf.place', (id, place) => { const p = w.s.people[id]; if (p) { p.place = place; if (p.doing && p.doing.kind === 'act') p.doing.place = place; } });
+    // a newborn named after the birth (the game names them by their looks)
+    w.defineInput('mf.name', (id, name) => { const p = w.s.people[id]; if (p) { p.name = name; p.def.name = name; } });
+    // the game ages folk at its own pace (a wizard's village's children grow
+    // slower), so Cradle's record of when they were born follows it
+    w.defineInput('mf.age', (id, days) => { const p = w.s.people[id]; if (p) p.born = mindBorn(w.s.now, days); });
   },
   input(name, args) { return this.w.input(name, args); },
   // an input about one villager: what the game wrote of their needs goes first
@@ -243,33 +375,59 @@ const Shell = {
       if (v.leaving) continue;
       here.add(this.pid(v));
       if (v._mw !== this.gen) this.join(v);
+      else if (v.age !== v._age) { v._age = v.age; this.input('mf.age', [v._pid, v.age]); }
     }
     for (const [pid, v] of this.byPid) {
       if (here.has(pid)) continue;
+      this.unhook(v);
       this.byPid.delete(pid);
       v._mw = -1;
       const p = this.w.s.people[pid];
       if (!p || p.status !== 'active') continue;
       if (v.leaving === 'trip') this.input('away', [pid, this.w.now + 1e7, 'off on an adventure', null]);
-      else this.input('remove', [pid, v.leaving === 'final' ? 'adventure' : v.leaving || 'gone']);
+      else this.input('depart', [pid, v.leaving === 'final' ? 'adventure' : v.leaving || 'gone']);
     }
-    for (const v of Game.villagers) this.flush(v);
+    for (const v of Game.villagers) { this.flush(v); if (v._tr && v._trH >= 0.25) this.flushTrain(v); }
+  },
+  // A villager leaves the minds (off on a trip or for good, or the minds
+  // stop): what Tyrell knew of their needs, habits and skills goes back to
+  // the villager, for the trip's record and for the archive.
+  unhook(v) {
+    if (!this.on || v._mw !== this.gen || v._unhooking) return;
+    v._unhooking = true;
+    try {
+      this.flushTrain(v);
+      const p = this.w.s.people[this.pid(v)];
+      if (!p) return;
+      for (const d of DRIVES) v._md[d] = this.need(v, d);
+      v._nb = null;
+      for (const k in ACTIONS) v._mh[k] = this.w.mind.habit(p, k);
+      for (const s of SKILLS) v._ms[s] = this.skill(v, s);
+    } finally { v._unhooking = false; }
   },
   // a villager joins the minds (founding, birth, arrival), or comes back to them
   join(v) {
     const w = this.w, id = this.pid(v), p = w.s.people[id];
     this.byPid.set(id, v); v._mw = this.gen; v._pid = id; v._nb = null; v._nc = null;
     v._rates = mindRates(v, w.hour);
+    v._age = v.age;
+    if (!w.ring.get(mindPlace(v.id))) w.place({ id: mindPlace(v.id) });
     if (!p) {
-      const def = { name: v.name(), place: 'valley', needs: { ...v._d }, data: { vid: v.id } };
-      const inst = {};
-      for (const k in v.genes.taste) if (Math.abs(v.genes.taste[k] - 1) > 1e-3 && w.actions.has(k)) inst[k] = Math.round(v.genes.taste[k] * 1000) / 1000;
-      if (Object.keys(inst).length) def.instincts = inst;
-      this.input('person', [id, def]);
+      const skills = {};
+      for (const s of SKILLS) if (v._ms[s] > 0) skills[s] = Math.round(clamp(v._ms[s] / 100, 0, 1) * 1e5) / 1e5;
+      this.input('person', [id, { name: v.name(), place: mindPlace(v.id), needs: { ...v._md }, skills, born: mindBorn(w.s.now, v.age), data: { vid: v.id } }]);
+      this.input('genome', [id, genomeOfGenes(v.genes)]);
       const hab = {};
-      for (const k in v._h) if (Math.abs(v._h[k] - 1) > 1e-6 && w.actions.has(k)) hab[k] = v._h[k];
+      for (const k in v._mh) if (Math.abs(v._mh[k] - 1) > 1e-6 && w.actions.has(k)) hab[k] = v._mh[k];
       if (Object.keys(hab).length) this.input('mf.habits', [id, hab]);
-    } else if (p.status !== 'active') this.input('mf.back', [id, { ...v._d }]);
+      const sp = v.spouse != null ? 'v' + v.spouse : null;
+      if (v.parents.length || (sp && w.s.people[sp])) this.input('mf.kin', [id, v.parents.map((x) => 'v' + x), sp]);
+      return;
+    }
+    if (p.status !== 'active') this.input('mf.back', [id, { ...v._md }]);
+    else if (p.place !== mindPlace(v.id)) this.input('mf.place', [id, mindPlace(v.id)]); // (minds saved when they shared one)
+    if (p.name !== v.name()) this.input('mf.name', [id, v.name()]);
+    if (!w.s.mod.delos || !w.s.mod.delos.g || !w.s.mod.delos.g[id]) this.input('genome', [id, genomeOfGenes(v.genes)]); // (minds from before they had genomes)
   },
   // on the hour: everyone's needs settled at the old pace, then the new pace
   hourly() {
@@ -288,7 +446,7 @@ const Shell = {
   need(v, d) {
     const nb = v._nb;
     if (nb !== null && nb[d] !== undefined) return nb[d];
-    if (!this.on || v._mw !== this.gen || v.leaving) return v._d[d] ?? 0;
+    if (!this.on || v._mw !== this.gen) return v._md[d] ?? 0;
     const pid = v._pid, now = this.w.s.now, ver = this.pver[pid] || 0;
     let c = v._nc;
     if (c === null || c.ver !== ver || c.now !== now) c = v._nc = { ver, now, lv: {} };
@@ -301,7 +459,7 @@ const Shell = {
   // minutes have gone by.
   setNeed(v, d, x) {
     x = Number.isFinite(x) ? clamp(x, 0, 1) : 0;
-    if (!minded(v)) { v._d[d] = x; return; }
+    if (!minded(v)) { v._md[d] = x; return; }
     if (Math.abs(x - this.need(v, d)) < 1e-9) return;
     if (!v._nb) { v._nb = {}; v._nbAt = Game.time; }
     v._nb[d] = x;
@@ -318,7 +476,7 @@ const Shell = {
     if (minded(v)) { this.touch(pid); this.input('mf.needs', [pid, nb]); this.touch(pid); }
   },
   habit(v, k) {
-    if (!minded(v)) return v._h[k] ?? 1;
+    if (!minded(v)) return v._mh[k] ?? 1;
     return this.w.mind.habit(this.w.s.people[this.pid(v)], k);
   },
   // a habit the game nudged (a pat, a tut-tut, a good example): Tyrell's reward
@@ -326,9 +484,39 @@ const Shell = {
   // 0.625 of it
   setHabit(v, k, x) {
     if (!Number.isFinite(x)) return;
-    if (!minded(v)) { v._h[k] = x; return; }
+    if (!minded(v)) { v._mh[k] = x; return; }
     const delta = x - this.habit(v, k);
     if (Math.abs(delta) > 1e-6) this.tell(v, 'reward', [this.pid(v), k, delta / 0.625]);
+  },
+
+  // ---- skills -------------------------------------------------------------
+  // Points, 0 to 100, from Tyrell's level (0 to 1.1, kept to the game's 100).
+  skill(v, s) {
+    if (!this.on || v._mw !== this.gen) return v._ms[s] ?? 0;
+    const p = this.w.s.people[v._pid];
+    return p ? Math.min(100, this.w.skills.level(p, s) * 100) : v._ms[s] ?? 0;
+  },
+  // a level set outright (a lesson, a story's gift, a newcomer's trade)
+  setSkill(v, s, x) {
+    if (!Number.isFinite(x)) return;
+    if (!minded(v)) { v._ms[s] = x; return; }
+    if (v._tr && v._tr[s]) this.flushTrain(v);
+    if (Math.abs(x - this.skill(v, s)) > 1e-6) this.tell(v, 'skill', [v._pid, s, clamp(x / 100, 0, 1)]);
+  },
+  // Practice from the game (an hour's work at a trade, watching a master):
+  // hours of it, gathered and told to Tyrell a quarter hour at a time.
+  practice(v, s, hours) {
+    if (!(hours > 0)) return;
+    if (!v._tr) { v._tr = {}; v._trH = 0; }
+    v._tr[s] = (v._tr[s] || 0) + hours;
+    v._trH += hours;
+  },
+  flushTrain(v) {
+    const tr = v._tr;
+    if (!tr) return;
+    v._tr = null; v._trH = 0;
+    if (!this.on || v._mw !== this.gen) return;
+    for (const s of Object.keys(tr).sort()) this.tell(v, 'train', [v._pid, s, Math.round(tr[s] * 1e6) / 1e6]);
   },
 
   // ---- choosing ----------------------------------------------------------
@@ -395,6 +583,7 @@ const Shell = {
   ended(v, task) {
     const id = this.pid(v), t0 = task.t0 ?? task.t, frac = t0 > 0 && t0 < 1e6 ? clamp((task.el || 0) / t0, 0, 1) : 0;
     this.correct(v, task, frac);
+    this.flushTrain(v);
     v._tyDone = task.ty;
     if (task.done && frac >= 0.9) this.tell(v, 'report', [id, 'done', '']);
     else this.tell(v, 'mf.stop', [id, frac]);
@@ -450,6 +639,26 @@ const Shell = {
     if (seq != null) task.ty = seq;
   },
 
+  // ---- families: Cradle and Delos --------------------------------------------
+  // A baby is born in the minds: Cradle makes them, and Delos their genome
+  // from both parents'. Returns the baby's genes (genetics.js's shape), or
+  // null when the parents aren't both known to the minds (the old way, then).
+  // (The other parent may be away, or gone: Delos keeps their genome.)
+  born(mother, father, id, def) {
+    if (!this.on || !minded(mother) || !father) return null;
+    const w = this.w, pid = 'v' + id, pf = 'v' + father.id, g = w.s.mod.delos && w.s.mod.delos.g;
+    if (w.s.people[pid] || !g || !g[mother._pid] || !g[pf]) return null;
+    this.muts[pid] = [];
+    if (!w.ring.get(mindPlace(id))) w.place({ id: mindPlace(id) });
+    try {
+      this.tell(mother, 'birth', [[mother._pid, pf], { ...def, home: mindPlace(id) }, pid]);
+      const G = w.delos.genome(pid);
+      return G ? genesOfGenome(G, this.muts[pid].map(mutationWords).filter(Boolean)) : null;
+    } finally { delete this.muts[pid]; }
+  },
+  // a wedding
+  pair(a, b) { if (minded(a) && minded(b)) this.tell(a, 'pair', [a._pid, b._pid]); },
+
   // ---- for the dev drawer and the console ------------------------------------
   why(v) { return this.on && this.w ? this.w.palantir.history(this.pid(v)) : []; },
   options(v) { const p = this.live(v); return p ? this.w.peek(() => this.w.mind.options(p)) : []; },
@@ -462,6 +671,13 @@ Object.defineProperty(Villager.prototype, 'task', {
   get() { return this._task; },
   set(t) { const old = this._task; this._task = t; if (old !== t && Shell.on && !this.leaving) Shell.taskSet(this, old, t); },
 });
+// A villager setting off (on a trip or for good) takes their needs, habits
+// and skills with them from the minds, as they are that moment.
+Object.defineProperty(Villager.prototype, 'leaving', {
+  configurable: true,
+  get() { return this._leaving; },
+  set(x) { if (x && !this._leaving && Shell.on && this._mw === Shell.gen) { Shell.unhook(this); this._mw = -2; } this._leaving = x; },
+});
 
 // Saving: the minds go in the save as they are (Game.minds, Tyrell's own
 // save), with the seed they were made from.
@@ -472,7 +688,14 @@ window.addEventListener('DOMContentLoaded', () => {
   // (after the other features have had their say about the founding families)
   addHook('afterNewVillage', () => Shell.start());
   // (Tyrell's state as it stands, which the save writes out as it is: Tyrell's own save is a copy of the same)
-  patch(window, 'save', (sv) => function () { if (Shell.on) Game.minds = { tyrell: 'world', v: Shell.w.s.v, s: Shell.w.s }; return sv.apply(this, arguments); }, 'shell');
+  // (what the game had yet to tell it, the needs it moved and the practice, is told first)
+  patch(window, 'save', (sv) => function () {
+    if (Shell.on) {
+      for (const v of Game.villagers) if (minded(v)) { Shell.flush(v, true); Shell.flushTrain(v); }
+      Game.minds = { tyrell: 'world', v: Shell.w.s.v, s: Shell.w.s };
+    }
+    return sv.apply(this, arguments);
+  }, 'shell');
   // a save from before the minds were Tyrell's has none: they're made afresh,
   // from each villager's drives and habits as they were (mindDrives, join)
   patch(window, 'load', (ld) => function () { Shell.stop(); const r = ld.apply(this, arguments); if (r) Shell.start(); return r; }, 'shell');

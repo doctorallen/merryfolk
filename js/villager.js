@@ -49,7 +49,8 @@ class Villager {
     this.foodLike = Object.assign(Object.fromEntries(PANTRY_KINDS.concat(['stew']).map((k) => [k, 1])), o.foodLike || {});
     this.rel = o.rel ?? {};
     this.love = o.love ?? {};
-    this.skills = Object.assign(Object.fromEntries(SKILLS.map((s) => [s, 0])), o.skills || {});
+    // the skills are Tyrell's too (shell.js): this reads and writes them
+    this.skills = mindSkillView(this, Object.assign(Object.fromEntries(SKILLS.map((s) => [s, 0])), o.skills || {}));
     this.edu = typeof o.edu === 'number' ? o.edu : o.vocab ? educationFromOld(o, this.genes, this.age) : startingEducation(this.genes, this.age);
     this.eduFrom = o.eduFrom ?? {};
     // rift ways: 0 = hill-folk through and through, 1 = rift-born manners and gear
@@ -161,6 +162,8 @@ class Villager {
 
   practice(skill, dt, mult = 1) {
     if (!skill) return;
+    // (with a mind of Tyrell's, practice is told to it, and it learns at their pace: shell.js)
+    if (minded(this)) { Shell.practice(this, skill, (dt / 60) * mult); return; }
     const edu = eduSkillMul(this);
     const cur = this.skills[skill] || 0;
     const gain = dt * 0.012 * (0.4 + this.genes.apt[skill] * 1.2) * edu * (1 - cur / 110) * mult;
