@@ -543,10 +543,10 @@ function skyLanterns(x, y) {
   Game.fireworks = { x, y, until: Game.time + 50 };
 }
 patch(FX, 'update', (update) => function (dt) {
-  for (let i = SKY_LANTERNS.length - 1; i >= 0; i--) {
-    const l = SKY_LANTERNS[i];
-    l.t += dt;
-    if (l.t >= l.life) { SKY_LANTERNS.splice(i, 1); continue; }
+  // each one's age counted up, and those past their life let go (Tycho's fx.age);
+  // then those that have set off drift up, slowly faster
+  Tycho.fx.age(SKY_LANTERNS, dt);
+  for (const l of SKY_LANTERNS) {
     if (l.t < 0) continue;
     l.vy = Math.max(l.vy - dt * 0.3, -16);
     l.x += (l.vx + Math.sin(l.t * 0.6 + l.ph) * 2) * dt; l.y += l.vy * dt;

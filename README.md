@@ -525,7 +525,7 @@ It's made for a phone first. Held upright, the world fills the top of the screen
 | `js/larder.js` | Putting by for winter: jams, pickles and smoked fish, opened when the cold months bite |
 | `js/farewells.js` | Send-offs for elders leaving on their last adventure, keepsakes, missing them, and the Remembrance Green |
 | `js/calendar.js` | The Shire week (market day, the Mersday sing-song, Highday rest) and birthdays with presents |
-| `js/occasions.js` | What each party is for (`PARTY_KINDS`): festivals, Founders' Day and Lantern Night, birthday parties, holidays, the long tables and their courses |
+| `js/occasions.js` | What each party is for (`PARTY_KINDS`): festivals, Founders' Day and Lantern Night (its sky lanterns aging by Tycho's fx), birthday parties, holidays, the long tables and their courses |
 | `js/wishes.js` | Wishes (small hopes, some yours to grant) and each grown-up's lifelong dream |
 | `js/lamplighter.js` | The lamplighter's trade: lighting the lamps at dusk and putting them out after sunrise |
 | `js/moodlets.js` | Feelings: passing moods with reasons, what brings them on, and how they lift or sink mood |
@@ -533,7 +533,7 @@ It's made for a phone first. Held upright, the world fills the top of the screen
 | `js/cliffs.js` | Rocky escarpments in the wilder land, their painted faces and the steps cut through them |
 | `js/layout.js` | The lie of the village: the original valley's layout, and the planning of new ones from their seed |
 | `js/nature.js` | Wind, swaying trees, long grass and reeds, rocks |
-| `js/fx.js` | Particles, fireworks, weather (rain, storms, snow, fog, leaves, petals), lighting |
+| `js/fx.js` | Particles, fireworks, weather (rain, storms, snow, fog, leaves, petals), lighting (its own: its particles wait before they start, burst into others as they end and slow by the frame, where Tycho's fx would change them) |
 | `js/audio.js` | Generative folk music and sound effects |
 | `js/education.js` | Education levels, learning, and whole-sentence speech in five registers |
 | `js/town.js` | Town planning: surveyed lots, housing need, building projects, public works |
