@@ -514,6 +514,7 @@ function dailySociety() {
 function wed(a, b) {
   Game.stats.weddings = (Game.stats.weddings || 0) + 1;
   a.spouse = b.id; b.spouse = a.id; a.sweetheart = b.id; b.sweetheart = a.id;
+  Shell.pair(a, b);
   // newlyweds want a place of their own if one can be found
   const empty = World.homes.find((h) => h.built && residentsOf(h).length === 0);
   let home;
@@ -531,10 +532,12 @@ function wed(a, b) {
 }
 
 function birth(a, b) {
-  const genes = inheritGenes(a.genes, b.genes);
+  const id = NEXT_ID, drives = { hunger: 0.2, thirst: 0.1, tired: 0.3, lonely: 0.2, bored: 0.1, craving: 0, cold: 0, ache: 0, industry: 0 };
+  // the minds make the baby (Cradle and Delos, shell.js), or genetics.js does
+  const genes = Shell.born(a, b, id, { name: 'baby', needs: Object.fromEntries(DRIVES.map((d) => [d, drives[d] || 0])), data: { vid: id } }) || inheritGenes(a.genes, b.genes);
   const baby = new Villager({
-    genes, age: 0, first: babyName(genes) || undefined, tech: ((a.tech || 0) + (b.tech || 0)) / 2 * 0.6, homeId: a.homeId, parents: [a.id, b.id], surname: R.chance(0.5) ? a.surname : b.surname,
-    x: a.home().stepX, y: a.home().stepY, born: Game.day, drives: { hunger: 0.2, thirst: 0.1, tired: 0.3, lonely: 0.2, bored: 0.1, craving: 0, cold: 0, ache: 0, industry: 0 }, pouch: 0,
+    id, genes, age: 0, first: babyName(genes) || undefined, tech: ((a.tech || 0) + (b.tech || 0)) / 2 * 0.6, homeId: a.homeId, parents: [a.id, b.id], surname: R.chance(0.5) ? a.surname : b.surname,
+    x: a.home().stepX, y: a.home().stepY, born: Game.day, drives, pouch: 0,
   });
   baby.rel[a.id] = 0.9; baby.rel[b.id] = 0.9; a.rel[baby.id] = 0.9; if (b.rel) b.rel[baby.id] = 0.9;
   for (const o of Game.villagers) if (o.parents.includes(a.id) || o.parents.includes(b.id)) { o.rel[baby.id] = 0.6; baby.rel[o.id] = 0.6; }

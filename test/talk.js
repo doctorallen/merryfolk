@@ -1,6 +1,7 @@
 'use strict';
 // The wizard's conversations: every talk pack loads, the content is sound,
-// and a few hundred talks played at random behave. The lint checks that every
+// it all reaches Tyrell's Voice (each thread a Voice thread, each line's text
+// a Cityspeak line), and a few hundred talks played at random behave, on Voice. The lint checks that every
 // thread's beats exist and can be reached, every line key has a fallback,
 // placeholders name real facts, lines fit a phone, nothing's said twice in a
 // key, and the spelling is American. The fuzz walks talks across three villages
@@ -61,13 +62,19 @@ const { launch, openGame, finish } = require('./lib');
       }
       if (th.open) for (const ap in th.open) if (isKey(th.open[ap]) && !TALK_LINES[th.open[ap]]) bad.push(`thread ${id}: opener uses missing line "${th.open[ap]}"`);
     }
+    // on Voice: every thread, and every text of every line
+    if (!(typeof Shell !== 'undefined' && Shell.on)) bad.push('the minds (Tyrell) are not running, so the talks are not on Voice');
+    else {
+      for (const id in THREADS) if (!Shell.w.voice.threads.has(id)) bad.push(`thread ${id} isn't one of Voice's`);
+      if (Shell.w.cityspeak.lines.length !== n) bad.push(`${n} lines' texts, but ${Shell.w.cityspeak.lines.length} lines in Cityspeak`);
+    }
     return { bad: bad.slice(0, 40), more: Math.max(0, bad.length - 40), lines: n, threads: Object.keys(THREADS).length, keys: Object.keys(TALK_LINES).length, packs: TalkPacks.loaded.size };
   });
   for (const b of lint.bad) failures.push('lint: ' + b);
   if (lint.more) failures.push(`lint: and ${lint.more} more`);
 
   const fuzz = await page.evaluate(async () => {
-    const out = { talks: 0, beats: 0, bad: [], ended: 0 };
+    const out = { talks: 0, beats: 0, bad: [], ended: 0, voice: 0 };
     for (const seed of [3, 7, 11]) {
       Math.random = mulberry32(seed);
       startGame(true);
@@ -86,6 +93,7 @@ const { launch, openGame, finish } = require('./lib');
           const T = Play.talk;
           if (!T || !T.F) { if (Play.talk) endTalk(); continue; }
           out.talks++;
+          if (T.voice) out.voice++;
           let guard = 0;
           while (Play.talk === T && guard++ < 40) {
             const bs = [...document.querySelectorAll('#sheet-choices .choice:not(:disabled)')];
@@ -110,8 +118,9 @@ const { launch, openGame, finish } = require('./lib');
   for (const b of [...new Set(fuzz.bad)].slice(0, 20)) failures.push('fuzz: ' + b);
   const depth = fuzz.talks ? fuzz.beats / fuzz.talks : 0;
   if (depth < 3) failures.push(`fuzz: talks average only ${depth.toFixed(1)} beats`);
+  if (fuzz.voice < fuzz.talks) failures.push(`fuzz: only ${fuzz.voice} of ${fuzz.talks} talks ran on Voice`);
   for (const e of errors) failures.push('page error: ' + e);
-  console.log(`talk: ${lint.packs} packs, ${lint.threads} threads, ${lint.keys} line keys, ${lint.lines} lines; ${fuzz.talks} talks averaging ${depth.toFixed(1)} beats`);
+  console.log(`talk: ${lint.packs} packs, ${lint.threads} threads, ${lint.keys} line keys, ${lint.lines} lines; ${fuzz.talks} talks (${fuzz.voice} on Voice) averaging ${depth.toFixed(1)} beats`);
   await browser.close();
   finish('talk', failures);
 })();

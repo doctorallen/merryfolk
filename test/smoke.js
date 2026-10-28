@@ -41,12 +41,15 @@ function runDays(days) {
 
 // After a reload: load the save, save again at once, and run on a little.
 function reloadAndCompare() {
+  // the minds (Tyrell's world, in the save as it was) come back exactly as they were saved
+  const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
   load();
+  const minds = !saved.minds || (Shell.on && JSON.stringify(Shell.w.s) === JSON.stringify(saved.minds.s));
   save();
   const again = localStorage.getItem(SAVE_KEY);
   for (let i = 0; i < 400; i++) simulate(0.5);
   render(0.016);
-  return { again, day: Game.day, folk: Game.villagers.length };
+  return { again, minds, day: Game.day, folk: Game.villagers.length };
 }
 
 // A save from before the names were American (save.js, RENAMED) loads as if
@@ -135,11 +138,16 @@ async function run(browser, label, opts, failures) {
   if (r.day < 3) failures.push(`${label}: only reached day ${r.day}`);
   for (const b of new Set(r.bad)) failures.push(`${label}: ${b}`);
   if (opts.mobile) await page.screenshot({ path: path.join(outDir(), 'phone.png') });
-  await page.reload();
-  await waitFor(page, READY, { timeout: 30000 });
+  // (a busy machine can take a while to load the page again)
+  await page.reload({ timeout: 120000 });
+  await waitFor(page, READY, { timeout: 120000 });
   const r2 = await page.evaluate(reloadAndCompare);
-  const diff = shapeDifference(JSON.parse(r.saved), JSON.parse(r2.again));
+  // (the minds are Tyrell's own state, with a heap of events and a rolling log whose shapes shift as
+  // they run: they're held to coming back exactly as they were saved instead)
+  const noMinds = (blob) => { const o = JSON.parse(blob); delete o.minds; return o; };
+  const diff = shapeDifference(noMinds(r.saved), noMinds(r2.again));
   if (diff) failures.push(`${label}: save changed by a reload: ${diff}`);
+  if (!r2.minds) failures.push(`${label}: the minds came back from the save changed`);
   if (r2.folk <= 0) failures.push(`${label}: no villagers after reload`);
   if (!opts.mobile) for (const b of (await page.evaluate(oldNamesRoundTrip)).bad) failures.push(`${label}: ${b}`);
   for (const e of errors) failures.push(`${label}: page error: ${e}`);

@@ -284,7 +284,8 @@ const ACTIONS = {
     trait: (v) => 0.8 + v.genes.laziness * 0.4,
     target: (v) => ({ building: v.home() }),
     tick: (v, task, dt, h) => {
-      v.drives.tired = Math.max(0, v.drives.tired - dt * (0.16 / 60));
+      // (with Tyrell, sleep relieves tiredness there, over the night: MIND_SLEEP in shell.js)
+      if (!minded(v)) v.drives.tired = Math.max(0, v.drives.tired - dt * (0.16 / 60));
       v.drives.ache = Math.max(0, v.drives.ache - dt * (0.05 / 60));
       if (v.drives.tired < 0.04 && !sleepHours(v, h) && !v.isSick()) task.t = 0;
       if (v.drives.hunger > 0.95 && h >= 5) task.t = 0;

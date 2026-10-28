@@ -225,8 +225,13 @@
      builds on. Later files add to earlier ones through addHook and patch
      (util.js). test/check.sh confirms every file is listed here. -->
 
-<!-- Foundations: helpers, the mind's dials, pixel art, genomes -->
+<!-- Tycho, the engine (a git submodule); Tyrell, the minds engine in it
+     (one global, Tyrell); and the bridge between them (Tycho.minds) -->
 <script src="vendor/tycho/dist/tycho.js"></script>
+<script src="vendor/tycho/dist/tyrell.js"></script>
+<script src="vendor/tycho/dist/tycho-minds.js"></script>
+
+<!-- Foundations: helpers, the mind's dials, pixel art, genomes -->
 <script src="js/version.js"></script>
 <script src="js/util.js"></script>
 <script src="js/tuning.js"></script>
@@ -309,6 +314,9 @@
 <script src="js/riftplay.js"></script>
 <script src="js/relay.js"></script>
 <script src="js/journey.js"></script>
+
+<!-- The minds: Tyrell's shell (needs, habits and every choice are Tyrell's) -->
+<script src="js/shell.js"></script>
 
 <!-- Fixes and rebalancing from the playtests, patching whatever came before -->
 <script src="js/fixes2.js"></script>

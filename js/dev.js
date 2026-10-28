@@ -156,6 +156,7 @@ function devBrain() {
     o += `<div class="dkv"><b>${escapeHtml(t.a.id)}</b> · ${t.phase === 'go' ? 'walking there' : 'doing it'} · ${Math.max(0, Math.round(t.t))} min left · target ${where}${v.path ? ` · path ${v.path.length - v.pathI} steps` : ''}${t.partner ? ' · with ' + dname(t.partner) : ''}</div>`;
   } else o += `<div class="dkv">thinking in ${dfmt(v.thinkDelay, 1)} min</div>`;
   if (v.queue.length) o += `<div class="dkv">queued: ${v.queue.map((q) => escapeHtml(q.a.id)).join(', ')}</div>`;
+  if (minded(v)) return o + devBrainMind(v, t);
   // every action, scored and explained
   const rows = [], blocked = [];
   for (const k in ACTIONS) {
@@ -188,6 +189,42 @@ function devBrain() {
   const people = Object.entries(v.rel).map(([id, r]) => [Game.villagers.find((x) => x.id === +id), r]).filter(([p]) => p).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 8);
   o += `<h5>People</h5><div class="dkv">${people.map(([p, r]) => `${dname(p)} ${dfmt(r)}${v.love[p.id] > 0.05 ? ' ♥' + dfmt(v.love[p.id]) : ''}`).join(' · ') || 'nobody yet'}</div>`;
   if (v.memories.length) o += `<h5>Memories</h5>${v.memories.slice(0, 5).map((m) => `<div class="dkv"><span class="dt">d${m.d}</span> ${escapeHtml(m.t)}</div>`).join('')}`;
+  return o;
+}
+
+// With Tyrell, the choice as Palantír sees it: every option weighed now (its
+// rank, its weight and what the weight is made of), what's ruled out and why,
+// and the last few decisions with what each beat.
+function devBrainMind(v, t) {
+  const parts = (c) => c.parts.map(([n, f], i) => (i === 0 ? `${escapeHtml(n)} ${dfmt(f, 3)}` : `<span class="${f > 1 ? 'up' : 'down'}">${escapeHtml(n)} ×${dfmt(f)}</span>`)).join(' ');
+  let o = '';
+  const opts = Shell.options(v), ok = opts.filter((c) => !c.blocked && c.weight > 0);
+  const top = ok.length ? Math.max(...ok.map((c) => c.rank)) : 0;
+  const pool = ok.filter((c) => c.rank === top).sort((a, b) => b.weight - a.weight);
+  const best = pool.length ? pool[0].weight : 0, draw = pool.filter((c) => c.weight >= best * Shell.w.config.cut).slice(0, Shell.w.config.top);
+  const tot = draw.reduce((a, c) => a + c.weight * c.weight, 0) || 1;
+  o += `<h5>If they chose now <small>(Tyrell: the top rank, one of the best ${Shell.w.config.top}, weighted by weight²)</small></h5><table class="dtab"><tr><th>action</th><th>rank</th><th>weight</th><th>chance</th><th>why</th></tr>`;
+  for (const c of ok.sort((a, b) => b.rank - a.rank || b.weight - a.weight).slice(0, 14)) {
+    const i = draw.indexOf(c);
+    o += `<tr class="${t && t.a.id === c.id ? 'cur' : ''}"><td>${escapeHtml(c.id)}</td><td class="dnum">${dfmt(c.rank, 1)}</td><td class="dnum">${dfmt(c.weight, 3)}</td><td class="dnum">${i >= 0 ? Math.round((c.weight * c.weight / tot) * 100) + '%' : ''}</td><td>${parts(c)}</td></tr>`;
+  }
+  o += '</table>';
+  const why = {};
+  for (const c of opts) if (c.blocked) (why[c.blocked] || (why[c.blocked] = [])).push(c.id);
+  o += `<details><summary>Ruled out (${opts.filter((c) => c.blocked).length})</summary>${Object.entries(why).map(([r, ks]) => `<div class="dkv"><b>${escapeHtml(r)}</b>: ${ks.map(escapeHtml).join(', ')}</div>`).join('')}</details>`;
+  o += '<h5>Recent decisions <small>(Palantír)</small></h5>';
+  const hist = Shell.why(v).slice().reverse();
+  for (const d of hist) {
+    const others = d.candidates.filter((c) => !c.blocked && c.weight > 0 && c !== d.picked).sort((a, b) => b.rank - a.rank || b.weight - a.weight).slice(0, 3);
+    o += `<div class="dkv"><span class="dt">${dtime(d.t)}</span> <b>${escapeHtml(d.picked ? d.picked.id : 'nothing')}</b> <small>${escapeHtml(d.reason)}</small>${d.picked ? ' · ' + parts(d.picked) : ''}${others.length ? ' · over ' + others.map((c) => `${escapeHtml(c.id)} ${dfmt(c.weight, 3)}`).join(', ') : ''}</div>`;
+  }
+  if (!hist.length) o += '<div class="dkv">none yet</div>';
+  const habits = Object.entries(v.weights).filter(([, w]) => Math.abs(w - 1) > 0.08).sort((a, b) => b[1] - a[1]);
+  o += `<h5>Learned habits <small>(Tyrell's; 1 = untouched)</small></h5><div class="dkv">${habits.map(([k, w]) => `<span class="${w > 1 ? 'up' : 'down'}">${escapeHtml(k)} ${dfmt(w)}</span>`).join(' · ') || 'none yet'}</div>`;
+  const people = Object.entries(v.rel).map(([id, r]) => [Game.villagers.find((x) => x.id === +id), r]).filter(([p]) => p).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 8);
+  o += `<h5>People</h5><div class="dkv">${people.map(([p, r]) => `${dname(p)} ${dfmt(r)}${v.love[p.id] > 0.05 ? ' ♥' + dfmt(v.love[p.id]) : ''}`).join(' · ') || 'nobody yet'}</div>`;
+  if (v.memories.length) o += `<h5>Memories</h5>${v.memories.slice(0, 5).map((m) => `<div class="dkv"><span class="dt">d${m.d}</span> ${escapeHtml(m.t)}</div>`).join('')}`;
+  o += `<details><summary>Tyrell's account</summary><pre class="dkv">${escapeHtml(Shell.describe(v))}</pre></details>`;
   return o;
 }
 
