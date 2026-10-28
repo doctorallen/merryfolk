@@ -66,7 +66,9 @@ const { launch, openGame, finish } = require('./lib');
     if (!(typeof Shell !== 'undefined' && Shell.on)) bad.push('the minds (Tyrell) are not running, so the talks are not on Voice');
     else {
       for (const id in THREADS) if (!Shell.w.voice.threads.has(id)) bad.push(`thread ${id} isn't one of Voice's`);
-      if (Shell.w.cityspeak.lines.length !== n) bad.push(`${n} lines' texts, but ${Shell.w.cityspeak.lines.length} lines in Cityspeak`);
+      // (the natters' own lines are Cityspeak's too, with the minds: bree.js)
+      const natter = typeof Natter !== 'undefined' ? Natter.lineCount : 0;
+      if (Shell.w.cityspeak.lines.length - natter !== n) bad.push(`${n} lines' texts, but ${Shell.w.cityspeak.lines.length - natter} lines in Cityspeak (besides the natters' ${natter})`);
     }
     return { bad: bad.slice(0, 40), more: Math.max(0, bad.length - 40), lines: n, threads: Object.keys(THREADS).length, keys: Object.keys(TALK_LINES).length, packs: TalkPacks.loaded.size };
   });

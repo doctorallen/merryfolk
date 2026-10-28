@@ -94,6 +94,7 @@ addTalkOption({
         if (Math.random() < clamp(sway, 0.15, 0.9)) {
           T.quarrel = false; if (a.task) a.task.data.quarrel = false;
           a.bond(b, 0.08); unfeel(a, 'squabble'); unfeel(b, 'squabble');
+          if (typeof Natter !== 'undefined') Natter.peace(a, b); // (and in the minds, no hard feelings: bree.js)
           T.reply('...Oh, all right. Sorry, ' + b.first + '.'); T.reply2('Me too. Daft, the pair of us.');
           addRegard(a, 0.04); addRegard(b, 0.04);
           if (!a.inside) FX.hearts((a.x + b.x) / 2, (a.y + b.y) / 2 - 14);

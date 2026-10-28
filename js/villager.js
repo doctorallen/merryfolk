@@ -396,7 +396,7 @@ class Villager {
     const mind = minded(this);
     if (!mind) this.learnFrom(task, task.before);
     this.stats[a.id] = (this.stats[a.id] || 0) + 1;
-    if (a.id === 'chat' && task.partner) this.bond(task.partner, task.data.quarrel ? -0.04 : 0.03);
+    if (a.id === 'chat' && task.partner && task.bree == null) this.bond(task.partner, task.data.quarrel ? -0.04 : 0.03);
     if (a.id === 'chat' && task.partner && task.data.ask) newcomerMet(this, task.partner);
     if (!a.queued) this.lastAction = a.id;
     if (a.job) { this.lastJobAt = Game.time; this.lastJob = a.id; }
@@ -709,6 +709,8 @@ class Villager {
       if (riftShy(this, other)) { this.abort(); return; }
       // Start a conversation: both stop and face each other
       if (other.task) other.abort();
+      // (with the minds, what they strike up is Bree's: bree.js)
+      if (typeof Natter !== 'undefined' && Natter.begin(this, other, a)) return;
       const dur = R.f(18, 32);
       const sweet = this.sweetheart === other.id || this.spouse === other.id;
       const f = this.rel[other.id] ?? 0.1;

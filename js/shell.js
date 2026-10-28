@@ -25,6 +25,10 @@
 // schooling's (mindSkills); practice the game gives is told in, a quarter
 // hour of it at a time.
 //
+// What passes between them is Tyrell's too: its Bree module runs every
+// natter, squabble, sweet-talk and making-up, and the talk round a table,
+// with the kinds, topics, words and outcomes Merryfolk declares (bree.js).
+//
 // What stays in the game: space. Tyrell has no coordinates, so the game
 // walks villagers to the bench, field or doorway an action needs, works out
 // who is near whom, and runs what an action does to the valley (a harvest, a
@@ -418,7 +422,7 @@ const Shell = {
     this.stop();
     if (!Game.mindSeed) Game.mindSeed = 'mf-' + Tyrell.hash(String(World.seed), ...Game.villagers.slice(0, 12).map((v) => v.first + v.id));
     const w = (this.w = Tyrell.create({
-      seed: Game.mindSeed, start: Game.time, modules: ['reverie', 'fellowship', 'cradle', 'delos', 'mentat', 'ceres', 'cityspeak', 'voice'], moduleConfig: MIND_MODULES, esper: { on: false },
+      seed: Game.mindSeed, start: Game.time, modules: ['reverie', 'fellowship', 'cradle', 'delos', 'mentat', 'ceres', 'cityspeak', 'voice', 'bree'], moduleConfig: MIND_MODULES, esper: { on: false },
       config: Object.assign({}, MIND_CONFIG, typeof Dev !== 'undefined' && Dev.on ? { logSize: 2000, decisions: 12 } : {}),
       extra: [MIND_MODULE], shell: { travel: () => 0 },
     }));
@@ -432,6 +436,8 @@ const Shell = {
     mindRounds(w);
     mindStore(w);
     this.inputs(w);
+    // what passes between them: natters, squabbles, table talk (bree.js)
+    if (typeof Natter !== 'undefined') Natter.declare(w);
     // (a relationship Fellowship makes for the first time: the index of them is out of date)
     const fs = w.fellowship, rec = fs.record;
     fs.record = function (a, b) { if (!w.s.mod.fellowship.rel[a + '>' + b]) Shell.relMade++; return rec.call(this, a, b); };
@@ -453,7 +459,7 @@ const Shell = {
     w.focus([]); // (nobody needs a body: the game draws them all, from its own tasks)
     this.sync();
   },
-  stop() { MindStore.stop(); this.on = false; this.w = null; this.byPid.clear(); this.ends = {}; this.picking = null; this.quiet = null; this._jk = null; },
+  stop() { MindStore.stop(); if (typeof Natter !== 'undefined') Natter.reset(); this.on = false; this.w = null; this.byPid.clear(); this.ends = {}; this.picking = null; this.quiet = null; this._jk = null; },
 
   // The game's own inputs (Tyrell records them as it does its own).
   inputs(w) {
@@ -617,7 +623,8 @@ const Shell = {
   touch(pid) { const v = this.byPid.get(pid); if (v) v._ver++; },
 
   // ---- every step: the minds' clock first, then who's here -----------------
-  advance(t) { if (t > this.w.now) this.w.advanceTo(t); },
+  // (then what the minds' natters set off, in the game's own terms: bree.js)
+  advance(t) { if (t > this.w.now) this.w.advanceTo(t); if (typeof Natter !== 'undefined') Natter.flush(); },
   sync() {
     const here = new Set();
     for (const v of Game.villagers) {
@@ -927,6 +934,8 @@ const Shell = {
   // ---- the game's tasks as Tyrell's doings ----------------------------------
   // (villager.js's task is this property: every task set or put down comes here)
   taskSet(v, old, t) {
+    // (a natter put down is over: bree.js)
+    if (old && old.bree != null && (!t || t.bree !== old.bree) && typeof Natter !== 'undefined') Natter.putDown(v, old);
     const p = this.live(v);
     if (!p) return;
     const cur = p.doing ? p.doing.seq : null;

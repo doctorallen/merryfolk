@@ -586,7 +586,7 @@ function nextTurn(conv) {
 {
   patch(Villager.prototype, 'chatTick', (chatTick) => function (task, dt) {
     const p = task.partner;
-    if (!task.data.leader) return;
+    if (!task.data.leader || task.bree != null) return; // (Bree runs a natter of the minds': bree.js)
     // toddlers, and newcomers asking their questions, keep the old exchange
     if (task.data.ask || register(this) === 'toddler' || register(p) === 'toddler' || p.stage === 'baby') return chatTick.call(this, task, dt);
     task.data.talkT = (task.data.talkT || 0) - dt;
@@ -770,8 +770,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const r = uw(dtMin, raining, season, hour);
     if (Game.started) {
       Game._roundT = (Game._roundT || 0) + dtMin;
-      if (Game._roundT >= 6) { Game._roundT = 0; tableRounds(hour); }
-      roundTick();
+      // (with the minds, the talk round a table is Bree's: bree.js)
+      const bree = typeof Natter !== 'undefined' && Natter.on();
+      if (Game._roundT >= 6) { Game._roundT = 0; if (bree) Natter.tables(); else tableRounds(hour); }
+      if (bree) Natter.tableTick(dtMin); else roundTick();
     }
     return r;
   };

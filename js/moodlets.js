@@ -148,7 +148,7 @@ function moodTick(v, dt) {
       if (id === 'party') feel(this, 'party');
       else if (id === 'sleep' && this.inside && this.inside.kind === 'home' && this.drives.tired < 0.25 && !this.inside.chilly) { feel(this, 'well_slept'); unfeel(this, 'slept_rough'); }
       else if (id === 'sleep_rough') feel(this, 'slept_rough');
-      else if (id === 'chat' && task.partner) {
+      else if (id === 'chat' && task.partner && task.bree == null) { // (Bree's natters give their own: bree.js)
         if (task.data.quarrel) feel(this, 'quarrel', task.partner.first);
         else if ((this.rel[task.partner.id] ?? 0) > 0.35 && R.chance(0.5)) feel(this, 'good_chat', task.partner.first);
       }
