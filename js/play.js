@@ -53,6 +53,8 @@ const PACK = {
   book: { label: 'a storybook', icon: 'book', max: 2, give: (v) => { learn(v, 0.02, 'school'); v.drives.bored = Math.max(0, v.drives.bored - 0.3); wishEvent(v, 'act:read_item'); return v.isChild() ? 'A book! Has it got dragons in? It has! Look!' : 'A new book. I shall read it by the fire tonight.'; } },
   squib: { label: 'a squib', icon: 'spark', max: 4, ok: (v) => !v.isGrown() || v.genes.merriness > 0.5, give: (v) => { FX.sparkle(v.x, v.y - 18, R.pick(['#ff8ae0', '#6ad0ff', '#ffd34a'])); FX.sparkle(v.x, v.y - 18, '#ffffff'); Sound.boom(); wishEvent(v, 'fireworks'); v.drives.bored = Math.max(0, v.drives.bored - 0.4); return v.isChild() ? 'BANG! Again! Do it again!' : 'Ha! I haven\'t had a squib since I was small.'; } },
 };
+// (the pack is a bag of counts by kind, Tycho's items.bag: play.md)
+const Pack = Tycho.items.bag;
 function packOf() { return Game.wizPack || (Game.wizPack = refillPack()); }
 function refillPack() { const p = {}; for (const k in PACK) p[k] = PACK[k].max; return p; }
 
@@ -294,14 +296,14 @@ addTalkOption({
 addTalkOption({
   id: 'give', order: 60, label: 'Give them something from your pack…',
   // only when there's something in it for them (no pipe-weed for a child), not already given this talk
-  when: (v, T) => Object.keys(PACK).some((k) => packOf()[k] > 0 && (!PACK[k].ok || PACK[k].ok(v)) && !(T.given || []).includes(k)),
+  when: (v, T) => Object.keys(PACK).some((k) => Pack.count(packOf(), k) > 0 && (!PACK[k].ok || PACK[k].ok(v)) && !(T.given || []).includes(k)),
   run: (v, T) => {
     const pk = packOf();
     // one of each kind of present in a talk
-    T.choices(Object.keys(PACK).filter((k) => pk[k] > 0 && (!PACK[k].ok || PACK[k].ok(v)) && !(T.given || []).includes(k)).map((k) => ({
-      label: `${PACK[k].label} <small>(${pk[k]} left)</small>`,
+    T.choices(Object.keys(PACK).filter((k) => Pack.count(pk, k) > 0 && (!PACK[k].ok || PACK[k].ok(v)) && !(T.given || []).includes(k)).map((k) => ({
+      label: `${PACK[k].label} <small>(${Pack.count(pk, k)} left)</small>`,
       run: () => {
-        pk[k]--; (T.given || (T.given = [])).push(k);
+        Pack.take(pk, k, 1); (T.given || (T.given = [])).push(k);
         T.wiz(R.pick([`Here. I saved you ${PACK[k].label}.`, `I believe this is for you, ${v.first}.`]));
         T.reply(PACK[k].give(v));
         feel(v, 'wizard_gift', PACK[k].label.replace(/^a (pouch of )?/, ''));

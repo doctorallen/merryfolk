@@ -982,7 +982,17 @@ function renderOverlay() {
 // ---------------------------------------------------------------------------
 // Camera and input
 // ---------------------------------------------------------------------------
-const keys = new Set();
+// The keys that move the camera (WASD and the arrows) are held as actions on
+// Tycho's controls (play.md), fed the keys' names (e.key, lowercased) by the
+// game's own listener below, which keeps the shortcuts and leaves typing in
+// a field alone. The drag, the pinch and the taps stay the game's: past the
+// first few pixels a drag either picks a villager up or pans by the whole
+// offset from where it landed, and a pinch zooms in whole steps from its
+// start, for touches only and never while carrying.
+const CamKeys = new Tycho.input.Controls({
+  keys: { a: 'left', arrowleft: 'left', d: 'right', arrowright: 'right', w: 'up', arrowup: 'up', s: 'down', arrowdown: 'down' },
+  axes: { left: 'left', right: 'right', up: 'up', down: 'down' },
+});
 const pointer = { down: false, sx: 0, sy: 0, camX: 0, camY: 0, moved: false, x: 0, y: 0, cand: null };
 
 // A phone (or any small or short window) gets the compact interface: the
@@ -1136,7 +1146,7 @@ function setupInput() {
   window.addEventListener('keydown', (e) => {
     if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
     const k = e.key.toLowerCase();
-    keys.add(k);
+    CamKeys.keyDown(k);
     if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
     // the tools, the hand and the ledger are the Steward's, not the wizard's
     const steward = !(typeof playMode === 'function' && playMode());
@@ -1153,8 +1163,8 @@ function setupInput() {
     if (k === 'tab') { e.preventDefault(); cycleVillager(e.shiftKey ? -1 : 1); }
     if (k === '`' || k === '~') devToggle();
   });
-  window.addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
-  window.addEventListener('blur', () => keys.clear());
+  window.addEventListener('keyup', (e) => CamKeys.keyUp(e.key.toLowerCase()));
+  window.addEventListener('blur', () => CamKeys.keysOff());
   window.addEventListener('resize', resize);
   // stop Safari zooming the whole page when a pinch lands on the panels
   document.addEventListener('gesturestart', (e) => e.preventDefault());
@@ -1258,11 +1268,8 @@ function plantFlowers(x, y, seed) {
 
 function updateCamera(dt) {
   const sp = 260 * dt / Math.max(1, Game.zoom / 2);
-  let mx = 0, my = 0;
-  if (keys.has('a') || keys.has('arrowleft')) mx -= 1;
-  if (keys.has('d') || keys.has('arrowright')) mx += 1;
-  if (keys.has('w') || keys.has('arrowup')) my -= 1;
-  if (keys.has('s') || keys.has('arrowdown')) my += 1;
+  CamKeys.update();
+  const mx = CamKeys.move.x, my = CamKeys.move.y;
   if (mx || my) { Game.cam.x += mx * sp; Game.cam.y += my * sp; Game.follow = false; updateFollowBtn(); }
   if (Game.follow && Game.selected) {
     const v = Game.selected;
