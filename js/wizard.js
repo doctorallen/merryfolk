@@ -691,12 +691,7 @@ function wagonSprite(frame) {
   const out = outlineCanvas(c, OUTLINE);
   return (WAGON_SPR[frame] = out);
 }
-function mirrorCanvas(src) {
-  if (src._mirror) return src._mirror;
-  const [c, x] = makeCanvas(src.width, src.height);
-  x.translate(src.width, 0); x.scale(-1, 1); x.drawImage(src, 0, 0);
-  return (src._mirror = c);
-}
+function mirrorCanvas(src) { return src._mirror || (src._mirror = Tycho.sprite.flipped(src, { read: true })); }
 function drawWizardWagon(ctx, w) {
   const moving = w.phase !== 'here';
   const frame = moving ? Math.floor((w.dist || 0) / 6) % 2 : Math.floor(tReal * 0.25 + w.camp.x) % 4 === 0 ? 'graze' : 0;

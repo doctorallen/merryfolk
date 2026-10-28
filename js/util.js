@@ -87,14 +87,9 @@ function patch(obj, key, make, label = '') {
   PATCHES.push({ key, label, immediate: document.readyState === 'loading' });
 }
 
+// (Tycho's canvas, sprite.md: smoothing off, kept for reading back unless drawn.)
 /** @returns {[HTMLCanvasElement, CanvasRenderingContext2D]} */
-function makeCanvas(w, h, draw = false) {
-  const c = document.createElement('canvas');
-  c.width = w; c.height = h;
-  const x = c.getContext('2d', draw ? undefined : { willReadFrequently: true });
-  x.imageSmoothingEnabled = false;
-  return [c, x];
-}
+function makeCanvas(w, h, draw = false) { return Tycho.sprite.canvas(w, h, { read: !draw }); }
 // A finished image copied once onto a graphics-card canvas, so drawing it
 // each frame doesn't upload it each frame.
 function gpuCopy(c) {
@@ -105,23 +100,9 @@ function gpuCopy(c) {
   return g;
 }
 
-// Pixel-perfect filled circle / ellipse.
-function disc(ctx, cx, cy, r, col) {
-  ctx.fillStyle = col;
-  for (let y = -r; y <= r; y++) {
-    const w = Math.floor(Math.sqrt(r * r + r * 0.6 - y * y));
-    if (w >= 0) ctx.fillRect(Math.round(cx - w), Math.round(cy + y), w * 2 + 1, 1);
-  }
-}
-function ellipseFill(ctx, cx, cy, rx, ry, col) {
-  ctx.fillStyle = col;
-  for (let y = -ry; y <= ry; y++) {
-    const t = 1 - (y * y) / (ry * ry + 0.5);
-    if (t < 0) continue;
-    const w = Math.round(rx * Math.sqrt(t));
-    ctx.fillRect(Math.round(cx - w), Math.round(cy + y), w * 2 + 1, 1);
-  }
-}
+// Pixel-perfect filled circle / ellipse (Tycho's disc and ellipse).
+const { disc } = Tycho.sprite;
+const ellipseFill = Tycho.sprite.ellipse;
 
 // Adds a 1px outline around every opaque pixel of a canvas, in a darkened
 // shade of whatever it borders rather than one ink color, so a sheep is ringed
@@ -129,46 +110,15 @@ function ellipseFill(ctx, cx, cy, rx, ry, col) {
 // takes the art's own colors.)
 // If anything is drawn right up to the canvas edge, the canvas grows by a
 // pixel all round first so the outline isn't cut off there (callers use the
-// canvas returned).
+// canvas returned). The outline is Tycho's (sprite.md), then copied for the GPU.
 const OUTLINE_DARK = 0.42;
 function outlineCanvas(c, col = '#2a1c12', alpha = 255) {
-  {
-    const w = c.width, h = c.height, d = c.getContext('2d').getImageData(0, 0, w, h).data;
-    let edge = false;
-    for (let x = 0; x < w && !edge; x++) edge = d[x * 4 + 3] > 100 || d[((h - 1) * w + x) * 4 + 3] > 100;
-    for (let y = 0; y < h && !edge; y++) edge = d[y * w * 4 + 3] > 100 || d[(y * w + w - 1) * 4 + 3] > 100;
-    if (edge) { const [p, px] = makeCanvas(w + 2, h + 2); px.drawImage(c, 1, 1); c = p; }
-  }
-  const ctx = c.getContext('2d');
-  const img = ctx.getImageData(0, 0, c.width, c.height);
-  const d = img.data, w = c.width, h = c.height;
-  const solid = (x, y) => x >= 0 && y >= 0 && x < w && y < h && d[(y * w + x) * 4 + 3] > 100;
-  const mark = [];
-  for (let y = 0; y < h; y++)
-    for (let x = 0; x < w; x++) {
-      if (d[(y * w + x) * 4 + 3] > 100) continue;
-      let r = 0, g = 0, b = 0, n = 0;
-      for (const [i, j] of [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]) if (solid(i, j)) { const k = (j * w + i) * 4; r += d[k]; g += d[k + 1]; b += d[k + 2]; n++; }
-      if (n) mark.push(y * w + x, r / n, g / n, b / n);
-    }
-  for (let m = 0; m < mark.length; m += 4) { const i = mark[m] * 4; d[i] = mark[m + 1] * OUTLINE_DARK; d[i + 1] = mark[m + 2] * OUTLINE_DARK; d[i + 2] = mark[m + 3] * OUTLINE_DARK; d[i + 3] = alpha; }
-  ctx.putImageData(img, 0, 0);
-  return gpuCopy(c);
+  return gpuCopy(Tycho.sprite.outline(c, { own: OUTLINE_DARK, alpha, grow: 'edge' }));
 }
 
-// Renders a list of strings into a canvas using a palette map. '.' is transparent.
-function spriteFrom(rows, pal) {
-  const h = rows.length, w = rows[0].length;
-  const [c, x] = makeCanvas(w, h);
-  for (let j = 0; j < h; j++)
-    for (let i = 0; i < w; i++) {
-      const ch = rows[j][i];
-      if (ch === '.' || ch === ' ' || !pal[ch]) continue;
-      x.fillStyle = pal[ch];
-      x.fillRect(i, j, 1, 1);
-    }
-  return c;
-}
+// Renders a list of strings into a canvas using a palette map. '.' is
+// transparent. As wide as the first row (Tycho's spriteFrom).
+function spriteFrom(rows, pal) { return Tycho.sprite.spriteFrom(rows, pal, { read: true, w: rows[0].length }); }
 
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 

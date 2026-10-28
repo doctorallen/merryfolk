@@ -30,12 +30,7 @@ function hd(img) {
   if (!out) { out = scale2x(img); out.hd = true; HD_CACHE.set(img, out); }
   return out;
 }
-function scale2x(src) {
-  const [c, x] = makeCanvas(src.width * 2, src.height * 2);
-  x.imageSmoothingEnabled = false;
-  x.drawImage(src, 0, 0, src.width * 2, src.height * 2);
-  return gpuCopy(c);
-}
+function scale2x(src) { return gpuCopy(Tycho.sprite.enlarged(src, 2, { read: true })); }
 // Draws any sprite at its world size: native double-resolution art as it is,
 // world-resolution art through the upscaler.
 function blit(ctx, img, x, y, flip = false) {
@@ -85,13 +80,9 @@ function villagerPalette(genes, stage, look = {}) {
   return pal;
 }
 
-// A world-resolution sprite from a template, with the usual outline (critters use this).
-function finishSprite(rows, pal) {
-  const raw = spriteFrom(rows, pal);
-  const [c, x] = makeCanvas(raw.width + 2, raw.height + 2);
-  x.drawImage(raw, 1, 1);
-  return outlineCanvas(c, OUTLINE);
-}
+// A world-resolution sprite from a template, with the usual outline, the
+// canvas grown a pixel all round for it (critters use this).
+function finishSprite(rows, pal) { return gpuCopy(Tycho.sprite.outline(spriteFrom(rows, pal), { own: OUTLINE_DARK })); }
 
 const FOLK_W = 20;
 // What a body looks like: the parts each view and pose draw from.
