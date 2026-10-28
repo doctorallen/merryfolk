@@ -346,6 +346,8 @@ Village.innkeeperOn = function () { return Game.villagers.some((v) => v.task && 
 {
   // a stint at a trade is a round of its jobs, begun one after the other
   patch(Villager.prototype, 'begin', (begin) => function (a, h, extra) {
+    // (with a mind of Tyrell's, the round is a Mentat plan: shell.js)
+    if (ROUNDS[a.id] && !(extra && extra.round) && minded(this) && !(Shell.picking && Shell.picking.v === this)) return Shell.round(this, a.id, h);
     if (ROUNDS[a.id] && !(extra && extra.round) && this.isGrown() && !this._arms) {
       const round = planRound(this, a.id, h);
       if (round.length) {
@@ -425,7 +427,7 @@ Village.innkeeperOn = function () { return Game.villagers.some((v) => v.task && 
     if (t && t.round) { this._lastSub = t.a.id; if (t.a.say && R.chance(0.25)) this.say(R.pick(t.a.say), 2.2); this.lastJobAt = Game.time; this.lastJob = t.round; }
     const r = finish.call(this);
     // the round is over: carry what it gathered
-    if (t && t.round && !this.queue.some((q) => q.extra && q.extra.round)) flushStash(this);
+    if (t && t.round && !(minded(this) ? Shell.inRound(this) : this.queue.some((q) => q.extra && q.extra.round))) flushStash(this);
     return r;
   }, 'work');
   // the Steward wants a second pair of hands at the inn once the village is big

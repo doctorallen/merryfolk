@@ -200,7 +200,7 @@ function mindAction(a) {
   const def = { id: a.id, label: a.label, minutes: a.dur < 1e6 ? [a.dur * 0.8, a.dur * 1.2] : 1e6, fill: false, pose: a.pose || 'idle' };
   if (Object.keys(relieves).length) def.relieves = relieves;
   if (a.extra || !def.relieves) def.base = 0.001;
-  if (a.queued) def.rank = -1;
+  if (a.queued || ROUNDS[a.id]) def.rank = -1; // (a trade's main work is chosen as its round: mindRounds)
   const tags = [];
   if (MIND_SLEEP[a.id]) tags.push('sleep');
   if (a.social) tags.push('social');
@@ -216,11 +216,104 @@ function mindAction(a) {
 // takes them off it); anything else gives way to an urgent need.
 function mindRank(a) { return a.queued || a.manual ? 3 : 1.2; }
 
+// A trade's round of jobs (work.js) as a Mentat plan. The task has the
+// trade's main action's id, so it carries its habit and instinct and is
+// weighed by the game as the trade always was (MIND_MODULE); its way is a
+// slot for each of the trade's jobs, in work.js's order, and each slot is a
+// task of its own with two ways: the job, or nothing this round. Whether a
+// job is in this round is drawn as work.js drew it, by how much the valley
+// wants it just now (the game's say: the plots unsown, the eggs laid, a full
+// bucket), about five to a round, from the person's own random stream.
+// Children, and anyone with a baby in their arms, just do the work itself.
+const MIND_ROUND = 5;
+function mindRounds(w) {
+  for (const main in ROUNDS) {
+    const defs = ROUNDS[main], rest = defs.find((d) => d.id.endsWith('_rest'));
+    const jobs = defs.filter((d) => d !== rest).map((d, i) => [d, i]).sort((x, y) => (ORDER[x[0].id] || 5) - (ORDER[y[0].id] || 5) || x[1] - y[1]).map(([d]) => d);
+    const step = (id) => (id === main ? { action: id } : id); // (the main action is a step of some rounds: as an action, not this task again)
+    const steps = jobs.map((d, i) => {
+      const id = `${main}#${i}`;
+      w.task({ id, label: d.label || d.a.label, rank: -1, methods: [
+        { name: 'this round', if: [(ctx) => mindRoundDraw(ctx, main, d)], do: Array.from({ length: d.repeat || 1 }, () => step(d.id)) },
+        { name: 'not this round', do: [] },
+      ] });
+      return id;
+    });
+    // the sit at the end, after a proper round; and the work itself, if nothing else was wanted
+    if (rest) { w.task({ id: `${main}#rest`, label: rest.a.label, rank: -1, methods: [{ if: [(ctx) => mindRoundCount(ctx) >= 3], do: [rest.id] }, { do: [] }] }); steps.push(`${main}#rest`); }
+    w.task({ id: `${main}#none`, label: ACTIONS[main].label, rank: -1, methods: [{ if: [(ctx) => mindRoundCount(ctx) === 0], do: [{ action: main }] }, { do: [] }] });
+    steps.push(`${main}#none`);
+    const ad = mindAction(ACTIONS[main]);
+    w.task({ id: main, label: ACTIONS[main].label, relieves: ad.relieves, base: ad.base, tags: ad.tags, methods: [
+      { name: 'a round of jobs', if: [(ctx) => { const v = Shell.byPid.get(ctx.person.id); return !!v && v.isGrown() && !v._arms; }], do: steps },
+      { name: 'just the work', do: [{ action: main }] },
+    ] });
+  }
+}
+// how many jobs this round has drawn so far (the game keeps the count, by the plan's start)
+function mindRoundCount(ctx) { const v = Shell.byPid.get(ctx.person.id), p = ctx.person; return v && v._rd && p.plan && v._rd.at === p.plan.started ? v._rd.n : 0; }
+function mindRoundDraw(ctx, main, d) {
+  const v = Shell.byPid.get(ctx.person.id), p = ctx.person;
+  if (!v || !p.plan) return false;
+  const h = (ctx.world.now % 1440) / 60;
+  const want = (x) => { const n = x.need ? x.need(v, h) : 1; return n > 0 && !(x.a.avail && !x.a.avail(v, h)) ? n * (x.id === v._lastSub ? 0.3 : 1) : 0; };
+  if (!v._rd || v._rd.at !== p.plan.started) v._rd = { at: p.plan.started, n: 0 };
+  const mine = want(d);
+  if (!(mine > 0)) return false;
+  let total = 0;
+  for (const x of ROUNDS[main]) if (!x.id.endsWith('_rest')) total += want(x);
+  const yes = ctx.world.stream(p).chance(Math.min(1, (mine * MIND_ROUND) / total));
+  if (yes) v._rd.n++;
+  return yes;
+}
+
+// The Common Store as Ceres keeps it: a place, 'store', whose stock is the
+// village's goods. Village.stores reads and writes it (MindStore); what's
+// made and used through Village.produce and Village.use is counted as Ceres
+// counts production, and anything else (a caravan's trade, spoilage, a hard
+// start) sets the stock without counting, as the game's own ledger did. The
+// Store's caps stay the game's (storeCap: they grow with the buildings).
+// Each production chain's link is a Ceres chain, piling up past half the
+// first good's cap while the next is down to a sixth or so of its own.
+function mindStore(w) {
+  w.place({ id: 'store', label: 'the Common Store' });
+  for (const c of CHAINS) w.ceres.chain({ id: `${c.from}>${c.to}`, label: c.say, goods: [c.from, c.to], store: 'store', get plenty() { return storeCap(c.from) * 0.5; }, get short() { return storeCap(c.to) * 0.15; } });
+}
+const MindStore = {
+  plain: {}, flow: 0, proxy: null,
+  on() { return Shell.on && !!Shell.w; },
+  stock() { const st = Shell.w.s.places.store; return (st && st.stock) || {}; },
+  // into the minds: their stock is the Store's (made afresh from the game's for a new world, or one saved before)
+  start(w) {
+    const st = w.s.places.store;
+    if (!st || !st.stock || !Object.keys(st.stock).length) Shell.input('mf.store', [{ ...this.plain }]);
+  },
+  // out of them: the game keeps the stock itself again
+  stop() { if (this.on()) this.plain = { ...this.stock() }; },
+  make() {
+    this.proxy = new Proxy({}, {
+      get: (_, k) => (typeof k !== 'string' ? undefined : this.on() ? this.stock()[k] : this.plain[k]),
+      set: (_, k, x) => {
+        if (!this.on()) { this.plain[k] = x; return true; }
+        const before = this.stock()[k] || 0;
+        if (Number.isFinite(x) && Math.abs(x - before) > 1e-9) Shell.input(this.flow ? 'stock' : 'mf.store', this.flow ? ['store', k, x - before] : [{ [k]: x }]);
+        return true;
+      },
+      has: (_, k) => k in (this.on() ? this.stock() : this.plain),
+      deleteProperty: (_, k) => { if (this.on()) Shell.input('mf.store', [{ [k]: 0 }]); else delete this.plain[k]; return true; },
+      ownKeys: () => Object.keys(this.on() ? this.stock() : this.plain),
+      getOwnPropertyDescriptor: (_, k) => { const o = this.on() ? this.stock() : this.plain; return k in o ? { value: o[k], writable: true, enumerable: true, configurable: true } : undefined; },
+    });
+  },
+  // Village.reset makes a fresh plain object: the Store takes it over
+  wrap() { if (Village.stores !== this.proxy) { this.plain = Village.stores; Village.stores = this.proxy; } },
+};
+
 // The game's say in every choice: score()'s reasons, as Tyrell factors.
 const MIND_MODULE = {
   name: 'merryfolk',
   attach(w) { this.w = w; },
-  block(p, c) { const j = Shell.judge(p, c); return j ? j.blocked : null; },
+  block(p, c) { if (c.layer === 'plan') return null; const j = Shell.judge(p, c); return j ? j.blocked : null; },
   consider(p, c) {
     const j = Shell.judge(p, c);
     if (!j || j.blocked) return null;
@@ -253,7 +346,7 @@ const Shell = {
     this.stop();
     if (!Game.mindSeed) Game.mindSeed = 'mf-' + Tyrell.hash(String(World.seed), ...Game.villagers.slice(0, 12).map((v) => v.first + v.id));
     const w = (this.w = Tyrell.create({
-      seed: Game.mindSeed, start: Game.time, modules: ['fellowship', 'cradle', 'delos'], moduleConfig: MIND_MODULES, esper: { on: false },
+      seed: Game.mindSeed, start: Game.time, modules: ['fellowship', 'cradle', 'delos', 'mentat', 'ceres'], moduleConfig: MIND_MODULES, esper: { on: false },
       config: Object.assign({}, MIND_CONFIG, typeof Dev !== 'undefined' && Dev.on ? { logSize: 2000, decisions: 12 } : {}),
       extra: [MIND_MODULE], shell: { travel: () => 0 },
     }));
@@ -263,6 +356,8 @@ const Shell = {
     w.action({ id: 'mf_busy', label: 'busy', minutes: 1e6, rank: -1, fill: false });
     mindGenome(w);
     mindSkills(w);
+    mindRounds(w);
+    mindStore(w);
     this.inputs(w);
     // a newborn's mutations, as Delos makes them (Shell.born names them)
     w.on('mutated', (e) => { if (this.muts[e.id]) this.muts[e.id].push(e); });
@@ -279,10 +374,11 @@ const Shell = {
       try { w.load(Game.minds); } catch (e) { if (typeof noteError === 'function') noteError(e, 'loading the minds'); }
     }
     this.gen++; this.on = true; this.byPid.clear(); this.ends = {}; this.pver = {};
+    MindStore.start(w);
     w.focus([]); // (nobody needs a body: the game draws them all, from its own tasks)
     this.sync();
   },
-  stop() { this.on = false; this.w = null; this.byPid.clear(); this.ends = {}; this.picking = null; this.quiet = null; this._jk = null; },
+  stop() { MindStore.stop(); this.on = false; this.w = null; this.byPid.clear(); this.ends = {}; this.picking = null; this.quiet = null; this._jk = null; },
 
   // The game's own inputs (Tyrell records them as it does its own).
   inputs(w) {
@@ -316,7 +412,7 @@ const Shell = {
       if (!p || p.status !== 'active') return null;
       const d = p.doing, last = p.last, lastEnd = p.lastEnd;
       if (d) {
-        w.clock.interrupt(p, 'the game', false);
+        w.clock.interrupt(p, 'the game', true);
         if (d.start >= w.s.now - 1e-9) { p.last = last; p.lastEnd = lastEnd; } // (only just chosen: it doesn't count as done)
       }
       const act = w.actions.has(action) ? action : 'mf_busy';
@@ -355,6 +451,17 @@ const Shell = {
     });
     // a place of their own, for someone from minds saved when they shared one
     w.defineInput('mf.place', (id, place) => { const p = w.s.people[id]; if (p) { p.place = place; if (p.doing && p.doing.kind === 'act') p.doing.place = place; } });
+    // the Store's stock set outright, not counted as made or used (a caravan's
+    // trade, the day's spoilage, a new village's stock)
+    w.defineInput('mf.store', (vals) => { const st = w.ring.state('store'); st.stock || (st.stock = {}); for (const k in vals) st.stock[k] = Math.max(0, Number(vals[k]) || 0); });
+    // the game set them to a task of Tyrell's (a trade's round, when the working day starts)
+    w.defineInput('mf.plan', (id, task, rank) => {
+      const p = w.s.people[id];
+      if (!p || p.status !== 'active' || !w.tasks.has(task)) return null;
+      if (p.doing) w.clock.interrupt(p, 'the game', true);
+      w.clock.begin(p, { id: task, kind: 'task', place: p.place, rank, layer: 'story', weight: 1, parts: [], fill: false });
+      return p.doing ? p.doing.seq : null;
+    });
     // a newborn named after the birth (the game names them by their looks)
     w.defineInput('mf.name', (id, name) => { const p = w.s.people[id]; if (p) { p.name = name; p.def.name = name; } });
     // the game ages folk at its own pace (a wizard's village's children grow
@@ -547,7 +654,7 @@ const Shell = {
   },
   // nothing in hand: start what Tyrell chose (and if there's no way to do it,
   // say so, and it chooses again)
-  decide(v, h) {
+  decide(v, h, only) {
     const id = this.pid(v);
     for (let tries = 0; tries < 6; tries++) {
       const p = this.live(v);
@@ -557,13 +664,33 @@ const Shell = {
       if (d.seq === v._tyDone) { this.tell(v, 'mf.stop', [id, 0]); continue; } // (one already done with: think again)
       this.picking = { v, seq: d.seq, id: d.action };
       let ok = false;
-      try { ok = v.begin(ACTIONS[d.action], h); } finally { this.picking = null; }
+      try { ok = v.begin(ACTIONS[d.action], h, this.stepExtra(p, d.action)); } finally { this.picking = null; }
       if (ok) return;
       this.tell(v, 'report', [id, 'failed', 'no way to do it just now']);
     }
+    if (only) return;
     // nothing worked out: what they'd always do
     v.begin(v.stage === 'baby' ? ACTIONS.cradle : needsMinder(v) ? ACTIONS.putter : ACTIONS.stroll, h);
   },
+  // How a step of a trade's round is begun: as work.js began a round's jobs,
+  // each with its stint.
+  stepExtra(p, id) {
+    const plan = p.plan;
+    if (!plan || !ROUNDS[plan.task]) return undefined;
+    const def = ROUNDS[plan.task].find((d) => d.id === id);
+    return { round: true, dur: def ? def.dur : undefined, main: plan.task };
+  },
+  // The working day starts (or anything else begins a trade's main work):
+  // Tyrell plans the round, and the game begins its first job.
+  round(v, main, h) {
+    const p = this.live(v);
+    if (!p || !this.w.tasks.has(main)) return false;
+    this.tell(v, 'mf.plan', [v._pid, main, mindRank(ACTIONS[main])]);
+    this.decide(v, h, true);
+    return !!v.task;
+  },
+  // is a round of theirs still going (or set aside, to be taken up again)?
+  inRound(v) { const p = this.live(v); return !!p && ((p.plan && !!ROUNDS[p.plan.task]) || p.suspended.some((x) => !!ROUNDS[x.task])); },
 
   // ---- the game's tasks as Tyrell's doings ----------------------------------
   // (villager.js's task is this property: every task set or put down comes here)
@@ -699,6 +826,28 @@ window.addEventListener('DOMContentLoaded', () => {
   // a save from before the minds were Tyrell's has none: they're made afresh,
   // from each villager's drives and habits as they were (mindDrives, join)
   patch(window, 'load', (ld) => function () { Shell.stop(); const r = ld.apply(this, arguments); if (r) Shell.start(); return r; }, 'shell');
+  // the Common Store is Ceres's (MindStore): what's made and used is counted,
+  // and the Steward's economy board reads Ceres's production report
+  MindStore.make(); MindStore.wrap();
+  patch(Village, 'reset', (rs) => function () { const r = rs.apply(this, arguments); MindStore.wrap(); return r; }, 'shell');
+  for (const k of ['produce', 'use']) {
+    const f = Village[k];
+    Village[k] = function () { MindStore.flow++; try { return f.apply(this, arguments); } finally { MindStore.flow--; } };
+  }
+  patch(window, 'econRows', (er) => function () {
+    if (!MindStore.on()) return er.apply(this, arguments);
+    const r = Shell.w.ceres.production('store').places.store || {};
+    return ECON_GOODS.map((k) => {
+      const g = r[k] || { stock: 0, made: 0, used: 0 }, have = Math.floor(g.stock), made = Math.round(g.made), used = Math.round(g.used), net = made - used;
+      return { k, have, cap: storeCap(k), made, used, net, days: net < 0 && have > 0 ? have / -net : null };
+    }).filter((x) => x.have || x.made || x.used);
+  }, 'shell');
+  patch(window, 'bottlenecks', (bn) => function () {
+    const out = bn.apply(this, arguments);
+    if (!MindStore.on()) return out;
+    const links = Shell.w.ceres.production('store').bottlenecks, short = new Set(CHAINS.filter((c) => links.some((b) => b.from === c.from && b.to === c.to)));
+    return out.filter((x) => !CHAINS.includes(x) || short.has(x)).concat(CHAINS.filter((c) => short.has(c) && !out.includes(c)));
+  }, 'shell');
   // the minds' clock runs to the end of the step first, then the villagers act on it
   patch(window, 'simulate', (sim) => function (dt) {
     if (Shell.on) { Shell.sync(); Shell.advance(Game.time + dt); }
