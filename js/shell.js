@@ -56,8 +56,10 @@ const MIND_SLEEP = { sleep: 2, lodge: 2, sleep_rough: 1.2 };
 // Tyrell's settings (its docs, deciding.md): habits learned at Merryfolk's
 // pace and kept to its range, no weight for the walk (the game picks the
 // nearest spot), half an hour before something that failed is tried again,
-// and a short log (it goes in the save).
-const MIND_CONFIG = { logSize: 200, decisions: 6, habitFast: 0.1, habitSlow: 0.05, habitMin: 0.35, habitMax: 2.2, travelScale: 1e9, backoff: 30, idle: 10 };
+// each moment's checks thought over once (someone who keeps on with what
+// they're doing, or whose doing the game lengthens, would otherwise have the
+// same check queued again), and a short log (it goes in the save).
+const MIND_CONFIG = { logSize: 200, decisions: 6, habitFast: 0.1, habitSlow: 0.05, habitMin: 0.35, habitMax: 2.2, travelScale: 1e9, backoff: 30, idle: 10, checksOnce: true };
 // The multipliers score() gives that Tyrell works out for itself.
 const MIND_OWN = new Set(['habit', 'instinct', 'did it last']);
 // Cradle's settings: a Merryfolk year is a day, and its stages; the game
