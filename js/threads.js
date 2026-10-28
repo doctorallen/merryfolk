@@ -57,6 +57,7 @@ function talkPack(name, fn) {
   try { fn(); } catch (e) { console.error(`talk pack ${name}:`, e); }
   TalkPacks.current = null;
   TalkPacks.loaded.add(name);
+  voiceDeclare(); // (on Voice, with the minds: below)
   for (const r of TalkPacks.waiting[name] || []) r();
   delete TalkPacks.waiting[name];
 }
@@ -390,6 +391,8 @@ function byLabel(list, T, seen = new Set()) { return list.filter(([, th]) => { c
 // --- Running a talk -----------------------------------------------------------------
 // Called when a talk opens (play.js startTalk), once the greeting's been said.
 function talkBegin(T) {
+  // (on Voice, the talk began with the greeting: what came after it is shown now)
+  if (T.voice) { const view = T.pendingView; T.pendingView = null; if (view) VoiceTalk.show(T, view); return; }
   const v = T.v;
   T.F = factsOf(v, T); T.said = T.said || new Set(); T.done = new Set(); T.depth = 0; T.flags = {};
   const b = bondFull(v);
@@ -419,6 +422,7 @@ function maybeTheirTurn(T, chance) {
 function safeWhen(th, T) { try { return th.when(T.F, T); } catch (e) { return false; } }
 // The wizard brings up a thread (with the approach he chose, if any).
 function enterThread(T, th, ap, theirs) {
+  if (T.voice) { VoiceTalk.enter(T, th.id, null, null, null, false); return; }
   T.th = { id: th.id, beat: th.start, label: threadLabel(th, T.F) };
   T.done.add(th.id);
   // and its namesakes in other packs, so the same thing isn't raised twice in a talk
@@ -486,6 +490,7 @@ function closeKindly(T) {
 // --- What the sheet shows ---------------------------------------------------------------
 // Returns { html, choices } for play.js's renderTalk.
 function talkView(T) {
+  if (T.voice) return voiceTalkView(T);
   const v = T.v, F = T.F;
   const crumb = T.th ? `<div class="tk-crumb">${escapeHtml(T.th.label || '')}</div>` : '';
   const log = T.log.slice(-5).map((l) => {
@@ -572,6 +577,13 @@ function somethingElse(T) {
   return out;
 }
 function byeTalk(T) {
+  if (T.voice) {
+    T.wiz(pickLine('bye.wiz', T.F, T, T.v) || 'Good day to you.');
+    const a = T.view && T.view.answers.find((x) => x.kind === 'bye');
+    if (a && VoiceTalk.talk()) VoiceTalk.answer(T, a.i);
+    endTalk();
+    return;
+  }
   const s = pickLine('bye.wiz', T.F, T, T.v) || 'Good day to you.';
   T.wiz(s);
   const r = pickLine('bye.them', T.F, T, T.v);
@@ -586,13 +598,318 @@ function talkGreeting(v) {
   return pickLine('greet', F, T, v);
 }
 
+// --- On Tyrell's Voice -------------------------------------------------------------
+// With the minds on Tyrell (shell.js), a talk runs on Voice, Tyrell's module
+// for branching talk: the subjects the hub offers, each thread's beats and the
+// answers on show, how each approach lands (TAKE, by temper), the warmth of the
+// talk and their patience, what they raise of their own, what's fresh and
+// what's sore, and what's been learned. The words are Cityspeak's: every text
+// of every rule above is a line of its own (so what was said lately is passed
+// over text by text), on the rule's key as its topic (a reaction, mix.<ap>.good,
+// is Voice's react.<ap>.well), as specific as the rule (its `if` keys and pri),
+// fitting only when the rule does and its placeholders can be filled from the
+// facts (factsOf). The game fills them in, and says the wizard's side: Voice
+// gives his words as written, or one of his line keys, since he isn't one of
+// the minds.
+//
+// Kept here, Voice having none of them: trust and respect, the talk's flags,
+// the daily luck and the situations' approach-first openings (rungFor), the
+// hooks that bring a thread back (a hook weighs its thread double), the hub's
+// own menus (passing the time, something else, the TalkOptions), the wizard's
+// own lines, jokes, secrets and the promises the packs make, the notices and
+// the "warming to this" asides, and a reaction to a remark that lands only a
+// little (Voice reacts only to strong ones). A thread from one of those menus,
+// or a situation's chosen opening, is started in Voice by the game (mf.thread).
+const VoiceTalk = {
+  by: 'wizard',
+  threads: new Set(), lines: new Map(), gen: -1,
+  on() { return typeof Shell !== 'undefined' && Shell.on && !!Shell.w && !!Shell.w.voice && !!Shell.w.cityspeak; },
+  // the facts of whoever a line or answer is about: the talk's own, kept fresh beat by beat
+  facts(ctx) {
+    const T = Play.talk, v = ctx.person && Shell.byPid.get(ctx.person.id);
+    if (T && v && T.v === v && T.F) return T.F;
+    return v ? factsOf(v, { said: new Set() }) : {};
+  },
+  talk() { return this.on() && Shell.w.s.mod.voice ? Shell.w.s.mod.voice.talks[this.by] || null : null; },
+
+  // ---- declaring: on every start of the minds, and as each pack comes in ----
+  declare() {
+    if (!this.on()) return;
+    const w = Shell.w;
+    if (this.gen !== Shell.gen) {
+      this.gen = Shell.gen; this.threads.clear(); this.lines.clear();
+      for (const ap in TAKE) w.voice.approach({ id: ap, label: APPROACHES[ap] ? APPROACHES[ap].label : ap, lands: (ctx) => (TAKE[ap] && TAKE[ap][VoiceTalk.facts(ctx).temper]) || 0 });
+      w.voice.warmth = () => { const T = Play.talk; return T ? T.open || 0 : 0; };
+      w.voice.patience = () => { const T = Play.talk; return T ? T.pat || 6 : 6; };
+    }
+    const add = [];
+    for (const key in TALK_LINES) {
+      const rules = TALK_LINES[key], from = this.lines.get(key) || 0;
+      if (from >= rules.length) continue;
+      const topic = voiceTopic(key);
+      for (let i = from; i < rules.length; i++) {
+        const r = rules[i], level = (r.if ? Object.keys(r.if).length : 0) + (r.pri || 0);
+        r.text.forEach((t, j) => {
+          const need = [...t.matchAll(/\{([a-zA-Z0-9.:]+)\}/g)].map((m) => m[1]).filter((k) => !k.startsWith('frag:')).map((k) => k[0].toLowerCase() + k.slice(1));
+          const plain = !/\{frag:/.test(t);
+          add.push({ key: `${key}#${i}.${j}`, topic, text: t, pri: level, when: [(ctx) => {
+            const F = VoiceTalk.facts(ctx);
+            if (!ruleFits(r, F) || !need.every((k) => voiceFilled(F[k]))) return false;
+            // (nor anything said already in this talk, word for word)
+            const T = Play.talk;
+            return !(plain && T && T.said && T.said.has(fillTalkLine(t, F)));
+          }] });
+        });
+      }
+      this.lines.set(key, rules.length);
+    }
+    if (add.length) w.cityspeak.addLines(add);
+    for (const id in THREADS) if (!this.threads.has(id)) { this.threads.add(id); w.voice.thread(voiceThread(THREADS[id])); }
+  },
+
+  // ---- running a talk -----------------------------------------------------------
+  // The talk begins, from the greeting: Voice greets them and they may raise
+  // something of their own (shown once the greeting's said: talkBegin).
+  start(T) {
+    const v = T.v;
+    T.F = factsOf(v, T); T.said = T.said || new Set(); T.done = new Set(); T.depth = 0; T.flags = {};
+    T.open = Math.round(clamp(regardOf(v) * 3 + (bondFull(v).trust || 0) * 2, -1, 3));
+    T.pat = talkPatience(T);
+    if (T.F.situation) T.mode = 'situation';
+    const view = Shell.w.voice.start(Shell.pid(v), this.by);
+    if (!view) return null;
+    T.voice = true;
+    const greet = view.lines[0] && view.lines[0].who === 'them' ? view.lines.shift() : null;
+    T.pendingView = view;
+    return greet ? (greet.text ? fillTalkLine(greet.text, T.F) : sayOf(greet.key, T.F, T, v)) : null;
+  },
+  // a choice made: Voice's answer, then what it said
+  answer(T, i, words) {
+    const a = T.view && T.view.answers[i];
+    T.saying = words || null;
+    const view = Shell.w.voice.answer(i, this.by);
+    T.saying = null;
+    if (view) this.show(T, view, a && a.approach);
+    return view;
+  },
+  // a thread the game's own menus began (something else; passing the time, or a
+  // situation's way in, with the wizard's opening already chosen)
+  enter(T, id, ap, beat, said, door) {
+    if (said) T.wiz(said);
+    const view = Shell.input('mf.thread', [this.by, id, ap || null, beat || null, !!door]);
+    if (view) this.show(T, view, ap);
+    return view;
+  },
+  // what Voice said, into the talk's log, with the game's words filled in
+  show(T, view, ap) {
+    const v = T.v, was = T.th;
+    const notes = T.noteBuf || []; T.noteBuf = null;
+    let first = true, lastThem = -1;
+    for (const l of view.lines) {
+      if (l.who === 'note') continue; // (the game's own note says what was learned)
+      let text;
+      if (l.who === 'you') { text = first && T.saying ? T.saying : sayOf(l.text || l.key, T.F, T, v); first = false; }
+      else text = l.text ? fillTalkLine(l.text, T.F) : l.key ? sayOf(l.key, T.F, T, v) : null;
+      if (!text) continue;
+      if (l.who === 'you') T.wiz(text); else if (l.who === 'aside') T.log.push({ who: 'aside', text }); else { lastThem = T.log.length; T.reply(text); }
+    }
+    for (const n of notes) T.log.push(n);
+    if (ap && view.landed && view.landed !== 'even') T.log.push({ who: 'feel', text: view.landed === 'well' ? R.pick([`${T.F.they.replace(/^./, (c) => c.toUpperCase())}'s warming to this.`, 'That went down well.', 'Opening up.']) : R.pick(['That didn\'t land.', 'A little stiffly.', 'Cooler, now.']) });
+    T.depth += Math.max(0, (T.pat || 0) - view.patience);
+    T.pat = view.patience; T.open = view.warmth;
+    if (was && (!view.thread || view.thread.id !== was.id)) voiceFinished(T, was, view);
+    if (view.thread) {
+      const th = THREADS[view.thread.id];
+      if (!was || was.id !== view.thread.id) {
+        T.done.add(view.thread.id);
+        // (they raise it: a word of that before what they say)
+        if (view.thread.theirs) T.log.splice(lastThem >= 0 ? lastThem : T.log.length, 0, { who: 'aside', text: (th && th.ask && sayOf(th.ask, T.F, T, v)) || `${v.first} has something to say.` });
+      }
+      T.th = { id: view.thread.id, beat: view.thread.beat, label: view.thread.label };
+      const beat = th && th.beats[T.th.beat];
+      if (beat && beat.notice && T.F.familiar >= 2) { const n = sayOf(beat.notice, T.F, T, v); if (n) T.log.push({ who: 'aside', text: n }); }
+    } else T.th = null;
+    if (view.over || view.ended) T.ended = true;
+    T.view = view;
+  },
+};
+// what Voice declares as each pack comes in (a function, so a pack can call it before this file's end)
+function voiceDeclare() { if (typeof VoiceTalk !== 'undefined') VoiceTalk.declare(); }
+// a line key's topic: the reactions are Voice's (react.<approach>.well|badly)
+function voiceTopic(key) { const m = /^mix\.(?:([a-z]+)\.)?(good|bad)$/.exec(key); return m ? `react.${m[1] ? m[1] + '.' : ''}${m[2] === 'good' ? 'well' : 'badly'}` : key; }
+function voiceFilled(x) { return !(x == null || x === '' || x === false || (Array.isArray(x) && !x.length)); }
+// their patience: a few beats, more for the chatty and those fond of you, fewer for the hungry, tired or busy
+function talkPatience(T) {
+  const v = T.v, tm = T.F.temper;
+  let p = 6 + ({ cheerful: 2, curious: 2, witty: 1, dreamy: 1, shy: -2, ornery: -1, gloomy: 0, proud: 0, child: 1 }[tm] || 0) + Math.round(regardOf(v) * 4);
+  if (T.F.hungry || T.F.tired) p -= 2;
+  if (T.was && ACTIONS[T.was] && ACTIONS[T.was].job) p -= 2;
+  if (Game.raining) p -= 1;
+  return Math.max(3, p);
+}
+// a thread is done with: what the game keeps of it (as finishThread did)
+function voiceFinished(T, th, view) {
+  const b = bondFull(T.v);
+  b.seen[th.id] = Game.day; b.stage[th.id] = th.beat; b.lastThread = th.id;
+  b.hooks = b.hooks.filter((h) => !(h.thread === th.id && Game.day > h.d));
+  if (!view.over && view.patience === 2) { const s = pickLine('close.soon', T.F, T, T.v); if (s) T.reply(s); }
+  T.mode = null;
+}
+// One of the packs' threads as a Voice thread.
+function voiceThread(th) {
+  const fxThen = (fx, refresh) => [(ctx) => { const T = Play.talk; if (!T) return; if (fx) { T.noteBuf = T.noteBuf || []; voiceFx(fx, T, ctx); } if (refresh) T.F = factsOf(T.v, T); }];
+  const beats = {};
+  for (const name in th.beats) {
+    const b = th.beats[name], def = {};
+    if (b.line) def.line = b.line;
+    else if (b.text) def.text = b.text;
+    if (b.who === 'wiz') def.who = 'you'; else if (b.who === 'aside') def.who = 'aside';
+    def.then = fxThen(b.fx, true);
+    if (b.end) def.end = true;
+    if (b.go && b.go.length) def.answers = b.go.map((g) => voiceAnswer(g));
+    beats[name] = def;
+  }
+  const open = th.open ? (th.ap && th.open[th.ap]) || th.open.say || th.open[Object.keys(th.open)[0]] : undefined;
+  const def = {
+    id: th.id, label: typeof th.label === 'function' ? (ctx) => threadLabel(th, VoiceTalk.facts(ctx)) : th.label,
+    cooldown: (th.cool || 3) * 1440, start: th.start || 'start', beats,
+    // (offered at the hub, or raised by them, as the game offered them: see threadScore)
+    if: [() => voiceOffered(th)], weight: () => voiceWeight(th),
+  };
+  if (th.end) def.then = fxThen(th.end, false);
+  if (open) def.open = open;
+  if (th.ap) def.approach = th.ap;
+  if (th.theirs) def.theirs = true;
+  if (th.reveals) def.reveals = th.reveals;
+  return def;
+}
+function voiceAnswer(g) {
+  const a = { say: g.say || '…' };
+  if (g.label) a.label = g.label;
+  if (g.ap) a.approach = g.ap;
+  const need = { ...(g.need || {}) };
+  if (need.open !== undefined) { a.warmth = need.open; delete need.open; }
+  if (Object.keys(need).length) a.if = [() => { const T = Play.talk; return !!T && needMet(need, T); }];
+  if (g.soft) a.soft = true;
+  if (g.fx) a.then = [(ctx) => { const T = Play.talk; if (T) { T.noteBuf = T.noteBuf || []; voiceFx(g.fx, T, ctx); } }];
+  if (Array.isArray(g.to)) a.to = g.to.map((x) => (typeof x === 'string' ? { to: x } : { if: [() => { const T = Play.talk; return !!T && needMet(x.need, T); }], to: x.to }));
+  else a.to = g.to || 'end';
+  return a;
+}
+// a beat's or answer's effects: the game's (applyFx), and what Voice keeps of them
+function voiceFx(fx, T, ctx) {
+  applyFx(fx, T);
+  const L = ctx.world.lang;
+  if (fx.learn) L.applyAll([`learn:${Array.isArray(fx.learn) ? fx.learn[0] : fx.learn}`], ctx);
+  if (fx.sore && (fx.sore.k || T.th)) L.applyAll([`sore:${fx.sore.k || T.th.id}=${fx.sore.days || 2}`], ctx);
+  if (fx.open) L.applyAll([`warmth+=${fx.open}`], ctx);
+}
+// Is a thread for the hub (or, if it's theirs, for them to raise) just now?
+function voiceOffered(th) {
+  const T = Play.talk;
+  if (!T || !T.F || T.third) return false;
+  if (th.light || th.situation || !forAge(th, T.F)) return false;
+  if (th.theirs && T.mode === 'situation') return false;
+  if (th.when && !safeWhen(th, T)) return false;
+  if (T.done.has(th.id)) return false;
+  // two packs may write a thread for the same thing: the one with the greater weight is offered, once a talk
+  const l = threadLabel(th, T.F);
+  for (const o of voiceNamesakes(th)) {
+    if (threadLabel(o, T.F) !== l) continue;
+    if (T.done.has(o.id)) return false;
+    if (((o.weight || 1) > (th.weight || 1) || ((o.weight || 1) === (th.weight || 1) && o.id < th.id)) && (!o.when || safeWhen(o, T))) return false;
+  }
+  return true;
+}
+// the other threads that might share a thread's label (the same, or labels worked out from the facts)
+function voiceNamesakes(th) {
+  if (th._namesakes) return th._namesakes;
+  const fixed = typeof th.label === 'string' ? th.label : null;
+  return (th._namesakes = Object.values(THREADS).filter((o) => o !== th && !o.light && !o.situation && !!o.theirs === !!th.theirs && (typeof o.label === 'function' || !fixed || o.label === fixed)));
+}
+// how much a subject is worth raising: its weight, how it bears on them, a first beat they're not ready for, a hook
+function voiceWeight(th) {
+  const T = Play.talk;
+  if (!T || !T.F) return th.weight || 1;
+  const b = bondFull(T.v);
+  let rel = 1; try { if (th.rel) rel = th.rel(T.F, T); } catch (e) { rel = 1; }
+  let fit = 1;
+  const first = th.beats[th.start || 'start'];
+  if (first && first.need && !needMet(first.need, T)) fit = 0.3;
+  const hook = b.hooks.some((h) => h.thread === th.id && Game.day > h.d) ? 2 : 1;
+  return (th.weight || 1) * rel * fit * hook;
+}
+
+// The sheet for a talk on Voice: what was said, then the answers (Voice's, and the game's own menus).
+function voiceTalkView(T) {
+  const v = T.v, F = T.F, view = T.view;
+  const crumb = T.th ? `<div class="tk-crumb">${escapeHtml(T.th.label || '')}</div>` : '';
+  const log = T.log.slice(-5).map((l) => {
+    if (l.who === 'note') return `<p class="tk-note">✎ ${escapeHtml(l.text)}</p>`;
+    if (l.who === 'aside') return `<p class="tk-aside">${escapeHtml(l.text)}</p>`;
+    if (l.who === 'feel') return `<p class="tk-feel">${escapeHtml(l.text)}</p>`;
+    return `<p class="tk-line ${l.who}"><b>${l.who === 'wiz' ? 'You' : escapeHtml(v.first)}</b> ${escapeHtml(l.text)}</p>`;
+  }).join('');
+  const html = `${crumb}<div class="tk-log">${log}</div>`;
+  const chip = (ap) => (ap ? `<span class="tone ${ap}">${APPROACHES[ap] ? APPROACHES[ap].label : ap}</span> ` : '');
+  const choices = [];
+  const go = (fn) => () => { fn(); if (Play.talk === T) renderTalk(); };
+  const answers = (view && view.answers) || [];
+  const bye = { label: 'Good day', foot: true, run: () => byeTalk(T) };
+  if (T.ended || !view) { choices.push(bye); return { html, choices }; }
+  if (T.th) {
+    for (const a of answers) {
+      if (a.kind !== 'answer') continue;
+      const text = sayOf(a.say, F, T, v) || '…';
+      const label = a.label ? (sayOf(a.label, F, T, v) || text) : text;
+      choices.push({ label: `${chip(a.approach)}${escapeHtml(label)}${a.ok ? '' : ' <small>(not yet)</small>'}`, disabled: !a.ok, run: go(() => VoiceTalk.answer(T, a.i, text)) });
+    }
+    const drop = answers.find((a) => a.kind === 'drop');
+    if (drop) choices.push({ label: 'Let it lie', foot: true, run: go(() => VoiceTalk.answer(T, drop.i)) });
+    choices.push(bye);
+    return { html, choices };
+  }
+  if (T.mode === 'situation' && F.situation && SITUATIONS[F.situation]) {
+    const sit = SITUATIONS[F.situation];
+    // four ways in at most, on a phone: the same four for this hobbit all day
+    const aps = Object.keys(sit.aps).map((ap) => [hash2(T.v.id * 7 + Game.day, ap.length * 3 + ap.charCodeAt(0)), ap]).sort((a, b) => a[0] - b[0]).slice(0, 4).map((x) => x[1]);
+    for (const ap of aps) {
+      const say = sayOf(`sit.${sit.key}.${ap}`, F, T, v) || sayOf(sit.aps[ap].say, F, T, v);
+      if (!say) continue;
+      choices.push({ label: `${chip(ap)}${escapeHtml(say)}`, run: go(() => {
+        T.mode = null;
+        if (THREADS[sit.thread]) VoiceTalk.enter(T, sit.thread, ap, sit.aps[ap].out[rungFor(sit, ap, T)], say, true);
+        else T.wiz(say);
+      }) });
+    }
+    choices.push({ label: 'Talk of something else', foot: true, run: go(() => { T.mode = null; if (sit.thread) bondFull(v).seen[sit.thread] = Game.day; }) });
+    choices.push(bye);
+    return { html, choices };
+  }
+  // the hub: Voice's three things worth talking about, passing the time, something else, good day
+  for (const a of answers) if (a.kind === 'thread') choices.push({ label: escapeHtml(a.label || ''), run: go(() => VoiceTalk.answer(T, a.i)) });
+  const light = Object.values(THREADS).filter((th) => th.light && forAge(th, F) && !T.done.has(th.id) && (!th.when || safeWhen(th, T)));
+  if (light.length) choices.push({ label: 'Pass the time of day…', run: go(() => { T.sub = shuffleArr(light).slice(0, 3).map((th) => { const ap = th.ap || Object.keys(th.open || {})[0]; const said = sayOf(th.open[ap], F, T, v) || threadLabel(th, F); return { label: `${chip(ap)}${escapeHtml(said)}`, run: () => { T.sub = null; VoiceTalk.enter(T, th.id, ap, null, said, true); } }; }); }) });
+  choices.push({ label: 'Something else…', run: go(() => { T.sub = somethingElse(T); }) });
+  choices.push(bye);
+  return { html, choices };
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   registerField('wizSaid', {});
   addHook('newVillage', () => { Game.wizSaid = {}; });
   // only a wizard's village needs the words
   patch(window, 'startGame', (sg) => function () { const r = sg.apply(this, arguments); if (playMode()) startTalkLoading(); return r; }, 'threads');
   patch(window, 'load', (ld) => function () { const r = ld.apply(this, arguments); if (playMode()) startTalkLoading(); return r; }, 'threads');
-  patch(window, 'greeting', (g) => function (v) { const s = TalkPacks.loaded.has('core') ? talkGreeting(v) : null; return s || g.apply(this, arguments); }, 'threads');
+  patch(window, 'greeting', (g) => function (v) {
+    // with the minds, the talk runs on Voice, and begins with its greeting
+    const T = Play.talk;
+    if (T && T.v === v && !T.third && TalkPacks.loaded.has('core') && VoiceTalk.on()) { const s = VoiceTalk.start(T); if (s) return s; }
+    const s = TalkPacks.loaded.has('core') ? talkGreeting(v) : null;
+    return s || g.apply(this, arguments);
+  }, 'threads');
+  // a talk walked away from ends in Voice too
+  patch(window, 'endTalk', (et) => function () { const T = Play.talk; if (T && T.voice && VoiceTalk.talk()) Shell.w.voice.end(VoiceTalk.by); return et.apply(this, arguments); }, 'threads');
   // what's said in a talk is noted, so it isn't said again too soon
   patch(Villager.prototype, 'say', (say) => function (text) { if (Play.talk && (Play.talk.v === this || Play.talk.third === this) && text) { Play.talk.said && Play.talk.said.add(text); noteSaid(this, text); } return say.apply(this, arguments); }, 'threads');
   // a day's turn: old "said lately" marks are let go

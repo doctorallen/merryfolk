@@ -69,6 +69,13 @@ const MIND_OWN = new Set(['habit', 'instinct', 'did it last']);
 const MIND_MODULES = {
   cradle: { year: 1440, stages: [['baby', 0], ['child', BABY_DAYS], ['adult', CHILD_DAYS], ['elder', ELDER_DAYS]], lifespan: [1e9, 1e9], fertile: [1e9, 1e9], fertility: 0, autoPair: null },
   fellowship: { meetGain: 0, imitation: 0 },
+  // the wizard's talks (threads.js): how a remark that lands strongly moves
+  // their fondness for him (the game's regard), and the lines' topics
+  voice: {
+    offers: 3, choices: 3, theirs: 0.3, strong: 2, greet: 'greet', bye: 'bye.them', close: 'close.patience', react: 'react',
+    onWell: [() => { const T = Play.talk; if (T) addRegard(T.v, 0.015); }],
+    onBadly: [() => { const T = Play.talk; if (T) { (T.flags || (T.flags = {})).misjudged = true; addRegard(T.v, -0.02); } }],
+  },
 };
 
 // The drives and habits of a villager, as the game reads and writes them:
@@ -346,7 +353,7 @@ const Shell = {
     this.stop();
     if (!Game.mindSeed) Game.mindSeed = 'mf-' + Tyrell.hash(String(World.seed), ...Game.villagers.slice(0, 12).map((v) => v.first + v.id));
     const w = (this.w = Tyrell.create({
-      seed: Game.mindSeed, start: Game.time, modules: ['fellowship', 'cradle', 'delos', 'mentat', 'ceres'], moduleConfig: MIND_MODULES, esper: { on: false },
+      seed: Game.mindSeed, start: Game.time, modules: ['fellowship', 'cradle', 'delos', 'mentat', 'ceres', 'cityspeak', 'voice'], moduleConfig: MIND_MODULES, esper: { on: false },
       config: Object.assign({}, MIND_CONFIG, typeof Dev !== 'undefined' && Dev.on ? { logSize: 2000, decisions: 12 } : {}),
       extra: [MIND_MODULE], shell: { travel: () => 0 },
     }));
@@ -375,6 +382,7 @@ const Shell = {
     }
     this.gen++; this.on = true; this.byPid.clear(); this.ends = {}; this.pver = {};
     MindStore.start(w);
+    voiceDeclare();
     w.focus([]); // (nobody needs a body: the game draws them all, from its own tasks)
     this.sync();
   },
@@ -461,6 +469,29 @@ const Shell = {
       if (p.doing) w.clock.interrupt(p, 'the game', true);
       w.clock.begin(p, { id: task, kind: 'task', place: p.place, rank, layer: 'story', weight: 1, parts: [], fill: false });
       return p.doing ? p.doing.seq : null;
+    });
+    // The game's own menus begin a thread of the wizard's talk (threads.js):
+    // something else (Voice opens it, as at the hub), or with his opening
+    // already said, the approach it came with landing first (passing the time;
+    // a situation's way in, at the beat it led to).
+    w.defineInput('mf.thread', (by, id, ap, beat, door) => {
+      const V = w.voice, talk = V.st && V.st.talks[by], def = V.threads.get(id);
+      if (!talk || !def) return null;
+      talk.lines = []; V.live = talk;
+      try {
+        if (talk.thread) V.finishThread(talk, false);
+        if (!talk.over) {
+          if (ap && door) V.land(talk, ap);
+          if (beat && def.beats[beat]) {
+            talk.thread = { id, beat, label: typeof def.label === 'function' ? def.label(V.ctx(talk)) : def.label ?? id };
+            if (!talk.done.includes(id)) talk.done.push(id);
+            V.runBeat(talk, beat);
+          } else V.enter(talk, def, false, !!door);
+        }
+        if (!talk.thread && !talk.over && V.theirTurn(talk)) return V.view(talk, false);
+        V.refresh(talk);
+      } finally { V.live = null; }
+      return V.view(talk, false);
     });
     // a newborn named after the birth (the game names them by their looks)
     w.defineInput('mf.name', (id, name) => { const p = w.s.people[id]; if (p) { p.name = name; p.def.name = name; } });
