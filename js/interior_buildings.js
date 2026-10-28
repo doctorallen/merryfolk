@@ -266,7 +266,7 @@ function drawBuildingItem(L, it, part, t) {
       for (let k = 0; k < 2; k++) {
         const ox = x + k * 26;
         IR(ox, b - 40, 24, 40, '#9a5a3a'); for (let y = b - 40; y < b; y += 4) IR(ox + ((y >> 2) % 2) * 3, y, 24, 1, '#7a4a2e');
-        disc(X, ox + 12, b - 20, 8, '#3a2014'); IR(ox + 4, b - 20, 17, 10, '#3a2014');
+        disc(IX, ox + 12, b - 20, 8, '#3a2014'); IR(ox + 4, b - 20, 17, 10, '#3a2014');
       }
       return;
     }
@@ -278,7 +278,7 @@ function drawBuildingItem(L, it, part, t) {
     }
     case 'copper': {
       if (part !== 'back') return;
-      disc(X, x, b - 30, 16, '#b8743a'); disc(X, x - 4, b - 34, 6, '#d8945a'); IR(x - 16, b - 30, 33, 30, '#b8743a'); IR(x - 16, b - 30, 2, 30, '#d8945a');
+      disc(IX, x, b - 30, 16, '#b8743a'); disc(IX, x - 4, b - 34, 6, '#d8945a'); IR(x - 16, b - 30, 33, 30, '#b8743a'); IR(x - 16, b - 30, 2, 30, '#d8945a');
       IR(x - 18, b - 8, 37, 8, '#5a3a22'); IR(x - 2, CEIL, 4, b - 46 - CEIL, '#8a5a30');
       for (let k = 0; k < 3; k++) { IR(x + 24 + k * 14, b - 14, 12, 14, '#7a4e2a'); IR(x + 24 + k * 14, b - 10, 12, 1, '#3a3a3a'); }
       return;
@@ -314,10 +314,10 @@ function drawStockThing(k, x, y) {
   switch (k) {
     case 'grain': case 'flour': IR(x, y + 2, 9, 9, k === 'flour' ? '#f4ead0' : '#d8c08a'); IR(x + 2, y, 5, 2, '#a89060'); IR(x + 1, y + 5, 7, 1, '#b8a070'); return;
     case 'wool': IR(x, y, 9, 8, '#f4f0e8'); IP(x + 2, y + 2, '#d8d0c0'); IP(x + 6, y + 4, '#d8d0c0'); return;
-    case 'wood': for (let j = 0; j < 3; j++) { disc(X, x + 2 + j * 4, y + 6, 2, '#7a5030'); IP(x + 2 + j * 4, y + 6, '#d8b07a'); } disc(X, x + 4, y + 2, 2, '#7a5030'); disc(X, x + 8, y + 2, 2, '#7a5030'); return;
+    case 'wood': for (let j = 0; j < 3; j++) { disc(IX, x + 2 + j * 4, y + 6, 2, '#7a5030'); IP(x + 2 + j * 4, y + 6, '#d8b07a'); } disc(IX, x + 4, y + 2, 2, '#7a5030'); disc(IX, x + 8, y + 2, 2, '#7a5030'); return;
     case 'ale': IR(x, y, 11, 12, '#7a4e2a'); IR(x, y + 3, 11, 1, '#3a3a3a'); IR(x, y + 8, 11, 1, '#3a3a3a'); IR(x + 1, y, 2, 12, '#9a6a3a'); return;
     case 'scrap': IR(x, y + 2, 10, 5, '#6a7078'); IR(x + 2, y, 3, 2, '#9aa0a8'); IP(x + 7, y + 1, '#3af0ff'); return;
-    case 'veg': case 'apple': IR(x, y + 2, 10, 5, '#8a6440'); for (let j = 0; j < 3; j++) disc(X, x + 2 + j * 3, y + 2, 1, k === 'apple' ? '#c83a2a' : j % 2 ? '#7ab04c' : '#e8742a'); return;
+    case 'veg': case 'apple': IR(x, y + 2, 10, 5, '#8a6440'); for (let j = 0; j < 3; j++) disc(IX, x + 2 + j * 3, y + 2, 1, k === 'apple' ? '#c83a2a' : j % 2 ? '#7ab04c' : '#e8742a'); return;
     case 'remedy': case 'honey': IR(x + 1, y, 5, 6, k === 'honey' ? '#e8a82a' : '#5a8a6a'); IR(x + 1, y, 5, 1, '#c8c0b0'); return;
     case 'herbs': case 'leaf': IR(x + 2, y, 2, 6, '#3f6b2f'); IR(x, y + 1, 6, 3, k === 'leaf' ? '#7a8a3a' : '#5a8a4a'); return;
     case 'cheese': IR(x, y + 2, 7, 4, '#f2c84a'); IR(x, y + 2, 7, 1, '#f8dc7a'); return;
@@ -359,8 +359,8 @@ function buildingSpotFor(v, L, taken) {
       const ov = L.items.find((i) => i.t === 'ovens');
       if (ov && Interior.baking) for (let k = 0; k < 2; k++) { IR(ov.x + k * 26 + 6, WALL_B - 24, 13, 8, Math.sin(t * 6 + k) > 0 ? '#e8742a' : '#ffb04a'); }
       const cu = L.items.find((i) => i.t === 'copper');
-      if (cu && Interior.brewing) for (let k = 0; k < 4; k++) { const ph = (t * 0.7 + k / 4) % 1; X.globalAlpha = 0.6 * (1 - ph); IR(cu.x - 6 + k * 4 + Math.round(Math.sin(ph * 6 + k) * 2), WALL_B - 48 - Math.round(ph * 16), 2, 2, '#ffffff'); }
-      X.globalAlpha = 1;
+      if (cu && Interior.brewing) for (let k = 0; k < 4; k++) { const ph = (t * 0.7 + k / 4) % 1; IX.globalAlpha = 0.6 * (1 - ph); IR(cu.x - 6 + k * 4 + Math.round(Math.sin(ph * 6 + k) * 2), WALL_B - 48 - Math.round(ph * 16), 2, 2, '#ffffff'); }
+      IX.globalAlpha = 1;
     }
     homeLive(L, t, dt);
   };
