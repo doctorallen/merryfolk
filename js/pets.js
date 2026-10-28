@@ -95,7 +95,7 @@ function petClear(x0, y0, x1, y1) {
   for (let i = 1; i <= n; i++) if (!petWalkable(x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n)) return false;
   return true;
 }
-// Straight there when nothing's in the way; otherwise round walls, lamp-posts
+// Straight there when nothing's in the way; otherwise round walls, lampposts
 // and fences along a proper path, as folk do.
 function stepPet(p, tx, ty, speed, dt) {
   const dx = tx - p.x, dy = ty - p.y, d = Math.hypot(dx, dy);

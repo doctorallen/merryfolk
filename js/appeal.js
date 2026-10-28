@@ -4,7 +4,7 @@
 // RimWorld's beauty, Animal Crossing's requests).
 //
 // Every tile has an appeal from what's around it: flowers, trees, hedges,
-// benches, lamp-posts, statues, fountains, ponds and the river nearby, with
+// benches, lampposts, statues, fountains, ponds and the river nearby, with
 // bare dug earth and stony ground counting against it. Folk whose holes look
 // out on lovely surroundings are happier; a drab outlook wears on them. In
 // build mode the Appeal button paints it over the map, as SimCity paints land

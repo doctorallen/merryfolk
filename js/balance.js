@@ -28,7 +28,7 @@ feelingsLift = function (v) {
 // charters that can't be met, or are met already
 CHARTER_KINDS.ale.size = [40, 55, 65];
 CHARTER_KINDS.lamps.size = [2, 4, 6];
-CHARTER_KINDS.lamps.text = (n) => `Put up ${n} new lamp-posts for the lamplighter`;
+CHARTER_KINDS.lamps.text = (n) => `Put up ${n} new lampposts for the lamplighter`;
 CHARTER_KINDS.lamps.val = (c) => World.lamps.length - (c.lampBase ?? World.lamps.length);
 // letters ever delivered, so progress never slips back when someone leaves
 CHARTER_KINDS.letters.val = () => Game.stats.letters || 0;

@@ -2,7 +2,7 @@
 // ---------------------------------------------------------------------------
 // Build mode: shaping Thistledown yourself. Open it with the Build button (or
 // B). Pick a tool, then click or drag on the map: footpaths, flower beds,
-// trees and hedgerows, benches and lamp-posts, clearing scrub and stones,
+// trees and hedgerows, benches and lampposts, clearing scrub and stones,
 // raising and lowering the ground a terrace at a time, digging ponds and
 // filling them in, staking out new hobbit-holes and wells, and choosing where
 // the village's next public buildings go.
@@ -23,7 +23,7 @@ const BUILD_TOOLS = [
   { id: 'tree', label: 'Tree', icon: 'leaf', kind: 'point', unit: 18, hint: 'Click to plant a young tree' },
   { id: 'hedge', label: 'Hedge', icon: 'herb', kind: 'line', unit: 7, hint: 'Drag a straight line to plant a hawthorn hedge' },
   { id: 'bench', label: 'Bench', icon: 'chat', kind: 'point', unit: 35, cost: { wood: 2 }, hint: 'Click to put a bench (2 timber)' },
-  { id: 'lamp', label: 'Lamp', icon: 'sun', kind: 'point', unit: 30, cost: { wood: 1 }, hint: 'Click to put up a lamp-post the lamplighter will light (1 timber)' },
+  { id: 'lamp', label: 'Lamp', icon: 'sun', kind: 'point', unit: 30, cost: { wood: 1 }, hint: 'Click to put up a lamppost the lamplighter will light (1 timber)' },
   { id: 'statue', label: 'Statue', icon: 'ring', kind: 'point', unit: 90, cost: { coin: 30 }, hint: 'Click to raise a stone statue of a famous hobbit (30 pennies)' },
   { id: 'fountain', label: 'Fountain', icon: 'cup', kind: 'point', unit: 120, cost: { coin: 60 }, hint: 'Click to build a fountain for the green (60 pennies)' },
   { id: 'clear', label: 'Clear', icon: 'axe', kind: 'box', unit: 14, hint: 'Drag a box to clear trees, bushes, hedges and stones (felled trees give timber)' },
@@ -271,7 +271,7 @@ function applyPlanWhole(p, quiet) {
       st.alt = st.baseAlt = makeLampPost(true);
       World.lamps.push({ x: x * 16 + 8, y: y * 16 + 14 - 22, footX: x * 16 + 8 + (walkable(x + 1, y) ? 9 : -9), footY: y * 16 + 16, st, lit: false, litAt: 0 });
       blk(x, y);
-      return 'lamp-post';
+      return 'lamppost';
     }
     case 'statue': case 'fountain': {
       const st = add(p.tool === 'statue' ? makeStatue(p.seed) : makeFountain(), x * 16 + 8, y * 16 + 14, { snow: true });
