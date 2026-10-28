@@ -80,27 +80,38 @@ const MIND_MODULES = {
 };
 
 // The drives and habits of a villager, as the game reads and writes them:
-// with Tyrell, its needs and habits; before they join it, their own.
+// with Tyrell, its needs and habits; before they join it, their own. (Every
+// villager's view has the same getters and setters, which find the villager
+// through the view's hidden _v, so the game's reads of any villager's needs
+// all take the same quick path.)
+function mindView(v, keys, kind, read, write) {
+  const o = {}, ix = MIND_IX[kind], acc = MIND_ACC[kind];
+  Object.defineProperty(o, '_v', { value: v });
+  for (const k of keys) {
+    if (ix[k] === undefined) ix[k] = Object.keys(ix).length;
+    const i = ix[k];
+    Object.defineProperty(o, k, acc[k] || (acc[k] = { get() { return read(this._v, k, i); }, set(x) { write(this._v, k, x, i); }, enumerable: true }));
+  }
+  return o;
+}
+// (each need, habit and skill has a number of its own, for the quick caches)
+const MIND_ACC = { drives: {}, habits: {}, skills: {} }, MIND_IX = { drives: {}, habits: {}, skills: {} };
 function mindDrives(v, init) {
   v._md = { ...init };
-  v._nb = null; v._nc = null; v._pid = 'v' + v.id;
-  const o = {};
-  for (const d of DRIVES) Object.defineProperty(o, d, { enumerable: true, get: () => Shell.need(v, d), set: (x) => Shell.setNeed(v, d, x) });
-  return o;
+  v._nb = null; v._nbi = []; v._pid = 'v' + v.id; v._ver = 0;
+  v._ncAt = []; v._ncLv = []; v._ncGen = 0; v._ncVer = -1; v._ncNow = -1;
+  return mindView(v, DRIVES, 'drives', (u, d, i) => Shell.need(u, d, i), (u, d, x, i) => Shell.setNeed(u, d, x, i));
 }
 function mindHabits(v, init) {
   v._mh = { ...init };
-  const o = {};
-  for (const k in ACTIONS) Object.defineProperty(o, k, { enumerable: true, get: () => Shell.habit(v, k), set: (x) => Shell.setHabit(v, k, x) });
-  return o;
+  v._hcAt = []; v._hcLv = []; v._hcGen = 0; v._hcVer = -1; v._hcW = null;
+  return mindView(v, Object.keys(ACTIONS), 'habits', (u, k, i) => Shell.habit(u, k, i), (u, k, x) => Shell.setHabit(u, k, x));
 }
 // A villager's skills as the game reads and writes them (points, 0 to 100).
 function mindSkillView(v, init) {
   v._ms = { ...init };
   v._tr = null;
-  const o = {};
-  for (const s of SKILLS) Object.defineProperty(o, s, { enumerable: true, get: () => Shell.skill(v, s), set: (x) => Shell.setSkill(v, s, x) });
-  return o;
+  return mindView(v, SKILLS, 'skills', (u, s) => Shell.skill(u, s), (u, s, x) => Shell.setSkill(u, s, x));
 }
 // When Cradle has someone born: the game's age is what they were at the last
 // midnight (they grow a year, a day, each midnight), so Cradle's age runs
@@ -351,7 +362,7 @@ function mindHearts(v, o) {
 // Fellowship's when the villager is in the minds, and their own otherwise.
 function mindDict(v, kind) {
   const own = () => v['_' + kind];
-  const on = () => minded(v) || (Shell.on && v._mw === Shell.gen);
+  const on = () => Shell.on && v._mw === Shell.gen;
   return new Proxy({}, {
     get: (_, k) => (typeof k !== 'string' ? undefined : on() ? Shell.rel(v, kind, k) : own()[k]),
     set: (_, k, x) => { if (on()) Shell.setRel(v, kind, k, x); else own()[k] = x; return true; },
@@ -384,12 +395,12 @@ const MIND_MODULE = {
 };
 
 const Shell = {
-  w: null, on: false, gen: 0, pver: {}, byPid: new Map(), ends: {}, picking: null, quiet: null, muts: {}, _jk: null, _jv: null,
+  w: null, on: false, gen: 0, byPid: new Map(), ends: {}, picking: null, quiet: null, muts: {}, _jk: null, _jv: null,
   pid: (v) => 'v' + v.id,
   // their person in the running world, if they're about
   live(v) {
     if (!minded(v)) return null;
-    const p = this.w.s.people[this.pid(v)];
+    const p = this.w.s.people[v._pid];
     return p && p.status === 'active' ? p : null;
   },
 
@@ -413,6 +424,9 @@ const Shell = {
     mindRounds(w);
     mindStore(w);
     this.inputs(w);
+    // (a relationship Fellowship makes for the first time: the index of them is out of date)
+    const fs = w.fellowship, rec = fs.record;
+    fs.record = function (a, b) { if (!w.s.mod.fellowship.rel[a + '>' + b]) Shell.relMade++; return rec.call(this, a, b); };
     // a newborn's mutations, as Delos makes them (Shell.born names them)
     w.on('mutated', (e) => { if (this.muts[e.id]) this.muts[e.id].push(e); });
     // a named level of a skill reached: remembered, felt, and the big ones told
@@ -425,7 +439,7 @@ const Shell = {
       if (e.level !== 'skilled') chronicle(`${v.name()} has become ${e.level === 'master' ? 'a master' : 'an expert'} at ${label}.`, 'learn');
     });
     Tycho.minds.restore(w, Game.minds, { onError: (e) => { if (typeof noteError === 'function') noteError(e, 'loading the minds'); } });
-    this.gen++; this.on = true; this.byPid.clear(); this.ends = {}; this.pver = {};
+    this.gen++; this.on = true; this.byPid.clear(); this.ends = {};
     MindStore.start(w);
     voiceDeclare();
     w.focus([]); // (nobody needs a body: the game draws them all, from its own tasks)
@@ -592,7 +606,7 @@ const Shell = {
   // an input about one villager: what the game wrote of their needs goes first
   tell(v, name, args) { this.flush(v, true); this.touch(args[0]); try { return this.input(name, args); } finally { this.touch(args[0]); } },
   // anything about someone in the minds changed: what was read of them is stale
-  touch(pid) { this.pver[pid] = (this.pver[pid] || 0) + 1; },
+  touch(pid) { const v = this.byPid.get(pid); if (v) v._ver++; },
 
   // ---- every step: the minds' clock first, then who's here -----------------
   advance(t) { if (t > this.w.now) this.w.advanceTo(t); },
@@ -600,7 +614,7 @@ const Shell = {
     const here = new Set();
     for (const v of Game.villagers) {
       if (v.leaving) continue;
-      here.add(this.pid(v));
+      here.add(v._pid);
       if (v._mw !== this.gen) this.join(v);
       else if (v.age !== v._age) { v._age = v.age; this.input('mf.age', [v._pid, v.age]); }
     }
@@ -637,7 +651,7 @@ const Shell = {
   // a villager joins the minds (founding, birth, arrival), or comes back to them
   join(v) {
     const w = this.w, id = this.pid(v), p = w.s.people[id];
-    this.byPid.set(id, v); v._mw = this.gen; v._pid = id; v._nb = null; v._nc = null;
+    this.byPid.set(id, v); v._mw = this.gen; v._pid = id; v._nb = null; v._ncVer = -1;
     v._rates = mindRates(v, w.hour);
     v._age = v.age;
     if (!w.ring.get(mindPlace(v.id))) w.place({ id: mindPlace(v.id) });
@@ -674,45 +688,53 @@ const Shell = {
 
   // ---- needs and habits ---------------------------------------------------
   // (levels are read often, so each is kept until anything in the minds changes)
-  need(v, d) {
-    const nb = v._nb;
-    if (nb !== null && nb[d] !== undefined) return nb[d];
+  need(v, d, i = MIND_IX.drives[d]) {
+    if (v._nb !== null) { const x = i === undefined ? v._nb[d] : v._nbi[i]; if (x !== undefined) return x; }
     if (!this.on || v._mw !== this.gen) return v._md[d] ?? 0;
-    const pid = v._pid, now = this.w.s.now, ver = this.pver[pid] || 0;
-    let c = v._nc;
-    if (c === null || c.ver !== ver || c.now !== now) c = v._nc = { ver, now, lv: {} };
-    const x = c.lv[d];
-    return x !== undefined ? x : (c.lv[d] = this.w.needOf(pid, d));
+    return this.mindNeed(v, d, i);
+  },
+  // what the minds hold of a need now (kept until anything about them changes, or the clock moves)
+  mindNeed(v, d, i = MIND_IX.drives[d]) {
+    const now = this.w.s.now;
+    if (v._ncVer !== v._ver || v._ncNow !== now) { v._ncVer = v._ver; v._ncNow = now; v._ncGen++; }
+    if (i === undefined) return this.w.needOf(v._pid, d); // (not one of the game's needs)
+    if (v._ncAt[i] === v._ncGen) return v._ncLv[i];
+    v._ncAt[i] = v._ncGen;
+    return (v._ncLv[i] = this.w.needOf(v._pid, d));
   },
   // A need the game moved: kept by the villager until it's told (at the end
   // of the step); the ones the valley moves (the chill, aches...) drift a
   // little every step, so they wait until they've moved enough, or a few
   // minutes have gone by.
-  setNeed(v, d, x) {
+  setNeed(v, d, x, i = MIND_IX.drives[d]) {
     x = Number.isFinite(x) ? clamp(x, 0, 1) : 0;
     if (!minded(v)) { v._md[d] = x; return; }
-    if (Math.abs(x - this.need(v, d)) < 1e-9) return;
-    if (!v._nb) { v._nb = {}; v._nbAt = Game.time; }
-    v._nb[d] = x;
+    if (Math.abs(x - this.need(v, d, i)) < 1e-9) return;
+    if (!v._nb) { v._nb = {}; v._nbAt = Game.time; v._nbi.length = 0; }
+    v._nb[d] = x; if (i !== undefined) v._nbi[i] = x;
+    v._nbW = (v._nbW || 0) + 1;
   },
   flush(v, now) {
     if (!v._nb) return;
     if (!now && minded(v) && Game.time - v._nbAt < 5) {
+      // (nothing written and nothing changed in the minds since the last look: still not moved enough)
+      const t = Game.time, wn = this.w.s.now;
+      if (v._nfT === t && v._nfN === wn && v._nfV === v._ver && v._nfW === v._nbW) return;
       let moved = false;
-      for (const d in v._nb) if (MIND_RISE[d] || Math.abs(v._nb[d] - this.w.needOf(this.pid(v), d)) > 0.01) { moved = true; break; }
-      if (!moved) return;
+      for (const d in v._nb) if (MIND_RISE[d] || Math.abs(v._nb[d] - this.mindNeed(v, d)) > 0.01) { moved = true; break; }
+      if (!moved) { v._nfT = t; v._nfN = wn; v._nfV = v._ver; v._nfW = v._nbW; return; }
     }
     const nb = v._nb, pid = this.pid(v);
     v._nb = null;
     if (minded(v)) { this.touch(pid); this.input('mf.needs', [pid, nb]); this.touch(pid); }
   },
-  habit(v, k) {
+  habit(v, k, i = MIND_IX.habits[k]) {
     if (!minded(v)) return v._mh[k] ?? 1;
-    const pid = v._pid, ver = this.pver[pid] || 0;
-    let c = v._hc;
-    if (!c || c.ver !== ver || c.w !== this.w) c = v._hc = { ver, w: this.w, lv: {} };
-    const x = c.lv[k];
-    return x !== undefined ? x : (c.lv[k] = this.w.mind.habit(this.w.s.people[pid], k));
+    if (v._hcVer !== v._ver || v._hcW !== this.w) { v._hcVer = v._ver; v._hcW = this.w; v._hcGen++; }
+    if (i !== undefined && v._hcAt[i] === v._hcGen) return v._hcLv[i];
+    const x = this.w.mind.habit(this.w.s.people[v._pid], k);
+    if (i !== undefined) { v._hcAt[i] = v._hcGen; v._hcLv[i] = x; }
+    return x;
   },
   // a habit the game nudged (a pat, a tut-tut, a good example): Tyrell's reward
   // moves the fast weight, and a quarter as much the slow, so the habit by
@@ -760,7 +782,7 @@ const Shell = {
   },
   remember(v, text, val) { this.tell(v, 'mf.remember', [v._pid, text, val || 0]); },
   rel(v, kind, k) {
-    const r = this.w.s.mod.fellowship.rel[v._pid + '>v' + k];
+    const r = this.w.s.mod.fellowship.rel[(v._rp || (v._rp = v._pid + '>v')) + k];
     if (!r) return undefined;
     if (kind === 'rel') return r.r;
     if (kind === 'love') return r.a || 0;
@@ -771,10 +793,27 @@ const Shell = {
   relKeys(v, kind) {
     const w = this.w, at = this.iv + ':' + w.s.now, c = v._rkc || (v._rkc = {});
     if (c[kind] && c[kind].at === at && c[kind].w === w) return c[kind].keys.slice();
-    const rel = w.s.mod.fellowship.rel, pre = v._pid + '>v', out = [];
-    for (const key in rel) if (key.startsWith(pre)) { const k = key.slice(pre.length); if (this.rel(v, kind, k) !== undefined) out.push(k); }
+    const out = [];
+    for (const k of this.relIndex().get(v._pid) || []) if (this.rel(v, kind, k) !== undefined) out.push(k);
     c[kind] = { at, w, keys: out };
     return out.slice();
+  },
+  // everyone's relationships with the villagers, by whose they are, in the
+  // order Fellowship keeps them (one pass over them all, kept until a new
+  // one is made: relMade)
+  _ri: null, relMade: 0,
+  relIndex() {
+    const w = this.w, rel = w.s.mod.fellowship.rel;
+    if (this._ri && this._ri.n === this.relMade && this._ri.rel === rel) return this._ri.m;
+    const m = new Map();
+    for (const key in rel) {
+      const i = key.indexOf('>');
+      if (i < 0 || key.charCodeAt(i + 1) !== 118) continue; // ('v': another villager)
+      const a = key.slice(0, i), list = m.get(a);
+      if (list) list.push(key.slice(i + 2)); else m.set(a, [key.slice(i + 2)]);
+    }
+    this._ri = { n: this.relMade, rel, m };
+    return m;
   },
 
   // ---- skills -------------------------------------------------------------
@@ -812,8 +851,8 @@ const Shell = {
   judge(p, c) {
     const v = this.byPid.get(p.id), a = ACTIONS[c.id];
     if (!v || !a) return null;
-    const now = this.w.s.now, key = p.id + '|' + c.id + '|' + now;
-    if (this._jk === key) return this._jv;
+    const now = this.w.s.now;
+    if (this._jk === p.id && this._jc === c.id && this._jt === now) return this._jv;
     // what they have in their care, once a moment
     if (v._careAt !== now) {
       const care = careLoad(v);
@@ -830,7 +869,7 @@ const Shell = {
       const relief = (ex.relief || []).reduce((t, r) => t + r[1], 0);
       out = { blocked: null, appeal: (ex.extra || 0) + Math.max(0, relief - sat), factors: (ex.mul || []).filter(([n]) => !MIND_OWN.has(n)) };
     }
-    this._jk = key; this._jv = out;
+    this._jk = p.id; this._jc = c.id; this._jt = now; this._jv = out;
     return out;
   },
   // nothing in hand: start what Tyrell chose (and if there's no way to do it,
@@ -996,9 +1035,10 @@ for (const [key, read, write] of [
   });
 }
 for (const kind of ['rel', 'love', 'sent']) {
+  const own = '_' + kind + 'P';
   Object.defineProperty(Villager.prototype, kind, {
     configurable: true,
-    get() { return this['_' + kind + 'P'] || (this['_' + kind + 'P'] = mindDict(this, kind)); },
+    get() { return this[own] || (this[own] = mindDict(this, kind)); },
     set(x) { const o = { ...(x || {}) }; if (minded(this)) { for (const k in o) this[kind][k] = o[k]; } else this['_' + kind] = o; },
   });
 }
