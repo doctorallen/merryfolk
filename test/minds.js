@@ -3,13 +3,16 @@
 // the same, byte for byte (Tyrell's world.hash(), and where everyone is and
 // what they're doing). Half a day of a fresh village is run twice in fresh
 // pages and compared, and it has to have been lived: meals eaten, and the
-// minds choosing what folk did.
+// minds choosing what folk did. The two runs found the same village and then
+// give Math.random different seeds: every chance the valley takes is drawn
+// from the minds' streams, so it makes no difference.
 const { launch, openGame, finish } = require('./lib');
 
 // Runs in the page: a fresh village (founded from a seeded chance), half a day.
-function halfDay(seed) {
+function halfDay(seed, salt) {
   Math.random = mulberry32(seed);
   startGame(true);
+  Math.random = mulberry32(salt);
   Game.generating = true; // (the page's own frames neither run the village nor draw meanwhile)
   // what they finish: they must live, not just keep busy (meals, and the minds' own choices)
   let meals = 0, chosen = 0;
@@ -28,7 +31,7 @@ function halfDay(seed) {
   try {
     for (let k = 0; k < 2; k++) {
       const { page, errors } = await openGame(kit);
-      runs.push(await page.evaluate(halfDay, 7));
+      runs.push(await page.evaluate(halfDay, 7, 100 + k));
       for (const e of errors) failures.push(`run ${k + 1}: page error: ${e}`);
       await page.close();
     }

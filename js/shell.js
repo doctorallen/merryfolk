@@ -68,7 +68,8 @@ const MIND_OWN = new Set(['habit', 'instinct', 'did it last']);
 // game works out who meets whom (Tyrell has no places for them to meet in).
 const MIND_MODULES = {
   cradle: { year: 1440, stages: [['baby', 0], ['child', BABY_DAYS], ['adult', CHILD_DAYS], ['elder', ELDER_DAYS]], lifespan: [1e9, 1e9], fertile: [1e9, 1e9], fertility: 0, autoPair: null },
-  fellowship: { meetGain: 0, imitation: 0 },
+  fellowship: { meetGain: 0, imitation: 0, decay: 0, forget: 0, sentiments: 8 },
+  reverie: { memoryCap: 16 },
   // the wizard's talks (threads.js): how a remark that lands strongly moves
   // their fondness for him (the game's regard), and the lines' topics
   voice: {
@@ -316,6 +317,51 @@ const MindStore = {
   wrap() { if (Village.stores !== this.proxy) { this.plain = Village.stores; Village.stores = this.proxy; } },
 };
 
+// ---- feelings, memories and the folk they know: Reverie and Fellowship ----
+// The passing feelings (moodlets.js's MOODLETS) are Reverie's feelings, kept
+// as the game kept them (one of a kind per cause, a few of a kind refreshed
+// whatever the cause, a dozen at most, the weakest going first, and a while
+// to last that the game may set); the memories are Reverie's memories,
+// fading as Reverie's do (a strong one lasts longer), a dozen and a half
+// kept; and how they feel about each other (rel), the spark between two
+// (love) and the reasons why (sentiments: hearts.js) are Fellowship's regard,
+// attraction and sentiments. The game reads and writes them as it always
+// did (villager.js's moodlets, memories, rel, love and sent are views of the
+// minds), and its own rules for them stand: the mood is the game's (needs
+// and feelings, as minds.js and moodlets.js weigh them, and Reverie's mood
+// reads it), friendship is symmetric where the game makes it so, and nothing
+// drifts or is forgotten in the minds that the game doesn't let go itself.
+const MIND_FEEL_ONE = new Set(['soaked', 'sunshine', 'festival', 'well_slept', 'slept_rough', 'made_piece']);
+function mindFeelings(w) {
+  for (const k in MOODLETS) { const M = MOODLETS[k]; w.reverie.feeling({ id: k, label: M[0], weight: M[1], minutes: Math.min(M[2], 1e6), stack: 12, stackMul: 1, stress: 0 }); }
+  w.reverie.mood = (id) => { const v = Shell.byPid.get(id); return v ? v.mood() : 0.5; };
+}
+// a memory's kind keeps how it felt: 'mf:-2' .. 'mf:3'
+const mindMemKind = (val) => 'mf:' + (Math.round(val) || 0);
+const mindMemVal = (k) => (k && k.startsWith('mf:') ? +k.slice(3) || 0 : null);
+// what the game keeps of someone's feelings, memories and relationships, before they join the minds or after they leave
+function mindHearts(v, o) {
+  v._moodlets = o.moodlets ?? [];
+  v._memories = o.memories ?? [];
+  v._rel = { ...(o.rel || {}) };
+  v._love = { ...(o.love || {}) };
+  v._sent = { ...(o.sent || {}) };
+}
+// A dictionary of the game's (rel, love, sent: by the other's id) that is
+// Fellowship's when the villager is in the minds, and their own otherwise.
+function mindDict(v, kind) {
+  const own = () => v['_' + kind];
+  const on = () => minded(v) || (Shell.on && v._mw === Shell.gen);
+  return new Proxy({}, {
+    get: (_, k) => (typeof k !== 'string' ? undefined : on() ? Shell.rel(v, kind, k) : own()[k]),
+    set: (_, k, x) => { if (on()) Shell.setRel(v, kind, k, x); else own()[k] = x; return true; },
+    has: (_, k) => (on() ? Shell.rel(v, kind, k) !== undefined : k in own()),
+    deleteProperty: (_, k) => { if (on()) Shell.setRel(v, kind, k, undefined); else delete own()[k]; return true; },
+    ownKeys: () => (on() ? Shell.relKeys(v, kind) : Object.keys(own())),
+    getOwnPropertyDescriptor: (_, k) => { const x = on() ? Shell.rel(v, kind, k) : own()[k]; return x === undefined ? undefined : { value: x, writable: true, enumerable: true, configurable: true }; },
+  });
+}
+
 // The game's say in every choice: score()'s reasons, as Tyrell factors.
 const MIND_MODULE = {
   name: 'merryfolk',
@@ -353,7 +399,7 @@ const Shell = {
     this.stop();
     if (!Game.mindSeed) Game.mindSeed = 'mf-' + Tyrell.hash(String(World.seed), ...Game.villagers.slice(0, 12).map((v) => v.first + v.id));
     const w = (this.w = Tyrell.create({
-      seed: Game.mindSeed, start: Game.time, modules: ['fellowship', 'cradle', 'delos', 'mentat', 'ceres', 'cityspeak', 'voice'], moduleConfig: MIND_MODULES, esper: { on: false },
+      seed: Game.mindSeed, start: Game.time, modules: ['reverie', 'fellowship', 'cradle', 'delos', 'mentat', 'ceres', 'cityspeak', 'voice'], moduleConfig: MIND_MODULES, esper: { on: false },
       config: Object.assign({}, MIND_CONFIG, typeof Dev !== 'undefined' && Dev.on ? { logSize: 2000, decisions: 12 } : {}),
       extra: [MIND_MODULE], shell: { travel: () => 0 },
     }));
@@ -363,6 +409,7 @@ const Shell = {
     w.action({ id: 'mf_busy', label: 'busy', minutes: 1e6, rank: -1, fill: false });
     mindGenome(w);
     mindSkills(w);
+    mindFeelings(w);
     mindRounds(w);
     mindStore(w);
     this.inputs(w);
@@ -493,13 +540,55 @@ const Shell = {
       } finally { V.live = null; }
       return V.view(talk, false);
     });
+    // Feelings as the game keeps them (moodlets.js's feel): one of a kind per
+    // cause, a few kinds refreshed whatever the cause, a dozen at most.
+    w.defineInput('mf.feel', (id, key, x, until) => {
+      const def = w.reverie.feelingDefs.get(key), st = w.s.mod.reverie;
+      if (!w.s.people[id] || !def || !st) return;
+      const now = w.s.now, list = (st.f[id] || []).filter((f) => f.until > now);
+      const old = list.find((f) => f.id === key && (f.cause || '') === x) || (MIND_FEEL_ONE.has(key) && list.find((f) => f.id === key));
+      if (old) { old.until = Math.max(old.until, until); if (x) old.cause = x; else delete old.cause; }
+      else { const f = { id: key, t: now, until, w: def.weight }; if (x) f.cause = x; list.push(f); w.log('felt', id, { feeling: key, label: def.label, ...(x ? { cause: x } : {}) }); }
+      if (list.length > 12) { list.sort((a, b) => Math.abs(b.w) - Math.abs(a.w)); list.length = 12; }
+      st.f[id] = list;
+    });
+    // their feelings set outright (some put aside, or an older save's), [key, cause, until] each
+    w.defineInput('mf.feelings', (id, list) => {
+      const st = w.s.mod.reverie;
+      if (!w.s.people[id] || !st) return;
+      const keep = (st.f[id] || []).filter((f) => !MOODLETS[f.id]);
+      st.f[id] = keep.concat(list.filter(([k]) => w.reverie.feelingDefs.has(k)).map(([k, x, until]) => { const f = { id: k, t: w.s.now, until, w: w.reverie.feelingDefs.get(k).weight }; if (x) f.cause = x; return f; }));
+    });
+    // a memory, with how it felt (-3 to 3) as its kind and how much it mattered
+    w.defineInput('mf.remember', (id, text, val) => w.reverie.applyRemember(id, { k: mindMemKind(val), imp: clamp(4 + Math.abs(val), 1, 10), text }));
+    // their memories set outright (some let go, or an older save's), [day, text, val] each, newest first
+    w.defineInput('mf.memories', (id, list) => {
+      const st = w.s.mod.reverie;
+      if (!w.s.people[id] || !st) return;
+      const keep = (st.m[id] || []).filter((m) => mindMemVal(m.k) === null);
+      st.m[id] = keep.concat(list.slice().reverse().map(([d, text, val]) => ({ k: mindMemKind(val), t: Math.min(w.s.now, (d - 1) * 1440 + 720), imp: clamp(4 + Math.abs(val), 1, 10), recalls: 0, text })));
+    });
+    // how one feels about another (rel), the spark (love) and the reasons why (sent)
+    w.defineInput('mf.rel', (kind, a, b, x) => {
+      const f = w.fellowship, r = f.record(a, b);
+      if (kind === 'rel') r.r = Math.round(clamp(Number(x) || 0, -1, 1) * 1e4) / 1e4;
+      else if (kind === 'love') r.a = Math.round(clamp(Number(x) || 0, -1, 1) * 1e4) / 1e4;
+      else r.s = r.s.filter((s) => !s.label.includes('|')).concat((x || []).map((s) => ({ label: s.tag + '|' + (s.why || ''), by: SENT[s.tag] ? SENT[s.tag][1] * 0.1 : 0, until: s.until })));
+    });
+    // an older save's feelings, memories and relationships, as the villager kept them
+    w.defineInput('mf.hearts', (id, h) => {
+      const f = w.fellowship;
+      for (const kind of ['rel', 'love']) for (const o in h[kind] || {}) { const r = f.record(id, 'v' + o); if (kind === 'rel') r.r = Math.round(clamp(Number(h.rel[o]) || 0, -1, 1) * 1e4) / 1e4; else r.a = Math.round(clamp(Number(h.love[o]) || 0, -1, 1) * 1e4) / 1e4; }
+      for (const o in h.sent || {}) { const r = f.record(id, 'v' + o); r.s = r.s.concat((h.sent[o] || []).filter((s) => s.until > w.s.now).map((s) => ({ label: s.tag + '|' + (s.why || ''), by: SENT[s.tag] ? SENT[s.tag][1] * 0.1 : 0, until: s.until }))); }
+    });
     // a newborn named after the birth (the game names them by their looks)
     w.defineInput('mf.name', (id, name) => { const p = w.s.people[id]; if (p) { p.name = name; p.def.name = name; } });
     // the game ages folk at its own pace (a wizard's village's children grow
     // slower), so Cradle's record of when they were born follows it
     w.defineInput('mf.age', (id, days) => { const p = w.s.people[id]; if (p) p.born = mindBorn(w.s.now, days); });
   },
-  input(name, args) { return this.w.input(name, args); },
+  iv: 0,
+  input(name, args) { this.iv++; return this.w.input(name, args); },
   // an input about one villager: what the game wrote of their needs goes first
   tell(v, name, args) { this.flush(v, true); this.touch(args[0]); try { return this.input(name, args); } finally { this.touch(args[0]); } },
   // anything about someone in the minds changed: what was read of them is stale
@@ -541,6 +630,8 @@ const Shell = {
       v._nb = null;
       for (const k in ACTIONS) v._mh[k] = this.w.mind.habit(p, k);
       for (const s of SKILLS) v._ms[s] = this.skill(v, s);
+      v._moodlets = this.moodlets(v); v._memories = this.memories(v);
+      for (const kind of ['rel', 'love', 'sent']) { const o = {}; for (const k of this.relKeys(v, kind)) o[k] = this.rel(v, kind, k); v['_' + kind] = o; }
     } finally { v._unhooking = false; }
   },
   // a villager joins the minds (founding, birth, arrival), or comes back to them
@@ -558,6 +649,7 @@ const Shell = {
       const hab = {};
       for (const k in v._mh) if (Math.abs(v._mh[k] - 1) > 1e-6 && w.actions.has(k)) hab[k] = v._mh[k];
       if (Object.keys(hab).length) this.input('mf.habits', [id, hab]);
+      this.hearts(v);
       const sp = v.spouse != null ? 'v' + v.spouse : null;
       if (v.parents.length || (sp && w.s.people[sp])) this.input('mf.kin', [id, v.parents.map((x) => 'v' + x), sp]);
       return;
@@ -566,6 +658,7 @@ const Shell = {
     else if (p.place !== mindPlace(v.id)) this.input('mf.place', [id, mindPlace(v.id)]); // (minds saved when they shared one)
     if (p.name !== v.name()) this.input('mf.name', [id, v.name()]);
     if (!w.s.mod.delos || !w.s.mod.delos.g || !w.s.mod.delos.g[id]) this.input('genome', [id, genomeOfGenes(v.genes)]); // (minds from before they had genomes)
+    if (!this.hasHearts(id)) this.hearts(v); // (or before they had feelings, memories and friends)
   },
   // on the hour: everyone's needs settled at the old pace, then the new pace
   hourly() {
@@ -615,7 +708,11 @@ const Shell = {
   },
   habit(v, k) {
     if (!minded(v)) return v._mh[k] ?? 1;
-    return this.w.mind.habit(this.w.s.people[this.pid(v)], k);
+    const pid = v._pid, ver = this.pver[pid] || 0;
+    let c = v._hc;
+    if (!c || c.ver !== ver || c.w !== this.w) c = v._hc = { ver, w: this.w, lv: {} };
+    const x = c.lv[k];
+    return x !== undefined ? x : (c.lv[k] = this.w.mind.habit(this.w.s.people[pid], k));
   },
   // a habit the game nudged (a pat, a tut-tut, a good example): Tyrell's reward
   // moves the fast weight, and a quarter as much the slow, so the habit by
@@ -625,6 +722,59 @@ const Shell = {
     if (!minded(v)) { v._mh[k] = x; return; }
     const delta = x - this.habit(v, k);
     if (Math.abs(delta) > 1e-6) this.tell(v, 'reward', [this.pid(v), k, delta / 0.625]);
+  },
+
+  // ---- feelings, memories and relationships (Reverie and Fellowship) --------
+  // what the villager kept of them themselves, into the minds
+  hearts(v) {
+    const w = this.w, id = v._pid, h = { rel: v._rel, love: v._love, sent: v._sent };
+    if (Object.keys(h.rel).length || Object.keys(h.love).length || Object.keys(h.sent).length) this.input('mf.hearts', [id, h]);
+    if (v._moodlets.length) this.input('mf.feelings', [id, v._moodlets.filter((m) => m.until > w.now).map((m) => [m.k, m.x || '', m.until])]);
+    if (v._memories.length) this.input('mf.memories', [id, v._memories.map((m) => [m.d, m.t, m.v || 0])]);
+  },
+  hasHearts(id) {
+    const rv = this.w.s.mod.reverie, rel = this.w.s.mod.fellowship.rel;
+    if (rv && ((rv.f[id] && rv.f[id].length) || (rv.m[id] && rv.m[id].length))) return true;
+    for (const k in rel) if (k.startsWith(id + '>')) return true;
+    return false;
+  },
+  moodlets(v) {
+    const st = this.w.s.mod.reverie, now = this.w.s.now;
+    return ((st && st.f[v._pid]) || []).filter((f) => f.until > now && MOODLETS[f.id]).map((f) => ({ k: f.id, x: f.cause || '', until: f.until }));
+  },
+  setMoodlets(v, list) {
+    const cur = this.moodlets(v), now = this.w.s.now;
+    const live = (list || []).filter((m) => m && m.until > now && MOODLETS[m.k]);
+    if (live.length === cur.length && live.every((m, i) => cur[i].k === m.k && cur[i].x === (m.x || '') && cur[i].until === m.until)) return;
+    this.tell(v, 'mf.feelings', [v._pid, live.map((m) => [m.k, m.x || '', m.until])]);
+  },
+  feel(v, key, x, until) { this.tell(v, 'mf.feel', [v._pid, key, x || '', until]); },
+  memories(v) {
+    const st = this.w.s.mod.reverie;
+    return ((st && st.m[v._pid]) || []).filter((m) => mindMemVal(m.k) !== null).sort((a, b) => b.t - a.t).map((m) => ({ d: Math.floor(m.t / 1440) + 1, t: m.text || '', v: mindMemVal(m.k) }));
+  },
+  setMemories(v, list) {
+    const cur = this.memories(v);
+    if (list.length === cur.length && list.every((m, i) => m.t === cur[i].t && m.d === cur[i].d)) return;
+    this.tell(v, 'mf.memories', [v._pid, list.map((m) => [m.d, m.t, m.v || 0])]);
+  },
+  remember(v, text, val) { this.tell(v, 'mf.remember', [v._pid, text, val || 0]); },
+  rel(v, kind, k) {
+    const r = this.w.s.mod.fellowship.rel[v._pid + '>v' + k];
+    if (!r) return undefined;
+    if (kind === 'rel') return r.r;
+    if (kind === 'love') return r.a || 0;
+    const now = this.w.s.now, s = r.s.filter((x) => x.label.includes('|') && (x.until === undefined || x.until > now)).map((x) => { const i = x.label.indexOf('|'); return { tag: x.label.slice(0, i), why: x.label.slice(i + 1), until: x.until }; });
+    return s.length ? s : undefined;
+  },
+  setRel(v, kind, k, x) { this.input('mf.rel', [kind, v._pid, 'v' + k, kind === 'sent' ? (x || []).map((s) => ({ tag: s.tag, why: s.why, until: s.until })) : x === undefined ? 0 : x]); },
+  relKeys(v, kind) {
+    const w = this.w, at = this.iv + ':' + w.s.now, c = v._rkc || (v._rkc = {});
+    if (c[kind] && c[kind].at === at && c[kind].w === w) return c[kind].keys.slice();
+    const rel = w.s.mod.fellowship.rel, pre = v._pid + '>v', out = [];
+    for (const key in rel) if (key.startsWith(pre)) { const k = key.slice(pre.length); if (this.rel(v, kind, k) !== undefined) out.push(k); }
+    c[kind] = { at, w, keys: out };
+    return out.slice();
   },
 
   // ---- skills -------------------------------------------------------------
@@ -829,6 +979,26 @@ Object.defineProperty(Villager.prototype, 'task', {
   get() { return this._task; },
   set(t) { const old = this._task; this._task = t; if (old !== t && Shell.on && !this.leaving) Shell.taskSet(this, old, t); },
 });
+// A villager's feelings, memories and relationships, as the game reads and
+// writes them: with Tyrell, Reverie's and Fellowship's; before they join it
+// (or after they leave), their own.
+for (const [key, read, write] of [
+  ['moodlets', (v) => Shell.moodlets(v), (v, x) => Shell.setMoodlets(v, x)],
+  ['memories', (v) => Shell.memories(v), (v, x) => Shell.setMemories(v, x)],
+]) {
+  Object.defineProperty(Villager.prototype, key, {
+    configurable: true,
+    get() { return minded(this) ? read(this) : this['_' + key]; },
+    set(x) { if (minded(this)) write(this, x || []); else this['_' + key] = x || []; },
+  });
+}
+for (const kind of ['rel', 'love', 'sent']) {
+  Object.defineProperty(Villager.prototype, kind, {
+    configurable: true,
+    get() { return this['_' + kind + 'P'] || (this['_' + kind + 'P'] = mindDict(this, kind)); },
+    set(x) { const o = { ...(x || {}) }; if (minded(this)) { for (const k in o) this[kind][k] = o[k]; } else this['_' + kind] = o; },
+  });
+}
 // A villager setting off (on a trip or for good) takes their needs, habits
 // and skills with them from the minds, as they are that moment.
 Object.defineProperty(Villager.prototype, 'leaving', {
@@ -880,9 +1050,18 @@ window.addEventListener('DOMContentLoaded', () => {
     return out.filter((x) => !CHAINS.includes(x) || short.has(x)).concat(CHAINS.filter((c) => short.has(c) && !out.includes(c)));
   }, 'shell');
   // the minds' clock runs to the end of the step first, then the villagers act on it
+  // Every chance the valley takes in a step (who catches a cold, which job comes
+  // next, what's said) is drawn from a stream of the minds' seed and the
+  // moment, not Math.random, so a village lives the same however it's watched
+  // (the drawing keeps Math.random, for what nothing saves).
   patch(window, 'simulate', (sim) => function (dt) {
-    if (Shell.on) { Shell.sync(); Shell.advance(Game.time + dt); }
-    sim.call(this, dt);
-    if (Shell.on) Shell.sync();
+    if (!Shell.on) return sim.call(this, dt);
+    const r = new Tyrell.Stream(Game.mindSeed, 'valley', Math.round(Game.time * 1e4)), mr = Math.random;
+    Math.random = () => r.next();
+    try {
+      Shell.sync(); Shell.advance(Game.time + dt);
+      sim.call(this, dt);
+      if (Shell.on) Shell.sync();
+    } finally { Math.random = mr; }
   }, 'shell');
 });

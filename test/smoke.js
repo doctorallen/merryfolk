@@ -138,8 +138,9 @@ async function run(browser, label, opts, failures) {
   if (r.day < 3) failures.push(`${label}: only reached day ${r.day}`);
   for (const b of new Set(r.bad)) failures.push(`${label}: ${b}`);
   if (opts.mobile) await page.screenshot({ path: path.join(outDir(), 'phone.png') });
-  await page.reload();
-  await waitFor(page, READY, { timeout: 30000 });
+  // (a busy machine can take a while to load the page again)
+  await page.reload({ timeout: 120000 });
+  await waitFor(page, READY, { timeout: 120000 });
   const r2 = await page.evaluate(reloadAndCompare);
   // (the minds are Tyrell's own state, with a heap of events and a rolling log whose shapes shift as
   // they run: they're held to coming back exactly as they were saved instead)

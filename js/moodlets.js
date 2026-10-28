@@ -53,6 +53,7 @@ function feel(v, key, x = '', mins) {
   if (!M || !v || v.stage === 'baby' || v.gone) return;
   const list = moodletsOf(v);
   const until = Game.time + (mins ?? M[2]);
+  if (minded(v)) { Shell.feel(v, key, x, until); return; } // (Reverie's: shell.js)
   const old = list.find((m) => m.k === key && m.x === x) || (['soaked', 'sunshine', 'festival', 'well_slept', 'slept_rough', 'made_piece'].includes(key) && list.find((m) => m.k === key));
   if (old) { old.until = Math.max(old.until, until); old.x = x; return; }
   list.push({ k: key, x, until });

@@ -47,8 +47,6 @@ class Villager {
     this.drives = mindDrives(this, drives);
     this.weights = mindHabits(this, weights);
     this.foodLike = Object.assign(Object.fromEntries(PANTRY_KINDS.concat(['stew']).map((k) => [k, 1])), o.foodLike || {});
-    this.rel = o.rel ?? {};
-    this.love = o.love ?? {};
     // the skills are Tyrell's too (shell.js): this reads and writes them
     this.skills = mindSkillView(this, Object.assign(Object.fromEntries(SKILLS.map((s) => [s, 0])), o.skills || {}));
     this.edu = typeof o.edu === 'number' ? o.edu : o.vocab ? educationFromOld(o, this.genes, this.age) : startingEducation(this.genes, this.age);
@@ -58,9 +56,9 @@ class Villager {
     this.visor = o.visor ?? false;
     this.lost = o.lost ?? 0;
     this.techTier = techTier(this.tech);
-    this.memories = o.memories ?? [];
-    this.moodlets = o.moodlets ?? [];
-    this.wishes = o.wishes ?? []; this.dream = o.dream ?? null; this.dreamsDone = o.dreamsDone ?? []; this.heirlooms = o.heirlooms ?? []; this.owesThanks = o.owesThanks ?? []; this.arc = o.arc ?? null; this.sent = o.sent ?? {}; this.likes = o.likes ?? null; this.dislikes = o.dislikes ?? null; this.rival = o.rival ?? null; this.rivalSkill = o.rivalSkill ?? null; this.rivalScore = o.rivalScore ?? 0; this.masterpiece = o.masterpiece ?? null; this.sulk = o.sulk ?? null; this.illness = o.illness ?? null; this.glum = o.glum ?? 0;
+    // (feelings, memories and relationships are the minds' too: shell.js)
+    mindHearts(this, o);
+    this.wishes = o.wishes ?? []; this.dream = o.dream ?? null; this.dreamsDone = o.dreamsDone ?? []; this.heirlooms = o.heirlooms ?? []; this.owesThanks = o.owesThanks ?? []; this.arc = o.arc ?? null; this.likes = o.likes ?? null; this.dislikes = o.dislikes ?? null; this.rival = o.rival ?? null; this.rivalSkill = o.rivalSkill ?? null; this.rivalScore = o.rivalScore ?? 0; this.masterpiece = o.masterpiece ?? null; this.sulk = o.sulk ?? null; this.illness = o.illness ?? null; this.glum = o.glum ?? 0;
     this.values = o.values ?? null; this.tol = o.tol ?? {}; this.breakDay = o.breakDay ?? -1; this.tantrum = o.tantrum ?? null;
     this.job = o.job ?? null;
     this.playerJob = o.playerJob ?? false;
@@ -156,6 +154,7 @@ class Villager {
   chatter() { this.say(remark(this), undefined, { think: true }); }
 
   remember(text, valence = 0) {
+    if (minded(this)) { Shell.remember(this, text, valence); return; }
     this.memories.unshift({ d: Game.day, t: text, v: valence });
     if (this.memories.length > 16) this.memories.length = 16;
   }

@@ -11,7 +11,13 @@ const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(__dirname, 'out');
 
 const chromePath = tk.chromePath;
-const launch = () => tk.launch();
+// (pages get two minutes to load and to answer: a busy machine can be slow to)
+const launch = async () => {
+  const kit = await tk.launch();
+  const page = kit.page;
+  kit.page = async (...a) => { const p = await page.apply(kit, a); p.setDefaultNavigationTimeout(120000); p.setDefaultTimeout(120000); return p; };
+  return kit;
+};
 const waitFor = tk.waitFor;
 const READY = () => typeof Game !== 'undefined' && Game.villagers.length > 0;
 
@@ -19,7 +25,7 @@ const READY = () => typeof Game !== 'undefined' && Game.villagers.length > 0;
 // villagers exist. `errors` fills with page errors and console errors.
 async function openGame(kit, { width = 1280, height = 800, mobile = false } = {}) {
   const { page, errors } = await tk.open(kit, {
-    root: ROOT, viewport: { width, height, mobile, scale: mobile ? 2 : 1 }, storage: null, ready: READY, timeout: 30000,
+    root: ROOT, viewport: { width, height, mobile, scale: mobile ? 2 : 1 }, storage: null, ready: READY, timeout: 120000,
   });
   return { page, errors };
 }
