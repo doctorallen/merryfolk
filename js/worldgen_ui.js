@@ -156,7 +156,7 @@ function drawGenMap(ctx, nStatics, grow) {
 
 // The founding families move in (what starting afresh always did after the land was built).
 function finishFreshVillage() {
-  try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* ignore */ }
+  Tycho.save.remove(SAVE_KEY);
   World.season = 'spring';
   Game.time = 8 * 60 + 20;
   Game.stats = {};

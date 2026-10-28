@@ -34,16 +34,22 @@ const RENAMED = {
   'ages.sweets': 'ages.candy', 'child.tale.biscuit': 'child.tale.cookie', 'pastime.burnt': 'pastime.burned', 'season.favour': 'season.favor',
   'village.wizrumour': 'village.wizrumor', 'secret.village.neighbour': 'secret.village.neighbor', 'wiz.visit.favour': 'wiz.visit.favor',
 };
-const renamedName = (s) => (Object.hasOwn(RENAMED, s) ? RENAMED[s] : s);
-// A copy of saved data with the old names put right.
-function renamedSave(o) {
-  if (Array.isArray(o)) return o.map(renamedSave);
-  if (o && typeof o === 'object') { const out = {}; for (const k of Object.keys(o)) out[renamedName(k)] = renamedSave(o[k]); return out; }
-  return typeof o === 'string' ? renamedName(o) : o;
-}
+// Each old name as it stands in a save's text: a whole JSON string, a key or a
+// value, and never the end of a longer one (a quote before it that isn't
+// escaped), with the new name in its place.
+const SAVE_RENAMES = Object.entries(RENAMED).map(([a, b]) => [new RegExp('(?<!\\\\)"' + a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '"', 'g'), '"' + b + '"']);
+// JSON text with the old names put right.
+function renamedJson(text) { for (const [a, b] of SAVE_RENAMES) text = text.replace(a, b); return text; }
+// The save is kept by Tycho's save store (shell.md): its storage never
+// throws, it puts the old names right as the save is read, and only a save of
+// this version with villagers in it is taken up.
+const SaveStore = new Tycho.save.Store({
+  key: SAVE_KEY, fresh: () => ({}), renamed: SAVE_RENAMES,
+  accept: (d) => d.v === 2 && !!d.villagers && !!d.villagers.length,
+});
 // The save in storage, read and put right (null if there's none, or it won't read).
 function readSave() {
-  try { const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); return d ? renamedSave(d) : null; } catch (e) { return null; }
+  try { return SaveStore.read() || null; } catch (e) { return null; }
 }
 
 // Each plain field of Game that a save keeps: its key in the save, the
@@ -156,15 +162,17 @@ function save(force = false) {
       planted: Game.planted, log: Game.log.slice(0, 40),
       items: World.items.map((i) => ({ kind: i.kind, x: i.x, y: i.y, uses: i.uses })),
     };
-    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-  } catch (e) { /* storage unavailable: the village simply won't persist */ }
+    // (storage unavailable or full: the village simply won't persist)
+    SaveStore.write(data);
+  } catch (e) { /* a save that couldn't be put together is not written */ }
 }
 
-function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } }
+function hasSave() { return !!Tycho.save.raw(SAVE_KEY); }
 
 function load() {
-  const data = readSave();
-  if (!data || data.v !== 2 || !data.villagers || !data.villagers.length) return false;
+  const data = SaveStore.load();
+  SaveStore.data = null; // (each save is put together afresh from the village: the store needn't hold this one)
+  if (!SaveStore.loaded) return false;
   Game.time = data.time; NEXT_ID = data.nextId || 1;
   (data.lamps || []).forEach((on, i) => { const l = World.lamps[i]; if (l) { l.lit = !!on; l.litAt = Game.time - 60; l.st.useAlt = l.lit; } });
   Game.weather = data.weather || 'clear'; Game.raining = Game.weather === 'rain' || Game.weather === 'storm'; Game.rainUntil = data.rainUntil || 0;

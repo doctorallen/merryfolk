@@ -167,8 +167,8 @@ function importVillagerCode(code) {
   code = (code || '').trim();
   if (!code.startsWith('TD2:')) throw new Error('That doesn\'t look like a Merryfolk letter. Codes start with TD2:');
   let data;
-  try { data = JSON.parse(decodeURIComponent(escape(atob(code.slice(4))))); } catch (e) { throw new Error('The letter is smudged. The code seems incomplete.'); }
+  // (a code from a game before the names were American has them put right as it's read, as a save does: save.js)
+  try { data = JSON.parse(renamedJson(decodeURIComponent(escape(atob(code.slice(4)))))); } catch (e) { throw new Error('The letter is smudged. The code seems incomplete.'); }
   if (!data || !data.g || !data.f) throw new Error('The letter is missing its traveler.');
-  // a code from a game before the names were American has them put right (save.js)
-  return renamedSave(data);
+  return data;
 }

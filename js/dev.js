@@ -30,11 +30,16 @@ function devLog(cat, text) {
   if (Dev.events.length > 600) Dev.events.length = 600;
 }
 
+// The drawer's own settings (open or not, the tab, the overlays, the events'
+// filter) are kept by Tycho's dev flags (shell.md), under a key of their own
+// and never in the save.
+const DevFlags = new Tycho.dev.Flags(DEV_KEY, {});
 function devLoad() {
-  try { const d = JSON.parse(localStorage.getItem(DEV_KEY) || '{}'); Object.assign(Dev.overlay, d.overlay || {}); Dev.tab = d.tab || Dev.tab; Dev.filter = d.filter || 'all'; if (d.on) devToggle(true); } catch (e) { /* no storage: defaults */ }
+  try { const d = DevFlags.load().s; Object.assign(Dev.overlay, d.overlay || {}); Dev.tab = d.tab || Dev.tab; Dev.filter = d.filter || 'all'; if (d.on) devToggle(true); } catch (e) { /* defaults */ }
 }
 function devSave() {
-  try { localStorage.setItem(DEV_KEY, JSON.stringify({ on: Dev.on, tab: Dev.tab, overlay: Dev.overlay, filter: Dev.filter })); } catch (e) { /* ignore */ }
+  Object.assign(DevFlags.s, { on: Dev.on, tab: Dev.tab, overlay: Dev.overlay, filter: Dev.filter });
+  DevFlags.save();
 }
 
 function devToggle(force) {
