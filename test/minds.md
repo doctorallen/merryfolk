@@ -313,3 +313,344 @@ weighing of every option, with the game's own score for each (about a
 quarter), the rest of Tyrell's work (about a sixth), the views and writes
 between the game and the minds (a tenth to a fifth), and a bigger hourly
 save (the minds' state, about 760 KB, adds some 14 ms an hour).
+
+## Natters on Bree
+
+The natters between villagers moved onto Bree, Tyrell's module for what
+passes between people, on the `bree` branch (with Tycho's `mf-bree`, which
+gives Bree what a game that owns space needs, merged with Tycho's main).
+Every natter, squabble, sweet-talk, natter with a little one, newcomer
+asking their way, apology, making-up and round of table talk is now one of
+Bree's exchanges: it strikes
+them up when one villager walks up to another (at converse.js's own odds),
+runs them turn by turn on the minds' clock, scores how each answer lands with
+whoever hears it, decides when a curt word sends someone off or turns a
+natter into a squabble, and leaves grudges; what each outcome does is the
+game's own (friendship by `bond()`, its moodlets, memories and chronicle).
+This is the village before and after.
+
+### How it was measured
+
+The season runner now counts what passes between people too: natters begun
+(each once, by whoever walked up), the lines said in them, those someone
+walked off from, long and good natters (the feelings, each one's), squabbles
+(each one's hard words), table talks and gatherings and the lines said round
+them, good company at table and sing-songs (feelings, counted each time
+they're given or refreshed), and with Bree, the grudges formed and held,
+feuds, making up, natters turned squabbles, patience kept and someone
+stepping in. Friendships in a season ran 30, 39 and 19 on reruns of the old
+village, so the season was played for six seeds (1 to 6) and the year for
+four (1 to 4, twelve days each), and six seeds for six days with the wizard
+kept away (`--no-wizard`: his visits, a crowd round him for a tale, move
+friendships more than anything else): before is main as it was (c587726,
+`season-bree-before*.json`), after is the branch (`season-bree-after*.json`).
+Each cell is the mean over the seeds, with the lowest and highest seed's in
+brackets. The usual comparison's three-seed season and two-seed year are the
+first file of each pair (`node test/season.js --compare bree-before
+bree-after`).
+
+A season, six seeds (1 to 6), three days each:
+
+| | before | after |
+|---|---:|---:|
+| folk at the end | 27.5 (26 to 29) | 27.67 (27 to 29) |
+| meals per villager-day | 2.45 (2.29 to 2.61) | 2.46 (2.38 to 2.56) |
+| weddings | 0 | 0 |
+| births | 0.33 (0 to 1) | 0.17 (0 to 1) |
+| mood, mean | 0.65 (0.63 to 0.66) | 0.65 (0.62 to 0.66) |
+| mood, lowest tenth | 0.38 (0.36 to 0.41) | 0.38 (0.36 to 0.41) |
+| mood, highest tenth | 0.9 (0.87 to 0.93) | 0.9 (0.88 to 0.94) |
+| breaks | 0.17 (0 to 1) | 0 |
+| friendships formed | 17.67 (10 to 30) | 14.83 (9 to 18) |
+| natters begun | 19.5 (14 to 24) | 18.67 (14 to 26) |
+| lines a natter | 6.07 (5.5 to 6.58) | 6.51 (5.4 to 7.32) |
+| good natters | 12.33 (6 to 20) | 12.17 (5 to 18) |
+| natters someone walked off from | 0.67 (0 to 2) | 1 (0 to 3) |
+| long natters (each one's) | 17.33 (8 to 26) | 19.67 (12 to 30) |
+| squabbles felt (each one's) | 0 | 1.67 (0 to 4) |
+| table talks and gatherings | 32 (16 to 39) | 35.67 (25 to 48) |
+| lines said round them | 240.33 (120 to 307) | 269.83 (178 to 423) |
+| good company at table (felt) | 189.17 (70 to 281) | 232.5 (132 to 387) |
+| sing-songs (felt) | 26.6 (16 to 42) | 54.17 (16 to 122) |
+| gatherings (felt) | 5.83 (2 to 9) | 4 (2 to 7) |
+| saw a squabble | 0 | 0.83 (0 to 4) |
+| grudges formed or deepened | - | 2.17 (0 to 4) |
+| grudges held at the end | - | 1.33 (0 to 3) |
+| natters turned squabbles | - | 0 |
+| someone stepped in | - | 0 |
+| time with others | 0.03 (0.02 to 0.03) | 0.03 (0.02 to 0.03) |
+| time at leisure | 0.12 (0.11 to 0.13) | 0.12 (0.11 to 0.13) |
+| wishes granted | 20.33 (18 to 26) | 19.17 (13 to 28) |
+| colds caught | 1 (0 to 3) | 1.33 (0 to 3) |
+
+A year, four seeds (1 to 4), twelve days each:
+
+| | before | after |
+|---|---:|---:|
+| folk at the end | 40.25 (37 to 43) | 39.75 (35 to 45) |
+| meals per villager-day | 2.45 (2.39 to 2.51) | 2.5 (2.45 to 2.53) |
+| weddings | 3 (2 to 4) | 3.5 (1 to 6) |
+| births | 9.25 (7 to 12) | 7.5 (4 to 11) |
+| mood, mean | 0.63 (0.62 to 0.63) | 0.62 (0.6 to 0.64) |
+| mood, lowest tenth | 0.38 (0.37 to 0.39) | 0.38 (0.35 to 0.41) |
+| mood, highest tenth | 0.87 (0.86 to 0.87) | 0.86 (0.83 to 0.89) |
+| breaks | 0.75 (0 to 1) | 0.5 (0 to 2) |
+| friendships formed | 133.5 (83 to 159) | 131.5 (108 to 149) |
+| natters begun | 109 (92 to 126) | 114.5 (101 to 122) |
+| lines a natter | 6.37 (5.83 to 6.83) | 6.42 (5.64 to 6.84) |
+| good natters | 62.75 (41 to 74) | 59 (42 to 68) |
+| natters someone walked off from | 4.5 (2 to 7) | 5 (1 to 9) |
+| long natters (each one's) | 98.5 (64 to 120) | 93 (54 to 115) |
+| squabbles felt (each one's) | 6.5 (4 to 12) | 9.5 (6 to 12) |
+| table talks and gatherings | 211.5 (194 to 233) | 230 (221 to 239) |
+| lines said round them | 1674 (1442 to 1861) | 1882.25 (1849 to 1904) |
+| good company at table (felt) | 1573.5 (1071 to 1919) | 1820 (1728 to 1962) |
+| sing-songs (felt) | 196.5 (81 to 289) | 397.5 (352 to 451) |
+| gatherings (felt) | 26.75 (25 to 29) | 21.5 (15 to 26) |
+| saw a squabble | 0 | 3.25 (1 to 5) |
+| grudges formed or deepened | - | 15 (7 to 26) |
+| grudges held at the end | - | 5.5 (3 to 9) |
+| natters turned squabbles | - | 0.25 (0 to 1) |
+| someone stepped in | - | 0.25 (0 to 1) |
+| time with others | 0.04 | 0.04 (0.03 to 0.04) |
+| time at leisure | 0.14 (0.13 to 0.15) | 0.14 (0.13 to 0.15) |
+| wishes granted | 114.75 (105 to 128) | 105 (94 to 125) |
+| colds caught | 11.5 (7 to 14) | 14.5 (13 to 19) |
+
+Without the wizard, six seeds (1 to 6), six days each:
+
+| | before | after |
+|---|---:|---:|
+| folk at the end | 32.33 (31 to 34) | 32 (30 to 35) |
+| meals per villager-day | 2.56 (2.48 to 2.67) | 2.55 (2.49 to 2.7) |
+| weddings | 0.33 (0 to 1) | 0.33 (0 to 1) |
+| births | 3.33 (3 to 4) | 3.17 (2 to 5) |
+| mood, mean | 0.62 (0.62 to 0.63) | 0.62 (0.61 to 0.64) |
+| mood, lowest tenth | 0.36 (0.34 to 0.38) | 0.35 (0.33 to 0.38) |
+| mood, highest tenth | 0.88 (0.86 to 0.89) | 0.88 (0.87 to 0.89) |
+| breaks | 0.5 (0 to 2) | 0.67 (0 to 3) |
+| friendships formed | 43.83 (40 to 48) | 35 (26 to 47) |
+| natters begun | 45.67 (36 to 53) | 42.67 (36 to 49) |
+| lines a natter | 6.1 (5.52 to 6.38) | 6.15 (4.97 to 6.82) |
+| good natters | 26.33 (16 to 32) | 24.17 (15 to 31) |
+| natters someone walked off from | 1.83 (0 to 5) | 2.83 (0 to 6) |
+| long natters (each one's) | 39.33 (30 to 50) | 36 (16 to 50) |
+| squabbles felt (each one's) | 1.33 (0 to 6) | 3.33 (2 to 6) |
+| table talks and gatherings | 68.67 (47 to 76) | 63 (50 to 75) |
+| lines said round them | 505.83 (325 to 642) | 458.67 (377 to 612) |
+| good company at table (felt) | 387.5 (199 to 545) | 341.17 (258 to 504) |
+| sing-songs (felt) | 47.17 (8 to 132) | 66.5 (27 to 146) |
+| gatherings (felt) | 13.5 (11 to 18) | 11.17 (9 to 13) |
+| saw a squabble | 0 | 2.33 (0 to 6) |
+| grudges formed or deepened | - | 6.17 (2 to 13) |
+| grudges held at the end | - | 3.33 (1 to 8) |
+| natters turned squabbles | - | 0 |
+| someone stepped in | - | 0 |
+| time with others | 0.03 (0.03 to 0.04) | 0.03 (0.02 to 0.03) |
+| time at leisure | 0.12 (0.11 to 0.12) | 0.12 (0.11 to 0.13) |
+| wishes granted | 48.5 (39 to 55) | 44.33 (30 to 63) |
+| colds caught | 1.33 (0 to 4) | 1.83 (0 to 3) |
+
+### What the numbers say
+
+The natters themselves are the old village's. Natters begun, the lines in
+each, good natters, walk-offs and long natters fall inside the old seeds'
+spread in all three, and their means are within about a tenth of the old
+ones but for walk-offs, a handful each way (a year's 5 against 4.5).
+
+The friendships are noise: a year's 131.5 against 133.5, a season's 14.83
+against 17.67 (the old seeds ran 10 to 30), and without the wizard 35
+against 43.83, the one low mark. Over the rounds of tuning below, none of
+which changed how a friendship grows, the same six seeds without the wizard
+formed 38.67, 41.67, 44.5, 43 and 35, and the year 112 to 147, so a round's
+mean moves a tenth or more on its own. If anything lies under it, it's the
+first days at the inn: over the first three days a villager spends a fifth
+less time over an ale (0.46 hours a day against 0.58, most of it waiting to
+be served, and the company there grows more friendships than any natter).
+With only the natters on Bree, or only the tables, each took off about a
+tenth (four days, six seeds, no wizard, in an earlier round); what moves it
+wasn't found, and by the end of a year it's level (0.57 hours both).
+Weddings, births and the size of the village follow, and stay within the
+old spread (a year ends with 39.75 folk after 7.5 births, against 40.25
+after 9.25; the new seeds had 4 to 11 births, the old 7 to 12, and the
+seventh round's year 9.25).
+
+Squabbles are a little more: 9.5 felt a year against 6.5 (the old seeds 4 to
+12), 3.33 against 1.33 without the wizard. They're struck at exactly the old
+odds; what's more is that a natter can now turn into one (a quarter of one a
+year) and that a squabble cut short is still felt (the old village felt one
+only if the chat ran to its end). What's new: someone about sees a squabble
+(3.25 a year) and doesn't like it, and squabbles leave grudges (15 formed
+or deepened a year, 5.5 still held at the end) that color the next natter
+between the two and fade over a few days. Making it up is rare (a quarter
+of one a year in earlier rounds, none in these): it wants both still sore
+when they next meet. Nobody fell into a feud, and someone stepped in once in
+the four years.
+
+Table talk is about the old: as many tables (230 a year against 211.5), a
+little more said round them (1882 lines against 1674, just over the old's
+highest seed; without the wizard 459 against 506), and good company as often
+(1820 against 1573; without the wizard 341 against 387). What's left is the
+singing: sing-songs are felt twice as often in a year (397.5 against 196.5)
+and a season, half again as often without the wizard. Played like for like
+(seed 3, twelve days, once each way), song takes 18 of every hundred lines
+round the table against 14, at tables a little bigger (4.4 against 4), and
+the feeling comes 35% more often. The old count swings widely (seed 3 felt
+it 81 times in the runner's year and 290 in that run), but every seed of the
+new year sings more than any of the old. It's a feeling worth 0.08, and the
+village's mood is the same (0.62 against 0.63 a year, the lowest and highest
+tenths alike).
+
+Gatherings are felt a fifth less (21.5 a year against 26.75), in every round
+of tuning; they're the game's own, and what natters have to do with it
+wasn't traced (more natters going, and a friend joining two in the lane at
+the old chance). Everything else (meals, mood, breaks, time with others) is
+the old village's within its spread; wishes granted are a little under it
+(105 a year against 114.75: the new seeds 94 to 125, the old 105 to 128) and
+colds a little over (14.5 against 11.5: 13 to 19, and 7 to 14).
+
+### How it was tuned
+
+The mapping as first built drifted in a few places, and seven rounds brought
+it back (the year's means, four seeds each; the friendships between rounds
+show how far a year swings with nothing much changed):
+
+| | before | first | second | third | fourth | fifth | sixth | seventh | after |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| folk at the end | 40.25 | 39 | 41.75 | 37.5 | 36.75 | 36.25 | 38.75 | 40.25 | 39.75 |
+| births | 9.25 | 8.25 | 10 | 7 | 7.5 | 7.75 | 7.5 | 9.25 | 7.5 |
+| friendships formed | 133.5 | 118.5 | 147.25 | 120.75 | 129 | 112.25 | 126 | 136.5 | 131.5 |
+| natters begun | 109 | 115.5 | 120 | 103 | 99.75 | 101.75 | 109.75 | 114.75 | 114.5 |
+| lines a natter | 6.37 | 6.46 | 6.53 | 6.41 | 6.48 | 6.5 | 6.57 | 6.63 | 6.42 |
+| good natters | 62.75 | 101.75 | 70.25 | 59.5 | 59 | 57.25 | 57.25 | 63.25 | 59 |
+| natters someone walked off from | 4.5 | 2.5 | 4.25 | 4.25 | 4.75 | 5 | 4.25 | 2.5 | 5 |
+| long natters (each one's) | 98.5 | 103 | 113 | 94.75 | 91.75 | 89.75 | 102.25 | 106.75 | 93 |
+| squabbles felt (each one's) | 6.5 | 10 | 7.5 | 6 | 6.75 | 8 | 6.5 | 7 | 9.5 |
+| table talks and gatherings | 211.5 | 308 | 297.5 | 224.25 | 265.25 | 228.75 | 223.5 | 219.25 | 230 |
+| lines said round them | 1674 | 2007.5 | 1860.25 | 1377.25 | 1651 | 1747.25 | 1650.5 | 1748.75 | 1882.25 |
+| good company at table (felt) | 1573.5 | 2388.75 | 2270.5 | 1509.5 | 1952.5 | 2022.75 | 1868.25 | 1588.25 | 1820 |
+| sing-songs (felt) | 196.5 | 172 | 173.5 | 81 | 146.25 | 164.75 | 135 | 418 | 397.5 |
+
+- **First:** the mapping as built. The natters themselves came out about the
+  same (115.5 begun, 6.46 lines each), but good natters ran at 102 against 63
+  (the chance of the feeling by outcome, warm 1, good 0.6, fine 0.3, was too
+  generous), walk-offs at 2.5 against 4.5, and table talk half again as often
+  (it ran without the old rounds' pauses between topics, at a turn every one
+  and a half to two and a half minutes).
+- **Second:** the good-natter chance down (warm 0.6, good 0.35, fine 0.2), a
+  grump's curt answer landing a little worse (-3.5) and sending the other off
+  a little more readily (`leaveBase` 0.6), a friend who happens by joining
+  after the second line as before (the first cut waited for the third),
+  table talk at two to three minutes a turn, and `escalation` 0.5 so a natter
+  now and then turns into a squabble.
+- **Third:** a lull of five minutes at a table after a round, as the old
+  rounds paused between topics; squabbles that end awkward are seen
+  (`seenAt`); making it up and saying sorry readier. Table talk fell
+  below the old (1377 lines against 1674).
+- **Fourth:** the lull three minutes, songs likelier at the inn of an
+  evening, and a squabble that ends merely awkward leaves the two sore with
+  each other (Bree's `grudge` table, a squabble's doubled), as the old
+  village's squabble memory had them "sour" for a while; before, Bree left a
+  grudge only for a sour one, so nobody ever had anything to make up.
+- **Fifth:** tables that go on when someone gets up (Bree's `stays`: the
+  first four rounds ran on a build of Bree from before it, so their tables
+  ended as soon as anyone left, and their table numbers are a little low on
+  lines), the natters with a toddler or a baby and newcomers asking their way
+  on Bree too (before, about three natters in ten still ran on villager.js's
+  old exchange), and the squabble odds exactly the old ones (an earlier
+  round had scaled them to three quarters, thinking the old village's
+  squabbles were often cut short before their hard words were felt; its year
+  says they weren't).
+- **Sixth:** a natter's relief reckoned as it always was. The old exchange
+  stretched the chat task to the natter's length only once it was under way,
+  after shell.js had taken the task's planned length (`t0`) as what the
+  minds are owed, so a natter that ran its course gave its whole relief and
+  was told to Tyrell as done. Bree's natters stretched it as they began, so a
+  natter that ended with its own last word looked cut short: about three
+  quarters of its relief, told as stopped part way, and the habit of a
+  natter learned more weakly (over four days, seeds 1 and 4, it moved by
+  -0.17 and +0.16 where the old village's grew by 0.23 and 0.51; with the
+  planned length kept, +0.16 and +0.26). With it the natters came back (109.75 a
+  year, against the old 109).
+- **Seventh:** topics drawn by their weights alone, as converse.js drew
+  them (`topicPull` and `topicCooldown` 0: Bree would favor a topic to the
+  speaker's taste and keep two from raising the same one again for a day, so
+  a family round the same table every mealtime talked of everything but the
+  food in front of them), and the table's topics as the old rounds chose
+  them: the first what's in front of them, or of an evening at the inn with
+  a few in three times in ten a song and, with an elder there, about one in
+  seven a tale; after that any topic that fits, each as likely, a song
+  wherever a few are in at the old inn (Bree's songs had wanted an evening
+  throughout: over three days, seeds 1 to 3, 11, 8 and 3 lines of song round
+  the table where the old village sang 32, 21 and 12). With that the year
+  came back nearly everywhere (friendships 136.5, the village 40.25 strong
+  with 9.25 births, good company at table 1588), but sing-songs overshot
+  (418) and walk-offs fell to 2.5: Bree's freshness had been sending grumps
+  onto the topics that sour them.
+- **After:** a curt answer sends someone off more readily (`leaveBase`
+  0.75: the old natter asked again after every answer once one had been
+  curt, where Bree asks once, as it lands; 0.9, tried first, overshot to
+  7.75 a year); a song a little less likely as a later topic (0.6 against
+  the others' 1: twelve days of seeds 1 and 2 played the old way and the
+  new, song took 17 of every hundred lines round the table against 14); six
+  at most sit down to a round, counting those who've got up, as the old
+  rounds had it (Bree's table seated latecomers up to six there at once, so
+  its singing tables were bigger, 4.7 on average against 4); and of an
+  evening at the inn an elder there starts the table off, as the old rounds
+  had the elder open a tale (Bree's opener was the first grown-up, so its
+  evening tables began with a song where the old ones began with a tale).
+  This round is the tables above.
+
+### What moved where
+
+| Merryfolk | Bree | |
+|---|---|---|
+| walking up to someone and settling in (`updateApproach`: the squabble roll, sweet-talk between sweethearts) | `strike`: the starter draws a kind by weight | `natterOdds`: the old odds, a kind each (natter, sweet nothings, squabble, a little one's natter, asking the way, making up, an apology) |
+| tempers (`temperOf`) | manners | each fits by `temperOf`, its answers in its own lines |
+| how long two talk (`plannedTurns`, by what they are to each other) | a kind's `turns`, as a function | the game's own reckoning; sweet-talk two more |
+| topics (`TOPICS`: `when`, `w`) | topics: `if`, `weight` | the food in front of them `from: 'doing'`; the rest the game's own subjects (its memories, hobbies, news and messages are its own) |
+| the pools (openers, answers by temper, follow-ups, last words, goodbyes, leaving) | Cityspeak lines on `<topic>.<step>`, `bree.bye`, `bree.leave` | `manner:` conditions, the child's own first, a curt word on an answer that landed badly, goodbyes by what the two are to each other |
+| a sour answer (`pSour`) | the natter kind's `lands`, at the `reply` step | a grump on the topics that sour them, or anyone low, worn out, no friend of the speaker, a rival (`CURT`); four tenths as much between sweethearts |
+| walking off (`wouldLeave`) | `leave` | `leaveBase` 0.6, `leaveTemper` 0.35, `leaveRegard` 0.3, `leaveSour` 0.2 |
+| a natter's warmth (+0.06 at the start, +0.03 at the end, +0.03 a long one) | the kinds' `on` | by outcome (`NATTER_BOND`, warm 0.12 to a row -0.04), through `bond()`; long, +0.03 |
+| snubbed, long_chat, good_chat, quarrel | `on.left`, `on.long`, `on.end` by outcome, the squabble's `on.end` | the game's moodlets, through `feel()` |
+| the quarrel mode | the squabble kind (hostile, no topics) | its words `lineFor(…, 'quarrel')` |
+| the court mode | sweet nothings (romantic) | the courting strands as topics |
+| table rounds (`tableRounds`, `roundTick`) | the table kind (a group that `stays`, two to three minutes a turn) | started at tables by the game (`Natter.tables`), latecomers seated (`join`) |
+| toddlers' natters, asking around | the little one's natter and asking the way | the old words and pace |
+| a squabble remembered | grudges | `relKind`'s squabble memory stays too |
+| | witnesses, patience, stepping in, making up, apologies | new |
+
+What stays the game's, and why:
+
+- **Space.** Every villager is at a place of their own in Tyrell, so Bree's
+  `together` is the game's (both still in their natter, or at the table) and
+  so are its `witnesses` (the room indoors, shouting distance outdoors); a
+  natter task put down (a break, the giant hand, the wizard) ends its
+  exchange.
+- **The words.** converse.js's pools, as Cityspeak lines, filled in by
+  `fillTalk` as they're said, with manners (`applyManner`); the news and the
+  messages passed on (gossip.js, talk.js) are topics with the game's own
+  words, and so are a little one's natter and asking the way.
+- **How a friendship grows.** `bond()` (likeness, shared values and likes,
+  sentiments, and the spark between two who could court), so Bree's own
+  regard and attraction are off: its outcome says how much.
+- **The feelings and memories.** The mood is the game's, from its moodlets,
+  so Bree's own feelings and memories are off and its outcomes give the
+  game's.
+- **Gatherings,** the wizard's talks (Voice) and the third voice (natter.js;
+  making the peace is Bree's reconcile now).
+- **Talking on and off, and a word at the counter.** Bree's `again` (two
+  still together strike up again later) and `interactWith` (an action that
+  talks with whoever's there, as someone pays at a till) both go by who
+  shares a place in Tyrell, and here nobody does, so the game does both its
+  own way: a table talks again after a lull while they're still sat there
+  (`Natter.tables`), and the innkeeper's serving stays work.js's.
+
+### Speed
+
+A day simulated (seed 7), the page's CPU time (its renderer, read from
+/proc), three times each, before and after in turn: 5.0 seconds before and
+5.1 after (4.7 to 5.4 and 4.9 to 5.3; wall time 3.6 both), which is the same
+within what back-to-back runs vary on a shared machine. A day is a couple of
+hundred turns, each a timer in the minds' queue and a line chosen.
