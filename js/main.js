@@ -1345,6 +1345,7 @@ function boot() {
   openIntro(true);
   window.addEventListener('beforeunload', save);
   document.addEventListener('visibilitychange', () => { if (document.hidden) save(); Sound.setHidden(document.hidden); });
+  Pwa.init(); // installable and kept current, when served over the web (pwa.js)
   requestAnimationFrame(frame);
 }
 // A loaded winter village should look wintry straight away.

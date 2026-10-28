@@ -466,7 +466,7 @@ It's made for a phone first. Held upright, the world fills the top of the screen
 
 | File | Contents |
 | --- | --- |
-| `js/util.js` | RNG, noise, color helpers, names, meal times, the calendar |
+| `js/util.js` | RNG, noise, color helpers (from Tycho's core), names, meal times, the calendar |
 | `js/sprites.js` | Procedural pixel art: villagers (with genes), seasonal trees, cottages and workshops, critters, props, icons |
 | `js/genetics.js` | Genome, inheritance, dominance, mutation, sending villagers as codes |
 | `js/world.js` | Map layout, seasonal ground painting, places, crops, critters, A* pathfinding |
@@ -518,6 +518,7 @@ It's made for a phone first. Held upright, the world fills the top of the screen
 | `js/talklog.js` | The Talk tab of the Chronicle: every natter kept as a thread, line by line |
 | `js/converse.js` | A proper natter: topics, tempers, how long two folk talk and how it ends; the rounds at table |
 | `js/gatherings.js` | Getting together: skittles, stone-skimming, the gossip by the well, sunsets, tag, and a third joining a natter |
+| `js/pwa.js` | Installing, and staying current, when served over the web (Tycho's installable app; `sw.js` is the worker) |
 | `js/mail.js` | Letters: written at home, sent from the road, carried round by the mail carrier |
 | `js/mathoms.js` | Mathoms: oddments passed round as birthday presents, and brought home from adventures |
 | `js/larder.js` | Putting by for winter: jams, pickles and smoked fish, opened when the cold months bite |

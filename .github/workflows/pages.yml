@@ -35,10 +35,17 @@ jobs:
       - name: Assemble site
         run: |
           mkdir -p _site
-          cp -r index.html css js talk _site/
-          # Tycho, the engine (a git submodule): only its built scripts
-          mkdir -p _site/vendor/tycho/dist && cp vendor/tycho/dist/tycho.js _site/vendor/tycho/dist/
+          cp -r index.html css js talk icons manifest.webmanifest sw.js _site/
+          # Tycho, the engine (a git submodule): only the built scripts the page and the worker load
+          mkdir -p _site/vendor/tycho/dist
+          for f in $(grep -o 'src="vendor/tycho/dist/[^"]*"' index.html | cut -d'"' -f2) $(grep -o "importScripts('vendor/tycho/dist/[^']*')" sw.js | cut -d"'" -f2); do cp "$f" _site/vendor/tycho/dist/; done
           touch _site/.nojekyll
+          # stamp this deploy: a new service worker each time (the commit),
+          # and version.json naming the build it carries (js/version.js),
+          # which a page open on an older one loads onto (js/pwa.js)
+          sed -i "s/__BUILD__/$(echo "$GITHUB_SHA" | cut -c1-7)/" _site/sw.js
+          node -e "const b = require('fs').readFileSync('js/version.js', 'utf8').match(/BUILD_INFO = '([^']*)'/)[1]; require('fs').writeFileSync('_site/version.json', JSON.stringify({ build: b }))"
+          cat _site/version.json
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
