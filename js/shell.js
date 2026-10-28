@@ -568,17 +568,19 @@ const Shell = {
       const keep = (st.m[id] || []).filter((m) => mindMemVal(m.k) === null);
       st.m[id] = keep.concat(list.slice().reverse().map(([d, text, val]) => ({ k: mindMemKind(val), t: Math.min(w.s.now, (d - 1) * 1440 + 720), imp: clamp(4 + Math.abs(val), 1, 10), recalls: 0, text })));
     });
-    // how one feels about another (rel), the spark (love) and the reasons why (sent)
+    // how one feels about another (rel), the spark (love) and the reasons why
+    // (sent), to the last decimal (a friendship grows by the ten-thousandth in
+    // a natter, a spark by less: rounding would stop them growing)
     w.defineInput('mf.rel', (kind, a, b, x) => {
       const f = w.fellowship, r = f.record(a, b);
-      if (kind === 'rel') r.r = Math.round(clamp(Number(x) || 0, -1, 1) * 1e4) / 1e4;
-      else if (kind === 'love') r.a = Math.round(clamp(Number(x) || 0, -1, 1) * 1e4) / 1e4;
+      if (kind === 'rel') r.r = clamp(Number(x) || 0, -1, 1);
+      else if (kind === 'love') r.a = clamp(Number(x) || 0, -1, 1);
       else r.s = r.s.filter((s) => !s.label.includes('|')).concat((x || []).map((s) => ({ label: s.tag + '|' + (s.why || ''), by: SENT[s.tag] ? SENT[s.tag][1] * 0.1 : 0, until: s.until })));
     });
     // an older save's feelings, memories and relationships, as the villager kept them
     w.defineInput('mf.hearts', (id, h) => {
       const f = w.fellowship;
-      for (const kind of ['rel', 'love']) for (const o in h[kind] || {}) { const r = f.record(id, 'v' + o); if (kind === 'rel') r.r = Math.round(clamp(Number(h.rel[o]) || 0, -1, 1) * 1e4) / 1e4; else r.a = Math.round(clamp(Number(h.love[o]) || 0, -1, 1) * 1e4) / 1e4; }
+      for (const kind of ['rel', 'love']) for (const o in h[kind] || {}) { const r = f.record(id, 'v' + o); if (kind === 'rel') r.r = clamp(Number(h.rel[o]) || 0, -1, 1); else r.a = clamp(Number(h.love[o]) || 0, -1, 1); }
       for (const o in h.sent || {}) { const r = f.record(id, 'v' + o); r.s = r.s.concat((h.sent[o] || []).filter((s) => s.until > w.s.now).map((s) => ({ label: s.tag + '|' + (s.why || ''), by: SENT[s.tag] ? SENT[s.tag][1] * 0.1 : 0, until: s.until }))); }
     });
     // a newborn named after the birth (the game names them by their looks)
@@ -880,11 +882,14 @@ const Shell = {
     if (!p) return;
     const cur = p.doing ? p.doing.seq : null;
     // the same thing carried on in a new task (a natter that's begun, say)
-    if (old && t && old.ty != null && old.ty === cur && t.ty == null && old.a.id === t.a.id) { t.ty = old.ty; return; }
-    if (old && old.ty != null && old.ty === cur && this.quiet !== v) this.ended(v, old);
+    const same = !!(old && t && old.ty != null && old.ty === cur && t.ty == null && old.a.id === t.a.id);
+    if (same && !t.chatLock) { t.ty = old.ty; return; }
+    if (old && old.ty != null && old.ty === cur && this.quiet !== v && !same) this.ended(v, old);
     if (t && t.ty == null) {
       if (this.picking && this.picking.v === v && this.picking.id === t.a.id) t.ty = this.picking.seq;
-      else t.ty = this.tell(v, 'mf.do', [this.pid(v), t.a.id, mindRank(t.a)]) ?? -1;
+      // (a natter both have stopped for is held to its end, as the game always
+      // held one: hunger waits for it, and only a break comes first)
+      else t.ty = this.tell(v, 'mf.do', [this.pid(v), t.a.id, t.chatLock ? 3 : mindRank(t.a)]) ?? -1;
     }
   },
   // the game is done with a task: how it went
