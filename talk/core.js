@@ -77,7 +77,7 @@ talkPack('core', () => {
   // --- How a remark lands, when it lands strongly -----------------------------------
   lines('mix.good', [{ text: ['Ha!', 'Oh, that\'s nice.', 'You\'re a kind one.'] }, { if: { temper: 'shy' }, text: ['...Thank you.'] }, { if: { stage: 'child' }, text: ['Hee!'] }]);
   lines('mix.bad', [{ text: ['Hmph.', 'Well, really.', '...If you say so.'] }, { if: { temper: 'ornery' }, text: ['Don\'t you start.', 'Is that meant to be funny?'] }, { if: { temper: 'proud' }, text: ['I\'ll have you know I\'m very well thought of.'] }, { if: { temper: 'shy' }, text: ['Oh. Um.'] }]);
-  lines('mix.jest.good', [{ text: ['Ha! You\'ll keep.', 'Oh, very good.'] }, { if: { temper: 'witty' }, text: ['Ha! I\'ll get you back for that.', 'Oh, that\'s good. I\'m stealing that.'] }, { if: { stage: 'child' }, text: ['Ahahaha! Say it again!'] }]);
+  lines('mix.jest.good', [{ text: ['Ha! You\'ll keep.', 'Oh, very good.'] }, { if: { temper: 'witty' }, text: ['Ha! I\'ll get you back for that.', 'Oh, that\'s good. I\'m stealing that.'] }, { if: { stage: 'child' }, text: ['Ahahaha! Say it again!', 'Hee hee! Do another one!'] }]);
   lines('mix.jest.bad', [{ text: ['I don\'t see what\'s funny.'] }, { if: { temper: 'ornery' }, text: ['Laugh at your own jokes, do you?'] }, { if: { temper: 'gloomy' }, text: ['Mm. Funny.'] }]);
   lines('mix.listen.good', [{ text: ['...You\'re a good listener, you know.', 'Nobody ever just lets me talk.'] }]);
   lines('mix.advise.bad', [{ text: ['I didn\'t ask for advice.', 'Thank you, wizard. I\'m a grown hobbit.'] }]);
@@ -314,7 +314,7 @@ talkPack('core', () => {
     end: { fond: 0.015 },
   });
   lines('pass.jest.open', [{ text: ['Still keeping out of trouble, {name}? A pity.', 'If you\'ve eaten fewer than six meals today, {name}, I shall be most concerned.', 'I\'ve met dragons with better manners than your rooster, {name}.'] }]);
-  lines('pass.jest.reply', [{ text: ['Ha! You haven\'t changed a bit.', 'Ha! You\'ll keep.'] }, { if: { temper: 'witty' }, text: ['Ha! I\'ll get you back for that.', 'Oh, very good. Very good indeed.'] }, { if: { temper: 'ornery' }, text: ['I don\'t see what\'s funny.', 'Laugh at your own jokes, do you?'] }, { if: { temper: 'shy' }, text: ['Oh. Ha. Yes.'] }, { if: { stage: 'child' }, text: ['Ahahaha! Say it again!'] }]);
+  lines('pass.jest.reply', [{ text: ['Ha! You haven\'t changed a bit.', 'Ha! You\'ll keep.'] }, { if: { temper: 'witty' }, text: ['Ha! I\'ll get you back for that.', 'Oh, very good. Very good indeed.'] }, { if: { temper: 'ornery' }, text: ['I don\'t see what\'s funny.', 'Laugh at your own jokes, do you?'] }, { if: { temper: 'shy' }, text: ['Oh. Ha. Yes.'] }, { if: { stage: 'child' }, text: ['Hee hee hee! That\'s the funniest thing ever!', 'Ha! Again! Tell it again!'] }]);
   lines('pass.jest.again', [{ text: ['And another thing: your hat\'s on backwards.', 'What do you call a hobbit with no pudding? Unwell.'] }]);
   lines('pass.jest.back', [{ text: ['My hat? Look at YOUR hat.', 'Unwell! Ha! That\'s true, though.'] }, { if: { temper: 'witty' }, text: ['Coming from a man whose hat has its own weather.'] }]);
   lines('pass.jest.theirs', [{ text: ['Why did the hobbit cross the road? Second breakfast was on the other side.', 'What\'s the difference between a troll and a turnip? Turnips are better company.'] }, { if: { stage: 'child' }, text: ['What do you call a dragon with no fire? A lizard! HAHAHA.'] }]);
