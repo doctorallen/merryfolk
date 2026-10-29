@@ -206,10 +206,12 @@ function mindSkills(w) {
 // old per-step rates of villager.js, by the hour: Tyrell keeps them steady
 // between hours, settling everyone's needs on the hour).
 function mindRates(v, h) {
-  const g = v.genes, c = v.chem, baby = v.stage === 'baby', grown = v.isGrown();
+  const g = v.genes, baby = v.stage === 'baby', grown = v.isGrown();
+  // (with the body on Athelas, a toadstool, being poorly and the ale move these through their courses: body.js)
+  const c = typeof Body !== 'undefined' && Body.on(v) ? { toxin: 0, ale: 0, sick: false } : { toxin: v.chem.toxin, ale: v.chem.ale, sick: v.isSick() };
   const r = {
     hunger: (baby ? 0.13 / 0.085 : 1) * (0.6 + g.appetite * 0.8) * (c.toxin > 0.4 ? 0.3 : 1) * (World.season === 'winter' ? 0.85 : 1),
-    tired: (baby ? 2 : v.isChild() ? 0.06 / 0.045 : 1) * (0.8 + g.laziness * 0.4) * (v.isSick() ? 1.6 : 1) * (c.ale > 0.6 ? 1.5 : 1),
+    tired: (baby ? 2 : v.isChild() ? 0.06 / 0.045 : 1) * (0.8 + g.laziness * 0.4) * (c.sick ? 1.6 : 1) * (c.ale > 0.6 ? 1.5 : 1),
     lonely: (baby ? 0.09 / 0.05 : 1) * (0.4 + g.sociability),
     bored: 0.5 + g.curiosity,
     craving: grown ? g.pipeLove : 0,
@@ -237,6 +239,8 @@ function mindAction(a) {
   if (a.social) tags.push('social');
   if (a.job) tags.push('work');
   if (a.outdoor) tags.push('outdoors');
+  if (a.harm) tags.push('harm');
+  if (a.meal || a.id === 'eat_item') tags.push('meal');
   if (tags.length) def.tags = tags;
   if (MIND_SLEEP[a.id]) def.rates = MIND_SLEEP_RATES;
   else if (a.id === 'party') def.rates = { tired: 0.6 };
@@ -359,6 +363,8 @@ function mindFeelings(w) {
   for (const k in MOODLETS) { const M = MOODLETS[k]; w.reverie.feeling({ id: k, label: M[0], weight: M[1], minutes: Math.min(M[2], 1e6), stack: 12, stackMul: 1, stress: 0 }); }
   w.reverie.mood = (id) => { const v = Shell.byPid.get(id); return v ? v.mood() : 0.5; };
 }
+// a feeling's cause, as the game shows it: someone (a Tyrell id, as Morgul gives it) by their first name
+const mindCause = (x) => { if (!x) return ''; const m = /^v(\d+)$/.exec(x); if (!m) return x; const o = person(+m[1]); return o ? o.first : x; };
 // a memory's kind keeps how it felt: 'mf:-2' .. 'mf:3'
 const mindMemKind = (val) => 'mf:' + (Math.round(val) || 0);
 const mindMemVal = (k) => (k && k.startsWith('mf:') ? +k.slice(3) || 0 : null);
@@ -422,7 +428,7 @@ const Shell = {
     this.stop();
     if (!Game.mindSeed) Game.mindSeed = 'mf-' + Tyrell.hash(String(World.seed), ...Game.villagers.slice(0, 12).map((v) => v.first + v.id));
     const w = (this.w = Tyrell.create({
-      seed: Game.mindSeed, start: Game.time, modules: ['reverie', 'fellowship', 'cradle', 'delos', 'mentat', 'ceres', 'cityspeak', 'voice', 'bree'], moduleConfig: MIND_MODULES, esper: { on: false },
+      seed: Game.mindSeed, start: Game.time, modules: ['reverie', 'fellowship', 'cradle', 'delos', 'mentat', 'ceres', 'cityspeak', 'voice', 'bree', 'athelas', 'morgul'], moduleConfig: MIND_MODULES, esper: { on: false },
       config: Object.assign({}, MIND_CONFIG, typeof Dev !== 'undefined' && Dev.on ? { logSize: 2000, decisions: 12 } : {}),
       extra: [MIND_MODULE], shell: { travel: () => 0 },
     }));
@@ -438,6 +444,11 @@ const Shell = {
     this.inputs(w);
     // what passes between them: natters, squabbles, table talk (bree.js)
     if (typeof Natter !== 'undefined') Natter.declare(w);
+    // the body: ale, colds, the flu, toadstools and sprains as Athelas courses (body.js)
+    if (typeof Body !== 'undefined') Body.declare(w);
+    // harm: scuffles come to blows, and folk get up to mischief (scuffle.js, mischief.js)
+    if (typeof Scuffle !== 'undefined') Scuffle.declare(w);
+    if (typeof Mischief !== 'undefined') Mischief.declare(w);
     // (a relationship Fellowship makes for the first time: the index of them is out of date)
     const fs = w.fellowship, rec = fs.record;
     fs.record = function (a, b) { if (!w.s.mod.fellowship.rel[a + '>' + b]) Shell.relMade++; return rec.call(this, a, b); };
@@ -453,6 +464,8 @@ const Shell = {
       if (e.level !== 'skilled') chronicle(`${v.name()} has become ${e.level === 'master' ? 'a master' : 'an expert'} at ${label}.`, 'learn');
     });
     Tycho.minds.restore(w, Game.minds, { onError: (e) => { if (typeof noteError === 'function') noteError(e, 'loading the minds'); } });
+    if (typeof Body !== 'undefined') Body.started();
+    if (typeof Mischief !== 'undefined') Mischief.restored();
     this.gen++; this.on = true; this.byPid.clear(); this.ends = {};
     MindStore.start(w);
     voiceDeclare();
@@ -777,7 +790,7 @@ const Shell = {
   },
   moodlets(v) {
     const st = this.w.s.mod.reverie, now = this.w.s.now;
-    return ((st && st.f[v._pid]) || []).filter((f) => f.until > now && MOODLETS[f.id]).map((f) => ({ k: f.id, x: f.cause || '', until: f.until }));
+    return ((st && st.f[v._pid]) || []).filter((f) => f.until > now && MOODLETS[f.id]).map((f) => ({ k: f.id, x: mindCause(f.cause), until: f.until }));
   },
   setMoodlets(v, list) {
     const cur = this.moodlets(v), now = this.w.s.now;

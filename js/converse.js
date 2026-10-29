@@ -610,7 +610,7 @@ function nextTurn(conv) {
     if (conv.mode === 'quarrel') FX.puff(turn.who.x, turn.who.y - 20);
     else if (conv.mode === 'court' && R.chance(0.5)) FX.hearts((this.x + p.x) / 2, Math.min(this.y, p.y) - 18);
     else if (!turn.sour) { this.bond(p, 0.004); shareWays(this, p); }
-    if (this.chem.germs > 0.3 && Math.random() < 0.05 * (1.2 - p.genes.hardiness)) p.catchCold(this.first);
+    if (this.chem.germs > 0.3 && Math.random() < 0.05 * (1.2 - p.genes.hardiness)) p.catchCold(this.first, this);
     if (turn.end) {
       // a word or two to see them off, then both go about their day
       const left = conv.left, other = left ? (left === this ? p : this) : null;

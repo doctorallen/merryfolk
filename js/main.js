@@ -329,6 +329,10 @@ function drawVillager(ctx, v, ox = 0, oy = 0) {
     }
     case 'sit': pose = 'sit'; break;
     case 'work': pose = Math.floor(t * 2.2 + v.id) % 2 ? 'stand' : 'work'; break;
+    // a scuffle: hopping and jostling, a lunge for a blow struck, a stagger for one taken (scuffle.js)
+    case 'tussle': { const L = Scuffle.look(v, t); pose = L.pose; xoff = L.xoff; yoff = L.yoff; break; }
+    // caught by a tripwire or a snare: down on the ground a moment (mischief.js)
+    case 'stumble': pose = 'sit'; break;
     case 'dance': {
       pose = ['walk1', 'reach', 'walk2', 'reach'][Math.floor(t * 6 + v.id) % 4];
       yoff = -Math.round(Math.abs(Math.sin(t * 6 + v.id)) * 3);
@@ -711,6 +715,8 @@ function render(dtReal, dtWall = dtReal) {
   }
   for (const p of Village.projects) if (p.kind === 'field') drawFieldSite(ctx, World.lots[p.lot], p.prog);
   for (const s of World.riftScars) if (s.x > cx - 40 && s.x < cx + cam.w + 40 && s.y > cy - 20 && s.y < cy + cam.h + 20) drawRiftScar(ctx, s);
+  // the pranks lying in wait: a cord across a path, a snare by the hedge (mischief.js)
+  if (typeof Mischief !== 'undefined') Mischief.draw(ctx, { x: cx, y: cy, w: cam.w, h: cam.h });
 
   // y-sorted drawables
   const list = [];

@@ -22,7 +22,7 @@ function sprained(v) { return !!(v.illness && v.illness.kind === 'sprain' && Gam
   // a cold in the cold months may turn to flu
   patch(Villager.prototype, 'catchCold', (cc) => function (from) {
     const before = this.chem.germs;
-    cc.call(this, from);
+    cc.apply(this, arguments);
     if (before > 0 || this.chem.germs <= 0) return;
     const p = { winter: 0.3, autumn: 0.15, spring: 0.06, summer: 0.02 }[World.season] * (1.3 - this.genes.hardiness) * (this.stage === 'elder' ? 1.5 : 1);
     if (R.chance(p)) {
@@ -34,7 +34,8 @@ function sprained(v) { return !!(v.illness && v.illness.kind === 'sprain' && Gam
   }, 'illness');
   // the flu keeps germs high and the patient abed; a sprain slows them down
   patch(Villager.prototype, 'update', (upd) => function (dt, h) {
-    if (this.illness && Game.time >= this.illness.until) {
+    // (with the minds, the flu and a sprain run their courses and say when they're over: body.js)
+    if (!Body.on(this) && this.illness && Game.time >= this.illness.until) {
       const k = this.illness.kind; this.illness = null;
       if (k === 'flu') { unfeel(this, 'laid_up'); this.remember('Got over the flu at last.', 1); if (R.chance(0.5)) chronicle(`${this.first} is up and about again after the flu.`, 'sick'); }
       else unfeel(this, 'sprained');
@@ -44,7 +45,7 @@ function sprained(v) { return !!(v.illness && v.illness.kind === 'sprain' && Gam
   }, 'illness');
   patch(Villager.prototype, 'score', (score) => function (a, h, ex) {
     let s = score.call(this, a, h, ex);
-    if (s <= 0) return s;
+    if (s <= 0 || Body.on(this)) return s; // (with the minds, the courses weigh it: body.js)
     const mul = (n, f) => { s *= f; if (ex) ex.mul.push([n, f]); };
     if (hasFlu(this)) mul('laid up with flu', a.id === 'sleep' || a.id === 'eat_home' || a.id === 'remedy_item' ? 2 : 0.05);
     else if (sprained(this) && (a.job || ['play', 'chase', 'party', 'stroll'].includes(a.id))) mul('a sprained ankle', 0.3);
@@ -76,7 +77,8 @@ ACTIONS.bring_soup = {
     if (!Game.villagers.includes(p)) return;
     feel(p, 'soup', v.first); addSentiment(p, v, 'grateful', 'soup when I had the flu', 8);
     p.drives.lonely = Math.max(0, p.drives.lonely - 0.4);
-    if (p.illness) p.illness.until -= 240; // a good visit speeds the mend (if they're not up and about already)
+    // a good visit speeds the mend (if they're not up and about already)
+    if (Body.on(p)) Body.hasten(p, 'flu', 240); else if (p.illness) p.illness.until -= 240;
     const home = v.homeId >= 0 ? v.home() : null;
     if (home && home.pantry.veg > 0) home.pantry.veg--; else if ((Village.stores.veg || 0) > 0) Village.use('veg', 1);
     v.remember(`Took soup round to ${p.first}, who has the flu.`, 1);
