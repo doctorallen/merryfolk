@@ -178,9 +178,12 @@ class Villager {
 
   cure(by, nurse) {
     const wasSick = this.isSick();
-    this.chem.germs = Math.max(0, this.chem.germs - 0.7);
-    this.chem.toxin = Math.max(0, this.chem.toxin - 0.7);
-    this.chem.immune = Math.max(this.chem.immune, 0.6);
+    if (Body.on(this)) Body.remedy(this);
+    else {
+      this.chem.germs = Math.max(0, this.chem.germs - 0.7);
+      this.chem.toxin = Math.max(0, this.chem.toxin - 0.7);
+      this.chem.immune = Math.max(this.chem.immune, 0.6);
+    }
     this.drives.ache = Math.max(0, this.drives.ache - 0.4);
     if (wasSick) {
       if (!this.inside) this.say(R.pick(['Ah, that\'s better!', 'Thank you kindly.', 'Bitter... but it works!']));
@@ -229,7 +232,8 @@ class Villager {
     if (a.outdoor && Game.raining) mul('rain', 0.3);
     if (a.outdoor && World.season === 'winter' && !a.job) mul('winter', 0.6);
     if (a.job && this.stage === 'elder' && a.job !== 'storyteller') mul('elderly', 0.5);
-    if (this.isSick() && a.id !== 'sleep' && a.id !== 'remedy_item') mul('poorly', 0.4);
+    // (with the minds, being poorly weighs as its course says: body.js)
+    if (this.isSick() && a.id !== 'sleep' && a.id !== 'remedy_item' && !Body.on(this)) mul('poorly', 0.4);
     if (this.stage === 'elder' && (a.id === 'party' || a.id === 'play')) mul('elderly', 0.7);
     // (pastimes have their own, finer sense of 'had enough' in minds.js)
     if (this.lastAction === a.id && a.id !== 'sleep' && !a.job && !(typeof LEISURE_KIND !== 'undefined' && LEISURE_KIND[a.id])) mul('did it last', 0.75);
@@ -341,7 +345,8 @@ class Villager {
     if (task.spot && task.spot.occ === this.id) task.spot.occ = null;
     if (task.target && task.target.item) task.target.item.claims = Math.max(0, task.target.item.claims - (task.consumed ? 0 : 1));
     if (task.a.release) task.a.release(this, task);
-    if (task.partner && task.partner.task && task.partner.task.partner === this) task.partner.task.t = Math.min(task.partner.task.t, 1);
+    // (one leaving off brings the other's to an end: a natter, or a scuffle, not a natter given way to a scuffle)
+    if (task.partner && task.partner.task && task.partner.task.partner === this && task.partner.task.a === task.a) task.partner.task.t = Math.min(task.partner.task.t, 1);
   }
 
   abort() {
@@ -484,15 +489,18 @@ class Villager {
     const cold = d.cold; // (each need read once: with Tyrell, a read is a look into the minds)
     d.cold = cold + (chill - cold) * rate * (chill > cold ? 0.35 : 0.6);
     // body chemistry: ale wears off, germs run their course, toxins pass
-    c.ale = Math.max(0, c.ale - rate * 0.05);
-    if (c.germs > 0) {
-      if (!c.peaked) { c.germs += rate * 0.09; if (c.germs >= 0.85) c.peaked = true; }
-      else c.germs -= rate * 0.035 * (0.5 + g.hardiness) * (sleeping ? 2 : 1);
-      if (c.germs <= 0) { c.germs = 0; c.peaked = false; c.immune = 1; this.remember('Shook off a nasty cold.', 0); }
+    // (with the minds, these are Athelas courses that run on their own: body.js)
+    if (!Body.on(this)) {
+      c.ale = Math.max(0, c.ale - rate * 0.05);
+      if (c.germs > 0) {
+        if (!c.peaked) { c.germs += rate * 0.09; if (c.germs >= 0.85) c.peaked = true; }
+        else c.germs -= rate * 0.035 * (0.5 + g.hardiness) * (sleeping ? 2 : 1);
+        if (c.germs <= 0) { c.germs = 0; c.peaked = false; c.immune = 1; this.remember('Shook off a nasty cold.', 0); }
+      }
+      c.immune = Math.max(0, c.immune - rate * 0.01);
+      c.toxin = Math.max(0, c.toxin - rate * 0.04);
+      c.hangover = Math.max(0, c.hangover - rate * 0.12);
     }
-    c.immune = Math.max(0, c.immune - rate * 0.01);
-    c.toxin = Math.max(0, c.toxin - rate * 0.04);
-    c.hangover = Math.max(0, c.hangover - rate * 0.12);
     // getting chilled to the bone can bring on a cold
     if (d.cold > 0.75 && c.germs === 0 && c.immune < 0.2 && Math.random() < rate * 0.04 * (1.2 - g.hardiness)) this.catchCold('the chill');
     const achTarget = Math.max(c.germs * 0.75, c.toxin * 0.9, c.hangover * 0.7);
@@ -608,9 +616,13 @@ class Villager {
     }
   }
 
-  catchCold(from) {
-    if (this.chem.germs > 0 || this.chem.immune > 0.3) return;
-    this.chem.germs = 0.12; this.chem.peaked = false;
+  // A cold caught, from someone (a name, and who it was) or something (the chill).
+  catchCold(from, by) {
+    if (Body.on(this)) { if (!Body.catchCold(this, by)) return; }
+    else {
+      if (this.chem.germs > 0 || this.chem.immune > 0.3) return;
+      this.chem.germs = 0.12; this.chem.peaked = false;
+    }
     this.remember(`Caught a cold from ${from}.`, -1);
     if (R.chance(0.2)) chronicle(`${this.first} has come down with the sniffles.`, 'sick');
   }
@@ -628,7 +640,7 @@ class Villager {
       }
       // a pint beside someone in neon trim rubs off, a little
       if (o.tech > this.tech + 0.1 && this.stage !== 'baby') shiftWays(this, dt * 0.00008 * (o.tech - this.tech) * (0.4 + this.genes.curiosity * 0.8));
-      if (this.isSick() && o.chem.germs === 0 && Math.random() < dt * 0.0015 * (1.2 - o.genes.hardiness)) o.catchCold(this.first);
+      if (this.isSick() && o.chem.germs === 0 && Math.random() < dt * 0.0015 * (1.2 - o.genes.hardiness)) o.catchCold(this.first, this);
     }
   }
   bond(o, amt) {
@@ -669,7 +681,7 @@ class Villager {
     if (other.pendingReply) task.data.reply = { who: other, to: speaker, kind: other.pendingReply };
     shareWays(speaker, other);
     // gossip spreads colds, too
-    if (speaker.chem.germs > 0.3 && Math.random() < 0.08 * (1.2 - other.genes.hardiness)) other.catchCold(speaker.first);
+    if (speaker.chem.germs > 0.3 && Math.random() < 0.08 * (1.2 - other.genes.hardiness)) other.catchCold(speaker.first, speaker);
   }
 
   updateApproach(dt) {

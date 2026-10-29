@@ -48,6 +48,10 @@ talkPack('core', () => {
     { if: { hour: 'evening', met: true }, text: ['Evening, wizard. Lovely light.', 'Out late! There\'s a chill coming.'] },
     { if: { tipsy: true }, pri: 1, text: ['Wizard! My dear, dear wizard. Have you met my friend? It\'s you.', 'Gandalf! Have a drink. Have two!'] },
     { if: { sick: true }, pri: 1, text: ['*sniff* Don\'t come too close. I\'m full of cold.', 'Hello. I\'d smile, but my head hurts.'] },
+    // after a scuffle, a prank, or with someone in mind for it (scuffle.js, mischief.js)
+    { if: { feeling: 'scuffled', feelingX: (x) => !!x }, pri: 2, text: ['Don\'t look at my eye. {FeelingX} and I had a... difference of opinion.', 'If you\'ve come about me and {feelingX}, I don\'t want to talk about it.'] },
+    { if: { feeling: 'tripped' }, pri: 2, text: ['Mind where you put your feet, wizard. Some joker\'s been stringing cords about.', 'Somebody tripped me up, and in front of everyone. My ankle!'] },
+    { if: { feeling: 'suspects', feelingX: (x) => !!x }, pri: 2, text: ['Somebody played a nasty trick on me. I know who, too. {FeelingX}.', 'Have you heard what was done to me? I\'d wager {feelingX} put them up to it. Or did it.'] },
     { if: { stage: 'child', met: true }, text: ['Wizard! Wizard! Did you bring anything?', 'It\'s the wizard! Hello hello hello!'] },
     { if: { rift: true, met: true }, text: ['Hey. The wizard. Ping received.', 'Oh, hey. Signal\'s good today.'] },
   ]);
@@ -398,7 +402,7 @@ talkPack('core', () => {
     },
   });
   lines('cross.stony', [{ text: ['...', '*says nothing at all*'] }]);
-  lines('cross.vents', [{ text: ['Words were had. Unkind words. And I wasn\'t the one who started it.', 'Some folk just don\'t know when to stop talking. That\'s all.'] }, { if: { rival: (r) => !!r }, text: ['{Rival}. It\'s always {rival}. Forty years of it.'] }, { if: { feeling: 'quarrel', feelingX: (x) => !!x }, pri: 1, text: ['{FeelingX}. Words were had. I\'m not saying who started it. ...It was {feelingX}.', 'It\'s {feelingX}. Stubborn as a stuck gate.'] }, { if: { memory: (m) => !!m, memoryGood: false }, pri: 1, text: ['"{Memory}" There. Now you know.'] }]);
+  lines('cross.vents', [{ text: ['Words were had. Unkind words. And I wasn\'t the one who started it.', 'Some folk just don\'t know when to stop talking. That\'s all.'] }, { if: { rival: (r) => !!r }, text: ['{Rival}. It\'s always {rival}. Forty years of it.'] }, { if: { feeling: 'quarrel', feelingX: (x) => !!x }, pri: 1, text: ['{FeelingX}. Words were had. I\'m not saying who started it. ...It was {feelingX}.', 'It\'s {feelingX}. Stubborn as a stuck gate.'] }, { if: { feeling: 'scuffled', feelingX: (x) => !!x }, pri: 2, text: ['{FeelingX} and I came to blows. Fists! At our age. I\'m that ashamed.', 'I\'ll not say what {feelingX} called me. But I gave as good as I got.'] }, { if: { memory: (m) => !!m, memoryGood: false }, pri: 1, text: ['"{Memory}" There. Now you know.'] }]);
   lines('cross.softens', [{ text: ['...I might have said a thing or two myself. Don\'t tell anyone.', '...Thank you for not saying anything. Most folk can\'t help themselves.'] }]);
   lines('cross.business', [{ text: ['None of your business, wizard.', 'I don\'t want to talk about it.'] }]);
   lines('cross.doubt', [{ text: ['...Maybe a little. A very little.', 'Right? ...Oh, they might have had a point. Somewhere.'] }]);

@@ -54,7 +54,8 @@ function randomGenes() {
   };
   for (const t of TRAITS) g[t] = R.f(0.1, 0.95);
   for (const s of SKILLS) g.apt[s] = s === 'tinkering' ? R.f(0.05, 0.45) : R.f(0.15, 1);
-  for (const a in ACTIONS) g.taste[a] = R.f(0.8, 1.25);
+  // (an action marked instinct: false, a scuffle or a prank, is nobody's by birth: it draws no taste, so a new one leaves a seed's village as it was)
+  for (const a in ACTIONS) if (ACTIONS[a].instinct !== false) g.taste[a] = R.f(0.8, 1.25);
   for (const f in FOODS) g.food[f] = R.f(0.7, 1.3);
   return g;
 }
@@ -94,7 +95,7 @@ function inheritGenes(a, b) {
     g[t] = clamp(fromEither(a[t], b[t]) * 0.65 + (a[t] + b[t]) * 0.175 + R.f(-0.1, 0.1), 0.03, 1);
   }
   for (const s of SKILLS) g.apt[s] = clamp(fromEither(a.apt[s], b.apt[s]) * 0.7 + (a.apt[s] + b.apt[s]) * 0.15 + R.f(-0.08, 0.08), 0.05, 1);
-  for (const k in ACTIONS) g.taste[k] = clamp(((a.taste[k] || 1) + (b.taste[k] || 1)) / 2 + R.f(-0.1, 0.1), 0.6, 1.4);
+  for (const k in ACTIONS) if (ACTIONS[k].instinct !== false) g.taste[k] = clamp(((a.taste[k] || 1) + (b.taste[k] || 1)) / 2 + R.f(-0.1, 0.1), 0.6, 1.4);
   for (const f in FOODS) g.food[f] = clamp(fromEither(a.food[f] || 1, b.food[f] || 1) + R.f(-0.1, 0.1), 0.5, 1.5);
 
   // Mutations: rare, and noted so the player can spot them.

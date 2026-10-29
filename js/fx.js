@@ -115,7 +115,7 @@ const FX = {
           break;
         case 'puff':
           ctx.globalAlpha = (1 - f) * 0.8;
-          round(x, y, p.r, '#8a8a8a');
+          round(x, y, p.r, p.col || '#8a8a8a');
           break;
         case 'z':
           ctx.globalAlpha = 1 - f;

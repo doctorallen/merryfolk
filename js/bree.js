@@ -162,6 +162,9 @@ const Natter = {
         continue;
       }
       const t = v.task;
+      // (two come to blows are still together while they're at it, the moment the minds have them fighting: scuffle.js)
+      if (t && t.a.id === 'scuffle' && t.bree === ex.id) continue;
+      if (this.w.morgul && this.w.morgul.fights(ex.kind)) { const d = this.w.s.people[pid] && this.w.s.people[pid].doing; if (d && d.action === 'scuffle' && !v.carried && !v.inside) continue; }
       if (!t || t.a.id !== 'chat' || !t.partner || !ex.who.includes(t.partner._pid)) return pid;
     }
     return null;
@@ -220,6 +223,8 @@ const Natter = {
   // the game put a natter down (a break, the giant hand, the wizard): it's over
   putDown(v, task) {
     if (!this.on() || task.bree == null || !this.w.bree.exchange(task.bree)) return;
+    // (a squabble come to blows: the natter gives way to the scuffle, which goes on)
+    if (task.a.id === 'chat' && this.w.morgul && this.w.morgul.fights(this.w.bree.exchange(task.bree).kind)) return;
     this.input('bree.end', [task.bree]);
   },
   // the wizard made the peace: no hard feelings either way
@@ -291,6 +296,10 @@ const Natter = {
   turn(t) {
     const s = this.v(t.who), l = this.v(t.to);
     if (!s || !l) return;
+    if (t.kind === 'scuffle') {
+      if (t.step === 'step_in' || t.step === 'leave') { const text = this.words(t, s, l, null); if (text) s.say(text, undefined, { to: l }); }
+      return;
+    }
     const rec = this.live.get(t.id) || (t.kind === 'table' ? this.live.get('pending') : null);
     const table = !!(rec && rec.table);
     let text = this.words(t, s, l, rec);
@@ -322,14 +331,14 @@ const Natter = {
     if (t.kind === 'babble' || t.kind === 'ask') {
       // (the old exchange: the ways rub off line by line, and the one speaking may pass on a cold)
       if (said) shareWays(s, l);
-      if (s.chem.germs > 0.3 && Math.random() < 0.08 * (1.2 - l.genes.hardiness)) l.catchCold(s.first);
+      if (s.chem.germs > 0.3 && Math.random() < 0.08 * (1.2 - l.genes.hardiness)) l.catchCold(s.first, s);
       return;
     }
     if (t.kind === 'squabble') FX.puff(s.x, s.y - 20);
     else if (t.kind === 'court' && R.chance(0.5)) FX.hearts((s.x + l.x) / 2, Math.min(s.y, l.y) - 18);
     else if (!bad && said) { lead.bond(other, 0.004); shareWays(lead, other); }
     // natters spread colds, too
-    if (lead.chem.germs > 0.3 && Math.random() < 0.05 * (1.2 - other.genes.hardiness)) other.catchCold(lead.first);
+    if (lead.chem.germs > 0.3 && Math.random() < 0.05 * (1.2 - other.genes.hardiness)) other.catchCold(lead.first, lead);
   },
   // What's said: the line Bree chose, filled in; the game's own words for its own topics.
   words(t, s, l, rec) {
@@ -377,6 +386,7 @@ const Natter = {
     const rec = this.live.get(f.id);
     this.live.delete(f.id);
     if (rec && rec.table) { this.lull.set(rec.b, Game.time); return; }
+    if (f.kind === 'scuffle') return; // (how a scuffle ends is its beats': scuffle.js)
     const a = this.v(f.who[0]), b = this.v(f.who[1]);
     if (!a || !b) return;
     // a word or two to see them off, then both go about their day
@@ -410,8 +420,10 @@ const Natter = {
   witnessed(e) {
     const v = this.v(e.id), by = this.v(e.actor);
     if (!v || !by) return;
-    feel(v, 'saw_row', by.first);
-    v.rel[by.id] = clamp((v.rel[by.id] ?? 0.1) - 0.015, -1, 1);
+    // (fists are worse than words)
+    const blows = e.kind === 'scuffle';
+    feel(v, blows ? 'saw_scuffle' : 'saw_row', by.first);
+    v.rel[by.id] = clamp((v.rel[by.id] ?? 0.1) - (blows ? 0.04 : 0.015), -1, 1);
   },
   // a grudge made up
   mended(e) {
@@ -516,9 +528,15 @@ function natterKinds(b) {
   b.kind({ id: 'court', label: 'sweet nothings', ...talk, tags: ['talk', 'friendly', 'romantic'], escalates: undefined, topics: ['tag:court', 'tag:natter'], weight: (ctx) => natterOdds(ctx, 'court'), turns: (ctx) => natterTurns(ctx, 2) });
   b.kind({
     id: 'squabble', label: 'a squabble', tags: ['hostile'], base: -2, grudge: 2, gap: [3, 5], weight: (ctx) => natterOdds(ctx, 'squabble'),
+    // now and then, rarely, a squabble comes to blows (scuffle.js)
+    escalates: 'scuffle', escalation: (ctx) => (typeof Scuffle !== 'undefined' ? Scuffle.escalation(ctx) : 0),
     turns: (ctx) => { const [a, b] = natterPair(ctx); return a && b && (natterLittle(a) || natterLittle(b)) ? 3 + Math.floor(Math.random() * 3) : natterTurns(ctx); },
     on: { end: { then: [natterDo((v, o, d) => { v.bond(o, (SQUABBLE_BOND[d.outcome] || 0) / 2); feel(v, 'quarrel', o.first); })] } },
   });
+  // a scuffle: a fight by numbers on Morgul, blow by blow (scuffle.js); only ever a squabble come to blows
+  // (a blow every five to eight minutes: slow enough to watch)
+  b.kind({ id: 'scuffle', label: 'a scuffle', tags: ['hostile'], base: -4, grudge: 1, gap: [5, 8], weight: 0,
+    on: { end: { then: [natterDo((v, o) => { if (typeof Scuffle !== 'undefined') Scuffle.over(v, o); })] } } });
   // a natter with a toddler or a baby, and a newcomer asking their way: the
   // old exchange's own words and pace (a line and its answer every five to
   // nine minutes), and its warmth at the end (whoever asked has met one more
