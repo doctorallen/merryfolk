@@ -1,0 +1,2 @@
+seed 1 {"tries":{"season chill":15,"social":4},"took":{"season chill":13,"social":4},"sickMin":18480,"sickSocial":700,"sickOut":6540,"sickAsleep":10590,"coldMin":24390,"flu":3,"bySeason":{"spring":2,"autumn":6,"winter":9}}
+seed 2 {"tries":{"season chill":6},"took":{"season chill":6},"sickMin":4330,"sickSocial":120,"sickOut":950,"sickAsleep":3630,"coldMin":6250,"flu":1,"bySeason":{"autumn":3,"winter":3}}

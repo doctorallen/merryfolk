@@ -1,0 +1,3 @@
+node test/harm/squabbles.js 0.35 160   (seed 11, before the founding fix; 160 squabbles forced between adults)
+rate 0.35 {"squabbles":134,"scuffles":15,"ends":{"yielded":4,"parted":2,"left":7,"stepped in":2},"sour":153,"turns":483,"blows":37,"nose":2,"stepped":0}
+(the two "parted" ends: the other fighter's minds had already sent them off to work, work_lamps and innkeeper_fetch)

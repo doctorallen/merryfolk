@@ -10,7 +10,11 @@
 // passed between them: natters begun and the lines said in them, natters
 // walked off from, long and good ones, squabbles, table talk and gatherings,
 // and with the natters on Bree, the grudges, feuds, making up, natters turned
-// squabbles, patience kept and someone stepping in.
+// squabbles, patience kept and someone stepping in; the body (pints drunk,
+// and each spell's count, length and share of everyone's time: in drink,
+// tipsy, a cold, the sniffles, a toadstool, the flu, a sprain, recently
+// recovered); and with harm on Morgul, scuffles and their blows and wounds,
+// tending, pranks set and sprung, and who suspected whom.
 //
 //   node test/season.js                     prints the numbers, writes test/out/season.json
 //   node test/season.js --record before     ...and keeps them as test/season-before.json
@@ -95,6 +99,26 @@ function installProbe({ seed, wizard }) {
     w.on('bree:feud', (e) => { if (e.strength > 0) B.feuds++; });
     w.on('bree:witnessed', () => B.witnessed++);
   }
+  // the body: how long a pint, a cold, a toadstool and the flu last, spell by
+  // spell (a spell is a run of ten-minute looks with it), and how much of
+  // everyone's time each takes
+  P.body = { spells: {}, mins: {}, levels: {}, n: 0 };
+  // harm, with it on Morgul: scuffles and their blows, wounds, pranks and suspicion
+  P.harm = null;
+  if (typeof Shell !== 'undefined' && Shell.w && Shell.w.morgul) {
+    const H = P.harm = { fights: 0, blows: 0, landed: 0, wounds: {}, down: 0, steppedIn: 0, fightEnds: {}, tended: 0, set: {}, sprung: {}, tainted: 0, dosed: 0, suspects: 0, suspectRight: 0, harms: 0, seen: 0, pranks: 0 };
+    const w = Shell.w, inc = (o, k) => { o[k] = (o[k] || 0) + 1; };
+    w.on('bree:escalated', (e) => { if (w.morgul.fights(e.to)) H.fights++; });
+    w.on('bree:turn', (t) => { if (t.harm) { H.blows++; } if (t.step === 'step_in' && w.morgul.fights(t.kind)) H.steppedIn++; });
+    w.on('bree:end', (e) => { if (w.morgul.fights(e.kind)) inc(H.fightEnds, e.why); });
+    w.on('morgul:harm', (h) => { H.harms++; if (h.wound) inc(H.wounds, h.wound); H.seen += (h.seenBy || []).length; });
+    w.on('morgul:down', () => H.down++);
+    w.on('morgul:set', (e) => inc(H.set, e.kind));
+    w.on('morgul:sprung', (e) => inc(H.sprung, e.kind));
+    w.on('morgul:tainted', () => H.tainted++);
+    w.on('morgul:suspect', (e) => { H.suspects++; if (e.right) H.suspectRight++; });
+    w.on('tended', () => H.tended++);
+  }
   const sa = startAdventure;
   startAdventure = function (v, k) { if (k === 'trip') P.trips++; return sa.apply(this, arguments); };
   const snap = () => ({
@@ -166,6 +190,17 @@ function runDay() {
         if (v.illness && v.illness !== pv.illness) P.ills[v.illness.kind] = (P.ills[v.illness.kind] || 0) + 1;
         if (v.chem.toxin > 0.35 && !(pv.toxin > 0.35)) P.poisoned++;
         pv.sulk = v.sulk; pv.tantrum = v.tantrum; pv.germs = v.chem.germs; pv.illness = v.illness; pv.toxin = v.chem.toxin;
+        // the body's spells: tipsy, well away, a cold, sick with it, a toadstool, the flu, a sprain, a sore head
+        if (v.stage === 'baby') continue;
+        const B = P.body, c = v.chem, ill = v.illness && Game.time < v.illness.until ? v.illness.kind : null;
+        const on = { tipsy: c.ale > 0.45, merry: c.ale > 0.6, drink: c.ale > 0, cold: c.germs > 0, sniffles: c.germs > 0.35, toxin: c.toxin > 0.35, flu: ill === 'flu', sprain: ill === 'sprain', sorehead: c.hangover > 0.25, immune: c.immune > 0.4, sick: v.isSick() };
+        const sp = pv.spells || (pv.spells = {});
+        for (const k in on) {
+          if (on[k]) { B.mins[k] = (B.mins[k] || 0) + 10; if (sp[k] == null) sp[k] = Game.time; }
+          else if (sp[k] != null) { (B.spells[k] || (B.spells[k] = [])).push(Game.time - sp[k]); sp[k] = null; }
+        }
+        if (c.ale > 0) B.levels.ale = (B.levels.ale || 0) + c.ale;
+        B.n++;
       }
     }
     if (i % 120 === 0) {
@@ -239,6 +274,15 @@ function report() {
   const foodMade = FOOD.reduce((t, k) => t + (P.made[k] || 0) + (P.madePriv[k] || 0), 0);
   const foodUsed = FOOD.reduce((t, k) => t + (P.used[k] || 0) + (P.usedPriv[k] || 0), 0);
   const B = (k) => P.feels[k] || 0;
+  // the body: each spell's count, its mean length in hours (finished spells), and its share of everyone's time
+  const PB = P.body, body = {};
+  for (const k of ['drink', 'tipsy', 'merry', 'cold', 'sniffles', 'toxin', 'flu', 'sprain', 'sorehead', 'immune', 'sick']) {
+    const xs = PB.spells[k] || [];
+    body[k] = { spells: xs.length, hours: r2(xs.reduce((a, b) => a + b, 0) / Math.max(1, xs.length) / 60), share: r2((PB.mins[k] || 0) / Math.max(1, PB.n * 10) * 1000) / 1000 };
+  }
+  body.pints = (P.done.ale || 0) + (P.done.ale_item || 0);
+  body.aleLevel = r2((PB.levels.ale || 0) / Math.max(1, (PB.mins.drink || 0) / 10));
+  body.nursed = P.done.nurse || 0; body.remedies = P.done.remedy_item || 0; body.soup = P.done.bring_soup || 0;
   return {
     seed: P.seed, days, msPerDay: Math.round(P.ms / days),
     folk: { start: s0.pop, end: s1.pop, stagesStart: s0.stages, stagesEnd: s1.stages },
@@ -259,6 +303,8 @@ function report() {
     },
     bree: P.bree ? { ...P.bree, grudgesHeld: Game.villagers.reduce((t, v) => t + (Shell.w.bree.grudges(v._pid) || []).length, 0), feudsNow: Shell.w.bree.feuds().length } : undefined,
     illness: { colds: P.colds, other: P.ills, poisoned: P.poisoned, sickShare: r2(P.sick / Math.max(1, P.alive)) },
+    body,
+    harm: P.harm ? { ...P.harm } : undefined,
     skills: { gained: Math.round(gained), perVillager: r2(gained / Math.max(1, both.length)), levelUps },
     wishes: { granted: P.wishes, dreams: s1.dreams - s0.dreams },
     feelings: sorted(P.feels),
@@ -294,6 +340,13 @@ const KEY = [
   ['table talks and gatherings', 'talk.groupTalks'], ['lines said round them', 'talk.groupLines'], ['good company at table (felt)', 'talk.tableTalk'],
   ['saw a squabble', 'talk.sawRow'], ['made it up', 'talk.madeUp'], ['grudges formed or deepened', 'bree.grudges'], ['grudges held at the end', 'bree.grudgesHeld'], ['feuds', 'bree.feuds'],
   ['natters turned squabbles', 'bree.escalated'], ['kept their patience', 'bree.calmed'], ['stepped in', 'bree.steppedIn'],
+  ['pints drunk', 'body.pints'], ['tipsy spells', 'body.tipsy.spells'], ['hours a tipsy spell', 'body.tipsy.hours'], ['time tipsy', 'body.tipsy.share'], ['time well in drink (over 0.6)', 'body.merry.share'],
+  ['hours a drink lasts (ale above 0)', 'body.drink.hours'], ['ale while in drink', 'body.aleLevel'],
+  ['colds (spells)', 'body.cold.spells'], ['hours a cold', 'body.cold.hours'], ['hours a cold has them sniffling', 'body.sniffles.hours'], ['time with a cold', 'body.cold.share'],
+  ['flu', 'illness.other.flu'], ['hours laid up with flu', 'body.flu.hours'], ['sprains', 'illness.other.sprain'], ['toadstools', 'illness.poisoned'], ['hours a toadstool sickens them', 'body.toxin.hours'],
+  ['time feeling poorly', 'body.sick.share'], ['time recently recovered', 'body.immune.share'], ['nursed', 'body.nursed'], ['remedies taken', 'body.remedies'], ['soup brought', 'body.soup'],
+  ['scuffles', 'harm.fights'], ['blows in them', 'harm.blows'], ['harms', 'harm.harms'], ['bruises', 'harm.wounds.bruise'], ['bloody noses', 'harm.wounds.bloody_nose'], ['knocked down', 'harm.down'], ['stepped in on a scuffle', 'harm.steppedIn'], ['tended', 'harm.tended'],
+  ['tripwires set', 'harm.set.tripwire'], ['snares set', 'harm.set.snare'], ['traps sprung', 'harm.sprung.tripwire'], ['snares sprung', 'harm.sprung.snare'], ['stews spiked', 'harm.tainted'], ['suspected someone', 'harm.suspects'], ['suspected the right one', 'harm.suspectRight'],
   ['skill points gained per villager', 'skills.perVillager'], ['skill levels gained', 'skills.levelUps'], ['wishes granted', 'wishes.granted'],
   ['time asleep', 'timeUse.sleep'], ['time working', 'timeUse.work'], ['time eating', 'timeUse.eat'], ['time with others', 'timeUse.social'], ['time at leisure', 'timeUse.leisure'], ['time walking', 'timeUse.travel'], ['time idle', 'timeUse.idle'],
   ['milliseconds per day simulated', 'msPerDay'],

@@ -654,3 +654,199 @@ A day simulated (seed 7), the page's CPU time (its renderer, read from
 5.1 after (4.7 to 5.4 and 4.9 to 5.3; wall time 3.6 both), which is the same
 within what back-to-back runs vary on a shared machine. A day is a couple of
 hundred turns, each a timer in the minds' queue and a line chosen.
+
+## The body and harm on Athelas and Morgul
+
+The body moved onto Athelas, Tyrell's module for illness and wounds, and
+two kinds of harm came with Morgul, its harm module, on the `harm` branch
+(with Tycho's `mf-harm`, which gives Athelas a phase's `if`, Bree a kind's
+`escalation` and Morgul a trap's `about`). Ale, a cold, the flu, a bad
+toadstool and a sprain are Athelas courses, each phase a band the old
+chemistry went through, and the game reads the old levels as views of where
+each course has got to (`js/body.js`). Now and then a squabble comes to
+blows, a fight by numbers that leaves a bruise or a bloody nose
+(`js/scuffle.js`), and folk with a grudge or a wicked streak set tripwires
+and snares or spoil someone's supper, and whoever's caught suspects someone
+(`js/mischief.js`). Nobody dies of any of it (`lethality` 0). This is the
+village before and after.
+
+### How it was measured
+
+The season runner counts the body (pints drunk; each spell's count, length
+and share of everyone's time: in drink, tipsy, a cold, the sniffles, a
+toadstool, the flu, a sprain) and harm (scuffles, blows, wounds, tending,
+traps set and sprung, stews spiked, suspicion). Before is main (a1c999f,
+Tycho 7b52461) with the branch's season runner; after is the branch with
+Tycho at `mf-harm` merged with Tycho's main (fe21326; Irulan, merged after,
+leaves a day's minds the same, hash for hash), run twice: with harm on, and
+body only (`SCUFFLE.rate` and `MISCHIEF.perDay` at 0). The new actions draw
+no instinct, so a seed founds the same village on both
+(`test/harm/founding.js` diffs every draw made while founding).
+
+A village doesn't live exactly the same twice, even on the same code: the
+game's own chances (`Math.random`, seeded) are drawn by what's drawn
+between the days too, and that depends on how many frames the page ran in
+between. So main was run twice, and its two runs are the yardstick: a
+difference smaller than theirs isn't one. A season is six seeds (1 to 6),
+three days each; a year is four seeds (1 to 4), twelve days each
+(`season-harm-before*.json`, `season-harm-before-again*.json`,
+`season-harm-body*.json`, `season-harm-after*.json`). Each cell is the mean
+over the seeds with the lowest and highest seed's in brackets; a spell's
+length is pooled over the seeds (every spell counts once, the number of
+them in brackets; `test/harm/pooled.js`), and harm is summed over them.
+
+A season, six seeds, three days each:
+
+| | before | before, again | body only | harm on |
+|---|---:|---:|---:|---:|
+| folk at the end | 27.67 (27 to 29) | 27.83 (27 to 29) | 28 (27 to 29) | 27.83 (26 to 29) |
+| meals per villager-day | 2.45 (2.33 to 2.56) | 2.45 (2.38 to 2.52) | 2.45 (2.28 to 2.61) | 2.43 (2.41 to 2.46) |
+| mood, mean | 0.65 (0.62 to 0.66) | 0.64 (0.61 to 0.66) | 0.65 (0.62 to 0.67) | 0.63 (0.61 to 0.65) |
+| mood, lowest tenth | 0.38 (0.36 to 0.41) | 0.38 (0.36 to 0.39) | 0.39 (0.35 to 0.43) | 0.36 (0.34 to 0.38) |
+| friendships formed | 15 (9 to 18) | 14.17 (5 to 21) | 17.83 (7 to 34) | 11.83 (9 to 16) |
+| natters begun | 18.83 (14 to 26) | 19.5 (14 to 26) | 18.5 (12 to 25) | 19.17 (12 to 22) |
+| good natters | 13 (5 to 18) | 10.83 (6 to 18) | 9.5 (6 to 17) | 11 (7 to 14) |
+| squabbles felt (each one's) | 1.67 (0 to 4) | 2 (0 to 4) | 2.67 (0 to 6) | 2 (0 to 4) |
+| grudges formed or deepened | 2 (0 to 4) | 2.83 (1 to 5) | 2.67 (0 to 7) | 3.5 (1 to 5) |
+| pints drunk | 22.5 (18 to 30) | 25.17 (18 to 35) | 26.67 (23 to 34) | 26.17 (19 to 31) |
+| colds caught | 1.33 (0 to 3) | 1.67 (0 to 3) | 1.5 (0 to 3) | 1.67 (0 to 4) |
+| flu | 0.17 (0 to 1) | 0.17 (0 to 1) | 0.17 (0 to 1) | 0 |
+| toadstools | 1 (0 to 2) | 1 (0 to 3) | 0.67 (0 to 1) | 0.67 (0 to 2) |
+| sprains | 0.5 (0 to 2) | 0.5 (0 to 1) | 0.5 (0 to 1) | 0.5 (0 to 1) |
+| time feeling poorly | 0.01 (0 to 0.03) | 0.01 (0 to 0.03) | 0.01 (0 to 0.03) | 0.01 (0 to 0.04) |
+| nursed | 2 (1 to 4) | 1.67 (0 to 4) | 2.33 (0 to 7) | 0.67 (0 to 1) |
+| soup brought | 0.83 (0 to 5) | 0.5 (0 to 3) | 0.67 (0 to 4) | 0 |
+| hours a drink lasts (pooled) | 3.7 (184) | 3.7 (195) | 4.0 (197) | 3.8 (198) |
+| hours a cold (pooled) | 27.3 (3) | 13.4 (2) | 12.6 (4) | 19.8 (6) |
+| hours sniffling (pooled) | 19.8 (3) | 21.3 (3) | 14.6 (5) | 13.3 (7) |
+| hours laid up with flu (pooled) | 43.0 (1) | 47.5 (1) | 43.5 (1) | - |
+| hours a toadstool sickens them (pooled) | 3.0 (6) | 3.3 (6) | 1.7 (3) | 6.2 (4) |
+| scuffles, all seeds | - | - | 0 | 0 |
+| blows in them, all seeds | - | - | 0 | 0 |
+| seen to after, all seeds | - | - | 0 | 0 |
+| tripwires set, all seeds | - | - | 0 | 8 |
+| snares set, all seeds | - | - | 0 | 5 |
+| tripwires sprung, all seeds | - | - | 0 | 5 |
+| snares sprung, all seeds | - | - | 0 | 2 |
+| stews spiked, all seeds | - | - | 0 | 0 |
+| suspected someone, all seeds | - | - | 0 | 7 |
+| suspected the right one, all seeds | - | - | 0 | 5 |
+
+A year, four seeds, twelve days each:
+
+| | before | before, again | body only | harm on |
+|---|---:|---:|---:|---:|
+| folk at the end | 37.75 (36 to 41) | 38.25 (34 to 41) | 39 (35 to 44) | 37.5 (34 to 43) |
+| meals per villager-day | 2.46 (2.4 to 2.52) | 2.53 (2.43 to 2.57) | 2.5 (2.48 to 2.52) | 2.49 (2.45 to 2.58) |
+| mood, mean | 0.61 (0.6 to 0.63) | 0.62 (0.6 to 0.63) | 0.62 (0.61 to 0.63) | 0.63 (0.61 to 0.63) |
+| mood, lowest tenth | 0.36 (0.34 to 0.4) | 0.39 (0.38 to 0.41) | 0.39 (0.36 to 0.41) | 0.39 (0.38 to 0.4) |
+| friendships formed | 117.5 (85 to 160) | 107.25 (88 to 128) | 124.5 (113 to 148) | 126.5 (83 to 203) |
+| natters begun | 115.75 (109 to 121) | 104 (72 to 125) | 117.5 (102 to 139) | 111.5 (94 to 130) |
+| good natters | 66 (54 to 77) | 56.75 (33 to 69) | 62.5 (42 to 76) | 63 (47 to 74) |
+| squabbles felt (each one's) | 11 (6 to 14) | 6 (2 to 10) | 7.5 (4 to 10) | 6 (4 to 10) |
+| grudges formed or deepened | 12 (7 to 15) | 11.25 (9 to 16) | 13 (10 to 18) | 13.5 (9 to 18) |
+| pints drunk | 155.5 (134 to 170) | 160.25 (145 to 189) | 156 (147 to 167) | 162 (116 to 196) |
+| colds caught | 16.25 (12 to 20) | 11.25 (7 to 16) | 15.5 (8 to 20) | 13 (6 to 18) |
+| flu | 4 (1 to 6) | 2.5 (2 to 4) | 4 (1 to 6) | 2.75 (2 to 4) |
+| toadstools | 1.25 (0 to 2) | 1.5 (1 to 3) | 1 (0 to 2) | 0.75 (0 to 2) |
+| sprains | 2.5 (1 to 5) | 2.75 (1 to 4) | 3.5 (1 to 5) | 2.25 (0 to 4) |
+| time feeling poorly | 0.03 (0.03 to 0.04) | 0.02 (0.01 to 0.03) | 0.03 (0.01 to 0.04) | 0.02 (0.02 to 0.03) |
+| nursed | 9.5 (2 to 16) | 6.5 (3 to 13) | 9.5 (3 to 14) | 7 (3 to 10) |
+| soup brought | 8 (1 to 14) | 4.75 (0 to 7) | 4.25 (1 to 7) | 3.75 (1 to 6) |
+| hours a drink lasts (pooled) | 4.0 (848) | 4.1 (894) | 4.1 (897) | 4.2 (857) |
+| hours a cold (pooled) | 27.6 (43) | 25.9 (27) | 25.6 (39) | 24.9 (37) |
+| hours sniffling (pooled) | 22.1 (48) | 16.1 (31) | 17.6 (44) | 16.3 (38) |
+| hours laid up with flu (pooled) | 44.4 (10) | 39.0 (5) | 43.7 (4) | 49.0 (5) |
+| hours a toadstool sickens them (pooled) | 3.1 (5) | 4.0 (6) | 5.2 (4) | 6.2 (3) |
+| scuffles, all seeds | - | - | 0 | 1 |
+| blows in them, all seeds | - | - | 0 | 6 |
+| seen to after, all seeds | - | - | 0 | 4 |
+| tripwires set, all seeds | - | - | 0 | 12 |
+| snares set, all seeds | - | - | 0 | 13 |
+| tripwires sprung, all seeds | - | - | 0 | 7 |
+| snares sprung, all seeds | - | - | 0 | 10 |
+| stews spiked, all seeds | - | - | 0 | 0 |
+| suspected someone, all seeds | - | - | 0 | 14 |
+| suspected the right one, all seeds | - | - | 0 | 8 |
+
+### What the numbers say
+
+- **Nothing about everyday life moved.** Folk, meals, mood, friendships,
+  natters, squabbles and pints are within main's own two runs, in the
+  season and the year, body only and with harm on.
+- **The courses are the old chemistry.** Given on purpose to the same
+  villagers (`test/harm/body-given.js`, seeds 1 to 4: eight grown-ups catch
+  a cold at six on the first morning, four nibble a toadstool, three are laid
+  up with the flu), the courses match person by person within an hour or
+  two: a cold uncured 27.7 hours before and 28.0 after, the sniffles 15.1
+  and 15.2, the same three colds turning to flu, a toadstool 6.2 hours each
+  in both, the flu laid up 38.8 and 36.3 hours. A pint lasts its level over
+  0.05 an hour in both (a drink four hours, pooled over some 850 a year).
+- **A year has no fewer colds.** An earlier year on the branch had about
+  40% fewer colds than main (38 against 65), but it ran on other villages
+  (before the new actions stopped drawing an instinct, every founding
+  differed). On the same villages it's 62 body only and 52 with harm on,
+  against main's 65 and 45; a cold lasts 25 to 28 hours pooled in all four,
+  and the flu comes 16 times body only and 11 with harm on, against main's
+  16 and 10. Most colds come
+  from the daily chill (19 of 23 in two of main's years), so the count
+  follows who's open to one on the day, and that's the village, not the
+  course.
+- **A remedy taken without a cold no longer wards one off.** On main a
+  remedy left anyone it was given to at an immunity of 0.6, so someone
+  dosed for a toadstool, nursed after they'd mended, or given the Remedy
+  tool when they weren't poorly ("Yuck! I wasn't even poorly.") was kept
+  from a cold for a day or so, and showed "Recently recovered". On the
+  branch only a remedy that ends a cold early does that (30 hours, against
+  the 70 a cold left to run leaves), since on Athelas immunity is what a
+  course leaves behind. It's kept on purpose: it was a side of main's single
+  immunity level rather than anything meant, and what it moves is well
+  inside a year's spread.
+- **Toadstools run longer, on a handful of cases.** 3.1 and 4.0 hours
+  poorly before, 5.2 and 6.2 after, pooled over three to six cases a run;
+  given on purpose they're 6.2 hours in both, so it's how many got a remedy
+  early.
+- **Pranks are about two a village-season and six a village-year**, as
+  many tripwires as snares; seven traps in ten catch someone (the one
+  meant, or someone else from the house), the rest are spotted or taken in,
+  and whoever's caught suspects someone rightly a little over half the time
+  (8 of 14 in the year).
+- **A scuffle is rare.** One in the four village-years (six blows, and a
+  friend round after to see to the bruises), none in the seasons.
+
+### How harm was tuned
+
+Neither a scuffle nor a spoiled supper came about on its own in any run on
+the code as handed over. A village left to itself was watched for what each
+squabble and each prank came to (`test/harm/wild.js`):
+
+- **Scuffles.** A squabble can only come to blows on a turn that lands sour
+  with whoever hears it, and more than half of those can never come to blows
+  (95 of 167: a child and a grown-up, family, sweethearts, indoors). At
+  `SCUFFLE.rate` 0.35 (a share of Bree's chance, times their temper), and
+  with the other keeping their patience about two times in five, a sour turn
+  came to blows about one time in ten when squabbles were forced between
+  grown-ups (15 of 153), and too seldom to be seen in the wild: four
+  village-years had ten squabbles, four sour turns among them, and none came
+  to blows. At
+  1.0, sixteen other village-years (seeds 5 to 20) had 66 squabbles and 5
+  scuffles; at 1.5, 68 and 6, about one squabble in eleven, a scuffle every
+  two or three village-years. It's 1.5. A squabble still almost always ends
+  in words: someone walks off, someone keeps their patience, or it simply
+  runs out.
+- **A bad mushroom in the pot.** It wanted a grudge of 0.25 or more, and
+  pranks are mostly a wicked streak's (30 of the 33 planned in four
+  village-years); the three with a grudge had no knowledge of toadstools.
+  Now a grown-up who knows a toadstool when they see one may spoil the
+  supper of someone whose home is empty: half the time with a grudge, a
+  quarter with only a wicked streak (`MISCHIEF.taint`, `taintStreak`).
+  Eight village-years (seeds 5 to 12) had 62 traps set and 4 pots spiked;
+  the four seeds of the year had none.
+
+### Speed
+
+A day simulated (seed 7, after a morning to settle), the page's main
+thread time (puppeteer's TaskDuration), four times each, before and after in
+turn on a quiet machine: 2.85 seconds before (2.73 to 2.95) and 3.14 after
+(2.87 to 3.79); leave out the one slow run and it's 2.92, about 2% more.
+(`test/harm/speed.js`.)
