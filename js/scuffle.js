@@ -24,9 +24,10 @@
 
 // How a scuffle goes: rare, short, and never worse than a bloody nose.
 const SCUFFLE = {
-  // a squabble's sour turn comes to blows at this share of Bree's chance, times their temper (0.4 + temper × 1.2);
+  // a squabble's sour turn comes to blows at this share of Bree's chance, times their temper (0.4 + temper × 1.2):
+  // about one squabble in nine, and most of those that do are between two hot tempers (test/harm/wild.js);
   // children only scuffle with children, never with an elder, a toddler, a sweetheart or their own parent
-  rate: 0.35, kids: 0.8,
+  rate: 1.5, kids: 0.8,
   // a blow is heavy (stars) from this, and a bloody nose from this
   heavyAt: 0.07, noseAt: 0.078,
   // folk who like the one hurt come round to see to it, at these hours, this often

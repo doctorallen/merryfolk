@@ -4,7 +4,7 @@
 // nursing and soup.
 //
 //   node test/harm/pooled.js harm-before harm-body            (test/season-<name>.json)
-//   node test/harm/pooled.js test/harm/earlier/season-harm-all2-year.json
+//   node test/harm/pooled.js harm-before-year harm-after-year
 const fs = require('fs');
 const path = require('path');
 const file = (n) => (n.endsWith('.json') ? n : path.join(__dirname, '..', `season-${n}.json`));

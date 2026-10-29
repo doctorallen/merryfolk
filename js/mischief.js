@@ -36,6 +36,8 @@ const MISCHIEF = {
   sees: 70, about: 180,
   // down on the ground a moment, in game minutes
   stumble: 4,
+  // a bad mushroom instead, for a grown-up who knows a toadstool, while nobody's home: this often with a grudge, this with only a wicked streak
+  taint: 0.5, taintStreak: 0.25,
 };
 // What a prank is done with, declared to both halves (the bridge's means): Morgul's traps and the poison, Tycho's triggers.
 const MISCHIEF_MEANS = [
@@ -157,15 +159,15 @@ const Mischief = {
     if (!t) return 0;
     return t.grudge > 0 ? MISCHIEF.grudgeBase + t.grudge * MISCHIEF.grudge : MISCHIEF.streakBase + this.streak(v) * MISCHIEF.streak;
   },
-  // What and where: a bad mushroom in their supper (for a real grudge, by someone who knows a toadstool, while
-  // nobody's home), a snare on their way into the village, or a tripwire across their garden path.
+  // What and where: a bad mushroom in their supper (by a grown-up who knows a toadstool, while nobody's home,
+  // the likelier for a grudge), a snare on their way into the village, or a tripwire across their garden path.
   plan(v) {
     const t = this.victim(v);
     if (!t) return null;
     const o = t.o, home = o.home();
     if (!home || !home.built) return null;
     const knows = v.wary > 0.2 || v.skills.herbalism > 25 || v.edu > 0.6;
-    if (t.grudge >= 0.25 && knows && v.isGrown() && !o.inside && !home.inside.length && R.chance(0.4)) return { building: home, prank: { kind: 'toadstool', for: o } };
+    if (knows && v.isGrown() && !o.inside && !home.inside.length && R.chance(t.grudge > 0 ? MISCHIEF.taint : MISCHIEF.taintStreak)) return { building: home, prank: { kind: 'toadstool', for: o } };
     let spot = { x: home.stepX, y: home.stepY };
     if (R.chance(0.5)) {
       // along their way toward the green, a few strides from the door

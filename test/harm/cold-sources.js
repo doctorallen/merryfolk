@@ -8,7 +8,7 @@
 //   node test/harm/cold-sources.js ../merryfolk-main 1,2,3,4 12 > before.log
 //   node test/harm/cold-sources.js . 1,2,3,4 12 > after.log
 //
-// For the colds a year has fewer of on Athelas (test/HANDOFF-harm.md).
+// (It asked whether a year on Athelas had fewer colds: it doesn't, test/minds.md.)
 const path = require('path');
 const root = path.resolve(process.argv[2] || path.join(__dirname, '../..'));
 const { launch, openGame } = require(path.join(root, 'test/lib'));
